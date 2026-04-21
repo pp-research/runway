@@ -1,0 +1,3235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Runway Workbook — Performance Property</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:      #2aadbb;
+    --accent:       #0a6266;
+    --bg:           #eefcfd;
+    --bg-card:      #ffffff;
+    --bg-subtle:    #f4fafb;
+    --text:         #161d27;
+    --text-muted:   #5c7b80;
+    --text-light:   #8aadb2;
+    --border:       #c8e8eb;
+    --border-light: #dff4f6;
+
+    /* semantic extras reusing palette */
+    --green:        #0a6266;
+    --green-bg:     rgba(10,98,102,0.08);
+    --yellow:       #b45309;
+    --yellow-bg:    rgba(180,83,9,0.08);
+    --red:          #be123c;
+    --red-bg:       rgba(190,18,60,0.08);
+    --purple:       #6d28d9;
+
+    --header-h: 56px;
+    --tab-h:    44px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 13px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    height: var(--header-h);
+    background: var(--accent);
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 6px rgba(10,98,102,0.18);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+  }
+  .brand-logo {
+    height: 28px;
+    width: auto;
+    display: block;
+  }
+  header h1 {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: -0.01em;
+    border-left: 1px solid rgba(255,255,255,0.25);
+    padding-left: 14px;
+  }
+  .header-meta {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.45);
+    display: flex;
+    gap: 20px;
+  }
+  .header-meta span { color: rgba(255,255,255,0.75); }
+
+  /* ── TABS ── */
+  .tab-bar {
+    height: var(--tab-h);
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    padding: 0 24px;
+    gap: 2px;
+    overflow-x: auto;
+    box-shadow: 0 1px 3px rgba(10,98,102,0.06);
+    position: sticky;
+    top: var(--header-h);
+    z-index: 99;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+
+  /* ── LIVE-FETCH INDICATOR (right side of tab bar) ── */
+  .fetch-indicator {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .fetch-indicator.success { color: var(--green); }
+  .fetch-indicator.error   { color: var(--red); }
+  .fetch-spinner {
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: fetch-spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+  .fetch-indicator.success .fetch-spinner,
+  .fetch-indicator.error .fetch-spinner {
+    animation: none;
+    border: none;
+    background: currentColor;
+    -webkit-mask: var(--check-mask) center / contain no-repeat;
+            mask: var(--check-mask) center / contain no-repeat;
+  }
+  .fetch-indicator.success .fetch-spinner {
+    --check-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M13.5 4.5l-7 7-3-3' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  }
+  .fetch-indicator.error .fetch-spinner {
+    --check-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4 4l8 8M12 4l-8 8' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/></svg>");
+  }
+  @keyframes fetch-spin { to { transform: rotate(360deg); } }
+  .fetch-indicator .fetch-text {
+    transition: color 0.2s;
+  }
+
+  /* ── VERSIONS MENU (save / load snapshots) ── */
+  .versions-menu {
+    position: relative;
+    margin: 0 6px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+  }
+  .versions-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .versions-btn:hover {
+    background: var(--bg-subtle);
+    border-color: var(--primary);
+  }
+  .versions-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .versions-btn.primary {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  .versions-btn.primary:hover {
+    background: var(--primary-dark, #0a6266);
+  }
+  .versions-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    min-width: 320px;
+    max-width: 420px;
+    max-height: 60vh;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    z-index: 500;
+    padding: 8px;
+  }
+  .versions-dropdown[hidden] { display: none; }
+  .versions-dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px 8px;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 6px;
+  }
+  .versions-dropdown-title {
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .versions-signout {
+    font-size: 10px;
+    color: var(--text-muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 2px 6px;
+  }
+  .versions-signout:hover { color: var(--red); }
+  .versions-list { display: flex; flex-direction: column; gap: 2px; }
+  .versions-item {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.1s;
+    gap: 2px;
+  }
+  .versions-item:hover { background: var(--bg-subtle); }
+  .versions-item-name { font-weight: 600; font-size: 12px; color: var(--text); }
+  .versions-item-meta { font-size: 10px; color: var(--text-muted); }
+  .versions-item-actions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+  }
+  .versions-item-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 10px;
+    cursor: pointer;
+    color: var(--text-muted);
+  }
+  .versions-item-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .versions-item-btn.danger:hover { border-color: var(--red); color: var(--red); }
+  .versions-empty {
+    padding: 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+  .versions-prompt {
+    padding: 12px;
+  }
+  .versions-prompt-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .versions-prompt-input {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 12px;
+    box-sizing: border-box;
+  }
+  .versions-prompt-input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  .versions-prompt-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .versions-prompt-msg {
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .versions-prompt-msg.error { color: var(--red); }
+  .versions-prompt-msg.success { color: var(--green); }
+
+  /* ── READ-ONLY BANNER (when viewing a saved snapshot) ── */
+  .readonly-banner {
+    position: sticky;
+    top: 0;
+    z-index: 400;
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    color: #fff;
+    padding: 10px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .readonly-banner[hidden] { display: none; }
+  .readonly-banner-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .readonly-banner-icon {
+    font-size: 16px;
+  }
+  .readonly-banner-exit {
+    background: rgba(255,255,255,0.25);
+    border: 1px solid rgba(255,255,255,0.5);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .readonly-banner-exit:hover {
+    background: rgba(255,255,255,0.4);
+  }
+  /* Disable inputs when read-only */
+  body.readonly-mode .v-input,
+  body.readonly-mode .filter-select,
+  body.readonly-mode .search-box input {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  /* ── UPDATE-AVAILABLE BANNER ── */
+  .update-banner {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--primary);
+    border-left: 4px solid var(--primary);
+    border-radius: 8px;
+    padding: 12px 14px 12px 16px;
+    box-shadow: 0 4px 16px rgba(10,98,102,0.18);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    max-width: 420px;
+    animation: banner-slide-in 0.3s ease-out;
+  }
+  @keyframes banner-slide-in {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+  .update-banner-text { flex: 1; }
+  .update-banner-btn {
+    background: var(--primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .update-banner-btn:hover { background: var(--accent); }
+  .update-banner-dismiss {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    transition: color 0.15s;
+  }
+  .update-banner-dismiss:hover { color: var(--text); }
+  .tab {
+    padding: 0 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-light);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .tab:hover { color: var(--text-muted); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--primary); }
+  .tab-icon { font-size: 14px; }
+
+  /* ── PANEL LAYOUT ── */
+  .panel { display: none; padding: 20px 24px 40px; }
+  .panel.active { display: block; }
+
+  /* ── UPSIDE/DOWNSIDE REFERENCE TABLE ── */
+  .ref-table {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(10,98,102,0.06);
+  }
+  .ref-table-title {
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .ref-table table {
+    border-collapse: collapse;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+  }
+  .ref-table thead th {
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 4px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  .ref-table tbody td {
+    padding: 3px 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .ref-table tbody tr:last-child td { border-bottom: none; }
+  .ref-table tbody td:first-child {
+    text-align: left;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+  }
+
+  /* ── RATES BAR (legacy, kept for non-houses tabs) ── */
+  .rates-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  /* ── VARIABLES PANEL ── */
+  .vars-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 16px;
+    margin-bottom: 20px;
+    align-items: start;
+  }
+  .vars-col {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(10,98,102,0.06);
+    overflow: hidden;
+  }
+  .vars-col-header {
+    background: var(--accent);
+    color: #ffffff;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+  }
+  .vars-row {
+    display: grid;
+    grid-template-columns: 1fr 110px;
+    align-items: center;
+    border-top: 1px solid var(--border-light);
+  }
+  .vars-row:first-of-type { border-top: none; }
+  .vars-row .v-label {
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    /* Reserve enough vertical space for a two-line label (label + subtitle).
+       Rows without a subtitle will simply have empty space below the label,
+       matching the height of rows that do have a subtitle. */
+    min-height: 48px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .vars-row .v-sublabel {
+    display: block;
+    margin-top: 2px;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text-muted, #6b7280);
+    letter-spacing: 0;
+  }
+  .vars-row .v-value {
+    padding: 8px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    border-left: 1px solid var(--border-light);
+    background: var(--bg-card);
+  }
+  .vars-row:hover .v-value {
+    background: var(--bg-subtle);
+  }
+  .v-input {
+    background: none;
+    border: none;
+    outline: none;
+    color: inherit;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    width: 60px;
+    text-align: right;
+    -moz-appearance: textfield;
+    cursor: text;
+    caret-color: var(--primary);
+  }
+  .v-input::-webkit-inner-spin-button,
+  .v-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .v-input:focus { color: var(--accent); }
+  .vars-row:focus-within .v-value {
+    background: var(--bg-subtle);
+    box-shadow: inset 0 0 0 2px var(--primary);
+  }
+  .v-suffix { color: var(--text-muted); font-weight: 500; margin-left: 2px; }
+
+  /* shared/read-only mirror panel for non-Houses tabs */
+  .vars-mirror {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 4px rgba(10,98,102,0.06);
+    align-items: center;
+  }
+  .vars-mirror-note {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-right: auto;
+  }
+  .vars-mirror-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-left: 24px;
+    border-left: 1px solid var(--border);
+  }
+  /* First .vars-mirror-item in the strip has no separator */
+  .vars-mirror-note + .vars-mirror-item {
+    padding-left: 0;
+    border-left: none;
+  }
+  .vars-mirror-item .vm-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-light);
+  }
+  .vars-mirror-item .vm-value {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .rate-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    min-width: 130px;
+    box-shadow: 0 1px 3px rgba(10,98,102,0.06);
+  }
+  .rate-card .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-light);
+    margin-bottom: 4px;
+  }
+  .rate-card .curr {
+    font-size: 18px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+    line-height: 1;
+  }
+  .rate-card .sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text-light);
+    margin-top: 2px;
+  }
+  .rate-card.accent { border-color: rgba(42,173,187,0.4); background: rgba(42,173,187,0.06); }
+  .rate-card.accent .curr { color: var(--accent); }
+  .rate-card.green  { border-color: rgba(10,98,102,0.35); background: rgba(10,98,102,0.05); }
+  .rate-card.green .curr  { color: var(--green); }
+
+  .wage-extras {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .badge {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 4px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .badge span { color: var(--yellow); font-weight: 500; }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── TABLE WRAPPER ── */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-card);
+    box-shadow: 0 1px 4px rgba(10,98,102,0.07);
+  }
+  .table-wrap::-webkit-scrollbar { height: 6px; }
+  .table-wrap::-webkit-scrollbar-track { background: var(--bg-subtle); }
+  .table-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--bg-card);
+  }
+
+  /* ── SECTION HEADER ROWS ── */
+  .thead-group th {
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .thead-group th.section-current {
+    background: #E4F4F6;
+    color: var(--primary);
+    border-left: 1px solid rgba(42,173,187,0.25);
+    border-right: 1px solid rgba(42,173,187,0.25);
+  }
+  .thead-group th.section-forecast {
+    background: #E4EFF1;
+    color: var(--accent);
+    border-left: 1px solid rgba(10,98,102,0.2);
+    border-right: 1px solid rgba(10,98,102,0.2);
+  }
+
+  /* ── COLUMN HEADERS ── */
+  thead tr.col-heads th {
+    background: var(--bg-card);
+    color: var(--text-muted);
+    font-size: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+    vertical-align: top;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    transition: background 0.1s;
+  }
+  thead tr.col-heads th:hover {
+    background: var(--bg-subtle);
+  }
+  thead tr.col-heads th.curr-col:hover {
+    background: #ECF7F8;
+  }
+  thead tr.col-heads th.fore-col:hover {
+    background: #ECF2F2;
+  }
+  thead tr.col-heads th .sort-arrow {
+    display: inline-block;
+    width: 10px;
+    margin-left: 4px;
+    color: var(--primary);
+    font-size: 9px;
+    line-height: 1;
+    opacity: 0;
+    transition: opacity 0.1s;
+  }
+  thead tr.col-heads th.sort-asc .sort-arrow,
+  thead tr.col-heads th.sort-desc .sort-arrow {
+    opacity: 1;
+  }
+  thead tr.col-heads th.sort-asc { background: rgba(42,173,187,0.06); }
+  thead tr.col-heads th.sort-desc { background: rgba(42,173,187,0.06); }
+  /* each cell hosts a flex column — bubble on top, label below, flush to top */
+  thead tr.col-heads th .hd {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    /* Reserve space so headers with a subtitle are the same height as
+       headers without — keeps all column headers vertically aligned. */
+    min-height: 66px;
+    justify-content: center;
+  }
+  thead tr.col-heads th:first-child .hd,
+  thead tr.col-heads th:nth-child(2) .hd { align-items: flex-start; }
+  thead tr.col-heads th .col-ref {
+    display: inline-block;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    font-style: normal;
+    padding: 1px 6px;
+    min-width: 16px;
+    border-radius: 9px;
+    text-align: center;
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+    line-height: 1.35;
+  }
+  thead tr.col-heads th .col-ref-blank { visibility: hidden; }
+  thead tr.col-heads th .col-label {
+    display: block;
+    max-width: 140px;
+    white-space: normal;
+    line-height: 1.25;
+    text-align: center;
+  }
+  thead tr.col-heads th .col-subtitle {
+    display: block;
+    font-size: 9px;
+    font-weight: 400;
+    color: var(--text-muted, #6b7280);
+    letter-spacing: 0;
+    text-align: center;
+    line-height: 1.2;
+    margin-top: 2px;
+    max-width: 140px;
+    white-space: normal;
+  }
+  thead tr.col-heads th:first-child .col-label,
+  thead tr.col-heads th:nth-child(2) .col-label { text-align: left; }
+  thead tr.col-heads th.curr-col {
+    background: #F4FBFC; /* opaque equivalent of rgba(42,173,187,0.05) on white */
+    border-left: 1px solid rgba(42,173,187,0.15);
+  }
+  thead tr.col-heads th.fore-col {
+    background: #F5F9F9; /* opaque equivalent of rgba(10,98,102,0.04) on white */
+    border-left: 1px solid rgba(10,98,102,0.12);
+  }
+
+  /* ── DATA ROWS ── */
+  tbody tr {
+    border-bottom: 1px solid var(--border-light);
+    transition: background 0.1s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--bg-subtle); }
+
+  td {
+    padding: 7px 10px;
+    color: var(--text);
+    text-align: center;
+    white-space: nowrap;
+  }
+  /* Data tables only — exclude the reference table */
+  .table-wrap td:first-child {
+    text-align: left;
+    color: var(--text-light);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+  }
+  .table-wrap td:nth-child(2) {
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--text);
+  }
+  td.curr-col { background: rgba(42,173,187,0.04); border-left: 1px solid rgba(42,173,187,0.1); }
+  td.fore-col { background: rgba(10,98,102,0.03); border-left: 1px solid rgba(10,98,102,0.1); }
+
+  /* ── STATUS BADGES ── */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .status.open   { background: var(--green-bg);  color: var(--green); }
+  .status.closed { background: var(--red-bg);    color: var(--red); }
+  .status.tbc    { background: rgba(138,173,178,0.12); color: var(--text-muted); }
+  .status.eval   { background: var(--yellow-bg); color: var(--yellow); }
+  .status.hold   { background: rgba(109,40,217,0.08); color: var(--purple); }
+
+  /* ── ROW COLOURING ── */
+  /* rows all use default text color — no region highlighting */
+
+  /* ── PROBABILITY PILL ── */
+  .prob {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .prob-high { background: var(--green-bg);              color: var(--green); }
+  .prob-mid  { background: rgba(42,173,187,0.12);        color: var(--primary); }
+  .prob-low  { background: var(--red-bg);                color: var(--red); }
+  .prob-warn { background: var(--yellow-bg);             color: var(--yellow); }
+
+  /* ── MOVEMENT CELLS ── */
+  .pos { color: var(--green); }
+  .neg { color: var(--red); }
+
+  /* ── CLOCK BADGE ── */
+  .clock {
+    display: inline-block;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* ── AI BAR ── */
+  .ai-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+  .ai-bar {
+    width: 48px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .ai-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  /* ── SEARCH/FILTER ── */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 7px 12px;
+    flex: 1;
+    min-width: 180px;
+    max-width: 280px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .search-box:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(42,173,187,0.12);
+  }
+  .search-box input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    width: 100%;
+  }
+  .search-box input::placeholder { color: var(--text-light); }
+  .search-icon { color: var(--text-light); font-size: 13px; }
+
+  .filter-select {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 7px 32px 7px 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%235c7b80' d='M0 0l5 6 5-6z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    min-width: 150px;
+  }
+  .filter-select:focus,
+  .filter-select:hover {
+    border-color: var(--primary);
+  }
+  .filter-select:focus {
+    box-shadow: 0 0 0 3px rgba(42,173,187,0.12);
+  }
+  .filter-select.active {
+    background-color: rgba(42,173,187,0.08);
+    border-color: var(--primary);
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .filter-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover  { border-color: var(--primary); color: var(--primary); }
+  .filter-btn.active { background: rgba(42,173,187,0.1); border-color: var(--primary); color: var(--accent); }
+  .row-count {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-light);
+  }
+  .row-count span { color: var(--text-muted); }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    border-radius: 7px;
+    font-size: 10px;
+    color: var(--text-light);
+    line-height: 1.5;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── EDITABLE INPUTS ── */
+  .rate-card.editable { cursor: text; position: relative; }
+  .rate-card.editable:hover { border-color: var(--primary); }
+  .rate-card.editable:hover::after {
+    content: '✎';
+    position: absolute;
+    top: 6px; right: 8px;
+    font-size: 10px;
+    color: var(--primary);
+    opacity: 0.7;
+  }
+  .rate-input {
+    background: none;
+    border: none;
+    outline: none;
+    color: inherit;
+    font: inherit;
+    font-size: 18px;
+    font-weight: 600;
+    width: 100%;
+    cursor: text;
+    caret-color: var(--primary);
+    -moz-appearance: textfield;
+  }
+  .rate-input::-webkit-inner-spin-button,
+  .rate-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .rate-input:focus { color: var(--accent); }
+  .rate-card.editable:focus-within {
+    border-color: var(--primary);
+    background: rgba(42,173,187,0.06);
+    box-shadow: 0 0 0 3px rgba(42,173,187,0.14);
+  }
+  .rate-card.editable.accent:focus-within { box-shadow: 0 0 0 3px rgba(42,173,187,0.18); }
+  .rate-card.editable.green:focus-within  { border-color: var(--green); box-shadow: 0 0 0 3px rgba(10,98,102,0.14); }
+  .recalc-flash { animation: flash 0.35s ease; }
+  @keyframes flash { 0%,100% { opacity:1 } 50% { opacity:0.6 } }
+  .param-changed { border-color: var(--yellow) !important; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    header { padding: 0 14px; }
+    .tab-bar { padding: 0 14px; }
+    .panel { padding: 14px 14px 40px; }
+  }
+</style>
+<!-- Supabase JS client (for snapshot save/load with magic-link auth) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img src="data:image/png;base64,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VVCpVBWj/lQqlXJT14fU66HumPBJBYbRcjCocOCqs8kN+b6x16lY7z+2pO15l9tV51nPG2fUsXmuuUKGPK+ykcXPcxs/T9qwTPhqKlXeUJw/D8dVqAu8KAa+ywAAarW6XsPUQ602GiEEz5492/all17qBgCyKIooCELF0YwoiiAIAt64cYMPCAhIWLhwYSghROI4DmRZrhgVye51+/btoV27dm0oiqIsCMIzDSPo/WDfvn18RkbGNUJIAlPsimYVer0KHx8fSa1Ww5dfftls5MiRw0RRfKlv375gZmaGaWlpJD4+Pio2Nvb6xIkTTylGreo6biIAgD/88IPttGnTXnFwcABRFCUd7w6pqalk3759xatWrbpACClmhgVriMHeXaVS2c2dO/flhg0bQllZmWxmZmZIwwwEALJjx47I999/P5rhYfPmzfZvvfXWS7a2tjrvxeiSnZ3N7d69u8jPz++il5dXiXJtbF3x8fH2rq6unroeLooiRwjhEBEFQZC0PkNBEEhycnKki4tLtL+/f9dx48Z1kCRJvnr16h1CSBR7hiF8tnfv3h4+Pj6teZ7nv/322+tLliyJqer37PPAwMDunp6ebajs08dXeOXKFT48PPz+zJkz71D6P3V/9v87duxwmDRpkqepqSlSXkVDabV27drb8+fPf6S8N2sE5u3t7frBBx+MdHR0fKFz584AABAdHU2KiopuhoaG3vjggw/Osc5rOt6bi4mJedXd3d3CUP5hNDpx4kTGyJEjgw3F5/nz5/u8+OKLLRITEzMIIeerQ8dr16717t27t1sVexwDAwP527dvRxJC7gHtbljVM2hrdBkApAEDBrRauXJlb41GM6xv375m5ubmUFhYCCEhIZKtre2xH3/88RwhJEspG9h9PDw8TPz9/Ue0bNnSbN26dUnz5s27XNnz2Wfr1693mTt3bv+SkhKYNWvWlV9//TXxX9KToh7+14GVTJ49e/YLQ5oaPH78GFNTU8P8/f2/BDo/HP47WYoDALhz585dQ5skFBYWFty9e/fkqlWrhinvoc+TBwAYPnx4x6CgoP/k5OTkVnbvpKSk0OPHj7/FvCJtr4RZ9atXr+6mZ8TsM7MP0tPTY2NjY30nTJjgpLwHW9uaNWt61nS05C+//LKK0sQcAGDTpk29qzOXITs7+1FAQMDW4cOHO2h7RXFxcQNr0886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" alt="Performance Property Research" class="brand-logo">
+  </div>
+  <h1>Market Runway Analysis</h1>
+  <div class="header-meta">
+    <div>Internal Use Only</div>
+  </div>
+</header>
+
+<!-- Read-only banner (shown when viewing a saved snapshot) -->
+<div class="readonly-banner" id="readonly-banner" hidden>
+  <div class="readonly-banner-text">
+    <span class="readonly-banner-icon">🔒</span>
+    <span id="readonly-banner-msg">Viewing saved version</span>
+  </div>
+  <button class="readonly-banner-exit" onclick="exitReadOnlyMode()">Exit saved view</button>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="switchTab('houses')" id="tab-houses">
+    <span class="tab-icon">🏠</span> Houses (IC)
+  </div>
+  <div class="tab" onclick="switchTab('units')" id="tab-units">
+    <span class="tab-icon">🏢</span> Units (IC)
+  </div>
+  <div class="tab" onclick="switchTab('wage-houses')" id="tab-wage-houses">
+    <span class="tab-icon">📈</span> Wage Growth · Houses
+  </div>
+  <div class="tab" onclick="switchTab('wage-units')" id="tab-wage-units">
+    <span class="tab-icon">📈</span> Wage Growth · Units
+  </div>
+  <div class="fetch-indicator" id="fetch-indicator" style="display:none">
+    <span class="fetch-spinner"></span>
+    <span class="fetch-text" id="fetch-text">Connecting…</span>
+  </div>
+  <!-- Versions menu: Save + load past snapshots -->
+  <div class="versions-menu" id="versions-menu">
+    <button class="versions-btn" id="versions-save-btn" onclick="versionsMenu.openSave()">💾 Save</button>
+    <button class="versions-btn" id="versions-load-btn" onclick="versionsMenu.openLoad()">📂 Versions</button>
+    <div class="versions-dropdown" id="versions-dropdown" hidden></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PANEL 1 — HOUSES RUNWAY IC
+══════════════════════════════════════════════════ -->
+<div class="panel active" id="panel-houses">
+
+  <div class="vars-panel">
+    <div class="vars-col">
+      <div class="vars-col-header">Current</div>
+      <div class="vars-row" title="Edit Cash Rate">
+        <div class="v-label">Cash Rate<span class="v-sublabel" id="h-cashRate-date"></span></div>
+        <div class="v-value"><input class="v-input" id="h-cashRate" type="number" step="0.01" min="0" max="30" value="" oninput="onRateChange()"><span class="v-suffix">%</span></div>
+      </div>
+      <div class="vars-row" title="Interest Rate, New Loans, Owner Occupier (editable — drives Bank Rate)">
+        <div class="v-label">Interest Rate, New Loans, Owner Occupier<span class="v-sublabel" id="h-bankVar-date"></span></div>
+        <div class="v-value"><input class="v-input" id="h-bankVarDisplay" type="number" step="0.01" min="0" max="50" value="" oninput="onRateChange()"><span class="v-suffix">%</span></div>
+      </div>
+      <div class="vars-row" title="Edit APRA Buffer (Current)">
+        <div class="v-label">APRA buffer</div>
+        <div class="v-value"><input class="v-input" id="h-apraBuffer" type="number" step="0.01" min="0" max="5" value="0.50" oninput="onRateChange()"><span class="v-suffix">%</span></div>
+      </div>
+      <div class="vars-row" title="Bank Rate = Interest Rate + APRA (auto)">
+        <div class="v-label">Bank Rate</div>
+        <div class="v-value"><span id="h-bankRateDisplay">6.01</span><span class="v-suffix">%</span></div>
+      </div>
+      <div class="vars-row" title="Edit Inflation Rate">
+        <div class="v-label">Inflation Rate<span class="v-sublabel" id="h-inflation-date"></span></div>
+        <div class="v-value"><input class="v-input" id="h-inflation" type="number" step="0.01" min="0" max="30" value="" oninput="onRateChange()"><span class="v-suffix">%</span></div>
+      </div>
+    </div>
+
+    <div class="vars-col">
+      <div class="vars-col-header">Forecast</div>
+      <div class="vars-row" title="Edit PP IC Cash Forecast">
+        <div class="v-label">PP IC Cash Forecast</div>
+        <div class="v-value"><input class="v-input" id="h-icForecast" type="number" step="0.01" min="0" max="20" value="2.69" oninput="onRateChange()"><span class="v-suffix">%</span></div>
+      </div>
+      <div class="vars-row" title="Edit Bank Margin">
+        <div class="v-label">Bank Margin</div>
+        <div class="v-value"><input class="v-input" id="h-bankMargin" type="number" step="0.01" min="0" max="10" value="1.75" oninput="onRateChange()"><span class="v-suffix">%</span></div>
+      </div>
+      <div class="vars-row" title="Edit APRA Buffer (Forecast)">
+        <div class="v-label">APRA buffer</div>
+        <div class="v-value"><input class="v-input" id="h-apraBufferF" type="number" step="0.01" min="0" max="5" value="0.50" oninput="onRateChange()"><span class="v-suffix">%</span></div>
+      </div>
+      <div class="vars-row" title="PP Variable Rate = IC Forecast + Margin + APRA (auto)">
+        <div class="v-label">PP Variable Rate</div>
+        <div class="v-value"><span id="h-ppVarDisplay">4.94</span><span class="v-suffix">%</span></div>
+      </div>
+    </div>
+
+    <div class="ref-table">
+      <div class="ref-table-title">Upside / Downside Reference</div>
+      <table>
+        <thead>
+          <tr><th>% runway</th><th>Upside</th><th>Downside</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>100% growth</td><td>95%</td><td>5%</td></tr>
+          <tr><td>75% to 99%</td><td>90%</td><td>10%</td></tr>
+          <tr><td>50–74</td><td>80%</td><td>20%</td></tr>
+          <tr><td>30–49</td><td>70%</td><td>30%</td></tr>
+          <tr><td>15–29</td><td>60%</td><td>40%</td></tr>
+          <tr><td>0–14</td><td>50%</td><td>50%</td></tr>
+          <tr><td>0 to -5%</td><td>30%</td><td>70%</td></tr>
+          <tr><td>-6 to -15</td><td>20%</td><td>80%</td></tr>
+          <tr><td>-16 or more</td><td>10%</td><td>90%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" placeholder="Search region..." oninput="filterTable('houses-table', this.value)">
+    </div>
+    <select class="filter-select" onchange="filterByState('houses-table', this.value); this.classList.toggle('active', !!this.value);">
+      <option value="">All states &amp; regions</option>
+      <option value="capcity">Capital Cities only</option>
+      <option value="state:nsw">NSW</option>
+      <option value="state:vic">VIC</option>
+      <option value="state:qld">QLD</option>
+      <option value="state:wa">WA</option>
+      <option value="state:sa">SA</option>
+      <option value="state:tas">TAS</option>
+      <option value="state:act">ACT</option>
+      <option value="state:nt">NT</option>
+    </select>
+
+    <div class="row-count" id="houses-count"><span>36</span> regions</div>
+  </div>
+
+  <div class="table-wrap">
+    <table id="houses-table">
+      <thead>
+        <tr class="thead-group">
+          <th colspan="6">Data Inputs</th>
+          <th colspan="6" class="section-current curr-rate-label">C U R R E N T &nbsp; R A T E S</th>
+          <th colspan="6" class="section-forecast fore-rate-label">F O R E C A S T E D &nbsp; R A T E S</th>
+        </tr>
+        <tr class="thead-group">
+          <th colspan="6"></th>
+          <th colspan="4" class="section-current">Current V Ceiling</th>
+          <th colspan="2" class="section-current">Probability</th>
+          <th colspan="4" class="section-forecast">Current V Ceiling</th>
+          <th colspan="2" class="section-forecast">Probability</th>
+        </tr>
+        <tr class="col-heads">
+          <th><div class="hd"><span class="col-ref col-ref-blank">x</span><span class="col-label">State</span></div></th>
+          <th><div class="hd"><span class="col-ref col-ref-blank">x</span><span class="col-label">Capital City / Regions</span></div></th>
+          <th><div class="hd"><span class="col-ref">a</span><span class="col-label">Population</span><span class="col-subtitle col-pop-date"></span></div></th>
+          <th><div class="hd"><span class="col-ref">b</span><span class="col-label">R90 Median HOUSE Price</span><span class="col-subtitle col-price-date"></span></div></th>
+          <th><div class="hd"><span class="col-ref">c</span><span class="col-label">Median Weekly Income by State</span><span class="col-subtitle col-income-date"></span></div></th>
+          <th><div class="hd"><span class="col-ref">d</span><span class="col-label">AI Ceiling</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">e</span><span class="col-label">AI</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">f</span><span class="col-label">Median HOUSE Price - Ceiling</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">g</span><span class="col-label">in AUD</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">h</span><span class="col-label">in %</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">i</span><span class="col-label">Upside</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">j</span><span class="col-label">Downside</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">k</span><span class="col-label">AI</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">l</span><span class="col-label">Median HOUSE Price - Ceiling</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">m</span><span class="col-label">in AUD</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">n</span><span class="col-label">in %</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">o</span><span class="col-label">Upside</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">p</span><span class="col-label">Downside</span></div></th>
+        </tr>
+      </thead>
+      <tbody id="houses-tbody"></tbody>
+    </table>
+  </div>
+  <div class="disclaimer">⚠ Internal document — Performance Property staff only. Not for external distribution. Updated each time new data is available; published reports reflect data at time of publication. Copyright 2024 Performance Property.</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PANEL 2 — UNITS RUNWAY IC
+══════════════════════════════════════════════════ -->
+<div class="panel" id="panel-units">
+
+  <div class="vars-mirror">
+    <div class="vars-mirror-note">⚙ Edit parameters on Houses tab — all tabs update together</div>
+    <div class="vars-mirror-item"><div class="vm-label">Current Cash Rate</div><div class="vm-value" id="u-cashRateDisplay">4.10%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">Current Bank Rate</div><div class="vm-value" id="u-bankRateDisplay2">6.01%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">PP IC Cash Forecast</div><div class="vm-value" id="u-icForecastDisplay">2.69%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">PP Variable Rate</div><div class="vm-value" id="u-ppVarDisplay">4.94%</div></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" placeholder="Search region..." oninput="filterTable('units-table', this.value)">
+    </div>
+    <select class="filter-select" onchange="filterByState('units-table', this.value); this.classList.toggle('active', !!this.value);">
+      <option value="">All states &amp; regions</option>
+      <option value="capcity">Capital Cities only</option>
+      <option value="state:nsw">NSW</option>
+      <option value="state:vic">VIC</option>
+      <option value="state:qld">QLD</option>
+      <option value="state:wa">WA</option>
+      <option value="state:sa">SA</option>
+      <option value="state:tas">TAS</option>
+      <option value="state:act">ACT</option>
+      <option value="state:nt">NT</option>
+    </select>
+
+
+    <div class="row-count" id="units-count"><span>36</span> regions</div>
+  </div>
+
+  <div class="table-wrap">
+    <table id="units-table">
+      <thead>
+        <tr class="thead-group">
+          <th colspan="6">Data Inputs</th>
+          <th colspan="6" class="section-current curr-rate-label">C U R R E N T &nbsp; R A T E S</th>
+          <th colspan="6" class="section-forecast fore-rate-label">F O R E C A S T E D &nbsp; R A T E S</th>
+        </tr>
+        <tr class="thead-group">
+          <th colspan="6"></th>
+          <th colspan="4" class="section-current">Current V Ceiling</th>
+          <th colspan="2" class="section-current">Probability</th>
+          <th colspan="4" class="section-forecast">Current V Ceiling</th>
+          <th colspan="2" class="section-forecast">Probability</th>
+        </tr>
+        <tr class="col-heads">
+          <th><div class="hd"><span class="col-ref col-ref-blank">x</span><span class="col-label">State</span></div></th>
+          <th><div class="hd"><span class="col-ref col-ref-blank">x</span><span class="col-label">Capital City / Regions</span></div></th>
+          <th><div class="hd"><span class="col-ref">a</span><span class="col-label">Population</span><span class="col-subtitle col-pop-date"></span></div></th>
+          <th><div class="hd"><span class="col-ref">b</span><span class="col-label">R90 Median UNIT Price</span><span class="col-subtitle col-price-date"></span></div></th>
+          <th><div class="hd"><span class="col-ref">c</span><span class="col-label">Median Weekly Income by State</span><span class="col-subtitle col-income-date"></span></div></th>
+          <th><div class="hd"><span class="col-ref">d</span><span class="col-label">AI Ceiling</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">e</span><span class="col-label">AI</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">f</span><span class="col-label">Median UNIT Price - Ceiling</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">g</span><span class="col-label">in AUD</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">h</span><span class="col-label">in %</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">i</span><span class="col-label">Upside</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">j</span><span class="col-label">Downside</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">k</span><span class="col-label">AI</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">l</span><span class="col-label">Median UNIT Price - Ceiling</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">m</span><span class="col-label">in AUD</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">n</span><span class="col-label">in %</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">o</span><span class="col-label">Upside</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">p</span><span class="col-label">Downside</span></div></th>
+        </tr>
+      </thead>
+      <tbody id="units-tbody"></tbody>
+    </table>
+  </div>
+  <div class="disclaimer">⚠ Internal document — Performance Property staff only. Not for external distribution. Copyright 2024 Performance Property.</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PANEL 3 — WAGE GROWTH HOUSES
+══════════════════════════════════════════════════ -->
+<div class="panel" id="panel-wage-houses">
+
+  <div class="vars-mirror">
+    <div class="vars-mirror-note">⚙ Edit rates on Houses tab · Wage growth controls below</div>
+    <div class="vars-mirror-item"><div class="vm-label">Cash Rate</div><div class="vm-value" id="wh-cashRateDisplay">4.10%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">Bank Rate</div><div class="vm-value" id="wh-bankRateDisplay">6.01%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">IC Cash Forecast</div><div class="vm-value" id="wh-icForecastDisplay">2.69%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">PP Variable Rate</div><div class="vm-value" id="wh-ppVarDisplay">4.94%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">Inflation</div><div class="vm-value" id="wh-inflationDisplay">7.00%</div></div>
+  </div>
+
+  <div class="wage-extras">
+    <div class="badge" title="Edit cap city wage growth %">
+      Cap City Wage Growth:
+      <input type="number" id="wg-capCity" step="0.1" min="0" max="20" value="3.0"
+        style="background:none;border:none;outline:none;color:var(--yellow);font-weight:500;font-family:inherit;font-size:inherit;width:36px;cursor:text;-moz-appearance:textfield;"
+        oninput="onWageChange()">% p.a.
+    </div>
+    <div class="badge" title="Edit regional wage growth %">
+      Regional Wage Growth:
+      <input type="number" id="wg-regional" step="0.1" min="0" max="20" value="2.0"
+        style="background:none;border:none;outline:none;color:var(--yellow);font-weight:500;font-family:inherit;font-size:inherit;width:36px;cursor:text;-moz-appearance:textfield;"
+        oninput="onWageChange()">% p.a.
+    </div>
+    <div class="badge" title="Edit years of wage growth">
+      Years Applied:
+      <input type="number" id="wg-years" step="1" min="1" max="20" value="5"
+        style="background:none;border:none;outline:none;color:var(--yellow);font-weight:500;font-family:inherit;font-size:inherit;width:28px;cursor:text;-moz-appearance:textfield;"
+        oninput="onWageChange()">
+    </div>
+    <div class="badge">Forecast Date: <span>Mar 2026</span></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" placeholder="Search region..." oninput="filterTable('wage-houses-table', this.value)">
+    </div>
+    <select class="filter-select" onchange="filterByState('wage-houses-table', this.value); this.classList.toggle('active', !!this.value);">
+      <option value="">All states &amp; regions</option>
+      <option value="capcity">Capital Cities only</option>
+      <option value="state:nsw">NSW</option>
+      <option value="state:vic">VIC</option>
+      <option value="state:qld">QLD</option>
+      <option value="state:wa">WA</option>
+      <option value="state:sa">SA</option>
+      <option value="state:tas">TAS</option>
+      <option value="state:act">ACT</option>
+      <option value="state:nt">NT</option>
+    </select>
+
+
+    <div class="row-count" id="wage-houses-count"><span>36</span> regions</div>
+  </div>
+
+  <div class="table-wrap">
+    <table id="wage-houses-table">
+      <thead>
+        <tr class="thead-group">
+          <th colspan="7">Data Inputs</th>
+          <th colspan="6" class="section-current">C U R R E N T &nbsp; R A T E S</th>
+          <th colspan="6" class="section-forecast wage-fore-rate-label">F O R E C A S T E D &nbsp; R A T E S + Wage Growth</th>
+        </tr>
+        <tr class="thead-group">
+          <th colspan="7"></th>
+          <th colspan="4" class="section-current">Current V Ceiling</th>
+          <th colspan="2" class="section-current">Probability</th>
+          <th colspan="4" class="section-forecast">Current V Ceiling</th>
+          <th colspan="2" class="section-forecast">Probability</th>
+        </tr>
+        <tr class="col-heads">
+          <th><div class="hd"><span class="col-ref col-ref-blank">x</span><span class="col-label">State</span></div></th>
+          <th><div class="hd"><span class="col-ref col-ref-blank">x</span><span class="col-label">Capital City / Regions</span></div></th>
+          <th><div class="hd"><span class="col-ref">a</span><span class="col-label">Population</span><span class="col-subtitle col-pop-date"></span></div></th>
+          <th><div class="hd"><span class="col-ref">b</span><span class="col-label">R90 Median HOUSE Price</span><span class="col-subtitle col-price-date"></span></div></th>
+          <th><div class="hd"><span class="col-ref">c</span><span class="col-label">Median Weekly Income by State</span><span class="col-subtitle col-income-date"></span></div></th>
+          <th><div class="hd"><span class="col-ref">d</span><span class="col-label">Predicted WG Income</span></div></th>
+          <th><div class="hd"><span class="col-ref">e</span><span class="col-label">AI Ceiling</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">f</span><span class="col-label">AI</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">g</span><span class="col-label">Median HOUSE Price - Ceiling</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">h</span><span class="col-label">in AUD</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">i</span><span class="col-label">in %</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">j</span><span class="col-label">Upside</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">k</span><span class="col-label">Downside</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">l</span><span class="col-label">AI</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">m</span><span class="col-label">Median HOUSE Price - Ceiling</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">n</span><span class="col-label">in AUD</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">o</span><span class="col-label">in %</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">p</span><span class="col-label">Upside</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">q</span><span class="col-label">Downside</span></div></th>
+        </tr>
+      </thead>
+      <tbody id="wage-houses-tbody"></tbody>
+    </table>
+  </div>
+  <div class="disclaimer">⚠ Internal document — Performance Property staff only. Not for external distribution. Copyright 2024 Performance Property.</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PANEL 4 — WAGE GROWTH UNITS
+══════════════════════════════════════════════════ -->
+<div class="panel" id="panel-wage-units">
+
+  <div class="vars-mirror">
+    <div class="vars-mirror-note">⚙ Edit rates on Houses tab · Edit wages on Wage Growth · Houses tab</div>
+    <div class="vars-mirror-item"><div class="vm-label">Cash Rate</div><div class="vm-value" id="wu-cashRateDisplay">4.10%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">Bank Rate</div><div class="vm-value" id="wu-bankRateDisplay">6.01%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">IC Cash Forecast</div><div class="vm-value" id="wu-icForecastDisplay">2.69%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">PP Variable Rate</div><div class="vm-value" id="wu-ppVarDisplay">4.94%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">Inflation</div><div class="vm-value" id="wu-inflationDisplay">7.00%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">Cap Wage</div><div class="vm-value" id="wu-capCityDisplay">3.00%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">Reg Wage</div><div class="vm-value" id="wu-regionalDisplay">2.00%</div></div>
+    <div class="vars-mirror-item"><div class="vm-label">Years</div><div class="vm-value" id="wu-yearsDisplay">5</div></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" placeholder="Search region..." oninput="filterTable('wage-units-table', this.value)">
+    </div>
+    <select class="filter-select" onchange="filterByState('wage-units-table', this.value); this.classList.toggle('active', !!this.value);">
+      <option value="">All states &amp; regions</option>
+      <option value="capcity">Capital Cities only</option>
+      <option value="state:nsw">NSW</option>
+      <option value="state:vic">VIC</option>
+      <option value="state:qld">QLD</option>
+      <option value="state:wa">WA</option>
+      <option value="state:sa">SA</option>
+      <option value="state:tas">TAS</option>
+      <option value="state:act">ACT</option>
+      <option value="state:nt">NT</option>
+    </select>
+
+
+    <div class="row-count" id="wage-units-count"><span>36</span> regions</div>
+  </div>
+
+  <div class="table-wrap">
+    <table id="wage-units-table">
+      <thead>
+        <tr class="thead-group">
+          <th colspan="7">Data Inputs</th>
+          <th colspan="6" class="section-current">C U R R E N T &nbsp; R A T E S</th>
+          <th colspan="6" class="section-forecast wage-fore-rate-label">F O R E C A S T E D &nbsp; R A T E S + Wage Growth</th>
+        </tr>
+        <tr class="thead-group">
+          <th colspan="7"></th>
+          <th colspan="4" class="section-current">Current V Ceiling</th>
+          <th colspan="2" class="section-current">Probability</th>
+          <th colspan="4" class="section-forecast">Current V Ceiling</th>
+          <th colspan="2" class="section-forecast">Probability</th>
+        </tr>
+        <tr class="col-heads">
+          <th><div class="hd"><span class="col-ref col-ref-blank">x</span><span class="col-label">State</span></div></th>
+          <th><div class="hd"><span class="col-ref col-ref-blank">x</span><span class="col-label">Capital City / Regions</span></div></th>
+          <th><div class="hd"><span class="col-ref">a</span><span class="col-label">Population</span><span class="col-subtitle col-pop-date"></span></div></th>
+          <th><div class="hd"><span class="col-ref">b</span><span class="col-label">R90 Median UNIT Price</span><span class="col-subtitle col-price-date"></span></div></th>
+          <th><div class="hd"><span class="col-ref">c</span><span class="col-label">Median Weekly Income by State</span><span class="col-subtitle col-income-date"></span></div></th>
+          <th><div class="hd"><span class="col-ref">d</span><span class="col-label">Predicted WG Income</span></div></th>
+          <th><div class="hd"><span class="col-ref">e</span><span class="col-label">AI Ceiling</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">f</span><span class="col-label">AI</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">g</span><span class="col-label">Median UNIT Price - Ceiling</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">h</span><span class="col-label">in AUD</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">i</span><span class="col-label">in %</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">j</span><span class="col-label">Upside</span></div></th>
+          <th class="curr-col"><div class="hd"><span class="col-ref">k</span><span class="col-label">Downside</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">l</span><span class="col-label">AI</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">m</span><span class="col-label">Median UNIT Price - Ceiling</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">n</span><span class="col-label">in AUD</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">o</span><span class="col-label">in %</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">p</span><span class="col-label">Upside</span></div></th>
+          <th class="fore-col"><div class="hd"><span class="col-ref">q</span><span class="col-label">Downside</span></div></th>
+        </tr>
+      </thead>
+      <tbody id="wage-units-tbody"></tbody>
+    </table>
+  </div>
+  <div class="disclaimer">⚠ Internal document — Performance Property staff only. Not for external distribution. Copyright 2024 Performance Property.</div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
+// Open = green highlight, eval/yellow = yellow highlight
+const OPEN_REGIONS = ['Perth','Adelaide','Brisbane','Ipswich','Mackay','Toowoomba','Rockingham'];
+const YELLOW_REGIONS = ['Melbourne','Gold Coast','Sunshine Coast','Canberra','Wollongong','Central Coast','Greater Geelong','Greater Hobart','Newcastle','Townsville','Cairns','Greater Bendigo','Ballarat','Bundaberg','Mandurah','Port Macquarie-Hastings','Rockhampton','Coffs Harbour','Launceston','Wagga Wagga','Gladstone','Tamworth Regional','Albury','Mildura','Wodonga','Orange','Bunbury','Darwin'];
+
+const HOUSES_DATA = [
+  ['VIC','Melbourne',null,null,null,null,0.5062,1054056,134056,0.1457,'50%',0.50,'11:30',0.4497,1186579,266579,0.2898,'60%',0.40,'Closed'],
+  ['NSW','Sydney',null,null,null,null,0.8241,1222508,-327492,-0.2113,'10%',0.90,'for eval',0.7321,1376211,-173789,-0.1121,'20%',0.80,'Closed'],
+  ['QLD','Brisbane',null,null,null,null,0.6111,1080006,-19994,-0.0182,'30%',0.70,'12:30',0.5429,1215792,115792,0.1053,'50%',0.50,'Areas Open'],
+  ['WA','Perth',null,null,null,null,0.4774,1128220,183220,0.1939,'60%',0.40,'11:00',0.4241,1270068,325068,0.3440,'70%',0.30,'Area Open'],
+  ['SA','Adelaide',null,null,null,null,0.5354,925593,-9407,-0.0101,'30%',0.70,'12:30',0.4756,1041965,106965,0.1144,'50%',0.50,'TBC'],
+  ['QLD','Gold Coast',null,null,null,null,0.7361,1242007,-82993,-0.0626,'20%',0.80,'for eval',0.6539,1398161,73161,0.0552,'50%',0.50,'TBC'],
+  ['ACT','Canberra',null,null,null,null,0.4982,1055158,44158,0.0437,'50%',0.50,'12:00',0.4426,1187821,176821,0.1749,'60%',0.40,'TBC'],
+  ['QLD','Sunshine Coast',null,null,null,null,0.6917,1170006,-74994,-0.0602,'20%',0.80,'for eval',0.6144,1317108,72108,0.0579,'50%',0.50,'TBC'],
+  ['NSW','Central Coast',null,null,null,null,0.5609,883968,-171032,-0.1621,'10%',0.90,'for eval',0.4983,995107,-59893,-0.0568,'20%',0.80,'TBC'],
+  ['VIC','Greater Geelong',null,null,null,null,0.4017,817802,87802,0.1203,'50%',0.50,'11:30',0.3568,920622,190622,0.2611,'60%',0.40,'TBC'],
+  ['QLD','Ipswich',null,null,null,null,0.4767,792004,-65996,-0.0769,'20%',0.80,'for eval',0.4234,891581,33581,0.0391,'50%',0.50,'Area Open'],
+  ['TAS','Greater Hobart',null,null,null,null,0.4563,805368,55368,0.0738,'50%',0.50,'11:30',0.4053,906625,156625,0.2088,'60%',0.40,'TBC'],
+  ['NSW','Wollongong',null,null,null,null,0.6513,996814,-228186,-0.1863,'10%',0.90,'for eval',0.5786,1122141,-102859,-0.0840,'20%',0.80,'TBC'],
+  ['QLD','Townsville',null,null,null,null,0.3778,900005,220005,0.3235,'70%',0.30,'10:30',0.3356,1013160,333160,0.4899,'70%',0.30,'TBC'],
+  ['QLD','Toowoomba',null,null,null,null,0.4456,756004,-45996,-0.0574,'20%',0.80,'for eval',0.3958,851054,49054,0.0612,'50%',0.50,'Area Open'],
+  ['QLD','Cairns',null,null,null,null,0.4335,1134006,353756,0.4534,'70%',0.30,'9:30',0.3851,1276582,496332,0.6361,'80%',0.20,'TBC'],
+  ['NSW','Newcastle',null,null,null,null,0.6035,846352,-288648,-0.2543,'10%',0.90,'for eval',0.5361,952762,-182238,-0.1606,'10%',0.90,'TBC'],
+  ['WA','Rockingham',null,null,null,null,0.4092,930287,120287,0.1485,'50%',0.50,'11:30',0.3635,1047249,237249,0.2929,'60%',0.40,'Area Open'],
+  ['NT','Darwin',null,null,null,null,0.3965,950598,255598,0.3678,'70%',0.30,'10:00',0.3522,1070114,375114,0.5397,'80%',0.20,'TBC'],
+  ['QLD','Mackay',null,null,null,null,0.3806,954005,269005,0.3927,'70%',0.30,'10:00',0.3381,1073950,388950,0.5678,'80%',0.20,'Area Open'],
+  ['VIC','Greater Bendigo',null,null,null,null,0.3494,763282,128282,0.2020,'60%',0.40,'11:00',0.3104,859247,224247,0.3531,'70%',0.30,'HOLD / Possibly Close'],
+  ['VIC','Ballarat',null,null,null,null,0.3302,763282,163282,0.2721,'60%',0.40,'10:30',0.2933,859247,259247,0.4321,'70%',0.30,'HOLD / Possible Close'],
+  ['QLD','Bundaberg',null,null,null,null,0.3806,702004,17004,0.0248,'50%',0.50,'12:00',0.3381,790265,105265,0.1537,'60%',0.40,'TBC'],
+  ['WA','Mandurah',null,null,null,null,0.3941,1068840,288840,0.3703,'70%',0.30,'10:00',0.3501,1203223,423223,0.5426,'80%',0.20,'TBC'],
+  ['NSW','Port Macquarie-Hastings',null,null,null,null,0.4705,902775,17775,0.0201,'50%',0.50,'12:00',0.4180,1016279,131279,0.1483,'50%',0.50,'TBC'],
+  ['QLD','Rockhampton',null,null,null,null,0.3167,684004,114004,0.2000,'60%',0.40,'11:00',0.2813,770002,200002,0.3509,'70%',0.30,'TBC'],
+  ['NSW','Coffs Harbour',null,null,null,null,0.5078,902775,-52225,-0.0547,'20%',0.80,'for eval',0.4511,1016279,61279,0.0642,'50%',0.50,'TBC'],
+  ['TAS','Launceston',null,null,null,null,0.3778,608135,-12865,-0.0207,'30%',0.70,'12:30',0.3356,684594,63594,0.1024,'50%',0.50,'TBC'],
+  ['NSW','Wagga Wagga',null,null,null,null,0.3706,714697,17697,0.0254,'50%',0.50,'12:00',0.3292,804554,107554,0.1543,'60%',0.40,'TBC'],
+  ['QLD','Gladstone',null,null,null,null,0.3506,990005,359005,0.5689,'80%',0.20,'9:00',0.3114,1114476,483476,0.7662,'90%',0.10,'TBC'],
+  ['NSW','Tamworth Regional',null,null,null,null,0.3376,639466,4466,0.0070,'50%',0.50,'12:00',0.2999,719864,84864,0.1336,'50%',0.50,'TBC'],
+  ['NSW','Albury',null,null,null,null,0.3616,714697,34697,0.0510,'50%',0.50,'11:30',0.3212,804554,124554,0.1832,'60%',0.40,'TBC'],
+  ['VIC','Mildura',null,null,null,null,0.3026,636068,86068,0.1565,'60%',0.40,'11:00',0.2688,716039,166039,0.3019,'70%',0.30,'TBC'],
+  ['VIC','Wodonga',null,null,null,null,0.3551,781455,136205,0.2111,'60%',0.40,'11:00',0.3154,879705,234455,0.3634,'70%',0.30,'TBC'],
+  ['NSW','Orange',null,null,null,null,0.3988,714697,-35298,-0.0471,'30%',0.70,'12:30',0.3542,804554,54559,0.0727,'50%',0.50,'TBC'],
+  ['WA','Bunbury',null,null,null,null,0.3415,811527,135527,0.2005,'60%',0.40,'11:00',0.3034,913558,237558,0.3514,'70%',0.30,'TBC'],
+];
+
+const UNITS_DATA = [
+  ['NSW','Sydney',null,null,null,null,0.4493,978007,133007,0.1574,'60%',0.40,'11:00',0.3991,1100969,255969,0.3029,'70%',0.30,null],
+  ['QLD','Gold Coast',null,null,null,null,0.4944,936005,46005,0.0517,'50%',0.50,'11:30',0.4392,1053686,163686,0.1839,'60%',0.40,null],
+  ['QLD','Sunshine Coast',null,null,null,null,0.4792,882005,19505,0.0226,'50%',0.50,'12:00',0.4256,992897,130397,0.1512,'60%',0.40,null],
+  ['NSW','Wollongong',null,null,null,null,0.4174,902775,117775,0.1500,'60%',0.40,'11:00',0.3708,1016279,231279,0.2946,'60%',0.40,null],
+  ['NSW','Newcastle',null,null,null,null,0.4223,789928,-4234,-0.0053,'30%',0.70,'12:30',0.3751,889244,95082,0.1197,'50%',0.50,null],
+  ['NSW','Central Coast',null,null,null,null,0.3988,771121,21121,0.0282,'50%',0.50,'12:00',0.3542,868072,118072,0.1574,'60%',0.40,null],
+  ['QLD','Brisbane',null,null,null,null,0.4394,846004,55004,0.0695,'50%',0.50,'11:30',0.3904,952370,161370,0.2040,'60%',0.40,'Areas Open'],
+  ['ACT','Canberra',null,null,null,null,0.2991,831952,224952,0.3706,'70%',0.30,'10:00',0.2657,936551,329551,0.5429,'80%',0.20,null],
+  ['NSW','Coffs Harbour',null,null,null,null,0.3429,601850,-43150,-0.0669,'20%',0.80,'for eval',0.3046,677519,32519,0.0504,'50%',0.50,null],
+  ['VIC','Melbourne',null,null,null,null,0.3549,872322,227322,0.3524,'70%',0.30,'10:00',0.3153,981997,336997,0.5225,'80%',0.20,null],
+  ['NSW','Port Macquarie-Hastings',null,null,null,null,0.3270,677082,62082,0.1009,'50%',0.50,'11:30',0.2905,762209,147209,0.2394,'60%',0.40,null],
+  ['SA','Adelaide',null,null,null,null,0.3836,663633,-6367,-0.0095,'30%',0.70,'12:30',0.3408,747070,77070,0.1150,'50%',0.50,null],
+  ['WA','Perth',null,null,null,null,0.3448,950080,267580,0.3921,'70%',0.30,'10:00',0.3063,1069531,387031,0.5671,'80%',0.20,'Area Open'],
+  ['TAS','Greater Hobart',null,null,null,null,0.3547,641007,58007,0.0995,'50%',0.50,'11:30',0.3151,721600,138600,0.2377,'60%',0.40,null],
+  ['VIC','Greater Geelong',null,null,null,null,0.3087,672415,111415,0.1986,'60%',0.40,'11:00',0.2742,756956,195956,0.3493,'70%',0.30,null],
+  ['QLD','Ipswich',null,null,null,null,0.3639,684004,29004,0.0443,'50%',0.50,'12:00',0.3232,770002,115002,0.1756,'60%',0.40,'Area Open'],
+  ['WA','Mandurah',null,null,null,null,0.2785,890700,339450,0.6158,'80%',0.20,'9:00',0.2474,1002686,451436,0.8189,'90%',0.10,null],
+  ['QLD','Toowoomba',null,null,null,null,0.3472,612003,-12997,-0.0208,'30%',0.70,'12:30',0.3084,688949,63949,0.1023,'50%',0.50,'Area Open'],
+  ['WA','Rockingham',null,null,null,null,0.2930,672973,92973,0.1603,'60%',0.40,'11:00',0.2603,757585,177585,0.3062,'70%',0.30,'Area Open'],
+  ['TAS','Launceston',null,null,null,null,0.2878,509519,36519,0.0772,'50%',0.50,'11:30',0.2556,573579,100579,0.2126,'60%',0.40,null],
+  ['VIC','Wodonga',null,null,null,null,0.2292,690588,274088,0.6581,'80%',0.20,'8:30',0.2036,777414,360914,0.8665,'90%',0.10,null],
+  ['WA','Bunbury',null,null,null,null,0.3055,811527,206777,0.3419,'70%',0.30,'10:30',0.2714,913558,308808,0.5106,'80%',0.20,null],
+  ['NSW','Orange',null,null,null,null,0.2624,601850,108350,0.2196,'60%',0.40,'11:00',0.2331,677519,184019,0.3729,'70%',0.30,null],
+  ['QLD','Bundaberg',null,null,null,null,0.2875,774004,256504,0.4957,'70%',0.30,'9:30',0.2554,871318,353818,0.6837,'80%',0.20,null],
+  ['VIC ','Greater Bendigo',null,null,null,null,0.2641,654241,174241,0.3630,'70%',0.30,'10:00',0.2346,736497,256497,0.5344,'80%',0.20,'HOLD / Possibly Close'],
+  ['NSW','Wagga Wagga',null,null,null,null,0.2605,601850,111850,0.2283,'60%',0.40,'11:00',0.2314,677519,187519,0.3827,'70%',0.30,null],
+  ['QLD','Cairns',null,null,null,null,0.2625,684004,211504,0.4476,'70%',0.30,'10:00',0.2332,770002,297502,0.6296,'80%',0.20,null],
+  ['QLD','Mackay',null,null,null,null,0.2327,774004,355116,0.8478,'90%',0.10,'8:00',0.2067,871318,452430,1.0801,'95%',0.05,'Area Open'],
+  ['NSW','Albury',null,null,null,null,0.2124,620658,221158,0.5536,'80%',0.20,'9:00',0.1887,698692,299192,0.7489,'80%',0.20,null],
+  ['VIC','Ballarat',null,null,null,null,0.2407,636068,198568,0.4539,'70%',0.30,'9:30',0.2139,716039,278539,0.6367,'80%',0.20,'HOLD / Possible Close'],
+  ['QLD','Townsville',null,null,null,null,0.2576,792004,328254,0.7078,'80%',0.20,'8:30',0.2289,891581,427831,0.9225,'90%',0.10,null],
+  ['QLD','Rockhampton',null,null,null,null,0.2736,756004,263504,0.5350,'80%',0.20,'9:30',0.2431,851054,358554,0.7280,'80%',0.20,null],
+  ['NT','Darwin',null,null,null,null,0.2510,718689,278689,0.6334,'80%',0.20,'9:00',0.2230,809048,369048,0.8387,'90%',0.10,null],
+  ['NSW','Tamworth Regional',null,null,null,null,0.2100,601850,206850,0.5237,'80%',0.20,'9:30',0.1866,677519,282519,0.7152,'80%',0.20,null],
+  ['QLD','Gladstone',null,null,null,null,0.2097,936005,558505,1.4795,'95%',0.05,'5:30',0.1863,1053686,676186,1.7912,'95%',0.05,null],
+  ['VIC','Mildura',null,null,null,null,0.2091,690588,310588,0.8173,'90%',0.10,'8:00',0.1857,777414,397414,1.0458,'95%',0.05,null],
+];
+
+const WAGE_HOUSES_DATA = [
+  ['SA','Adelaide',1449366,935000,1935.1,1993.15,0.53,0.5198,953361,18361,0.0196,'50%',0.50,'12:00',0.3769,1314781,379781,0.4062,'70%',0.30,'TBC'],
+  ['NSW','Albury',58317,680000,2084,2125.68,0.38,0.3545,728991,48991,0.0720,'50%',0.50,'11:30',0.2570,1005353,325353,0.4785,'70%',0.30,'TBC'],
+  ['VIC','Ballarat',121050,600000,2013.7,2053.97,0.42,0.3237,778547,178547,0.2976,'70%',0.30,'10:30',0.2347,1073696,473696,0.7895,'90%',0.10,'HOLD / Possible Close'],
+  ['QLD','Brisbane',2693649,1100000,1994.5,2054.34,0.60,0.5933,1112406,12406,0.0113,'50%',0.50,'12:00',0.4302,1534120,434120,0.3947,'70%',0.30,'Areas Open'],
+  ['WA','Bunbury',35174,676000,2193.2,2237.06,0.41,0.3348,827757,151757,0.2245,'60%',0.40,'11:00',0.2428,1141561,465561,0.6887,'80%',0.20,'TBC'],
+  ['QLD','Bundaberg',106146,685000,1994.5,2034.39,0.39,0.3731,716044,31044,0.0453,'50%',0.50,'12:00',0.2705,987497,302497,0.4416,'70%',0.30,'TBC'],
+  ['QLD','Cairns',178104,780250,1994.5,2034.39,0.63,0.4250,1156686,376436,0.4825,'70%',0.30,'9:30',0.3082,1595187,814937,1.0445,'95%',0.05,'TBC'],
+  ['ACT','Canberra',510641,1011000,2248.4,2315.85,0.52,0.4837,1086813,75813,0.0750,'50%',0.50,'11:30',0.3508,1498825,487825,0.4825,'70%',0.30,'TBC'],
+  ['NSW','Central Coast',354803,1055000,2084,2125.68,0.47,0.5499,901647,-153353,-0.1454,'20%',0.80,'for eval',0.3988,1243462,188462,0.1786,'60%',0.40,'TBC'],
+  ['NSW','Coffs Harbour',81248,955000,2084,2125.68,0.48,0.4978,920831,-34169,-0.0358,'30%',0.70,'12:30',0.3610,1269919,314919,0.3298,'70%',0.30,'TBC'],
+  ['NT','Darwin',138567,695000,1942.3,2000.57,0.5423,0.3849,979115,284115,0.4088,'70%',0.30,'10:00',0.2791,1350299,655299,0.9429,'90%',0.10,'TBC'],
+  ['QLD','Gladstone',68065,631000,1994.5,2034.39,0.55,0.3437,1009805,378805,0.6003,'80%',0.20,'9:00',0.2492,1392624,761624,1.2070,'95%',0.05,'TBC'],
+  ['QLD','Gold Coast',681389,1325000,1994.5,2034.39,0.69,0.7217,1266847,-58153,-0.0439,'30%',0.70,'12:30',0.5233,1747110,422110,0.3186,'70%',0.30,'TBC'],
+  ['VIC ','Greater Bendigo',125805,635000,2013.7,2053.97,0.42,0.3426,778547,143547,0.2261,'60%',0.40,'11:00',0.2484,1073696,438696,0.6909,'80%',0.20,'HOLD / Possibly Close'],
+  ['VIC','Greater Geelong',289565,730000,2013.7,2053.97,0.45,0.3938,834158,104158,0.1427,'50%',0.50,'11:30',0.2856,1150388,420388,0.5759,'80%',0.20,'TBC'],
+  ['TAS','Greater Hobart',233592,750000,1821.2,1875.84,0.49,0.4430,829529,79529,0.1060,'50%',0.50,'11:30',0.3212,1144005,394005,0.5253,'80%',0.20,'TBC'],
+  ['QLD','Ipswich',259886,858000,1994.5,2034.39,0.44,0.4673,807844,-50156,-0.0585,'20%',0.80,'for eval',0.3389,1114099,256099,0.2985,'60%',0.40,'Area Open'],
+  ['TAS','Launceston',71616,621000,1821.2,1857.62,0.37,0.3704,620298,-702,-0.0011,'30%',0.70,'12:30',0.2686,855454,234454,0.3775,'70%',0.30,'TBC'],
+  ['QLD','Mackay',128361,685000,1994.5,2034.39,0.53,0.3731,973085,288085,0.4206,'70%',0.30,'10:00',0.2705,1341983,656983,0.9591,'90%',0.10,'Area Open'],
+  ['WA','Mandurah',102922,780000,2193.2,2237.06,0.54,0.3863,1090217,310217,0.3977,'70%',0.30,'10:00',0.2801,1503520,723520,0.9276,'90%',0.10,'TBC'],
+  ['VIC','Melbourne',5245182,920000,2013.7,2074.11,0.58,0.4915,1085677,165677,0.1801,'60%',0.40,'11:00',0.3564,1497259,577259,0.6275,'80%',0.20,'Closed'],
+  ['VIC','Mildura',57626,550000,2013.7,2053.97,0.35,0.2967,648789,98789,0.1796,'60%',0.40,'11:00',0.2151,894746,344746,0.6268,'80%',0.20,'TBC'],
+  ['NSW','Newcastle',176860,1135000,2084,2125.68,0.45,0.5916,863279,-271721,-0.2394,'10%',0.90,'for eval',0.4290,1190549,55549,0.0489,'50%',0.50,'TBC'],
+  ['NSW','Orange',44610,749995,2084,2125.68,0.38,0.3909,728991,-21004,-0.0280,'30%',0.70,'12:30',0.2835,1005353,255358,0.3405,'70%',0.30,'TBC'],
+  ['WA','Perth',2363562,945000,2193.2,2258.996,0.57,0.4635,1162067,217067,0.2297,'60%',0.40,'11:00',0.3361,1602608,657608,0.6959,'80%',0.20,'Area Open'],
+  ['NSW','Port Macquarie-Hastings',90835,885000,2084,2125.68,0.48,0.4613,920831,35831,0.0405,'50%',0.50,'12:00',0.3345,1269919,384919,0.4349,'70%',0.30,'TBC'],
+  ['QLD','Rockhampton',85334,570000,1994.5,2034.39,0.38,0.3105,697684,127684,0.2240,'60%',0.40,'11:00',0.2251,962176,392176,0.6880,'80%',0.20,'TBC'],
+  ['WA','Rockingham',154132,810000,2193.2,2237.06,0.47,0.4012,948893,138893,0.1715,'60%',0.40,'11:00',0.2909,1308619,498619,0.6156,'80%',0.20,'Area Open'],
+  ['QLD','Sunshine Coast',375328,1245000,1994.5,2034.39,0.65,0.6781,1193406,-51594,-0.0414,'30%',0.70,'12:30',0.4917,1645828,400828,0.3220,'70%',0.30,'TBC'],
+  ['NSW','Sydney',5143256,1550000,2084,2146.52,0.65,0.8001,1259184,18361,-0.1876,'10%',0.90,'for eval',0.5802,1736542,186542,0.1203,'50%',0.50,'Closed'],
+  ['NSW','Tamworth Regional',65908,635000,2084,2125.68,0.34,0.3310,652255,17255,0.0272,'50%',0.50,'12:00',0.2400,899526,264526,0.4166,'70%',0.30,'TBC'],
+  ['QLD','Toowoomba',184377,802000,1994.5,2034.39,0.42,0.4368,771124,-30876,-0.0385,'30%',0.70,'12:30',0.3167,1063458,261458,0.3260,'70%',0.30,'Area Open'],
+  ['QLD','Townsville',204541,680000,1994.5,2034.39,0.50,0.3704,918005,238005,0.3500,'70%',0.30,'10:00',0.2686,1266022,586022,0.8618,'90%',0.10,'TBC'],
+  ['NSW','Wagga Wagga',68951,697000,2084,2125.68,0.38,0.3633,728991,31991,0.0459,'50%',0.50,'12:00',0.2634,1005353,308353,0.4424,'70%',0.30,'TBC'],
+  ['VIC','Wodonga',44824,645250,2013.7,2053.97,0.43,0.3551,781455,136205,0.2111,'60%',0.40,'11:00',0.3154,879705,234455,0.3634,'70%',0.30,'TBC'],
+  ['NSW','Wollongong',221894,1225000,2084,2125.68,0.53,0.6386,1016751,-208249,-0.1700,'10%',0.90,'for eval',0.4630,1402202,177202,0.1447,'50%',0.50,'TBC'],
+];
+
+const WAGE_UNITS_DATA = [
+  ['SA','Adelaide',670000,1935.1,1993.15,0.38,0.3725,683542,13542,0.0202,'50%',0.50,'12:00',0.2701,942673,272673,0.4070,'70%',0.30,null],
+  ['NSW','Albury',399500,2084,2125.68,0.33,0.2082,633071,233571,0.5847,'80%',0.20,'9:00',0.1510,873069,473569,1.1854,'95%',0.05,null],
+  ['VIC','Ballarat',437500,2013.7,2053.97,0.35,0.2360,648789,211289,0.4829,'70%',0.30,'9:30',0.1711,894746,457246,1.0451,'95%',0.05,'HOLD / Possible Close'],
+  ['QLD','Brisbane',791000,1994.5,2054.34,0.47,0.4266,871385,80385,0.1016,'50%',0.50,'11:30',0.3094,1201728,410728,0.5193,'80%',0.20,'Areas Open'],
+  ['WA','Bunbury',604750,2193.2,2237.06,0.41,0.2995,827757,223007,0.3688,'70%',0.30,'10:00',0.2172,1141561,536811,0.8877,'90%',0.10,null],
+  ['QLD','Bundaberg',517500,1994.5,2034.39,0.43,0.2819,789484,271984,0.5256,'80%',0.20,'9:30',0.2044,1088779,571279,1.1039,'95%',0.05,null],
+  ['QLD','Cairns',472500,1994.5,2034.39,0.38,0.2574,697684,225184,0.4766,'70%',0.30,'9:30',0.1866,962176,489676,1.0364,'95%',0.05,null],
+  ['ACT','Canberra',607000,2248.4,2315.85,0.41,0.2904,856910,249910,0.4117,'70%',0.30,'10:00',0.2106,1181766,574766,0.9469,'90%',0.10,null],
+  ['NSW','Central Coast',750000,2084,2125.68,0.41,0.3910,786543,36543,0.0487,'50%',0.50,'12:00',0.2835,1084723,334723,0.4463,'70%',0.30,null],
+  ['NSW','Coffs Harbour',645000,2084,2146.52,0.32,0.3330,619906,-25094,-0.0389,'30%',0.70,'12:30',0.2414,854913,209913,0.3254,'70%',0.30,null],
+  ['NT','Darwin',440000,1942.3,2000.57,0.41,0.2437,740250,300250,0.6824,'80%',0.20,'8:30',0.1767,1020879,580879,1.3202,'95%',0.05,null],
+  ['QLD','Gladstone',377500,1994.5,2034.39,0.52,0.2056,954725,577225,1.5291,'95%',0.05,'5:30',0.1491,1316663,939163,2.4878,'95%',0.05,null],
+  ['QLD','Gold Coast',890000,1994.5,2034.39,0.52,0.4847,954725,64725,0.0727,'50%',0.50,'11:30',0.3515,1316663,426663,0.4794,'70%',0.30,null],
+  ['VIC ','Greater Bendigo',480000,2013.7,2053.97,0.36,0.2589,667326,187326,0.3903,'70%',0.30,'10:00',0.1878,920310,440310,0.9173,'90%',0.10,'HOLD / Possibly Close'],
+  ['VIC','Greater Geelong',561000,2013.7,2053.97,0.37,0.3026,685863,124863,0.2226,'60%',0.40,'11:00',0.2194,945875,384875,0.6861,'80%',0.20,null],
+  ['TAS','Greater Hobart',583000,1821.2,1875.84,0.39,0.3444,660238,77238,0.1325,'50%',0.50,'11:30',0.2497,910534,327534,0.5618,'80%',0.20,null],
+  ['QLD','Ipswich',655000,1994.5,2034.39,0.38,0.3568,697684,42684,0.0652,'50%',0.50,'11:30',0.2587,962176,307176,0.4690,'70%',0.30,'Area Open'],
+  ['TAS','Launceston',473000,1821.2,1857.62,0.31,0.2821,519709,46709,0.0988,'50%',0.50,'11:30',0.2046,716731,243731,0.5153,'80%',0.20,null],
+  ['QLD','Mackay',418888,1994.5,2034.39,0.43,0.2282,789484,370596,0.8847,'90%',0.10,'7:30',0.1654,1088779,669891,1.5992,'95%',0.05,'Area Open'],
+  ['WA','Mandurah',551250,2193.2,2237.06,0.45,0.2730,908514,357264,0.6481,'80%',0.20,'9:00',0.1980,1252933,701683,1.2729,'95%',0.05,null],
+  ['VIC','Melbourne',645000,2013.7,2074.11,0.48,0.3446,898492,253492,0.3930,'70%',0.30,'10:00',0.2499,1239111,594111,0.9211,'90%',0.10,null],
+  ['VIC','Mildura',380000,2013.7,2053.97,0.38,0.2050,704400,324400,0.8537,'90%',0.10,'7:30',0.1486,971439,591439,1.5564,'95%',0.05,null],
+  ['NSW','Newcastle',794162,2084,2125.68,0.42,0.4140,805727,11565,0.0146,'50%',0.50,'12:00',0.3002,1111179,317017,0.3992,'70%',0.30,null],
+  ['NSW','Orange',493500,2084,2125.68,0.32,0.2572,613887,120387,0.2439,'60%',0.40,'11:00',0.1865,846613,353113,0.7155,'80%',0.20,null],
+  ['WA','Perth',682500,2193.2,2258.996,0.48,0.3348,978583,296083,0.4338,'70%',0.30,'10:00',0.2427,1349564,667064,0.9774,'90%',0.10,'Area Open'],
+  ['NSW','Port Macquarie-Hastings',615000,2084,2125.68,0.36,0.3206,690623,75623,0.1230,'50%',0.50,'11:30',0.2325,952439,337439,0.5487,'80%',0.20,null],
+  ['QLD','Rockhampton',492500,1994.5,2034.39,0.42,0.2682,771124,278624,0.5657,'80%',0.20,'9:00',0.1945,1063458,570958,1.1593,'95%',0.05,null],
+  ['WA','Rockingham',580000,2193.2,2237.06,0.34,0.2873,686433,106433,0.1835,'60%',0.40,'11:00',0.2083,946660,366660,0.6322,'80%',0.20,'Area Open'],
+  ['QLD','Sunshine Coast',862500,1994.5,2034.39,0.49,0.4698,899645,37145,0.0431,'50%',0.50,'12:00',0.3406,1240701,378201,0.4385,'70%',0.30,null],
+  ['NSW','Sydney',845000,2084,2146.52,0.52,0.4362,1007347,162347,0.1921,'60%',0.40,'11:00',0.3163,1389233,544233,0.6441,'80%',0.20,null],
+  ['NSW','Tamworth Regional',395000,2084,2125.68,0.32,0.2059,613887,218887,0.5541,'80%',0.20,'9:00',0.1493,846613,451613,1.1433,'95%',0.05,null],
+  ['QLD','Toowoomba',625000,1994.5,2034.39,0.34,0.3404,624243,-757,-0.0012,'30%',0.70,'12:30',0.2468,860895,235895,0.3774,'70%',0.30,'Area Open'],
+  ['QLD','Townsville',463750,1994.5,2034.39,0.44,0.2526,807844,344094,0.7420,'80%',0.20,'8:30',0.1832,1114099,650349,1.4024,'95%',0.05,null],
+  ['NSW','Wagga Wagga',490000,2084,2125.68,0.32,0.2554,613887,123887,0.2528,'60%',0.40,'10:30',0.1852,846613,356613,0.7278,'80%',0.20,null],
+  ['VIC','Wodonga',416500,2013.7,2053.97,0.38,0.2247,704400,287900,0.6912,'80%',0.20,'8:30',0.1629,971439,554939,1.3324,'95%',0.05,null],
+  ['NSW','Wollongong',785000,2084,2125.68,0.48,0.4092,920831,135831,0.1730,'60%',0.40,'11:00',0.2967,1269919,484919,0.6177,'80%',0.20,null],
+];
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+
+function fmt$(v) {
+  if (v == null || isNaN(v)) return '—';
+  const sign = v < 0 ? '-' : '';
+  return sign + '$' + Math.round(Math.abs(v)).toLocaleString('en-AU');
+}
+function fmtPct(v) {
+  if (v == null || isNaN(v)) return '—';
+  return (v*100).toFixed(1)+'%';
+}
+function fmtAI(v) {
+  if (v == null || isNaN(v)) return '—';
+  return v.toFixed(4);
+}
+function fmtPop(v) { return v ? v.toLocaleString('en-AU') : '—'; }
+function fmtIncome(v, decimals) {
+  if (v == null || isNaN(v)) return '—';
+  const d = decimals == null ? 1 : decimals;
+  return '$' + v.toLocaleString('en-AU', { minimumFractionDigits: d, maximumFractionDigits: d });
+}
+
+function statusBadge(s) {
+  if (!s) return '<span class="status tbc">—</span>';
+  const sl = s.toLowerCase();
+  if (sl.includes('area open') || sl === 'areas open') return `<span class="status open">● ${s}</span>`;
+  if (sl === 'closed') return `<span class="status closed">✕ Closed</span>`;
+  if (sl.includes('for eval')) return `<span class="status eval">◈ For Evaluation</span>`;
+  if (sl.includes('hold')) return `<span class="status hold">⏸ ${s}</span>`;
+  if (sl === 'tbc') return `<span class="status tbc">· TBC</span>`;
+  return `<span class="status tbc">${s}</span>`;
+}
+
+function probBadge(v) {
+  const pct = Math.round(v * 100);
+  if (pct >= 70) return `<span class="prob prob-high">${pct}%</span>`;
+  if (pct >= 40) return `<span class="prob prob-mid">${pct}%</span>`;
+  return `<span class="prob prob-low">${pct}%</span>`;
+}
+
+function movCell(v) {
+  if (v == null || isNaN(v)) return '—';
+  const cls = v >= 0 ? 'pos' : 'neg';
+  const sign = v >= 0 ? '+' : '';
+  return `<span class="${cls}">${sign}${fmt$(v)}</span>`;
+}
+
+function movPctCell(v) {
+  if (v == null || isNaN(v)) return '—';
+  const cls = v >= 0 ? 'pos' : 'neg';
+  const sign = v >= 0 ? '+' : '';
+  return `<span class="${cls}">${sign}${fmtPct(v)}</span>`;
+}
+
+function getRowClass(region) {
+  const r = region.trim();
+  if (OPEN_REGIONS.includes(r)) return 'row-green';
+  return '';
+}
+
+function aiBar(ai, ceiling) {
+  const pct = Math.min(100, (ai / ceiling) * 100);
+  const color = pct > 85 ? '#ef4444' : pct > 60 ? '#f59e0b' : '#10b981';
+  return `<div class="ai-bar-wrap">${fmtAI(ai)}<div class="ai-bar"><div class="ai-bar-fill" style="width:${pct}%;background:${color}"></div></div></div>`;
+}
+
+// ── EXCEL FORMULA ENGINE ──────────────────────────────────────────────────────
+// PMT: periodic payment. -PMT(r,n,pv) = pv * r / (1-(1+r)^-n)
+function PMT(rate, nper, pv) {
+  if (rate === 0) return pv / nper;
+  return pv * rate / (1 - Math.pow(1 + rate, -nper));
+}
+// PV: present value of annuity. -PV(r,n,pmt) = pmt * (1-(1+r)^-n) / r
+function PV(rate, nper, pmt) {
+  if (rate === 0) return pmt * nper;
+  return pmt * (1 - Math.pow(1 + rate, -nper)) / rate;
+}
+
+// AI (current): -PMT(bankRate/12, 360, price*0.8) * 12 / (weeklyIncome * 52)
+function calcAI(bankRate, price, weeklyIncome) {
+  if (price == null || weeklyIncome == null || isNaN(price) || isNaN(weeklyIncome)) return null;
+  const r = bankRate / 100 / 12;
+  return PMT(r, 360, price * 0.8) * 12 / (weeklyIncome * 52);
+}
+
+// Ceiling Price: -PV(rate/12, 360, (annualIncome * aiCeiling)/12) / 0.8
+function calcCeilingPrice(bankRate, weeklyIncome, aiCeiling) {
+  if (weeklyIncome == null || aiCeiling == null || isNaN(weeklyIncome) || isNaN(aiCeiling)) return null;
+  const r = bankRate / 100 / 12;
+  const annualIncome = weeklyIncome * 52;
+  return PV(r, 360, (annualIncome * aiCeiling) / 12) / 0.8;
+}
+
+// Upside band — Current side (I) breakpoint at 0.295
+// =IF(in%>=1,"95%", IF(in%>=0.75,"90%", IF(in%>=0.5,"80%", IF(in%>=0.295,"70%",
+//   IF(in%>=0.15,"60%", IF(in%>=0,"50%", IF(in%>=-0.05,"30%",
+//   IF(in%>=-0.15,"20%", IF(in%<-0.16,"10%")))))))))
+function calcUpsideCurr(movPct) {
+  if (movPct == null || isNaN(movPct)) return '—';
+  if (movPct >= 1)     return '95%';
+  if (movPct >= 0.75)  return '90%';
+  if (movPct >= 0.5)   return '80%';
+  if (movPct >= 0.295) return '70%';
+  if (movPct >= 0.15)  return '60%';
+  if (movPct >= 0)     return '50%';
+  if (movPct >= -0.05) return '30%';
+  if (movPct >= -0.15) return '20%';
+  return '10%';
+}
+
+// Upside band — Forecast side (O) breakpoint at 0.3
+// =IF(in%>=1,"95%", IF(in%>=0.75,"90%", IF(in%>=0.5,"80%", IF(in%>=0.3,"70%",
+//   IF(in%>=0.15,"60%", IF(in%>=0,"50%", IF(in%>=-0.05,"30%",
+//   IF(in%>=-0.15,"20%", IF(in%<-0.16,"10%")))))))))
+function calcUpside(movPct) {
+  if (movPct == null || isNaN(movPct)) return '—';
+  if (movPct >= 1)     return '95%';
+  if (movPct >= 0.75)  return '90%';
+  if (movPct >= 0.5)   return '80%';
+  if (movPct >= 0.3)   return '70%';
+  if (movPct >= 0.15)  return '60%';
+  if (movPct >= 0)     return '50%';
+  if (movPct >= -0.05) return '30%';
+  if (movPct >= -0.15) return '20%';
+  return '10%';
+}
+
+function upsidePct(s) { return parseFloat(s) / 100; }
+function downsidePct(s) { return 1 - upsidePct(s); }
+
+// Null-safe downside cell — returns dash if upside isn't a numeric % string
+function downsideCell(upside) {
+  const v = parseFloat(upside);
+  if (isNaN(v)) return '—';
+  return Math.round(100 - v) + '%';
+}
+
+function calcClock(movPct) {
+  if (movPct >= 1.25) return '5:30';
+  if (movPct >= 1.15) return '6:00';
+  if (movPct >= 1.05) return '6:30';
+  if (movPct >= 0.95) return '7:00';
+  if (movPct >= 0.85) return '7:30';
+  if (movPct >= 0.75) return '8:00';
+  if (movPct >= 0.65) return '8:30';
+  if (movPct >= 0.55) return '9:00';
+  if (movPct >= 0.45) return '9:30';
+  if (movPct >= 0.35) return '10:00';
+  if (movPct >= 0.25) return '10:30';
+  if (movPct >= 0.15) return '11:00';
+  if (movPct >= 0.05) return '11:30';
+  if (movPct >= 0)    return '12:00';
+  if (movPct >= -0.05) return '12:30';
+  return 'for evaluation';
+}
+
+// Capital city regions per Excel 'Wage growth Prediction' sheet (cap city = 3%, regional = 2%)
+const CAP_CITIES = ['Sydney','Melbourne','Brisbane','Perth','Adelaide','Canberra','Darwin','Greater Hobart'];
+
+function isCapCity(region) {
+  return CAP_CITIES.some(c => region.trim().toLowerCase().includes(c.toLowerCase()));
+}
+
+// ── GET PARAMS ────────────────────────────────────────────────────────────────
+function getParams() {
+  // Fetched fields (Cash Rate, Interest Rate, Inflation) — NO bundled fallback.
+  // If the live fetch hasn't run or has failed, these are NaN and downstream
+  // calcs will render "—" so missing data is obvious.
+  const cashRate   = parseFloat(document.getElementById('h-cashRate').value);
+  const bankVar    = parseFloat(document.getElementById('h-bankVarDisplay').value);
+  const inflation  = parseFloat(document.getElementById('h-inflation').value);
+  // Non-fetched scenario inputs keep their defaults so workbook stays usable.
+  const apra       = parseFloat(document.getElementById('h-apraBuffer').value)      || 0.50;
+  const apraF      = parseFloat(document.getElementById('h-apraBufferF').value)     || 0.50;
+  const icForecast = parseFloat(document.getElementById('h-icForecast').value)      || 2.69;
+  const bankMargin = parseFloat(document.getElementById('h-bankMargin').value)      || 1.75;
+  const capWage    = parseFloat(document.getElementById('wg-capCity').value)        || 3.0;
+  const regWage    = parseFloat(document.getElementById('wg-regional').value)       || 2.0;
+  const wgYears    = parseFloat(document.getElementById('wg-years').value)          || 5;
+
+  const bankRate = bankVar + apra;                  // Auto: Bank/Variable + APRA buffer
+  const ppVar    = icForecast + bankMargin + apraF; // Auto: IC Forecast + Margin + APRA buffer
+
+  return { cashRate, bankVar, bankMargin, apra, apraF, icForecast, inflation, bankRate, ppVar, capWage, regWage, wgYears };
+}
+
+// ── UPDATE DISPLAY LABELS ─────────────────────────────────────────────────────
+function updateLabels(p) {
+  // Null-safe pct formatter for display labels — show dash if value is NaN.
+  const pct = (v) => (v == null || isNaN(v)) ? '—' : v.toFixed(2);
+  const pctPercent = (v) => (v == null || isNaN(v)) ? '—' : v.toFixed(2) + '%';
+  // Quieter variant — show nothing while the computed value is still loading
+  // (used for Bank Rate so we don't flash a dash for the ~2s the fetch takes).
+  const pctQuiet = (v) => (v == null || isNaN(v)) ? '' : v.toFixed(2);
+
+  // Houses panel — Bank/Variable is user-editable (read-only from JS perspective)
+  document.getElementById('h-bankRateDisplay').textContent = pctQuiet(p.bankRate);
+  document.getElementById('h-ppVarDisplay').textContent    = pct(p.ppVar);
+
+  // Units panel
+  document.getElementById('u-cashRateDisplay').textContent    = pctPercent(p.cashRate);
+  document.getElementById('u-bankRateDisplay2').textContent   = pctPercent(p.bankRate);
+  document.getElementById('u-icForecastDisplay').textContent  = pctPercent(p.icForecast);
+  document.getElementById('u-ppVarDisplay').textContent       = pctPercent(p.ppVar);
+
+  // Wage houses panel
+  document.getElementById('wh-cashRateDisplay').textContent   = pctPercent(p.cashRate);
+  document.getElementById('wh-icForecastDisplay').textContent = pctPercent(p.icForecast);
+  document.getElementById('wh-bankRateDisplay').textContent   = pctPercent(p.bankRate);
+  document.getElementById('wh-ppVarDisplay').textContent      = pctPercent(p.ppVar);
+  document.getElementById('wh-inflationDisplay').textContent  = pctPercent(p.inflation);
+
+  // Wage units panel
+  document.getElementById('wu-cashRateDisplay').textContent   = pctPercent(p.cashRate);
+  document.getElementById('wu-icForecastDisplay').textContent = pctPercent(p.icForecast);
+  document.getElementById('wu-bankRateDisplay').textContent   = pctPercent(p.bankRate);
+  document.getElementById('wu-ppVarDisplay').textContent      = pctPercent(p.ppVar);
+  document.getElementById('wu-inflationDisplay').textContent  = pctPercent(p.inflation);
+  document.getElementById('wu-capCityDisplay').textContent    = pctPercent(p.capWage);
+  document.getElementById('wu-regionalDisplay').textContent   = pctPercent(p.regWage);
+  document.getElementById('wu-yearsDisplay').textContent      = p.wgYears;
+
+  // Table header labels
+  document.querySelectorAll('.fore-rate-label').forEach(el => {
+    el.textContent = `F O R E C A S T E D   R A T E S`;
+  });
+  document.querySelectorAll('.curr-rate-label').forEach(el => {
+    el.textContent = `C U R R E N T   R A T E S`;
+  });
+  document.querySelectorAll('.wage-fore-rate-label').forEach(el => {
+    el.textContent = `F O R E C A S T E D   R A T E S + Wage Growth`;
+  });
+}
+
+// ── RENDER FUNCTIONS ──────────────────────────────────────────────────────────
+
+function renderHouses(p) {
+  const tbody = document.getElementById('houses-tbody');
+  tbody.innerHTML = HOUSES_DATA.map(d => {
+    const [state,region,pop,price,income,aiCeiling,,,,,,,,,,,,,,,status] = d;
+
+    const aiCurr     = calcAI(p.bankRate, price, income);
+    const ceilPrice  = calcCeilingPrice(p.bankRate, income, aiCeiling);
+    const movAud     = ceilPrice - price;
+    const movPct     = movAud / price;
+    const upside     = calcUpsideCurr(movPct);
+    const downside   = 1 - upsidePct(upside);
+
+    const aiFor      = calcAI(p.ppVar, price, income);
+    const forPrice   = calcCeilingPrice(p.ppVar, income, aiCeiling);
+    const forMovAud  = forPrice - price;
+    const forMovPct  = forMovAud / price;
+    const forUp      = calcUpside(forMovPct);
+    const forDown    = 1 - upsidePct(forUp);
+
+    const rc = getRowClass(region);
+    return `<tr class="${rc}" data-region="${region.toLowerCase()}" data-state="${state.trim().toLowerCase()}" data-capcity="${isCapCity(region) ? '1' : '0'}" data-status="${(status||'').toLowerCase()}">
+      <td>${state}</td>
+      <td>${region}</td>
+      <td>${fmtPop(pop)}</td>
+      <td>${fmt$(price)}</td>
+      <td>${fmtIncome(income, 1)}</td>
+      <td>${fmtPct(aiCeiling)}</td>
+      <td class="curr-col">${fmtPct(aiCurr)}</td>
+      <td class="curr-col">${fmt$(ceilPrice)}</td>
+      <td class="curr-col">${movCell(movAud)}</td>
+      <td class="curr-col">${movPctCell(movPct)}</td>
+      <td class="curr-col">${upside}</td>
+      <td class="curr-col">${downsideCell(upside)}</td>
+      <td class="fore-col">${fmtPct(aiFor)}</td>
+      <td class="fore-col">${fmt$(forPrice)}</td>
+      <td class="fore-col">${movCell(forMovAud)}</td>
+      <td class="fore-col">${movPctCell(forMovPct)}</td>
+      <td class="fore-col">${forUp}</td>
+      <td class="fore-col">${downsideCell(forUp)}</td>
+    </tr>`;
+  }).join('');
+  reapplyFilter('houses-table');
+}
+
+// Look up shared data fields from HOUSES_DATA (single source of truth)
+// Population AND Income are inherited from Houses; Units keep their own Price and AI Ceiling.
+const HOUSES_BY_REGION = (() => {
+  const map = {};
+  HOUSES_DATA.forEach(d => { map[d[1].trim().toLowerCase()] = { pop: d[2], income: d[4] }; });
+  return map;
+})();
+function lookupPop(region)    { return HOUSES_BY_REGION[region.trim().toLowerCase()]?.pop    ?? null; }
+function lookupIncome(region) { return HOUSES_BY_REGION[region.trim().toLowerCase()]?.income ?? null; }
+
+function renderUnits(p) {
+  const tbody = document.getElementById('units-tbody');
+  tbody.innerHTML = UNITS_DATA.map(d => {
+    const [state,region,price,,aiCeiling,,,,,,,,,,,,,,,status] = d;
+    // Population and Income are inherited from HOUSES_DATA (source of truth)
+    const pop    = lookupPop(region);
+    const income = lookupIncome(region) ?? d[3];  // fallback to UNITS_DATA value if missing
+
+    const aiCurr    = calcAI(p.bankRate, price, income);
+    const ceilPrice = calcCeilingPrice(p.bankRate, income, aiCeiling);
+    const movAud    = ceilPrice - price;
+    const movPct    = movAud / price;
+    const upside    = calcUpsideCurr(movPct);
+    const downside  = 1 - upsidePct(upside);
+
+    const aiFor     = calcAI(p.ppVar, price, income);
+    const forPrice  = calcCeilingPrice(p.ppVar, income, aiCeiling);
+    const forMovAud = forPrice - price;
+    const forMovPct = forMovAud / price;
+    const forUp     = calcUpside(forMovPct);
+    const forDown   = 1 - upsidePct(forUp);
+
+    const rc = getRowClass(region);
+    return `<tr class="${rc}" data-region="${region.toLowerCase()}" data-state="${state.trim().toLowerCase()}" data-capcity="${isCapCity(region) ? '1' : '0'}" data-status="${(status||'').toLowerCase()}">
+      <td>${state}</td>
+      <td>${region}</td>
+      <td>${fmtPop(pop)}</td>
+      <td>${fmt$(price)}</td>
+      <td>${fmtIncome(income, 1)}</td>
+      <td>${fmtPct(aiCeiling)}</td>
+      <td class="curr-col">${fmtPct(aiCurr)}</td>
+      <td class="curr-col">${fmt$(ceilPrice)}</td>
+      <td class="curr-col">${movCell(movAud)}</td>
+      <td class="curr-col">${movPctCell(movPct)}</td>
+      <td class="curr-col">${upside}</td>
+      <td class="curr-col">${downsideCell(upside)}</td>
+      <td class="fore-col">${fmtPct(aiFor)}</td>
+      <td class="fore-col">${fmt$(forPrice)}</td>
+      <td class="fore-col">${movCell(forMovAud)}</td>
+      <td class="fore-col">${movPctCell(forMovPct)}</td>
+      <td class="fore-col">${forUp}</td>
+      <td class="fore-col">${downsideCell(forUp)}</td>
+    </tr>`;
+  }).join('');
+  reapplyFilter('units-table');
+}
+
+function renderWageHouses(p) {
+  const tbody = document.getElementById('wage-houses-tbody');
+  // Pull canonical data from HOUSES_DATA (single source of truth)
+  tbody.innerHTML = HOUSES_DATA.map(d => {
+    const [state,region,pop,price,income,aiCeiling,,,,,,,,,,,,,,,status] = d;
+    const wgRate   = isCapCity(region) ? p.capWage / 100 : p.regWage / 100;
+    const wgIncome = income * Math.pow(1 + wgRate, p.wgYears);
+
+    const aiCurr    = calcAI(p.bankRate, price, wgIncome);
+    const ceilPrice = calcCeilingPrice(p.bankRate, wgIncome, aiCeiling);
+    const movAud    = ceilPrice - price;
+    const movPct    = movAud / price;
+    const upside    = calcUpsideCurr(movPct);
+    const downside  = 1 - upsidePct(upside);
+
+    const aiFor     = calcAI(p.ppVar, price, wgIncome);
+    const forPrice  = calcCeilingPrice(p.ppVar, wgIncome, aiCeiling);
+    const forMovAud = forPrice - price;
+    const forMovPct = forMovAud / price;
+    const forUp     = calcUpside(forMovPct);
+    const forDown   = 1 - upsidePct(forUp);
+
+    const rc = getRowClass(region);
+    return `<tr class="${rc}" data-region="${region.toLowerCase()}" data-state="${state.trim().toLowerCase()}" data-capcity="${isCapCity(region) ? '1' : '0'}" data-status="${(status||'').toLowerCase()}">
+      <td>${state}</td>
+      <td>${region}</td>
+      <td>${fmtPop(pop)}</td>
+      <td>${fmt$(price)}</td>
+      <td>${fmtIncome(income, 1)}</td>
+      <td>${fmtIncome(wgIncome, 2)}</td>
+      <td>${fmtPct(aiCeiling)}</td>
+      <td class="curr-col">${fmtPct(aiCurr)}</td>
+      <td class="curr-col">${fmt$(ceilPrice)}</td>
+      <td class="curr-col">${movCell(movAud)}</td>
+      <td class="curr-col">${movPctCell(movPct)}</td>
+      <td class="curr-col">${upside}</td>
+      <td class="curr-col">${downsideCell(upside)}</td>
+      <td class="fore-col">${fmtPct(aiFor)}</td>
+      <td class="fore-col">${fmt$(forPrice)}</td>
+      <td class="fore-col">${movCell(forMovAud)}</td>
+      <td class="fore-col">${movPctCell(forMovPct)}</td>
+      <td class="fore-col">${forUp}</td>
+      <td class="fore-col">${downsideCell(forUp)}</td>
+    </tr>`;
+  }).join('');
+  reapplyFilter('wage-houses-table');
+}
+
+function renderWageUnits(p) {
+  const tbody = document.getElementById('wage-units-tbody');
+  // Price + AI Ceiling from UNITS_DATA; Population + Income inherited from HOUSES_DATA (source of truth)
+  tbody.innerHTML = UNITS_DATA.map(d => {
+    const [state,region,price,,aiCeiling,,,,,,,,,,,,,,,status] = d;
+    const pop      = lookupPop(region);
+    const income   = lookupIncome(region) ?? d[3];
+    const wgRate   = isCapCity(region) ? p.capWage / 100 : p.regWage / 100;
+    const wgIncome = income * Math.pow(1 + wgRate, p.wgYears);
+
+    const aiCurr    = calcAI(p.bankRate, price, wgIncome);
+    const ceilPrice = calcCeilingPrice(p.bankRate, wgIncome, aiCeiling);
+    const movAud    = ceilPrice - price;
+    const movPct    = movAud / price;
+    const upside    = calcUpsideCurr(movPct);
+    const downside  = 1 - upsidePct(upside);
+
+    const aiFor     = calcAI(p.ppVar, price, wgIncome);
+    const forPrice  = calcCeilingPrice(p.ppVar, wgIncome, aiCeiling);
+    const forMovAud = forPrice - price;
+    const forMovPct = forMovAud / price;
+    const forUp     = calcUpside(forMovPct);
+    const forDown   = 1 - upsidePct(forUp);
+
+    const rc = getRowClass(region);
+    return `<tr class="${rc}" data-region="${region.toLowerCase()}" data-state="${state.trim().toLowerCase()}" data-capcity="${isCapCity(region) ? '1' : '0'}" data-status="${(status||'').toLowerCase()}">
+      <td>${state}</td>
+      <td>${region}</td>
+      <td>${fmtPop(pop)}</td>
+      <td>${fmt$(price)}</td>
+      <td>${fmtIncome(income, 1)}</td>
+      <td>${fmtIncome(wgIncome, 2)}</td>
+      <td>${fmtPct(aiCeiling)}</td>
+      <td class="curr-col">${fmtPct(aiCurr)}</td>
+      <td class="curr-col">${fmt$(ceilPrice)}</td>
+      <td class="curr-col">${movCell(movAud)}</td>
+      <td class="curr-col">${movPctCell(movPct)}</td>
+      <td class="curr-col">${upside}</td>
+      <td class="curr-col">${downsideCell(upside)}</td>
+      <td class="fore-col">${fmtPct(aiFor)}</td>
+      <td class="fore-col">${fmt$(forPrice)}</td>
+      <td class="fore-col">${movCell(forMovAud)}</td>
+      <td class="fore-col">${movPctCell(forMovPct)}</td>
+      <td class="fore-col">${forUp}</td>
+      <td class="fore-col">${downsideCell(forUp)}</td>
+    </tr>`;
+  }).join('');
+  reapplyFilter('wage-units-table');
+}
+
+// ── RECALC ALL ────────────────────────────────────────────────────────────────
+function recalcAll() {
+  const p = getParams();
+  updateLabels(p);
+  renderHouses(p);
+  renderUnits(p);
+  renderWageHouses(p);
+  renderWageUnits(p);
+  reapplyActiveSort();
+}
+
+function onRateChange() {
+  recalcAll();
+  // Flash the tables to show they've updated
+  document.querySelectorAll('.table-wrap').forEach(el => {
+    el.classList.remove('recalc-flash');
+    void el.offsetWidth;
+    el.classList.add('recalc-flash');
+  });
+}
+
+function onWageChange() {
+  recalcAll();
+}
+
+// ── TAB / FILTER / SEARCH ────────────────────────────────────────────────────
+
+function switchTab(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── COLUMN SORTING ───────────────────────────────────────────────────────────
+// Click a header to cycle: original → ascending → descending → original
+// Sorting operates on the rendered DOM rows (preserves filter/search state).
+const sortState = {};   // tableId → { colIndex, direction: 'asc'|'desc' } or null
+
+// Parse a cell's display text into a sortable value.
+// Strips $, commas, %, +, and unicode minuses; falls back to lowercase string.
+function parseCell(text) {
+  const trimmed = (text || '').trim();
+  if (trimmed === '' || trimmed === '—') return { num: NaN, str: '' };
+  const cleaned = trimmed
+    .replace(/[\u2212\u2013\u2014]/g, '-')
+    .replace(/[$,+\s]/g, '')
+    .replace(/%$/, '');
+  const n = parseFloat(cleaned);
+  return { num: n, str: trimmed.toLowerCase() };
+}
+
+// Apply sort to a table for given colIndex + direction.
+// Updates DOM only — does not change sortState or visual indicators.
+function applySortToTable(tableId, colIndex, direction) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const tbody = table.tBodies[0];
+  const rows = Array.from(tbody.rows);
+  const sign = direction === 'asc' ? 1 : -1;
+
+  // Sample first non-empty cell to decide numeric vs string sort
+  let useNumeric = true;
+  for (const r of rows) {
+    const text = r.cells[colIndex]?.textContent.trim();
+    if (text === '' || text === '—') continue;
+    if (isNaN(parseCell(text).num)) useNumeric = false;
+    break;
+  }
+
+  rows.sort((a, b) => {
+    const av = parseCell(a.cells[colIndex]?.textContent || '');
+    const bv = parseCell(b.cells[colIndex]?.textContent || '');
+    if (useNumeric) {
+      const aNaN = isNaN(av.num), bNaN = isNaN(bv.num);
+      if (aNaN && bNaN) return 0;
+      if (aNaN) return 1;          // NaN always at bottom
+      if (bNaN) return -1;
+      return sign * (av.num - bv.num);
+    }
+    return sign * av.str.localeCompare(bv.str);
+  });
+  for (const r of rows) tbody.appendChild(r);
+}
+
+// Update visual indicators for a table's header row.
+function updateSortIndicators(tableId) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const headerCells = table.tHead.querySelector('tr.col-heads').children;
+  for (const th of headerCells) {
+    th.classList.remove('sort-asc', 'sort-desc');
+    const arrow = th.querySelector('.sort-arrow');
+    if (arrow) arrow.textContent = '';
+  }
+  const s = sortState[tableId];
+  if (!s) return;
+  const th = headerCells[s.colIndex];
+  th.classList.add(s.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+  const arrow = th.querySelector('.sort-arrow');
+  if (arrow) arrow.textContent = s.direction === 'asc' ? '▲' : '▼';
+}
+
+// Handler for header clicks — cycles direction, updates state, re-renders.
+function sortTableByColumn(tableId, colIndex) {
+  const cur = sortState[tableId];
+  let direction;
+  if (!cur || cur.colIndex !== colIndex) {
+    direction = 'asc';
+  } else if (cur.direction === 'asc') {
+    direction = 'desc';
+  } else {
+    direction = null;
+  }
+
+  if (direction === null) {
+    sortState[tableId] = null;
+    updateSortIndicators(tableId);
+    recalcAll();   // re-render in original order
+    return;
+  }
+
+  sortState[tableId] = { colIndex, direction };
+  updateSortIndicators(tableId);
+  applySortToTable(tableId, colIndex, direction);
+}
+
+// Re-apply current sort after a re-render (called from recalcAll)
+function reapplyActiveSort() {
+  for (const tableId of Object.keys(sortState)) {
+    const s = sortState[tableId];
+    if (!s) continue;
+    applySortToTable(tableId, s.colIndex, s.direction);
+    updateSortIndicators(tableId);
+  }
+}
+
+function attachHeaderSortHandlers() {
+  document.querySelectorAll('table thead tr.col-heads').forEach(headRow => {
+    const tableId = headRow.closest('table').id;
+    if (!tableId) return;
+    Array.from(headRow.children).forEach((th, idx) => {
+      // Inject a sort-arrow span inside the .hd if missing
+      if (!th.querySelector('.sort-arrow')) {
+        const arrow = document.createElement('span');
+        arrow.className = 'sort-arrow';
+        const hd = th.querySelector('.hd') || th;
+        hd.appendChild(arrow);
+      }
+      if (th.dataset.sortBound) return;
+      th.dataset.sortBound = '1';
+      th.addEventListener('click', () => sortTableByColumn(tableId, idx));
+    });
+  });
+}
+
+let currentFilters = {};
+
+// stateFilters: tableId → '' | 'capcity' | 'state:nsw' | etc.
+const stateFilters = {};
+
+function filterTable(tableId, query) {
+  const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+  const statusFilter = currentFilters[tableId] || '';
+  const stateFilter  = stateFilters[tableId] || '';
+  const q = (query || '').toLowerCase();
+  let visible = 0;
+  rows.forEach(r => {
+    const regionMatch = r.dataset.region.includes(q);
+    const statusVal = r.dataset.status || '';
+    const statusMatch = !statusFilter ||
+      (statusFilter === 'open' && (statusVal.includes('open'))) ||
+      (statusFilter === 'closed' && statusVal === 'closed') ||
+      (statusFilter === 'tbc' && statusVal === 'tbc');
+    let stateMatch = true;
+    if (stateFilter === 'capcity') {
+      stateMatch = r.dataset.capcity === '1';
+    } else if (stateFilter.startsWith('state:')) {
+      stateMatch = r.dataset.state === stateFilter.slice(6);
+    }
+    const show = regionMatch && statusMatch && stateMatch;
+    r.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  updateCount(tableId, visible);
+}
+
+function filterByState(tableId, value) {
+  stateFilters[tableId] = value;
+  // Re-trigger filterTable using current search query
+  const wrapper = document.getElementById('panel-' + tableId.replace('-table',''));
+  const input = wrapper ? wrapper.querySelector('input[placeholder]') : null;
+  filterTable(tableId, input ? input.value : '');
+}
+
+function filterStatus(tableId, status) {
+  currentFilters[tableId] = status;
+  const wrapper = document.getElementById('panel-' + tableId.replace('-table','').replace('wage-','wage-'));
+  const input = wrapper ? wrapper.querySelector('input[type=text], input[placeholder]') : null;
+  const query = input ? input.value : '';
+  filterTable(tableId, query);
+}
+
+function reapplyFilter(tableId) {
+  const panelId = tableId.replace('-table', '');
+  const wrapper = document.getElementById('panel-' + panelId);
+  const input = wrapper ? wrapper.querySelector('input[placeholder]') : null;
+  const query = input ? input.value : '';
+  filterTable(tableId, query);
+}
+
+function updateCount(tableId, n) {
+  const panelId = tableId.replace('-table', '');
+  const el = document.getElementById(panelId + '-count');
+  if (el) el.innerHTML = `<span>${n}</span> regions`;
+}
+
+// ── LIVE PRICE FEED FROM GOOGLE SHEETS ──────────────────────────────────────
+// Fetches latest "YYYY-MM Market Trends" file from Drive via Apps Script web app
+// and updates HOUSES_DATA / UNITS_DATA Median Prices in place.
+const PRICES_API = 'https://script.google.com/macros/s/AKfycbwi0vd2X5CFwUJG-0zEKhtkZzWKrDNHkjSwn_JD1drR95KgbwpHzM9d-edJKz3SBWs6/exec';
+
+// CoreLogic column indices (0-based) — confirmed against the headers you sent
+const PRICE_COL = 16;    // "Median sales price last 3 months"
+const REGION_COL = 1;    // "Capital City" or "LGA Name"
+const PROPTYPE_COL = 2;  // "H" or "U"
+
+// Track which source file is currently applied to the tables (to detect new files)
+let currentSourceFile = null;
+// Track the ABS AWE release label for the badge (e.g. "Nov 2025")
+let currentIncomeRelease = null;
+// Track the latest AI Ceiling data year for the badge (e.g. 2026)
+let currentAicYear = null;
+// Track the latest ABS population data year (e.g. 2025 → "2024-25 FY" badge)
+let currentPopYear = null;
+
+// Format a Date as "20 April 2026 · 01:15 PM"
+function formatStamp(d) {
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const day = d.getDate();
+  const month = months[d.getMonth()];
+  const year = d.getFullYear();
+  let hours = d.getHours();
+  const mins = d.getMinutes().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12; if (hours === 0) hours = 12;
+  const hh = hours.toString().padStart(2, '0');
+  return `${day} ${month} ${year} · ${hh}:${mins} ${ampm}`;
+}
+
+// Normalize a region name for matching CoreLogic ↔ workbook
+// Strips LGA suffixes like "(C)", "(A)", "(M)", " Regional"; lowercases; collapses whitespace/hyphens.
+function normalizeRegion(name) {
+  return String(name || '')
+    .toLowerCase()
+    // Strip state-code parentheticals: (NSW), (VIC), (QLD), (SA), (WA), (Tas.), (Tas), (NT), (ACT)
+    .replace(/\s*\((?:nsw|vic|qld|sa|wa|tas\.?|nt|act)\)\s*$/i, '')
+    // Strip category markers: (C), (A), (M)
+    .replace(/\s*\([cam]\)\s*$/i, '')
+    .replace(/\s+regional$/i, '')
+    .replace(/[\s\-]+/g, ' ')
+    .trim();
+}
+
+// Extract an uppercase state code from a region name like "Central Coast (NSW)"
+// or "Central Coast (Tas.)". Returns '' if no state parenthetical present.
+function extractStateSuffix(name) {
+  const m = String(name || '').match(/\((nsw|vic|qld|sa|wa|tas\.?|nt|act)\)\s*$/i);
+  if (!m) return '';
+  let s = m[1].toUpperCase().replace('.', '');
+  return s === 'TAS' ? 'TAS' : s;
+}
+
+// Build a keying string that includes state when known — "NSW::H::central coast"
+// vs bare "H::central coast" — so two LGAs with the same name (e.g. Central Coast
+// in NSW and Tas.) don't collide.
+function regionKey(region, propType, state) {
+  const p = (propType || '').toUpperCase();
+  const s = (state || extractStateSuffix(region) || '').toUpperCase();
+  return s + '::' + p + '::' + normalizeRegion(region);
+}
+
+// Show a banner offering to load a newly-available source file
+function showUpdateBanner(newSourceFile) {
+  let banner = document.getElementById('update-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'update-banner';
+    banner.className = 'update-banner';
+    banner.innerHTML = `
+      <span class="update-banner-text"></span>
+      <button class="update-banner-btn" onclick="loadLatestPrices(true)">Update now</button>
+      <button class="update-banner-dismiss" onclick="this.parentElement.remove()" title="Dismiss">×</button>
+    `;
+    document.body.appendChild(banner);
+  }
+  banner.querySelector('.update-banner-text').textContent =
+    `${newSourceFile} is available. Update now?`;
+  banner.style.display = 'flex';
+}
+
+function hideUpdateBanner() {
+  const banner = document.getElementById('update-banner');
+  if (banner) banner.remove();
+}
+
+async function loadLatestPrices(force) {
+  if (!PRICES_API) return;  // Not configured — silent no-op
+
+  const indicator = document.getElementById('fetch-indicator');
+  const text = document.getElementById('fetch-text');
+  const setPhase = (msg, klass) => {
+    if (!indicator) return;
+    indicator.style.display = 'flex';
+    indicator.classList.remove('success', 'error');
+    if (klass) indicator.classList.add(klass);
+    text.textContent = msg;
+  };
+
+  setPhase('Connecting to Google Sheets…');
+  try {
+    // Fetch six endpoints in parallel — the single Web App URL serves
+    // prices (default), populations (?source=pops), incomes (?source=incomes),
+    // AI ceilings (?source=aic), RBA rates (?source=rates), CPI (?source=cpi).
+    const [priceRes, popRes, incRes, aicRes, ratesRes, cpiRes] = await Promise.all([
+      fetch(PRICES_API),
+      fetch(PRICES_API + '?source=pops').catch(err => ({ _err: err })),
+      fetch(PRICES_API + '?source=incomes').catch(err => ({ _err: err })),
+      fetch(PRICES_API + '?source=aic').catch(err => ({ _err: err })),
+      fetch(PRICES_API + '?source=rates').catch(err => ({ _err: err })),
+      fetch(PRICES_API + '?source=cpi').catch(err => ({ _err: err }))
+    ]);
+    if (!priceRes.ok) throw new Error('HTTP ' + priceRes.status);
+    setPhase('Loading data…');
+    const data = await priceRes.json();
+    if (data.error) throw new Error(data.error);
+
+    // Populations are best-effort; bolt them on to the data object if the
+    // second call succeeded so downstream logic stays uniform.
+    if (popRes && !popRes._err && popRes.ok) {
+      try {
+        const popBody = await popRes.json();
+        if (popBody && !popBody.error && popBody.populations) {
+          data.populations = popBody.populations;
+        } else if (popBody && popBody.error) {
+          console.warn('[Live data] ABS populations error:', popBody.error);
+        }
+      } catch (popParseErr) {
+        console.warn('[Live data] ABS populations parse failed:', popParseErr.message);
+      }
+    }
+
+    // Incomes — also best-effort.
+    if (incRes && !incRes._err && incRes.ok) {
+      try {
+        const incBody = await incRes.json();
+        if (incBody && !incBody.error && incBody.incomes) {
+          data.incomes = incBody.incomes;
+        } else if (incBody && incBody.error) {
+          console.warn('[Live data] ABS incomes error:', incBody.error);
+        }
+      } catch (incParseErr) {
+        console.warn('[Live data] ABS incomes parse failed:', incParseErr.message);
+      }
+    }
+
+    // AI Ceilings — best-effort.
+    if (aicRes && !aicRes._err && aicRes.ok) {
+      try {
+        const aicBody = await aicRes.json();
+        if (aicBody && !aicBody.error && aicBody.aic) {
+          data.aic = aicBody.aic;
+        } else if (aicBody && aicBody.error) {
+          console.warn('[Live data] AI Ceiling error:', aicBody.error);
+        }
+      } catch (aicParseErr) {
+        console.warn('[Live data] AI Ceiling parse failed:', aicParseErr.message);
+      }
+    }
+
+    // RBA rates — best-effort. Shape: { cashRate, bankRate, cashRateDate, bankRateMonth, asOf }
+    if (ratesRes && !ratesRes._err && ratesRes.ok) {
+      try {
+        const ratesBody = await ratesRes.json();
+        if (ratesBody && !ratesBody.error && ratesBody.rates) {
+          data.rates = ratesBody.rates;
+        } else if (ratesBody && ratesBody.error) {
+          console.warn('[Live data] RBA rates error:', ratesBody.error);
+        }
+      } catch (ratesParseErr) {
+        console.warn('[Live data] RBA rates parse failed:', ratesParseErr.message);
+      }
+    }
+
+    // CPI — best-effort. Shape: { inflationRate, releaseQuarter, releaseLabel, asOf }
+    if (cpiRes && !cpiRes._err && cpiRes.ok) {
+      try {
+        const cpiBody = await cpiRes.json();
+        if (cpiBody && !cpiBody.error && cpiBody.cpi) {
+          data.cpi = cpiBody.cpi;
+        } else if (cpiBody && cpiBody.error) {
+          console.warn('[Live data] CPI error:', cpiBody.error);
+        }
+      } catch (cpiParseErr) {
+        console.warn('[Live data] CPI parse failed:', cpiParseErr.message);
+      }
+    }
+
+    // If a newer file appeared and we're not forcing, prompt the user instead of auto-applying.
+    if (!force && currentSourceFile && data.sourceFile && data.sourceFile !== currentSourceFile) {
+      showUpdateBanner(data.sourceFile);
+      setPhase(`Loaded · ${formatStamp(new Date())} | ${currentSourceFile}`, 'success');
+      return;
+    }
+
+    setPhase('Updating tables…');
+
+    // Build region+propType → price map from both tabs.
+    // Capital Cities tab feeds the 8 capitals; LGA tab feeds the 28 regionals.
+    // We key by STATE::PROPTYPE::region when the source carries a state suffix
+    // (e.g. "Central Coast (NSW)"), and also store an unstated PROPTYPE::region
+    // alias so lookups without a state still work for unique regions.
+    const priceMap = {};
+    const ingest = (rows) => {
+      if (!Array.isArray(rows) || rows.length < 2) return;
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        const region = r[REGION_COL];
+        const propType = String(r[PROPTYPE_COL] || '').trim().toUpperCase();
+        const price = Number(r[PRICE_COL]);
+        if (!region || !propType || !price || isNaN(price)) continue;
+
+        const stateSuffix = extractStateSuffix(region);
+        const baseName = normalizeRegion(region);
+
+        if (stateSuffix) {
+          // Definitive stated key — can't collide with other states
+          priceMap[stateSuffix + '::' + propType + '::' + baseName] = price;
+        } else {
+          // No state suffix in source; store unstated alias.
+          // Only write if not already taken by a disambiguated row,
+          // so "Central Coast" (no state) doesn't overwrite a proper NSW entry.
+          const unstated = propType + '::' + baseName;
+          if (priceMap[unstated] == null) priceMap[unstated] = price;
+        }
+      }
+    };
+    ingest(data.capitalCities);
+    ingest(data.lga);
+
+    // Apply to HOUSES_DATA (price is index 3) and UNITS_DATA (price is index 2).
+    const matched = { houses: 0, units: 0, pop: 0, inc: 0, aicH: 0, aicU: 0 };
+    const missing = [];
+    const lookupPrice = (region, propType, state) => {
+      const baseName = normalizeRegion(region);
+      const p = propType.toUpperCase();
+      const s = (state || '').toUpperCase();
+      // Try state-qualified key first; fall back to unstated alias
+      return priceMap[s + '::' + p + '::' + baseName] ?? priceMap[p + '::' + baseName] ?? null;
+    };
+    HOUSES_DATA.forEach(row => {
+      const price = lookupPrice(row[1], 'H', row[0]);
+      if (price != null) {
+        row[3] = price;
+        matched.houses++;
+      } else {
+        missing.push('House: ' + row[1]);
+      }
+    });
+    UNITS_DATA.forEach(row => {
+      const price = lookupPrice(row[1], 'U', row[0]);
+      if (price != null) {
+        row[2] = price;
+        matched.units++;
+      } else {
+        missing.push('Unit: ' + row[1]);
+      }
+    });
+
+    // Apply ABS populations (HOUSES_DATA[i][2]).
+    // Server returns { latestYear, capitalCities: {Sydney: N, ...}, lga: {...} }
+    const pops = data.populations;
+    if (pops && !pops.error) {
+      // Build a single normalized lookup combining both sources.
+      // Capital cities win over LGAs if there's a name collision.
+      const popMap = {};
+      [pops.lga || {}, pops.capitalCities || {}].forEach(dict => {
+        Object.keys(dict).forEach(name => {
+          popMap[normalizeRegion(name)] = Number(dict[name]);
+        });
+      });
+      HOUSES_DATA.forEach(row => {
+        const key = normalizeRegion(row[1]);
+        if (popMap[key] != null && !isNaN(popMap[key])) {
+          row[2] = popMap[key];
+          matched.pop++;
+        } else {
+          missing.push('Pop: ' + row[1]);
+        }
+      });
+      if (pops.latestYear) currentPopYear = pops.latestYear;
+    } else if (pops && pops.error) {
+      console.warn('[Live prices] ABS populations unavailable:', pops.error);
+    }
+
+    // Apply ABS incomes (HOUSES_DATA[i][4]).
+    // Server returns { release, releaseLabel, asOf, states: { NSW: 2084, ... } }
+    const incs = data.incomes;
+    if (incs && !incs.error && incs.states) {
+      HOUSES_DATA.forEach(row => {
+        const state = String(row[0] || '').trim().toUpperCase();
+        const v = incs.states[state];
+        if (v != null && !isNaN(Number(v))) {
+          row[4] = Number(v);
+          matched.inc++;
+        } else {
+          missing.push('Inc: ' + row[1] + ' (' + state + ')');
+        }
+      });
+      // Remember release label for badge
+      if (incs.releaseLabel) currentIncomeRelease = incs.releaseLabel;
+    } else if (incs && incs.error) {
+      console.warn('[Live data] ABS incomes unavailable:', incs.error);
+    }
+
+    // Apply AI Ceilings (HOUSES_DATA[i][5] and UNITS_DATA[i][4]).
+    // Server returns { latestYear, capitalCities: {Sydney: {H, U}}, lga: {...} }
+    const aic = data.aic;
+    if (aic && !aic.error) {
+      // Build a normalized lookup combining both sources — capital cities win on collision.
+      const aicMap = {};
+      [aic.lga || {}, aic.capitalCities || {}].forEach(dict => {
+        Object.keys(dict).forEach(name => {
+          aicMap[normalizeRegion(name)] = dict[name];
+        });
+      });
+      HOUSES_DATA.forEach(row => {
+        const key = normalizeRegion(row[1]);
+        const hit = aicMap[key];
+        if (hit && hit.H != null && !isNaN(Number(hit.H))) {
+          row[5] = Number(hit.H);
+          matched.aicH++;
+        } else {
+          missing.push('AIC-H: ' + row[1]);
+        }
+      });
+      UNITS_DATA.forEach(row => {
+        const key = normalizeRegion(row[1]);
+        const hit = aicMap[key];
+        if (hit && hit.U != null && !isNaN(Number(hit.U))) {
+          row[4] = Number(hit.U);
+          matched.aicU++;
+        } else {
+          missing.push('AIC-U: ' + row[1]);
+        }
+      });
+      if (aic.latestYear) currentAicYear = aic.latestYear;
+    } else if (aic && aic.error) {
+      console.warn('[Live data] AI Ceiling unavailable:', aic.error);
+    }
+
+    // Apply RBA rates to the Variables panel inputs.
+    // Only the Houses tab has the editable inputs; the other tabs mirror
+    // computed values, which will update via recalcAll() below.
+    const rates = data.rates;
+    if (rates && !rates.error) {
+      const cashEl     = document.getElementById('h-cashRate');
+      const bankEl     = document.getElementById('h-bankVarDisplay');
+      const cashDateEl = document.getElementById('h-cashRate-date');
+      const bankDateEl = document.getElementById('h-bankVar-date');
+      if (cashEl && rates.cashRate != null && !isNaN(Number(rates.cashRate))) {
+        cashEl.value = Number(rates.cashRate).toFixed(2);
+      }
+      if (bankEl && rates.bankRate != null && !isNaN(Number(rates.bankRate))) {
+        bankEl.value = Number(rates.bankRate).toFixed(2);
+      }
+      // Show the source date as a small subtitle under each label
+      if (cashDateEl) cashDateEl.textContent = rates.cashRateDate  ? 'as of ' + rates.cashRateDate : '';
+      if (bankDateEl) bankDateEl.textContent = rates.bankRateMonth ? 'as of ' + rates.bankRateMonth : '';
+    } else if (rates && rates.error) {
+      console.warn('[Live data] RBA rates unavailable:', rates.error);
+    }
+
+    // Apply CPI to the Inflation Rate input.
+    const cpi = data.cpi;
+    if (cpi && !cpi.error) {
+      const inflEl     = document.getElementById('h-inflation');
+      const inflDateEl = document.getElementById('h-inflation-date');
+      if (inflEl && cpi.inflationRate != null && !isNaN(Number(cpi.inflationRate))) {
+        inflEl.value = Number(cpi.inflationRate).toFixed(2);
+      }
+      if (inflDateEl) inflDateEl.textContent = cpi.releaseLabel ? 'as of ' + cpi.releaseLabel : '';
+    } else if (cpi && cpi.error) {
+      console.warn('[Live data] CPI unavailable:', cpi.error);
+    }
+
+    // Rebuild HOUSES_BY_REGION so lookupPop/lookupIncome reflect the
+    // latest HOUSES_DATA (touched by both pop and income updates above).
+    Object.keys(HOUSES_BY_REGION).forEach(k => delete HOUSES_BY_REGION[k]);
+    HOUSES_DATA.forEach(d => {
+      HOUSES_BY_REGION[d[1].trim().toLowerCase()] = { pop: d[2], income: d[4] };
+    });
+
+    // Re-render with the fresh data
+    recalcAll();
+    currentSourceFile = data.sourceFile;
+    hideUpdateBanner();
+
+    // Populate column-header subtitles with their respective data-source dates.
+    // The subtitle spans carry classes so we can set them all at once.
+    const setColSubtitle = (className, text) => {
+      document.querySelectorAll('.' + className).forEach(el => {
+        el.textContent = text || '';
+      });
+    };
+    // Price column: source file is like "2026-01 Market Trends" — show the month/year
+    const priceDateText = (() => {
+      if (!data.sourceFile) return '';
+      const m = data.sourceFile.match(/(\d{4})-(\d{2})/);
+      if (!m) return '';
+      const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const mo = monthNames[Number(m[2]) - 1] || m[2];
+      return 'as of ' + mo + ' ' + m[1];
+    })();
+    setColSubtitle('col-price-date', priceDateText);
+
+    // Income: release label like "Nov 2025"
+    setColSubtitle('col-income-date', currentIncomeRelease ? 'as of ' + currentIncomeRelease : '');
+
+    // Population: FY format, e.g. 2025 → "2024-25 FY"
+    const popDateText = (() => {
+      if (!currentPopYear) return '';
+      const y = Number(currentPopYear);
+      const prev = y - 1;
+      const yy = String(y).slice(-2);
+      return `${prev}-${yy} FY`;
+    })();
+    setColSubtitle('col-pop-date', popDateText);
+
+    setPhase(`Loaded · ${formatStamp(new Date())}`, 'success');
+
+    console.log('[Live data] Loaded from', data.sourceFile,
+                '— matched', matched.houses, 'houses,', matched.units, 'units,',
+                matched.pop, 'populations,', matched.inc, 'incomes',
+                currentIncomeRelease ? '(' + currentIncomeRelease + '),' : ',',
+                matched.aicH, 'AIC-H,', matched.aicU, 'AIC-U',
+                currentAicYear ? '(' + currentAicYear + ')' : '');
+    if (missing.length) console.log('[Live data] Unmatched:', missing);
+  } catch (err) {
+    setPhase('Live data unavailable — using bundled', 'error');
+    console.warn('[Live prices] Failed to load — using bundled data:', err.message);
+  }
+}
+
+// Poll for newer source files every 5 minutes
+function checkForUpdates() {
+  if (!currentSourceFile) return;  // Initial load hasn't completed yet
+  loadLatestPrices(false);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VERSIONS / SNAPSHOTS — Supabase integration
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// Configuration: PASTE YOUR SUPABASE CREDENTIALS HERE.
+// From Supabase Dashboard → Project Settings → API.
+// The anon key is designed to be public; Row Level Security policies
+// in Supabase ensure only allowlisted users can actually save/load.
+
+const SUPABASE_URL      = 'https://rgvfmnhdapztfbfvjemc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJndmZtbmhkYXB6dGZiZnZqZW1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NDMyODMsImV4cCI6MjA5MjMxOTI4M30.-XGGa_INManXxzA-aaipI5-VIK6kKX0pdvJCTqHELC8';
+
+// Feature flag — auto-disabled if credentials aren't set.
+const VERSIONS_ENABLED = SUPABASE_URL.indexOf('PASTE_YOUR') === -1 &&
+                         SUPABASE_ANON_KEY.indexOf('PASTE_YOUR') === -1;
+
+const versionsMenu = (() => {
+  let supabase = null;
+  let session = null;
+  let allowed = false;
+  let inReadOnlyMode = false;
+  let originalState = null;  // Pre-snapshot state so exit-readonly can restore
+
+  // ── Initialise the Supabase client if configured ────────────────────────
+  function init() {
+    if (!VERSIONS_ENABLED) {
+      document.getElementById('versions-menu').style.display = 'none';
+      return;
+    }
+    if (typeof window.supabase === 'undefined') {
+      console.warn('[Versions] Supabase JS client failed to load');
+      document.getElementById('versions-menu').style.display = 'none';
+      return;
+    }
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Pick up existing session from magic-link redirect
+    supabase.auth.getSession().then(({ data }) => {
+      if (data && data.session) {
+        session = data.session;
+        checkAllowlist();
+      }
+    });
+    // Listen for auth changes (e.g. after clicking magic link)
+    supabase.auth.onAuthStateChange((event, s) => {
+      session = s;
+      if (event === 'SIGNED_IN' && session) checkAllowlist();
+      if (event === 'SIGNED_OUT') {
+        allowed = false;
+        closeDropdown();
+      }
+    });
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('versions-menu');
+      if (menu && !menu.contains(e.target)) closeDropdown();
+    });
+  }
+
+  async function checkAllowlist() {
+    if (!session) return;
+    const email = session.user?.email;
+    if (!email) return;
+    const { data, error } = await supabase
+      .from('allowed_emails')
+      .select('email')
+      .ilike('email', email)
+      .limit(1);
+    allowed = !error && data && data.length > 0;
+    if (!allowed) {
+      console.warn('[Versions] Signed in as ' + email + ' but not on allowlist');
+    }
+  }
+
+  // ── Dropdown UI ─────────────────────────────────────────────────────────
+  const dropdownEl = () => document.getElementById('versions-dropdown');
+
+  function closeDropdown() {
+    const d = dropdownEl();
+    if (d) d.hidden = true;
+  }
+
+  function showDropdown(html) {
+    const d = dropdownEl();
+    d.innerHTML = html;
+    d.hidden = false;
+  }
+
+  // ── Sign-in flow ────────────────────────────────────────────────────────
+  function renderSignInPrompt(msg = '', msgClass = '') {
+    showDropdown(`
+      <div class="versions-prompt">
+        <label class="versions-prompt-label">Sign in with your email</label>
+        <input type="email" class="versions-prompt-input" id="signin-email"
+               placeholder="you@example.com" autocomplete="email">
+        <div class="versions-prompt-actions">
+          <button class="versions-btn" onclick="versionsMenu.cancel()">Cancel</button>
+          <button class="versions-btn primary" onclick="versionsMenu.sendMagicLink()">Send magic link</button>
+        </div>
+        <div class="versions-prompt-msg ${msgClass}" id="signin-msg">${msg}</div>
+      </div>
+    `);
+    setTimeout(() => {
+      const inp = document.getElementById('signin-email');
+      if (inp) inp.focus();
+    }, 30);
+  }
+
+  async function sendMagicLink() {
+    const input = document.getElementById('signin-email');
+    const msg = document.getElementById('signin-msg');
+    if (!input) return;
+    const email = input.value.trim().toLowerCase();
+    if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+      msg.textContent = 'Enter a valid email address.';
+      msg.className = 'versions-prompt-msg error';
+      return;
+    }
+    msg.textContent = 'Sending…';
+    msg.className = 'versions-prompt-msg';
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email,
+      options: { emailRedirectTo: window.location.href }
+    });
+    if (error) {
+      msg.textContent = 'Error: ' + error.message;
+      msg.className = 'versions-prompt-msg error';
+    } else {
+      msg.textContent = 'Check your email for a sign-in link.';
+      msg.className = 'versions-prompt-msg success';
+    }
+  }
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    session = null;
+    allowed = false;
+    closeDropdown();
+  }
+
+  // ── Save flow ───────────────────────────────────────────────────────────
+  async function openSave() {
+    if (!VERSIONS_ENABLED) return alert('Versions feature not configured.');
+    if (inReadOnlyMode) return alert('Exit read-only view before saving a new version.');
+    if (!session) return renderSignInPrompt();
+    if (!allowed) return renderSignInPrompt('Your email is not on the allowlist. Contact your admin.', 'error');
+
+    showDropdown(`
+      <div class="versions-prompt">
+        <label class="versions-prompt-label">Name this version</label>
+        <input type="text" class="versions-prompt-input" id="save-name"
+               placeholder="e.g. IC Apr 2026 — baseline">
+        <label class="versions-prompt-label" style="margin-top:10px;">Note (optional)</label>
+        <input type="text" class="versions-prompt-input" id="save-note"
+               placeholder="Brief description">
+        <div class="versions-prompt-actions">
+          <button class="versions-btn" onclick="versionsMenu.cancel()">Cancel</button>
+          <button class="versions-btn primary" onclick="versionsMenu.saveNow()">Save</button>
+        </div>
+        <div class="versions-prompt-msg" id="save-msg"></div>
+      </div>
+    `);
+    setTimeout(() => {
+      const inp = document.getElementById('save-name');
+      if (inp) inp.focus();
+    }, 30);
+  }
+
+  async function saveNow() {
+    const nameInput = document.getElementById('save-name');
+    const noteInput = document.getElementById('save-note');
+    const msg = document.getElementById('save-msg');
+    if (!nameInput) return;
+    const name = nameInput.value.trim();
+    const note = noteInput.value.trim();
+    if (!name) {
+      msg.textContent = 'Please enter a name for this version.';
+      msg.className = 'versions-prompt-msg error';
+      return;
+    }
+
+    msg.textContent = 'Saving…';
+    msg.className = 'versions-prompt-msg';
+
+    const snapshot = captureSnapshot();
+    const { error } = await supabase
+      .from('snapshots')
+      .insert({
+        name: name,
+        saved_by: session.user.email,
+        note: note || null,
+        data: snapshot
+      });
+
+    if (error) {
+      msg.textContent = 'Error: ' + error.message;
+      msg.className = 'versions-prompt-msg error';
+      return;
+    }
+    msg.textContent = 'Saved.';
+    msg.className = 'versions-prompt-msg success';
+    setTimeout(closeDropdown, 800);
+  }
+
+  // ── Load flow ───────────────────────────────────────────────────────────
+  async function openLoad() {
+    if (!VERSIONS_ENABLED) return alert('Versions feature not configured.');
+    if (!session) return renderSignInPrompt();
+    if (!allowed) return renderSignInPrompt('Your email is not on the allowlist. Contact your admin.', 'error');
+
+    showDropdown(`
+      <div class="versions-dropdown-header">
+        <span class="versions-dropdown-title">Saved Versions</span>
+        <button class="versions-signout" onclick="versionsMenu.signOut()">Sign out</button>
+      </div>
+      <div class="versions-empty">Loading…</div>
+    `);
+
+    const { data, error } = await supabase
+      .from('snapshots')
+      .select('id, name, saved_by, saved_at, note')
+      .order('saved_at', { ascending: false });
+
+    const d = dropdownEl();
+    const headerHtml = `
+      <div class="versions-dropdown-header">
+        <span class="versions-dropdown-title">Saved Versions</span>
+        <button class="versions-signout" onclick="versionsMenu.signOut()">Sign out</button>
+      </div>`;
+
+    if (error) {
+      d.innerHTML = headerHtml +
+        `<div class="versions-empty error">Error: ${error.message}</div>`;
+      return;
+    }
+    if (!data || data.length === 0) {
+      d.innerHTML = headerHtml +
+        `<div class="versions-empty">No saved versions yet. Click 💾 Save to create one.</div>`;
+      return;
+    }
+
+    const ownEmail = session.user.email;
+    const rowsHtml = data.map(s => {
+      const when = new Date(s.saved_at).toLocaleString('en-AU', {
+        day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      const canDelete = (s.saved_by || '').toLowerCase() === ownEmail.toLowerCase();
+      return `
+        <div class="versions-item">
+          <div class="versions-item-name">${escapeHtml(s.name)}</div>
+          <div class="versions-item-meta">${escapeHtml(s.saved_by)} · ${when}${s.note ? ' · ' + escapeHtml(s.note) : ''}</div>
+          <div class="versions-item-actions">
+            <button class="versions-item-btn" onclick="versionsMenu.load('${s.id}')">View</button>
+            ${canDelete ? `<button class="versions-item-btn danger" onclick="versionsMenu.remove('${s.id}', '${escapeHtml(s.name).replace(/'/g, "\\'")}')">Delete</button>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+
+    d.innerHTML = headerHtml + '<div class="versions-list">' + rowsHtml + '</div>';
+  }
+
+  async function load(id) {
+    const { data, error } = await supabase
+      .from('snapshots')
+      .select('name, saved_by, saved_at, data')
+      .eq('id', id)
+      .single();
+    if (error) {
+      alert('Load failed: ' + error.message);
+      return;
+    }
+    applySnapshot(data);
+    closeDropdown();
+  }
+
+  async function remove(id, name) {
+    if (!confirm('Delete version "' + name + '"? This cannot be undone.')) return;
+    const { error } = await supabase.from('snapshots').delete().eq('id', id);
+    if (error) {
+      alert('Delete failed: ' + error.message);
+      return;
+    }
+    openLoad();  // refresh the list
+  }
+
+  function cancel() { closeDropdown(); }
+
+  // ── Snapshot capture ─────────────────────────────────────────────────────
+  function captureSnapshot() {
+    // Serialize everything needed to reproduce the workbook state.
+    return {
+      schemaVersion: 1,
+      capturedAt: new Date().toISOString(),
+      sourceFile: currentSourceFile,
+      incomeRelease: currentIncomeRelease,
+      aicYear: currentAicYear,
+      popYear: currentPopYear,
+      housesData: JSON.parse(JSON.stringify(HOUSES_DATA)),
+      unitsData:  JSON.parse(JSON.stringify(UNITS_DATA)),
+      inputs: {
+        cashRate:    document.getElementById('h-cashRate').value,
+        bankVar:     document.getElementById('h-bankVarDisplay').value,
+        apraBuffer:  document.getElementById('h-apraBuffer').value,
+        apraBufferF: document.getElementById('h-apraBufferF').value,
+        icForecast:  document.getElementById('h-icForecast').value,
+        bankMargin:  document.getElementById('h-bankMargin').value,
+        inflation:   document.getElementById('h-inflation').value,
+        capWage:     document.getElementById('wg-capCity').value,
+        regWage:     document.getElementById('wg-regional').value,
+        wgYears:     document.getElementById('wg-years').value
+      },
+      subtitles: {
+        cashRateDate:   (document.getElementById('h-cashRate-date')   || {}).textContent || '',
+        bankVarDate:    (document.getElementById('h-bankVar-date')    || {}).textContent || '',
+        inflationDate:  (document.getElementById('h-inflation-date')  || {}).textContent || '',
+        colPopDate:     (document.querySelector('.col-pop-date')      || {}).textContent || '',
+        colPriceDate:   (document.querySelector('.col-price-date')    || {}).textContent || '',
+        colIncomeDate:  (document.querySelector('.col-income-date')   || {}).textContent || ''
+      }
+    };
+  }
+
+  function applySnapshot(record) {
+    const snap = record.data;
+    if (!snap || snap.schemaVersion !== 1) {
+      alert('Unsupported snapshot format.');
+      return;
+    }
+
+    // Stash current live state so we can exit read-only later
+    originalState = captureSnapshot();
+
+    // Replace data arrays in-place (same references preserved)
+    HOUSES_DATA.length = 0;
+    snap.housesData.forEach(row => HOUSES_DATA.push(row));
+    UNITS_DATA.length = 0;
+    snap.unitsData.forEach(row => UNITS_DATA.push(row));
+
+    // Rebuild HOUSES_BY_REGION lookup
+    Object.keys(HOUSES_BY_REGION).forEach(k => delete HOUSES_BY_REGION[k]);
+    HOUSES_DATA.forEach(d => {
+      HOUSES_BY_REGION[d[1].trim().toLowerCase()] = { pop: d[2], income: d[4] };
+    });
+
+    // Restore input values
+    const inp = snap.inputs || {};
+    Object.entries({
+      'h-cashRate':         inp.cashRate,
+      'h-bankVarDisplay':   inp.bankVar,
+      'h-apraBuffer':       inp.apraBuffer,
+      'h-apraBufferF':      inp.apraBufferF,
+      'h-icForecast':       inp.icForecast,
+      'h-bankMargin':       inp.bankMargin,
+      'h-inflation':        inp.inflation,
+      'wg-capCity':         inp.capWage,
+      'wg-regional':        inp.regWage,
+      'wg-years':           inp.wgYears
+    }).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el != null && val != null) el.value = val;
+    });
+
+    // Restore subtitles
+    const subs = snap.subtitles || {};
+    const setText = (sel, txt) => document.querySelectorAll(sel).forEach(el => el.textContent = txt || '');
+    const setId   = (id, txt)  => { const el = document.getElementById(id); if (el) el.textContent = txt || ''; };
+    setId('h-cashRate-date',  subs.cashRateDate);
+    setId('h-bankVar-date',   subs.bankVarDate);
+    setId('h-inflation-date', subs.inflationDate);
+    setText('.col-pop-date',    subs.colPopDate);
+    setText('.col-price-date',  subs.colPriceDate);
+    setText('.col-income-date', subs.colIncomeDate);
+
+    // Re-render everything
+    recalcAll();
+
+    // Enter read-only mode
+    enterReadOnlyMode(record);
+  }
+
+  function enterReadOnlyMode(record) {
+    inReadOnlyMode = true;
+    document.body.classList.add('readonly-mode');
+    const banner = document.getElementById('readonly-banner');
+    const msg = document.getElementById('readonly-banner-msg');
+    const when = new Date(record.saved_at).toLocaleString('en-AU', {
+      day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+    msg.textContent = `Viewing saved version: ${record.name} · saved by ${record.saved_by} on ${when}`;
+    banner.hidden = false;
+    document.getElementById('versions-save-btn').disabled = true;
+  }
+
+  function exitReadOnly() {
+    if (!inReadOnlyMode || !originalState) return;
+    const snap = originalState;
+    // Put live state back in place
+    HOUSES_DATA.length = 0;
+    snap.housesData.forEach(row => HOUSES_DATA.push(row));
+    UNITS_DATA.length = 0;
+    snap.unitsData.forEach(row => UNITS_DATA.push(row));
+    Object.keys(HOUSES_BY_REGION).forEach(k => delete HOUSES_BY_REGION[k]);
+    HOUSES_DATA.forEach(d => {
+      HOUSES_BY_REGION[d[1].trim().toLowerCase()] = { pop: d[2], income: d[4] };
+    });
+    const inp = snap.inputs;
+    Object.entries({
+      'h-cashRate': inp.cashRate, 'h-bankVarDisplay': inp.bankVar,
+      'h-apraBuffer': inp.apraBuffer, 'h-apraBufferF': inp.apraBufferF,
+      'h-icForecast': inp.icForecast, 'h-bankMargin': inp.bankMargin,
+      'h-inflation': inp.inflation, 'wg-capCity': inp.capWage,
+      'wg-regional': inp.regWage, 'wg-years': inp.wgYears
+    }).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el != null && val != null) el.value = val;
+    });
+    const subs = snap.subtitles;
+    const setText = (sel, txt) => document.querySelectorAll(sel).forEach(el => el.textContent = txt || '');
+    const setId   = (id, txt)  => { const el = document.getElementById(id); if (el) el.textContent = txt || ''; };
+    setId('h-cashRate-date',  subs.cashRateDate);
+    setId('h-bankVar-date',   subs.bankVarDate);
+    setId('h-inflation-date', subs.inflationDate);
+    setText('.col-pop-date',    subs.colPopDate);
+    setText('.col-price-date',  subs.colPriceDate);
+    setText('.col-income-date', subs.colIncomeDate);
+
+    recalcAll();
+
+    inReadOnlyMode = false;
+    originalState = null;
+    document.body.classList.remove('readonly-mode');
+    document.getElementById('readonly-banner').hidden = true;
+    document.getElementById('versions-save-btn').disabled = false;
+  }
+
+  function escapeHtml(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  // Public API
+  return {
+    init,
+    openSave, saveNow,
+    openLoad, load, remove,
+    cancel,
+    sendMagicLink, signOut,
+    exitReadOnly
+  };
+})();
+
+// Expose exit function to the read-only banner button
+function exitReadOnlyMode() { versionsMenu.exitReadOnly(); }
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+recalcAll();
+attachHeaderSortHandlers();
+loadLatestPrices(true);
+setInterval(checkForUpdates, 5 * 60 * 1000);  // poll every 5 minutes
+versionsMenu.init();
+</script>
+</body>
+</html>
