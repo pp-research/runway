@@ -288,6 +288,79 @@
   .versions-prompt-msg.error { color: var(--red); }
   .versions-prompt-msg.success { color: var(--green); }
 
+  /* ── SIGN-IN WALL (full-page, blocks workbook until authenticated) ── */
+  .signin-wall {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(244, 251, 252, 0.97);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .signin-wall[hidden] { display: none; }
+  .signin-wall-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    width: 360px;
+    max-width: 90vw;
+    box-shadow: 0 12px 40px rgba(10,98,102,0.18);
+    text-align: center;
+  }
+  .signin-wall-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .signin-wall-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .signin-wall-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+  .signin-wall-input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  .signin-wall-btn {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .signin-wall-btn:hover {
+    background: var(--primary-dark, #0a6266);
+  }
+  .signin-wall-msg {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--text-muted);
+    min-height: 14px;
+  }
+  .signin-wall-msg.error { color: var(--red); }
+  .signin-wall-msg.success { color: var(--green); }
+
   /* ── READ-ONLY BANNER (when viewing a saved snapshot) ── */
   .readonly-banner {
     position: sticky;
@@ -1112,6 +1185,7 @@
   </div>
   <!-- Versions menu: Save + load past snapshots -->
   <div class="versions-menu" id="versions-menu">
+    <button class="versions-btn" id="versions-update-btn" onclick="versionsMenu.updateFromLive()">🔄 Update</button>
     <button class="versions-btn" id="versions-save-btn" onclick="versionsMenu.openSave()">💾 Save</button>
     <button class="versions-btn" id="versions-load-btn" onclick="versionsMenu.openLoad()">📂 Versions</button>
     <div class="versions-dropdown" id="versions-dropdown" hidden></div>
@@ -2796,36 +2870,303 @@ const versionsMenu = (() => {
   // ── Initialise the Supabase client if configured ────────────────────────
   function init() {
     if (!VERSIONS_ENABLED) {
+      // Versions feature disabled — fall back to old behaviour (live fetch on load)
       document.getElementById('versions-menu').style.display = 'none';
+      loadLatestPrices(true);
       return;
     }
     if (typeof window.supabase === 'undefined') {
       console.warn('[Versions] Supabase JS client failed to load');
       document.getElementById('versions-menu').style.display = 'none';
+      loadLatestPrices(true);
       return;
     }
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    // Pick up existing session from magic-link redirect
-    supabase.auth.getSession().then(({ data }) => {
+
+    // Disable Save/Versions/Update until auth resolved
+    setToolbarButtonsDisabled(true);
+
+    // Pick up existing session (from magic-link redirect or prior visit)
+    supabase.auth.getSession().then(async ({ data }) => {
       if (data && data.session) {
         session = data.session;
-        checkAllowlist();
+        await checkAllowlist();
+        await bootstrapFromLatestSnapshot();
+      } else {
+        renderSignInWall();
       }
     });
-    // Listen for auth changes (e.g. after clicking magic link)
-    supabase.auth.onAuthStateChange((event, s) => {
+
+    // Listen for auth changes (post-magic-link click)
+    supabase.auth.onAuthStateChange(async (event, s) => {
       session = s;
-      if (event === 'SIGNED_IN' && session) checkAllowlist();
+      if (event === 'SIGNED_IN' && session) {
+        await checkAllowlist();
+        await bootstrapFromLatestSnapshot();
+      }
       if (event === 'SIGNED_OUT') {
         allowed = false;
         closeDropdown();
+        renderSignInWall();
       }
     });
+
     // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
       const menu = document.getElementById('versions-menu');
       if (menu && !menu.contains(e.target)) closeDropdown();
     });
+  }
+
+  function isSignedIn() {
+    return !!session && !!session.user;
+  }
+
+  function setToolbarButtonsDisabled(disabled) {
+    ['versions-update-btn', 'versions-save-btn', 'versions-load-btn'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.disabled = disabled;
+    });
+  }
+
+  // Full-page sign-in wall shown when the user has no session.
+  function renderSignInWall() {
+    setToolbarButtonsDisabled(true);
+    let wall = document.getElementById('signin-wall');
+    if (!wall) {
+      wall = document.createElement('div');
+      wall.id = 'signin-wall';
+      wall.className = 'signin-wall';
+      document.body.appendChild(wall);
+    }
+    wall.innerHTML = `
+      <div class="signin-wall-card">
+        <div class="signin-wall-title">Sign in</div>
+        <div class="signin-wall-sub">Enter your email to access the runway workbook.</div>
+        <input type="email" class="signin-wall-input" id="wall-email"
+               placeholder="you@example.com" autocomplete="email">
+        <button class="signin-wall-btn" onclick="versionsMenu.wallSendLink()">Send magic link</button>
+        <div class="signin-wall-msg" id="wall-msg"></div>
+      </div>`;
+    wall.hidden = false;
+    setTimeout(() => {
+      const inp = document.getElementById('wall-email');
+      if (inp) inp.focus();
+    }, 50);
+  }
+
+  function hideSignInWall() {
+    const wall = document.getElementById('signin-wall');
+    if (wall) wall.hidden = true;
+  }
+
+  async function wallSendLink() {
+    const input = document.getElementById('wall-email');
+    const msg = document.getElementById('wall-msg');
+    const email = input.value.trim().toLowerCase();
+    if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+      msg.textContent = 'Enter a valid email address.';
+      msg.className = 'signin-wall-msg error';
+      return;
+    }
+    msg.textContent = 'Sending…';
+    msg.className = 'signin-wall-msg';
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email,
+      options: { emailRedirectTo: window.location.href }
+    });
+    if (error) {
+      msg.textContent = 'Error: ' + error.message;
+      msg.className = 'signin-wall-msg error';
+    } else {
+      msg.textContent = 'Check your email for a sign-in link.';
+      msg.className = 'signin-wall-msg success';
+    }
+  }
+
+  // After sign-in succeeds + allowlist verified, bootstrap the workbook from
+  // the most recent snapshot. If none exists, fall through to live fetch.
+  async function bootstrapFromLatestSnapshot() {
+    if (!allowed) {
+      renderNotAllowedWall();
+      return;
+    }
+    hideSignInWall();
+    setToolbarButtonsDisabled(false);
+
+    // Try to load the latest snapshot
+    const { data, error } = await supabase
+      .from('snapshots')
+      .select('id, name, saved_by, saved_at, data')
+      .order('saved_at', { ascending: false })
+      .limit(1);
+
+    if (error) {
+      console.warn('[Versions] Bootstrap query failed:', error.message);
+      // Fallback: live fetch so the user still sees something
+      loadLatestPrices(true);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      // No snapshots yet — first-time setup. Load live data so the workbook
+      // is populated, and hint that they can save a version.
+      loadLatestPrices(true);
+      setLastUpdatedText('No saved versions yet — click Update, then Save.');
+      return;
+    }
+
+    // Apply the latest snapshot
+    const record = data[0];
+    applySnapshotAsCurrent(record);
+  }
+
+  function renderNotAllowedWall() {
+    setToolbarButtonsDisabled(true);
+    let wall = document.getElementById('signin-wall');
+    if (!wall) {
+      wall = document.createElement('div');
+      wall.id = 'signin-wall';
+      wall.className = 'signin-wall';
+      document.body.appendChild(wall);
+    }
+    const email = session?.user?.email || 'your email';
+    wall.innerHTML = `
+      <div class="signin-wall-card">
+        <div class="signin-wall-title">Access denied</div>
+        <div class="signin-wall-sub">
+          ${escapeHtml(email)} is not on the allowlist.
+          Contact your administrator to request access.
+        </div>
+        <button class="signin-wall-btn" onclick="versionsMenu.signOut()">Sign out</button>
+      </div>`;
+    wall.hidden = false;
+  }
+
+  // Subtle "Last updated" indicator in the fetch indicator slot
+  function setLastUpdatedText(text, klass = '') {
+    const indicator = document.getElementById('fetch-indicator');
+    const spinner = indicator ? indicator.querySelector('.fetch-spinner') : null;
+    const txt = document.getElementById('fetch-text');
+    if (!indicator || !txt) return;
+    indicator.style.display = '';
+    indicator.classList.remove('success', 'error');
+    if (klass) indicator.classList.add(klass);
+    if (spinner) spinner.style.visibility = klass === '' ? 'visible' : 'hidden';
+    txt.textContent = text;
+  }
+
+  // Apply a snapshot record in editable "current" mode (no read-only banner).
+  // Used by bootstrap.
+  function applySnapshotAsCurrent(record) {
+    applyStateFromSnapshot(record.data);
+    // Render a subtle indicator — no read-only banner
+    const when = new Date(record.saved_at).toLocaleString('en-AU', {
+      day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+    setLastUpdatedText(
+      `Last updated: ${when} · by ${record.saved_by}${record.name ? ' · ' + record.name : ''}`,
+      'success'
+    );
+  }
+
+  // Apply a snapshot record in read-only mode (explicit historical view).
+  // Used by versionsMenu.load().
+  function applySnapshotReadOnly(record) {
+    originalState = captureSnapshot();
+    applyStateFromSnapshot(record.data);
+    inReadOnlyMode = true;
+    document.body.classList.add('readonly-mode');
+    const banner = document.getElementById('readonly-banner');
+    const msg = document.getElementById('readonly-banner-msg');
+    const when = new Date(record.saved_at).toLocaleString('en-AU', {
+      day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+    msg.textContent = `Viewing saved version: ${record.name} · saved by ${record.saved_by} on ${when}`;
+    banner.hidden = false;
+    document.getElementById('versions-update-btn').disabled = true;
+    document.getElementById('versions-save-btn').disabled = true;
+  }
+
+  // Shared data-application routine used by both bootstrap and manual load.
+  function applyStateFromSnapshot(snap) {
+    if (!snap || snap.schemaVersion !== 1) {
+      alert('Unsupported snapshot format.');
+      return;
+    }
+    HOUSES_DATA.length = 0;
+    snap.housesData.forEach(row => HOUSES_DATA.push(row));
+    UNITS_DATA.length = 0;
+    snap.unitsData.forEach(row => UNITS_DATA.push(row));
+    Object.keys(HOUSES_BY_REGION).forEach(k => delete HOUSES_BY_REGION[k]);
+    HOUSES_DATA.forEach(d => {
+      HOUSES_BY_REGION[d[1].trim().toLowerCase()] = { pop: d[2], income: d[4] };
+    });
+    currentSourceFile = snap.sourceFile || null;
+    currentIncomeRelease = snap.incomeRelease || null;
+    currentAicYear = snap.aicYear || null;
+    currentPopYear = snap.popYear || null;
+
+    const inp = snap.inputs || {};
+    Object.entries({
+      'h-cashRate': inp.cashRate, 'h-bankVarDisplay': inp.bankVar,
+      'h-apraBuffer': inp.apraBuffer, 'h-apraBufferF': inp.apraBufferF,
+      'h-icForecast': inp.icForecast, 'h-bankMargin': inp.bankMargin,
+      'h-inflation': inp.inflation, 'wg-capCity': inp.capWage,
+      'wg-regional': inp.regWage, 'wg-years': inp.wgYears
+    }).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el != null && val != null) el.value = val;
+    });
+
+    const subs = snap.subtitles || {};
+    const setText = (sel, txt) => document.querySelectorAll(sel).forEach(el => el.textContent = txt || '');
+    const setId   = (id, txt)  => { const el = document.getElementById(id); if (el) el.textContent = txt || ''; };
+    setId('h-cashRate-date',  subs.cashRateDate);
+    setId('h-bankVar-date',   subs.bankVarDate);
+    setId('h-inflation-date', subs.inflationDate);
+    setText('.col-pop-date',    subs.colPopDate);
+    setText('.col-price-date',  subs.colPriceDate);
+    setText('.col-income-date', subs.colIncomeDate);
+
+    recalcAll();
+  }
+
+  // ── Update flow ─────────────────────────────────────────────────────────
+  // 🔄 Update — fetch live data, then prompt to save as new version
+  async function updateFromLive() {
+    if (inReadOnlyMode) return alert('Exit read-only view before updating.');
+    if (!allowed) return alert('Not authorized.');
+
+    // Call the existing live loader (it updates fetch-indicator itself)
+    try {
+      await loadLatestPrices(true);
+    } catch (e) {
+      alert('Update failed: ' + (e.message || e));
+      return;
+    }
+
+    // Prompt: save this as a new version?
+    showDropdown(`
+      <div class="versions-prompt">
+        <div style="font-weight:600;font-size:12px;margin-bottom:6px;">Live data loaded.</div>
+        <label class="versions-prompt-label">Save this as a new version?</label>
+        <input type="text" class="versions-prompt-input" id="save-name"
+               placeholder="e.g. IC Apr 2026 — baseline">
+        <label class="versions-prompt-label" style="margin-top:10px;">Note (optional)</label>
+        <input type="text" class="versions-prompt-input" id="save-note"
+               placeholder="Brief description">
+        <div class="versions-prompt-actions">
+          <button class="versions-btn" onclick="versionsMenu.cancel()">Not now</button>
+          <button class="versions-btn primary" onclick="versionsMenu.saveNow()">Save version</button>
+        </div>
+        <div class="versions-prompt-msg" id="save-msg"></div>
+      </div>
+    `);
+    setTimeout(() => {
+      const inp = document.getElementById('save-name');
+      if (inp) inp.focus();
+    }, 30);
   }
 
   async function checkAllowlist() {
@@ -3033,14 +3374,14 @@ const versionsMenu = (() => {
   async function load(id) {
     const { data, error } = await supabase
       .from('snapshots')
-      .select('name, saved_by, saved_at, data')
+      .select('id, name, saved_by, saved_at, data')
       .eq('id', id)
       .single();
     if (error) {
       alert('Load failed: ' + error.message);
       return;
     }
-    applySnapshot(data);
+    applySnapshotReadOnly(data);
     closeDropdown();
   }
 
@@ -3091,117 +3432,16 @@ const versionsMenu = (() => {
     };
   }
 
-  function applySnapshot(record) {
-    const snap = record.data;
-    if (!snap || snap.schemaVersion !== 1) {
-      alert('Unsupported snapshot format.');
-      return;
-    }
-
-    // Stash current live state so we can exit read-only later
-    originalState = captureSnapshot();
-
-    // Replace data arrays in-place (same references preserved)
-    HOUSES_DATA.length = 0;
-    snap.housesData.forEach(row => HOUSES_DATA.push(row));
-    UNITS_DATA.length = 0;
-    snap.unitsData.forEach(row => UNITS_DATA.push(row));
-
-    // Rebuild HOUSES_BY_REGION lookup
-    Object.keys(HOUSES_BY_REGION).forEach(k => delete HOUSES_BY_REGION[k]);
-    HOUSES_DATA.forEach(d => {
-      HOUSES_BY_REGION[d[1].trim().toLowerCase()] = { pop: d[2], income: d[4] };
-    });
-
-    // Restore input values
-    const inp = snap.inputs || {};
-    Object.entries({
-      'h-cashRate':         inp.cashRate,
-      'h-bankVarDisplay':   inp.bankVar,
-      'h-apraBuffer':       inp.apraBuffer,
-      'h-apraBufferF':      inp.apraBufferF,
-      'h-icForecast':       inp.icForecast,
-      'h-bankMargin':       inp.bankMargin,
-      'h-inflation':        inp.inflation,
-      'wg-capCity':         inp.capWage,
-      'wg-regional':        inp.regWage,
-      'wg-years':           inp.wgYears
-    }).forEach(([id, val]) => {
-      const el = document.getElementById(id);
-      if (el != null && val != null) el.value = val;
-    });
-
-    // Restore subtitles
-    const subs = snap.subtitles || {};
-    const setText = (sel, txt) => document.querySelectorAll(sel).forEach(el => el.textContent = txt || '');
-    const setId   = (id, txt)  => { const el = document.getElementById(id); if (el) el.textContent = txt || ''; };
-    setId('h-cashRate-date',  subs.cashRateDate);
-    setId('h-bankVar-date',   subs.bankVarDate);
-    setId('h-inflation-date', subs.inflationDate);
-    setText('.col-pop-date',    subs.colPopDate);
-    setText('.col-price-date',  subs.colPriceDate);
-    setText('.col-income-date', subs.colIncomeDate);
-
-    // Re-render everything
-    recalcAll();
-
-    // Enter read-only mode
-    enterReadOnlyMode(record);
-  }
-
-  function enterReadOnlyMode(record) {
-    inReadOnlyMode = true;
-    document.body.classList.add('readonly-mode');
-    const banner = document.getElementById('readonly-banner');
-    const msg = document.getElementById('readonly-banner-msg');
-    const when = new Date(record.saved_at).toLocaleString('en-AU', {
-      day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-    });
-    msg.textContent = `Viewing saved version: ${record.name} · saved by ${record.saved_by} on ${when}`;
-    banner.hidden = false;
-    document.getElementById('versions-save-btn').disabled = true;
-  }
-
   function exitReadOnly() {
     if (!inReadOnlyMode || !originalState) return;
-    const snap = originalState;
-    // Put live state back in place
-    HOUSES_DATA.length = 0;
-    snap.housesData.forEach(row => HOUSES_DATA.push(row));
-    UNITS_DATA.length = 0;
-    snap.unitsData.forEach(row => UNITS_DATA.push(row));
-    Object.keys(HOUSES_BY_REGION).forEach(k => delete HOUSES_BY_REGION[k]);
-    HOUSES_DATA.forEach(d => {
-      HOUSES_BY_REGION[d[1].trim().toLowerCase()] = { pop: d[2], income: d[4] };
-    });
-    const inp = snap.inputs;
-    Object.entries({
-      'h-cashRate': inp.cashRate, 'h-bankVarDisplay': inp.bankVar,
-      'h-apraBuffer': inp.apraBuffer, 'h-apraBufferF': inp.apraBufferF,
-      'h-icForecast': inp.icForecast, 'h-bankMargin': inp.bankMargin,
-      'h-inflation': inp.inflation, 'wg-capCity': inp.capWage,
-      'wg-regional': inp.regWage, 'wg-years': inp.wgYears
-    }).forEach(([id, val]) => {
-      const el = document.getElementById(id);
-      if (el != null && val != null) el.value = val;
-    });
-    const subs = snap.subtitles;
-    const setText = (sel, txt) => document.querySelectorAll(sel).forEach(el => el.textContent = txt || '');
-    const setId   = (id, txt)  => { const el = document.getElementById(id); if (el) el.textContent = txt || ''; };
-    setId('h-cashRate-date',  subs.cashRateDate);
-    setId('h-bankVar-date',   subs.bankVarDate);
-    setId('h-inflation-date', subs.inflationDate);
-    setText('.col-pop-date',    subs.colPopDate);
-    setText('.col-price-date',  subs.colPriceDate);
-    setText('.col-income-date', subs.colIncomeDate);
-
-    recalcAll();
-
+    // Re-apply the previously stashed live state via the shared helper
+    applyStateFromSnapshot(originalState);
     inReadOnlyMode = false;
     originalState = null;
     document.body.classList.remove('readonly-mode');
     document.getElementById('readonly-banner').hidden = true;
     document.getElementById('versions-save-btn').disabled = false;
+    document.getElementById('versions-update-btn').disabled = false;
   }
 
   function escapeHtml(s) {
@@ -3213,10 +3453,13 @@ const versionsMenu = (() => {
   // Public API
   return {
     init,
+    isSignedIn,
     openSave, saveNow,
     openLoad, load, remove,
     cancel,
     sendMagicLink, signOut,
+    wallSendLink,
+    updateFromLive,
     exitReadOnly
   };
 })();
@@ -3225,11 +3468,20 @@ const versionsMenu = (() => {
 function exitReadOnlyMode() { versionsMenu.exitReadOnly(); }
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
+// NOTE: we no longer auto-fetch live data on page load. Instead:
+//   1. versionsMenu.init() establishes Supabase session
+//   2. versionsMenu.bootstrapFromLatestSnapshot() either loads the latest
+//      saved snapshot, OR shows a sign-in prompt if no session
+//   3. User clicks Update button to pull fresh live data
 recalcAll();
 attachHeaderSortHandlers();
-loadLatestPrices(true);
-setInterval(checkForUpdates, 5 * 60 * 1000);  // poll every 5 minutes
 versionsMenu.init();
+// Live-data polling (every 5 min) is kept for in-session update detection,
+// but only runs once we have an authenticated session so it doesn't waste
+// calls for anonymous/pre-auth states.
+setInterval(() => {
+  if (versionsMenu.isSignedIn()) checkForUpdates();
+}, 5 * 60 * 1000);
 </script>
 </body>
 </html>
