@@ -154,18 +154,32 @@
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 4px 10px;
+    padding: 4px 10px 4px 8px;
     font-family: inherit;
     font-size: 11px;
     font-weight: 500;
     color: var(--text);
     cursor: pointer;
     white-space: nowrap;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .vbtn-icon {
+    width: 13px;
+    height: 13px;
+    color: var(--primary);
+    flex-shrink: 0;
+    transition: color 0.15s;
   }
   .versions-btn:hover {
     background: var(--bg-subtle);
     border-color: var(--primary);
+    color: var(--primary);
+  }
+  .versions-btn:hover .vbtn-icon {
+    color: var(--primary-dark, #0a6266);
   }
   .versions-btn:disabled {
     opacity: 0.5;
@@ -176,6 +190,7 @@
     color: #fff;
     border-color: var(--primary);
   }
+  .versions-btn.primary .vbtn-icon { color: #fff; }
   .versions-btn.primary:hover {
     background: var(--primary-dark, #0a6266);
   }
@@ -1258,9 +1273,9 @@
   </div>
   <!-- Versions menu: Save + load past snapshots -->
   <div class="versions-menu" id="versions-menu">
-    <button class="versions-btn" id="versions-update-btn" onclick="versionsMenu.updateFromLive()">🔄 Update</button>
-    <button class="versions-btn" id="versions-save-btn" onclick="versionsMenu.openSave()">💾 Save</button>
-    <button class="versions-btn" id="versions-load-btn" onclick="versionsMenu.openLoad()">📂 Versions</button>
+    <button class="versions-btn" id="versions-update-btn" onclick="versionsMenu.updateFromLive()"><svg class="vbtn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8a5.5 5.5 0 0 1 9.4-3.9L14 6"/><path d="M14 2v4h-4"/><path d="M13.5 8a5.5 5.5 0 0 1-9.4 3.9L2 10"/><path d="M2 14v-4h4"/></svg>Update</button>
+    <button class="versions-btn" id="versions-save-btn" onclick="versionsMenu.openSave()"><svg class="vbtn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2h8l3 3v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M11 2v4H5V2"/><path d="M5 11h6v4H5z"/></svg>Save</button>
+    <button class="versions-btn" id="versions-load-btn" onclick="versionsMenu.openLoad()"><svg class="vbtn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M8 4.5V8l2.2 2.2"/></svg>Versions</button>
     <div class="versions-dropdown" id="versions-dropdown" hidden></div>
   </div>
 </div>
@@ -2297,10 +2312,17 @@ function onRateChange() {
     void el.offsetWidth;
     el.classList.add('recalc-flash');
   });
+  // Flip the indicator state to "Modified · not saved"
+  if (typeof versionsMenu !== 'undefined' && versionsMenu.markModified) {
+    versionsMenu.markModified();
+  }
 }
 
 function onWageChange() {
   recalcAll();
+  if (typeof versionsMenu !== 'undefined' && versionsMenu.markModified) {
+    versionsMenu.markModified();
+  }
 }
 
 // ── TAB / FILTER / SEARCH ────────────────────────────────────────────────────
@@ -3091,6 +3113,10 @@ const versionsMenu = (() => {
   let inReadOnlyMode = false;
   let originalState = null;
   let viewedRecord = null;  // The snapshot record currently being viewed (for Restore)
+  // True while we're programmatically applying a snapshot or live data — used
+  // to suppress the "Modified" indicator that would otherwise fire when our
+  // own code writes to inputs.
+  let isApplyingProgrammaticChange = false;
 
   function init() {
     if (!VERSIONS_ENABLED) {
@@ -3133,6 +3159,14 @@ const versionsMenu = (() => {
 
   // ── Bootstrap (page load): try latest snapshot, fall back to live ─────
   async function bootstrapFromLatestSnapshot() {
+    const fallbackToLive = async () => {
+      isApplyingProgrammaticChange = true;
+      try {
+        await loadLatestPrices(true);
+      } finally {
+        isApplyingProgrammaticChange = false;
+      }
+    };
     try {
       const { data, error } = await supabase
         .from('snapshots')
@@ -3141,18 +3175,18 @@ const versionsMenu = (() => {
         .limit(1);
       if (error) {
         console.warn('[Versions] Bootstrap query failed:', error.message);
-        loadLatestPrices(true);
+        await fallbackToLive();
         return;
       }
       if (!data || data.length === 0) {
-        loadLatestPrices(true);
+        await fallbackToLive();
         setLastUpdatedText('No saved versions yet — click Update, then Save.');
         return;
       }
       applySnapshotAsCurrent(data[0]);
     } catch (err) {
       console.warn('[Versions] Bootstrap failed, falling back to live:', err);
-      loadLatestPrices(true);
+      await fallbackToLive();
     }
   }
 
@@ -3164,7 +3198,7 @@ const versionsMenu = (() => {
       <div class="versions-prompt">
         <label class="versions-prompt-label">Name this version</label>
         <input type="text" class="versions-prompt-input" id="save-name"
-               placeholder="e.g. IC Apr 2026 — baseline">
+               value="${escapeHtml(fmtAuTimestamp(new Date()))}">
         <label class="versions-prompt-label" style="margin-top:10px;">Your name (optional)</label>
         <input type="text" class="versions-prompt-input" id="save-by"
                placeholder="Your name">
@@ -3179,7 +3213,7 @@ const versionsMenu = (() => {
       </div>`);
     setTimeout(() => {
       const inp = document.getElementById('save-name');
-      if (inp) inp.focus();
+      if (inp) { inp.focus(); inp.select(); }
     }, 30);
   }
 
@@ -3200,9 +3234,11 @@ const versionsMenu = (() => {
     msg.textContent = 'Saving…';
     msg.className = 'versions-prompt-msg';
     const snapshot = captureSnapshot();
-    const { error } = await supabase
+    const { data: inserted, error } = await supabase
       .from('snapshots')
-      .insert({ name, saved_by: by, note: note || null, data: snapshot });
+      .insert({ name, saved_by: by, note: note || null, data: snapshot })
+      .select('id, name, saved_by, saved_at')
+      .single();
     if (error) {
       msg.textContent = 'Error: ' + error.message;
       msg.className = 'versions-prompt-msg error';
@@ -3210,6 +3246,8 @@ const versionsMenu = (() => {
     }
     msg.textContent = 'Saved.';
     msg.className = 'versions-prompt-msg success';
+    // Flip indicator back to clean "saved" state with the new record's metadata
+    if (inserted) setIndicatorSaved(inserted);
     setTimeout(closeDropdown, 800);
   }
 
@@ -3278,18 +3316,25 @@ const versionsMenu = (() => {
   // ── Update from live ────────────────────────────────────────────────────
   async function updateFromLive() {
     if (inReadOnlyMode) return alert('Exit read-only view before updating.');
+    isApplyingProgrammaticChange = true;
     try {
       await loadLatestPrices(true);
     } catch (e) {
+      isApplyingProgrammaticChange = false;
       alert('Update failed: ' + (e.message || e));
       return;
+    } finally {
+      isApplyingProgrammaticChange = false;
     }
+    // Override the indicator that loadLatestPrices just set, with the
+    // "LIVE Update · not saved" state.
+    setIndicatorUpdated();
     showDropdown(`
       <div class="versions-prompt">
         <div style="font-weight:600;font-size:12px;margin-bottom:6px;">Live data loaded.</div>
         <label class="versions-prompt-label">Save this as a new version?</label>
         <input type="text" class="versions-prompt-input" id="save-name"
-               placeholder="e.g. Live data Apr 2026">
+               value="${escapeHtml(fmtAuTimestamp(new Date()))}">
         <label class="versions-prompt-label" style="margin-top:10px;">Your name (optional)</label>
         <input type="text" class="versions-prompt-input" id="save-by" placeholder="Your name">
         <label class="versions-prompt-label" style="margin-top:10px;">Note (optional)</label>
@@ -3302,7 +3347,7 @@ const versionsMenu = (() => {
       </div>`);
     setTimeout(() => {
       const inp = document.getElementById('save-name');
-      if (inp) inp.focus();
+      if (inp) { inp.focus(); inp.select(); }
     }, 30);
   }
 
@@ -3342,13 +3387,7 @@ const versionsMenu = (() => {
 
   function applySnapshotAsCurrent(record) {
     applyStateFromSnapshot(record.data);
-    const when = new Date(record.saved_at).toLocaleString('en-AU', {
-      day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-    });
-    setLastUpdatedText(
-      `Last updated: ${when} · by ${record.saved_by}${record.name ? ' · ' + record.name : ''}`,
-      'success'
-    );
+    setIndicatorSaved(record);
   }
 
   function applySnapshotReadOnly(record) {
@@ -3373,42 +3412,47 @@ const versionsMenu = (() => {
       alert('Unsupported snapshot format.');
       return;
     }
-    HOUSES_DATA.length = 0;
-    snap.housesData.forEach(row => HOUSES_DATA.push(row));
-    UNITS_DATA.length = 0;
-    snap.unitsData.forEach(row => UNITS_DATA.push(row));
-    Object.keys(HOUSES_BY_REGION).forEach(k => delete HOUSES_BY_REGION[k]);
-    HOUSES_DATA.forEach(d => {
-      HOUSES_BY_REGION[d[1].trim().toLowerCase()] = { pop: d[2], income: d[4] };
-    });
-    currentSourceFile = snap.sourceFile || null;
-    currentIncomeRelease = snap.incomeRelease || null;
-    currentAicYear = snap.aicYear || null;
-    currentPopYear = snap.popYear || null;
+    isApplyingProgrammaticChange = true;
+    try {
+      HOUSES_DATA.length = 0;
+      snap.housesData.forEach(row => HOUSES_DATA.push(row));
+      UNITS_DATA.length = 0;
+      snap.unitsData.forEach(row => UNITS_DATA.push(row));
+      Object.keys(HOUSES_BY_REGION).forEach(k => delete HOUSES_BY_REGION[k]);
+      HOUSES_DATA.forEach(d => {
+        HOUSES_BY_REGION[d[1].trim().toLowerCase()] = { pop: d[2], income: d[4] };
+      });
+      currentSourceFile = snap.sourceFile || null;
+      currentIncomeRelease = snap.incomeRelease || null;
+      currentAicYear = snap.aicYear || null;
+      currentPopYear = snap.popYear || null;
 
-    const inp = snap.inputs || {};
-    Object.entries({
-      'h-cashRate': inp.cashRate, 'h-bankVarDisplay': inp.bankVar,
-      'h-apraBuffer': inp.apraBuffer, 'h-apraBufferF': inp.apraBufferF,
-      'h-icForecast': inp.icForecast, 'h-bankMargin': inp.bankMargin,
-      'h-inflation': inp.inflation, 'wg-capCity': inp.capWage,
-      'wg-regional': inp.regWage, 'wg-years': inp.wgYears
-    }).forEach(([id, val]) => {
-      const el = document.getElementById(id);
-      if (el != null && val != null) el.value = val;
-    });
+      const inp = snap.inputs || {};
+      Object.entries({
+        'h-cashRate': inp.cashRate, 'h-bankVarDisplay': inp.bankVar,
+        'h-apraBuffer': inp.apraBuffer, 'h-apraBufferF': inp.apraBufferF,
+        'h-icForecast': inp.icForecast, 'h-bankMargin': inp.bankMargin,
+        'h-inflation': inp.inflation, 'wg-capCity': inp.capWage,
+        'wg-regional': inp.regWage, 'wg-years': inp.wgYears
+      }).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el != null && val != null) el.value = val;
+      });
 
-    const subs = snap.subtitles || {};
-    const setText = (sel, txt) => document.querySelectorAll(sel).forEach(el => el.textContent = txt || '');
-    const setId   = (id, txt)  => { const el = document.getElementById(id); if (el) el.textContent = txt || ''; };
-    setId('h-cashRate-date',  subs.cashRateDate);
-    setId('h-bankVar-date',   subs.bankVarDate);
-    setId('h-inflation-date', subs.inflationDate);
-    setText('.col-pop-date',    subs.colPopDate);
-    setText('.col-price-date',  subs.colPriceDate);
-    setText('.col-income-date', subs.colIncomeDate);
+      const subs = snap.subtitles || {};
+      const setText = (sel, txt) => document.querySelectorAll(sel).forEach(el => el.textContent = txt || '');
+      const setId   = (id, txt)  => { const el = document.getElementById(id); if (el) el.textContent = txt || ''; };
+      setId('h-cashRate-date',  subs.cashRateDate);
+      setId('h-bankVar-date',   subs.bankVarDate);
+      setId('h-inflation-date', subs.inflationDate);
+      setText('.col-pop-date',    subs.colPopDate);
+      setText('.col-price-date',  subs.colPriceDate);
+      setText('.col-income-date', subs.colIncomeDate);
 
-    recalcAll();
+      recalcAll();
+    } finally {
+      isApplyingProgrammaticChange = false;
+    }
   }
 
   function exitReadOnly() {
@@ -3445,6 +3489,48 @@ const versionsMenu = (() => {
     );
   }
 
+  // ── Indicator state machine ─────────────────────────────────────────────
+  // Three states displayed in the top-right indicator:
+  //   'saved'    — bootstrap or after a successful Save
+  //   'updated'  — after Update fetched live data (not yet saved)
+  //   'modified' — after the user edited any input (not yet saved)
+  //
+  // 'updated' and 'modified' both append "· This version is not saved" so the
+  // user knows their visible state isn't persisted. Calling Save returns to
+  // 'saved'. Loading any snapshot returns to 'saved' too.
+  function fmtAuTimestamp(date) {
+    return new Date(date).toLocaleString('en-AU', {
+      day: 'numeric', month: 'short', year: 'numeric',
+      hour: 'numeric', minute: '2-digit', hour12: true
+    }).replace(' am', ' am').replace(' pm', ' pm');
+  }
+
+  function setIndicatorSaved(record) {
+    const when = fmtAuTimestamp(record.saved_at);
+    setLastUpdatedText(`Last saved: ${when}`, 'success');
+  }
+  function setIndicatorUpdated() {
+    setLastUpdatedText(
+      `LIVE Update: ${fmtAuTimestamp(new Date())} · This is not saved`,
+      'success'
+    );
+  }
+  function setIndicatorModified() {
+    setLastUpdatedText(
+      `Modified: ${fmtAuTimestamp(new Date())} · This is not saved`,
+      'success'
+    );
+  }
+
+  // Public: called from the variable-input oninput handlers to flip the
+  // indicator state to "Modified". Suppressed during programmatic snapshot
+  // application so bootstrap doesn't immediately mark itself as modified.
+  function markModified() {
+    if (isApplyingProgrammaticChange) return;
+    if (inReadOnlyMode) return;  // shouldn't fire — inputs disabled — but defensive
+    setIndicatorModified();
+  }
+
   function setLastUpdatedText(text, klass = '') {
     const indicator = document.getElementById('fetch-indicator');
     const spinner = indicator ? indicator.querySelector('.fetch-spinner') : null;
@@ -3470,7 +3556,8 @@ const versionsMenu = (() => {
     cancel,
     updateFromLive,
     exitReadOnly,
-    restoreFromReadOnly
+    restoreFromReadOnly,
+    markModified
   };
 })();
 
