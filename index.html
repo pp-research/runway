@@ -2113,7 +2113,7 @@ function fmt$(v) {
 }
 function fmtPct(v) {
   if (v == null || isNaN(v)) return '—';
-  return (v*100).toFixed(1)+'%';
+  return (v*100).toFixed(2)+'%';
 }
 function fmtAI(v) {
   if (v == null || isNaN(v)) return '—';
@@ -2377,7 +2377,7 @@ function renderHouses(p) {
       <td>${region}</td>
       <td>${fmtPop(pop)}</td>
       <td>${fmt$(price)}</td>
-      <td>${fmtIncome(income, 1)}</td>
+      <td>${fmtIncome(income, 0)}</td>
       <td>${fmtPct(aiCeiling)}</td>
       <td class="curr-col">${fmtPct(aiCurr)}</td>
       <td class="curr-col">${fmt$(ceilPrice)}</td>
@@ -2434,7 +2434,7 @@ function renderUnits(p) {
       <td>${region}</td>
       <td>${fmtPop(pop)}</td>
       <td>${fmt$(price)}</td>
-      <td>${fmtIncome(income, 1)}</td>
+      <td>${fmtIncome(income, 0)}</td>
       <td>${fmtPct(aiCeiling)}</td>
       <td class="curr-col">${fmtPct(aiCurr)}</td>
       <td class="curr-col">${fmt$(ceilPrice)}</td>
@@ -2481,7 +2481,7 @@ function renderWageHouses(p) {
       <td>${region}</td>
       <td>${fmtPop(pop)}</td>
       <td>${fmt$(price)}</td>
-      <td>${fmtIncome(income, 1)}</td>
+      <td>${fmtIncome(income, 0)}</td>
       <td>${fmtIncome(wgIncome, 2)}</td>
       <td>${fmtPct(aiCeiling)}</td>
       <td class="curr-col">${fmtPct(aiCurr)}</td>
@@ -2531,7 +2531,7 @@ function renderWageUnits(p) {
       <td>${region}</td>
       <td>${fmtPop(pop)}</td>
       <td>${fmt$(price)}</td>
-      <td>${fmtIncome(income, 1)}</td>
+      <td>${fmtIncome(income, 0)}</td>
       <td>${fmtIncome(wgIncome, 2)}</td>
       <td>${fmtPct(aiCeiling)}</td>
       <td class="curr-col">${fmtPct(aiCurr)}</td>
