@@ -1370,13 +1370,6 @@
     flex: 1;                 /* content area fills available card height */
     align-items: center;     /* vertically center inputs in the card body */
   }
-  .sens-generate-btn {
-    padding: 7px 18px !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    flex-shrink: 0;
-    align-self: center;      /* button centered, doesn't stretch */
-  }
   /* Single combined table — House on left, Unit on right, shared cash rate */
   .sens-tables {
     display: flex;
@@ -2370,24 +2363,23 @@
         <div class="vars-mirror-item editable" title="Years of wage growth applied">
           <div class="vm-label">Years</div>
           <div class="vm-value">
-            <input type="number" id="sens-years" class="vm-input" step="1" min="1" max="20" value="5" oninput="sensitivityRecalc()">
+            <input type="number" id="sens-years" class="vm-input" step="1" min="1" max="20" value="5" oninput="sensitivityRecalc(); _sensMarkModified();">
           </div>
         </div>
         <div class="vars-mirror-item editable" title="Cap city wage growth %">
           <div class="vm-label">Cap City Wage</div>
           <div class="vm-value">
-            <input type="number" id="sens-capWage" class="vm-input" step="0.1" min="0" max="20" value="3.0" oninput="sensitivityRecalc()"><span class="vm-suffix">%</span>
+            <input type="number" id="sens-capWage" class="vm-input" step="0.1" min="0" max="20" value="3.0" oninput="sensitivityRecalc(); _sensMarkModified();"><span class="vm-suffix">%</span>
           </div>
         </div>
         <div class="vars-mirror-item editable" title="Regional wage growth %">
           <div class="vm-label">Regional Wage</div>
           <div class="vm-value">
-            <input type="number" id="sens-regWage" class="vm-input" step="0.1" min="0" max="20" value="2.0" oninput="sensitivityRecalc()"><span class="vm-suffix">%</span>
+            <input type="number" id="sens-regWage" class="vm-input" step="0.1" min="0" max="20" value="2.0" oninput="sensitivityRecalc(); _sensMarkModified();"><span class="vm-suffix">%</span>
           </div>
         </div>
       </div>
     </div>
-    <button class="versions-btn primary sens-generate-btn" onclick="sensitivityGenerate()">Generate</button>
   </div>
 
   <!-- Combined sensitivity table — Cash Rate shared across House and Unit calcs -->
@@ -4199,6 +4191,18 @@ const versionsMenu = (() => {
 
   // ── Snapshot capture / apply ────────────────────────────────────────────
   function captureSnapshot() {
+    // Sensitivity tab state — only included if the tab has been initialised
+    // at least once (i.e. user has visited it). Otherwise we don't pollute
+    // older snapshots with default values.
+    const sensitivity = (typeof sensInitialised !== 'undefined' && sensInitialised)
+      ? {
+          rates:   Array.isArray(sensRates) ? sensRates.slice() : null,
+          years:   document.getElementById('sens-years')?.value,
+          capWage: document.getElementById('sens-capWage')?.value,
+          regWage: document.getElementById('sens-regWage')?.value,
+          sortDir: typeof sensSortDir !== 'undefined' ? sensSortDir : 'desc'
+        }
+      : null;
     return {
       schemaVersion: 1,
       capturedAt: new Date().toISOString(),
@@ -4220,6 +4224,7 @@ const versionsMenu = (() => {
         regWage:     document.getElementById('wg-regional').value,
         wgYears:     document.getElementById('wg-years').value
       },
+      sensitivity,
       subtitles: {
         cashRateDate:   (document.getElementById('h-cashRate-date')   || {}).textContent || '',
         bankVarDate:    (document.getElementById('h-bankVar-date')    || {}).textContent || '',
@@ -4299,6 +4304,37 @@ const versionsMenu = (() => {
       // values for main regions, but if the user has the bundled toggle ON,
       // we want bundled values displayed.
       applyAICPreference();
+
+      // Restore Sensitivity Analysis tab state (rates list, inputs, sort dir).
+      // Older snapshots may lack `sensitivity`; in that case we leave the
+      // current sensitivity state alone.
+      if (snap.sensitivity) {
+        const s = snap.sensitivity;
+        if (Array.isArray(s.rates)) {
+          if (typeof sensRates !== 'undefined' || true) {
+            // Replace sensRates if it exists, or seed it for first use
+            window.sensRates = s.rates.slice();
+            // Mirror to the local module variable (sensRates is declared with
+            // `let` so we assign through the global to ensure it picks up)
+            try { sensRates = s.rates.slice(); } catch (e) {}
+          }
+          // Mark sensitivity as initialised so the tab doesn't re-seed defaults
+          try { sensInitialised = true; } catch (e) {}
+        }
+        const yEl = document.getElementById('sens-years');
+        const cEl = document.getElementById('sens-capWage');
+        const rEl = document.getElementById('sens-regWage');
+        if (yEl && s.years   != null) yEl.value = s.years;
+        if (cEl && s.capWage != null) cEl.value = s.capWage;
+        if (rEl && s.regWage != null) rEl.value = s.regWage;
+        if (s.sortDir === 'asc' || s.sortDir === 'desc') {
+          try { sensSortDir = s.sortDir; } catch (e) {}
+        }
+        // If the tab is currently visible, re-render with the restored state
+        if (typeof sensitivityRecalc === 'function' && sensInitialised) {
+          sensitivityRecalc();
+        }
+      }
 
       recalcAll();
     } finally {
@@ -4764,8 +4800,10 @@ let sensRates = null;          // user-editable list of cash rates (all editable
 let sensInitialised = false;   // first-show one-time setup flag
 let sensSelected = null;       // currently selected region key "STATE::Region"
 
-// Force-init helper — used by switchTab() and the Generate button so that
-// state setup is guaranteed regardless of which path opens the tab.
+// Force-init helper — used by switchTab() the FIRST time the tab opens.
+// Seeds inputs from Wage Growth tab values, and seeds default cash rates.
+// Subsequent calls are no-ops (the `sensInitialised` flag prevents re-seeding
+// inputs the user may have edited).
 function sensitivityInit() {
   if (sensInitialised) return;
   const yearsEl = document.getElementById('sens-years');
@@ -4780,15 +4818,6 @@ function sensitivityInit() {
   if (regEl   && wgReg)   regEl.value   = wgReg;
   sensRates = SENS_DEFAULT_RATES.slice();
   sensInitialised = true;
-}
-
-// Generate button handler — full reset + recalc with current selections.
-// Re-seeds the default cash rates (so users can recover the standard 9 rows
-// after editing/deleting) and forces a full render.
-function sensitivityGenerate() {
-  sensInitialised = false;       // force re-init
-  sensitivityInit();
-  sensitivityRefresh();
 }
 
 function sensitivityRefresh() {
@@ -4831,18 +4860,18 @@ function sensitivityRefresh() {
 
 function sensitivityAddRow() {
   if (!sensRates) return;
-  // Append a new editable rate row at the end. Default value picks something
-  // visibly distinct from the last row so the new row reads as "new".
   const lastRate = sensRates.length ? sensRates[sensRates.length - 1] : 3.50;
   const newRate = Math.max(0, parseFloat((lastRate - 0.5).toFixed(2)));
   sensRates.push(newRate);
   sensitivityRecalc();
+  _sensMarkModified();
 }
 
 function sensitivityDeleteRow(index) {
   if (!sensRates) return;
   sensRates.splice(index, 1);
   sensitivityRecalc();
+  _sensMarkModified();
 }
 
 function sensitivityUpdateRate(index, value) {
@@ -4850,6 +4879,16 @@ function sensitivityUpdateRate(index, value) {
   const v = parseFloat(value);
   if (!isNaN(v)) sensRates[index] = v;
   sensitivityRecalc();
+  _sensMarkModified();
+}
+
+// Mark snapshot-indicator as modified (only if not in the middle of a
+// programmatic update — same pattern as the other tabs).
+function _sensMarkModified() {
+  if (typeof isApplyingProgrammaticChange !== 'undefined' && isApplyingProgrammaticChange) return;
+  if (typeof versionsMenu !== 'undefined' && versionsMenu.markModified) {
+    versionsMenu.markModified();
+  }
 }
 
 // Sort direction toggles on each click of the header sort button.
@@ -4858,12 +4897,11 @@ let sensSortDir = 'desc';
 
 function sensitivitySort() {
   if (!sensRates) return;
-  // Flip direction: each click reverses
   sensSortDir = sensSortDir === 'desc' ? 'asc' : 'desc';
   sensRates.sort((a, b) => sensSortDir === 'desc' ? b - a : a - b);
   sensitivityRecalc();
-  // Update the button's icon to reflect new direction
   _sensUpdateSortBtnIcon();
+  _sensMarkModified();
 }
 
 function _sensUpdateSortBtnIcon() {
