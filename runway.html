@@ -166,6 +166,57 @@
     align-items: center;
     gap: 5px;
   }
+
+  /* AIC toggle — iOS-style switch in the tab bar action cluster.
+     ON  = use bundled AI Ceiling values for the 36 main regions
+     OFF = use whatever live fetch produced */
+  .aic-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px 4px 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    user-select: none;
+    margin-right: 4px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .aic-toggle:hover { border-color: var(--primary); }
+  .aic-toggle input { display: none; }
+  .aic-toggle-track {
+    display: inline-block;
+    width: 26px;
+    height: 14px;
+    background: var(--border);
+    border-radius: 7px;
+    position: relative;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .aic-toggle-thumb {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    transition: left 0.15s;
+  }
+  .aic-toggle input:checked + .aic-toggle-track {
+    background: var(--primary);
+  }
+  .aic-toggle input:checked + .aic-toggle-track .aic-toggle-thumb {
+    left: 13px;
+  }
+  .aic-toggle-label { line-height: 1; }
   .vbtn-icon {
     width: 13px;
     height: 13px;
@@ -1297,6 +1348,346 @@
     font-family: 'DM Mono', monospace;
   }
 
+  /* ── SENSITIVITY ANALYSIS TAB ── */
+  .sens-region-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  /* Top row: Region card + Sensitivity Inputs card + Generate button.
+     Cards stretch to equal heights; button sits centered to the right. */
+  .sens-top-row {
+    align-items: stretch;
+  }
+  .sens-top-row > .vars-mirror {
+    flex: 0 0 auto;          /* card width fits content; height stretches */
+    display: flex;
+    flex-direction: column;  /* let the title sit above content area */
+  }
+  .sens-top-row > .vars-mirror > .vars-mirror-items,
+  .sens-top-row > .vars-mirror > .sens-region-row {
+    flex: 1;                 /* content area fills available card height */
+    align-items: center;     /* vertically center inputs in the card body */
+  }
+  .sens-generate-btn {
+    padding: 7px 18px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    flex-shrink: 0;
+    align-self: center;      /* button centered, doesn't stretch */
+  }
+  /* Single combined table — House on left, Unit on right, shared cash rate */
+  .sens-tables {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  /* Visual separator between House and Unit sections in the combined table.
+     The first House column gets a left border so it stands out from Cash Rate;
+     the first Unit column gets a left border to mark the section change. */
+  .sens-table thead th.sens-section-house,
+  .sens-table tbody td.sens-section-house {
+    background: rgba(42,173,187,0.04);
+  }
+  .sens-table thead th.sens-section-unit,
+  .sens-table tbody td.sens-section-unit {
+    background: rgba(217,119,6,0.04);
+  }
+  /* Hover overrides background but preserves section tint subtly */
+  .sens-table tbody tr:hover td.sens-section-house {
+    background: rgba(42,173,187,0.08);
+  }
+  .sens-table tbody tr:hover td.sens-section-unit {
+    background: rgba(217,119,6,0.08);
+  }
+  /* Group header row spanning the section columns */
+  .sens-table thead tr.sens-thead-group th {
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .sens-table thead tr.sens-thead-group th.sens-section-house {
+    color: var(--primary);
+    background: rgba(42,173,187,0.1);
+  }
+  .sens-table thead tr.sens-thead-group th.sens-section-unit {
+    color: #c2410c;
+    background: rgba(217,119,6,0.1);
+  }
+  /* Vertical separators between sections. Columns are:
+     1=Cash Rate | 2=House Ceiling | 3=House Growth$ | 4=House Growth%
+     5=Unit Ceiling | 6=Unit Growth$ | 7=Unit Growth% | 8=Delete
+     Dividers go before columns 2, 5, and 8. */
+  .sens-table tbody td:nth-child(2),
+  .sens-table tbody td:nth-child(5),
+  .sens-table tbody td:nth-child(8),
+  .sens-table thead tr.sens-thead th:nth-child(1),
+  .sens-table thead tr.sens-thead th:nth-child(4),
+  .sens-table thead tr.sens-thead th:nth-child(7) {
+    border-left: 2px solid var(--border);
+  }
+  /* Group header row (HOUSE / UNIT spanning headers): apply dividers
+     so the columns line up visually with the data below. */
+  .sens-table thead tr.sens-thead-group th.sens-section-house,
+  .sens-table thead tr.sens-thead-group th.sens-section-unit,
+  .sens-table thead tr.sens-thead-group th[rowspan]:last-child {
+    border-left: 2px solid var(--border);
+  }
+  .sens-block {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(10,98,102,0.06);
+  }
+  /* Tighter padding for the combined table */
+  .sens-table thead th {
+    padding: 8px 10px;
+  }
+  .sens-table tbody td {
+    padding: 7px 10px;
+  }
+  .sens-block-header {
+    display: flex;
+    align-items: stretch;
+    background: var(--bg-subtle);
+    border-bottom: 1px solid var(--border);
+  }
+  .sens-block-title {
+    flex: 1;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    padding: 12px 18px;
+    text-transform: uppercase;
+  }
+  /* Banner row (House MHP / Unit MUP value) — sits as the topmost row of
+     the table head, aligned to the Ceiling Price column of each section. */
+  .sens-table thead tr.sens-thead-banner th {
+    background: var(--bg-card);
+    padding: 10px 10px;
+    border-bottom: 1px solid var(--border-light);
+    text-align: center;
+    font-weight: 400;
+  }
+  .sens-table thead tr.sens-thead-banner th.sens-banner-cell {
+    background: var(--bg-subtle);
+  }
+  .sens-banner-label {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-right: 8px;
+  }
+  .sens-banner-value {
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Old .sens-block-mhp-wrap rules retained below for backwards compat
+     (the wrappers are no longer rendered, but the rules don't harm anything) */
+  .sens-block-mhp-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    background: var(--bg-card);
+    border-left: 1px solid var(--border);
+  }
+  .sens-block-mhp-label {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+  .sens-block-mhp {
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+  }
+  .sens-table-wrap {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: var(--bg-card);
+  }
+  .sens-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    background: var(--bg-card);
+  }
+  .sens-table thead th {
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .sens-table tbody td {
+    padding: 8px 14px;
+    text-align: center !important;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-light);
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .sens-table thead th {
+    text-align: center !important;
+  }
+  /* Force any input/button/span inside a sensitivity cell to be a centered
+     inline-block (so they sit visually centered regardless of width). */
+  .sens-table tbody td > input,
+  .sens-table tbody td > button,
+  .sens-table tbody td > span {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .sens-table tbody td:first-child {
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .sens-table tbody tr:hover td {
+    background: rgba(42,173,187,0.04);
+  }
+  .sens-table tbody tr:last-child td { border-bottom: none; }
+  /* Row highlights removed — all rows render uniformly. The class names
+     `.sens-row-current` and `.sens-row-ic` may still be added by the
+     renderer but have no visual effect. */
+  /* Editable cash-rate input */
+  .sens-rate-input {
+    width: 64px;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: var(--bg-card);
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--text);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    -moz-appearance: textfield;
+    /* Center the input within its cell horizontally */
+    display: inline-block;
+    margin: 0 auto;
+  }
+  .sens-rate-input::-webkit-outer-spin-button,
+  .sens-rate-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .sens-rate-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--bg-subtle);
+  }
+  .sens-rate-static {
+    display: inline-block;
+    padding: 4px 8px;
+    font-family: inherit;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Action buttons cell — just delete now (drag handle moved to Cash Rate cell) */
+  .sens-actions { width: 32px; }
+  .sens-actions-cell {
+    white-space: nowrap;
+  }
+
+  /* Sort-toggle button in the Cash Rate header */
+  .sens-th-label {
+    margin-right: 6px;
+  }
+  .sens-sort-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-light);
+    padding: 3px 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 0;
+    transition: all 0.15s;
+  }
+  .sens-sort-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(42,173,187,0.06);
+  }
+
+  /* Delete button styling */
+  .sens-del-btn {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 6px;
+    line-height: 1;
+    border-radius: 4px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .sens-del-btn:hover:not(:disabled) {
+    background: rgba(220,30,30,0.1);
+    color: #d11515;
+  }
+  .sens-del-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+  }
+  /* Footer "+ Add" button row */
+  .sens-tfoot td {
+    padding: 8px 14px !important;
+    text-align: center;
+    background: var(--bg-subtle);
+    border-top: 1px solid var(--border);
+  }
+  .sens-add-btn {
+    background: none;
+    border: 1px dashed var(--border);
+    color: var(--primary);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .sens-add-btn:hover {
+    border-color: var(--primary);
+    background: rgba(42,173,187,0.06);
+  }
+  /* Positive / negative growth tinting */
+  .sens-table .sens-pos { color: #16a34a; }
+  .sens-table .sens-neg { color: #d11515; }
+
   /* ── EDITABLE INPUTS ── */
   .rate-card.editable { cursor: text; position: relative; }
   .rate-card.editable:hover { border-color: var(--primary); }
@@ -1499,12 +1890,20 @@
   <div class="tab" onclick="switchTab('wage-units')" id="tab-wage-units">
     <span class="tab-icon">📈</span> Wage Growth · Units
   </div>
+  <div class="tab" onclick="switchTab('sensitivity')" id="tab-sensitivity">
+    <span class="tab-icon">🎯</span> Sensitivity Analysis
+  </div>
   <div class="fetch-indicator" id="fetch-indicator" style="display:none">
     <span class="fetch-spinner"></span>
     <span class="fetch-text" id="fetch-text">Connecting…</span>
   </div>
   <!-- Versions menu: Save + load past snapshots -->
   <div class="versions-menu" id="versions-menu">
+    <label class="aic-toggle" title="When ON, the 36 main regions show the Performance Property default AI Ceiling values. When OFF, live-fetched values from the AI Ceiling Sheet are shown.">
+      <input type="checkbox" id="aic-toggle-input" onchange="toggleBundledAIC(this.checked)">
+      <span class="aic-toggle-track"><span class="aic-toggle-thumb"></span></span>
+      <span class="aic-toggle-label">Default AIC</span>
+    </label>
     <button class="versions-btn" id="versions-update-btn" onclick="versionsMenu.updateFromLive()"><svg class="vbtn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8a5.5 5.5 0 0 1 9.4-3.9L14 6"/><path d="M14 2v4h-4"/><path d="M13.5 8a5.5 5.5 0 0 1-9.4 3.9L2 10"/><path d="M2 14v-4h4"/></svg>Update</button>
     <button class="versions-btn" id="versions-save-btn" onclick="versionsMenu.openSave()"><svg class="vbtn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2h8l3 3v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M11 2v4H5V2"/><path d="M5 11h6v4H5z"/></svg>Save</button>
     <button class="versions-btn" id="versions-load-btn" onclick="versionsMenu.openLoad()"><svg class="vbtn-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M8 4.5V8l2.2 2.2"/></svg>Versions</button>
@@ -1941,6 +2340,122 @@
   <div class="disclaimer">⚠ Internal document — Performance Property staff only. Not for external distribution. Copyright 2024 Performance Property.</div>
 </div>
 
+<!-- ═════════ Sensitivity Analysis tab ═════════ -->
+<div class="panel" id="panel-sensitivity">
+
+  <!-- Top: region selector + sensitivity inputs strip + generate button -->
+  <div class="vars-mirror-row sens-top-row">
+    <div class="vars-mirror" data-card-title="Region">
+      <div class="vars-mirror-title">Region</div>
+      <div class="sens-region-row">
+        <select class="filter-select" id="sens-state-filter" onchange="sensitivityRefresh()" style="min-width:170px">
+          <option value="main" selected>Main Regions</option>
+          <option value="">All states &amp; regions</option>
+          <option value="capcity">Capital Cities</option>
+          <option value="state:nsw">NSW</option>
+          <option value="state:vic">VIC</option>
+          <option value="state:qld">QLD</option>
+          <option value="state:wa">WA</option>
+          <option value="state:sa">SA</option>
+          <option value="state:tas">TAS</option>
+          <option value="state:act">ACT</option>
+          <option value="state:nt">NT</option>
+        </select>
+        <select class="filter-select" id="sens-region-select" onchange="sensitivityRecalc()" style="min-width:240px"></select>
+      </div>
+    </div>
+    <div class="vars-mirror" data-card-title="Sensitivity Inputs">
+      <div class="vars-mirror-title">Sensitivity Inputs</div>
+      <div class="vars-mirror-items">
+        <div class="vars-mirror-item editable" title="Years of wage growth applied">
+          <div class="vm-label">Years</div>
+          <div class="vm-value">
+            <input type="number" id="sens-years" class="vm-input" step="1" min="1" max="20" value="5" oninput="sensitivityRecalc()">
+          </div>
+        </div>
+        <div class="vars-mirror-item editable" title="Cap city wage growth %">
+          <div class="vm-label">Cap City Wage</div>
+          <div class="vm-value">
+            <input type="number" id="sens-capWage" class="vm-input" step="0.1" min="0" max="20" value="3.0" oninput="sensitivityRecalc()"><span class="vm-suffix">%</span>
+          </div>
+        </div>
+        <div class="vars-mirror-item editable" title="Regional wage growth %">
+          <div class="vm-label">Regional Wage</div>
+          <div class="vm-value">
+            <input type="number" id="sens-regWage" class="vm-input" step="0.1" min="0" max="20" value="2.0" oninput="sensitivityRecalc()"><span class="vm-suffix">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="versions-btn primary sens-generate-btn" onclick="sensitivityGenerate()">Generate</button>
+  </div>
+
+  <!-- Combined sensitivity table — Cash Rate shared across House and Unit calcs -->
+  <div class="sens-tables">
+    <div class="sens-block">
+      <div class="sens-block-header">
+        <div class="sens-block-title">Sensitivity Analysis</div>
+      </div>
+      <div class="table-wrap sens-table-wrap">
+        <table class="sens-table" id="sens-combined-table">
+          <thead>
+            <!-- MHP / MUP banner row: empty Cash Rate cell, then House MHP value
+                 spans only Ceiling Price column with the other 2 House cols empty;
+                 same for Unit. -->
+            <tr class="sens-thead-banner">
+              <th></th>
+              <th class="sens-section-house sens-banner-cell">
+                <span class="sens-banner-label">House MHP</span>
+                <span class="sens-banner-value" id="sens-house-mhp">—</span>
+              </th>
+              <th class="sens-section-house"></th>
+              <th class="sens-section-house"></th>
+              <th class="sens-section-unit sens-banner-cell">
+                <span class="sens-banner-label">Unit MUP</span>
+                <span class="sens-banner-value" id="sens-unit-mhp">—</span>
+              </th>
+              <th class="sens-section-unit"></th>
+              <th class="sens-section-unit"></th>
+              <th></th>
+            </tr>
+            <tr class="sens-thead-group">
+              <th rowspan="2">
+                <span class="sens-th-label">Cash Rate</span>
+                <button id="sens-sort-btn" class="sens-sort-btn" onclick="sensitivitySort()" title="Sort descending (highest to lowest) — click to reverse">
+                  <svg viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3h8M3 7h6M3 11h4"/>
+                  </svg>
+                </button>
+              </th>
+              <th colspan="3" class="sens-section-house">HOUSE</th>
+              <th colspan="3" class="sens-section-unit">UNIT</th>
+              <th rowspan="2" class="sens-actions"></th>
+            </tr>
+            <tr class="sens-thead">
+              <th class="sens-section-house">Ceiling Price</th>
+              <th class="sens-section-house">Growth from MHP</th>
+              <th class="sens-section-house">% Growth</th>
+              <th class="sens-section-unit">Ceiling Price</th>
+              <th class="sens-section-unit">Growth from MUP</th>
+              <th class="sens-section-unit">% Growth</th>
+            </tr>
+          </thead>
+          <tbody id="sens-combined-tbody"></tbody>
+          <tfoot>
+            <tr class="sens-tfoot">
+              <td colspan="8">
+                <button class="sens-add-btn" onclick="sensitivityAddRow()">+ Add cash rate</button>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer">⚠ Internal document — Performance Property staff only. Not for external distribution. Copyright 2024 Performance Property.</div>
+</div>
+
 <script>
 // ── DATA ──────────────────────────────────────────────────────────────────────
 
@@ -1949,81 +2464,81 @@ const OPEN_REGIONS = ['Perth','Adelaide','Brisbane','Ipswich','Mackay','Toowoomb
 const YELLOW_REGIONS = ['Melbourne','Gold Coast','Sunshine Coast','Canberra','Wollongong','Central Coast','Greater Geelong','Greater Hobart','Newcastle','Townsville','Cairns','Greater Bendigo','Ballarat','Bundaberg','Mandurah','Port Macquarie-Hastings','Rockhampton','Coffs Harbour','Launceston','Wagga Wagga','Gladstone','Tamworth Regional','Albury','Mildura','Wodonga','Orange','Bunbury','Darwin'];
 
 const HOUSES_DATA = [
-  ['VIC','Melbourne',null,null,null,null,0.5062,1054056,134056,0.1457,'50%',0.50,'11:30',0.4497,1186579,266579,0.2898,'60%',0.40,'Closed'],
-  ['NSW','Sydney',null,null,null,null,0.8241,1222508,-327492,-0.2113,'10%',0.90,'for eval',0.7321,1376211,-173789,-0.1121,'20%',0.80,'Closed'],
-  ['QLD','Brisbane',null,null,null,null,0.6111,1080006,-19994,-0.0182,'30%',0.70,'12:30',0.5429,1215792,115792,0.1053,'50%',0.50,'Areas Open'],
-  ['WA','Perth',null,null,null,null,0.4774,1128220,183220,0.1939,'60%',0.40,'11:00',0.4241,1270068,325068,0.3440,'70%',0.30,'Area Open'],
-  ['SA','Adelaide',null,null,null,null,0.5354,925593,-9407,-0.0101,'30%',0.70,'12:30',0.4756,1041965,106965,0.1144,'50%',0.50,'TBC'],
-  ['QLD','Gold Coast',null,null,null,null,0.7361,1242007,-82993,-0.0626,'20%',0.80,'for eval',0.6539,1398161,73161,0.0552,'50%',0.50,'TBC'],
-  ['ACT','Canberra',null,null,null,null,0.4982,1055158,44158,0.0437,'50%',0.50,'12:00',0.4426,1187821,176821,0.1749,'60%',0.40,'TBC'],
-  ['QLD','Sunshine Coast',null,null,null,null,0.6917,1170006,-74994,-0.0602,'20%',0.80,'for eval',0.6144,1317108,72108,0.0579,'50%',0.50,'TBC'],
-  ['NSW','Central Coast',null,null,null,null,0.5609,883968,-171032,-0.1621,'10%',0.90,'for eval',0.4983,995107,-59893,-0.0568,'20%',0.80,'TBC'],
-  ['VIC','Greater Geelong',null,null,null,null,0.4017,817802,87802,0.1203,'50%',0.50,'11:30',0.3568,920622,190622,0.2611,'60%',0.40,'TBC'],
-  ['QLD','Ipswich',null,null,null,null,0.4767,792004,-65996,-0.0769,'20%',0.80,'for eval',0.4234,891581,33581,0.0391,'50%',0.50,'Area Open'],
-  ['TAS','Greater Hobart',null,null,null,null,0.4563,805368,55368,0.0738,'50%',0.50,'11:30',0.4053,906625,156625,0.2088,'60%',0.40,'TBC'],
-  ['NSW','Wollongong',null,null,null,null,0.6513,996814,-228186,-0.1863,'10%',0.90,'for eval',0.5786,1122141,-102859,-0.0840,'20%',0.80,'TBC'],
-  ['QLD','Townsville',null,null,null,null,0.3778,900005,220005,0.3235,'70%',0.30,'10:30',0.3356,1013160,333160,0.4899,'70%',0.30,'TBC'],
-  ['QLD','Toowoomba',null,null,null,null,0.4456,756004,-45996,-0.0574,'20%',0.80,'for eval',0.3958,851054,49054,0.0612,'50%',0.50,'Area Open'],
-  ['QLD','Cairns',null,null,null,null,0.4335,1134006,353756,0.4534,'70%',0.30,'9:30',0.3851,1276582,496332,0.6361,'80%',0.20,'TBC'],
-  ['NSW','Newcastle',null,null,null,null,0.6035,846352,-288648,-0.2543,'10%',0.90,'for eval',0.5361,952762,-182238,-0.1606,'10%',0.90,'TBC'],
-  ['WA','Rockingham',null,null,null,null,0.4092,930287,120287,0.1485,'50%',0.50,'11:30',0.3635,1047249,237249,0.2929,'60%',0.40,'Area Open'],
-  ['NT','Darwin',null,null,null,null,0.3965,950598,255598,0.3678,'70%',0.30,'10:00',0.3522,1070114,375114,0.5397,'80%',0.20,'TBC'],
-  ['QLD','Mackay',null,null,null,null,0.3806,954005,269005,0.3927,'70%',0.30,'10:00',0.3381,1073950,388950,0.5678,'80%',0.20,'Area Open'],
-  ['VIC','Greater Bendigo',null,null,null,null,0.3494,763282,128282,0.2020,'60%',0.40,'11:00',0.3104,859247,224247,0.3531,'70%',0.30,'HOLD / Possibly Close'],
-  ['VIC','Ballarat',null,null,null,null,0.3302,763282,163282,0.2721,'60%',0.40,'10:30',0.2933,859247,259247,0.4321,'70%',0.30,'HOLD / Possible Close'],
-  ['QLD','Bundaberg',null,null,null,null,0.3806,702004,17004,0.0248,'50%',0.50,'12:00',0.3381,790265,105265,0.1537,'60%',0.40,'TBC'],
-  ['WA','Mandurah',null,null,null,null,0.3941,1068840,288840,0.3703,'70%',0.30,'10:00',0.3501,1203223,423223,0.5426,'80%',0.20,'TBC'],
-  ['NSW','Port Macquarie-Hastings',null,null,null,null,0.4705,902775,17775,0.0201,'50%',0.50,'12:00',0.4180,1016279,131279,0.1483,'50%',0.50,'TBC'],
-  ['QLD','Rockhampton',null,null,null,null,0.3167,684004,114004,0.2000,'60%',0.40,'11:00',0.2813,770002,200002,0.3509,'70%',0.30,'TBC'],
-  ['NSW','Coffs Harbour',null,null,null,null,0.5078,902775,-52225,-0.0547,'20%',0.80,'for eval',0.4511,1016279,61279,0.0642,'50%',0.50,'TBC'],
-  ['TAS','Launceston',null,null,null,null,0.3778,608135,-12865,-0.0207,'30%',0.70,'12:30',0.3356,684594,63594,0.1024,'50%',0.50,'TBC'],
-  ['NSW','Wagga Wagga',null,null,null,null,0.3706,714697,17697,0.0254,'50%',0.50,'12:00',0.3292,804554,107554,0.1543,'60%',0.40,'TBC'],
-  ['QLD','Gladstone',null,null,null,null,0.3506,990005,359005,0.5689,'80%',0.20,'9:00',0.3114,1114476,483476,0.7662,'90%',0.10,'TBC'],
-  ['NSW','Tamworth Regional',null,null,null,null,0.3376,639466,4466,0.0070,'50%',0.50,'12:00',0.2999,719864,84864,0.1336,'50%',0.50,'TBC'],
-  ['NSW','Albury',null,null,null,null,0.3616,714697,34697,0.0510,'50%',0.50,'11:30',0.3212,804554,124554,0.1832,'60%',0.40,'TBC'],
-  ['VIC','Mildura',null,null,null,null,0.3026,636068,86068,0.1565,'60%',0.40,'11:00',0.2688,716039,166039,0.3019,'70%',0.30,'TBC'],
-  ['VIC','Wodonga',null,null,null,null,0.3551,781455,136205,0.2111,'60%',0.40,'11:00',0.3154,879705,234455,0.3634,'70%',0.30,'TBC'],
-  ['NSW','Orange',null,null,null,null,0.3988,714697,-35298,-0.0471,'30%',0.70,'12:30',0.3542,804554,54559,0.0727,'50%',0.50,'TBC'],
-  ['WA','Bunbury',null,null,null,null,0.3415,811527,135527,0.2005,'60%',0.40,'11:00',0.3034,913558,237558,0.3514,'70%',0.30,'TBC'],
+  ['VIC','Melbourne',null,null,null,0.58,0.5062,1054056,134056,0.1457,'50%',0.50,'11:30',0.4497,1186579,266579,0.2898,'60%',0.40,'Closed'],
+  ['NSW','Sydney',null,null,null,0.65,0.8241,1222508,-327492,-0.2113,'10%',0.90,'for eval',0.7321,1376211,-173789,-0.1121,'20%',0.80,'Closed'],
+  ['QLD','Brisbane',null,null,null,0.6,0.6111,1080006,-19994,-0.0182,'30%',0.70,'12:30',0.5429,1215792,115792,0.1053,'50%',0.50,'Areas Open'],
+  ['WA','Perth',null,null,null,0.57,0.4774,1128220,183220,0.1939,'60%',0.40,'11:00',0.4241,1270068,325068,0.3440,'70%',0.30,'Area Open'],
+  ['SA','Adelaide',null,null,null,0.53,0.5354,925593,-9407,-0.0101,'30%',0.70,'12:30',0.4756,1041965,106965,0.1144,'50%',0.50,'TBC'],
+  ['QLD','Gold Coast',null,null,null,0.69,0.7361,1242007,-82993,-0.0626,'20%',0.80,'for eval',0.6539,1398161,73161,0.0552,'50%',0.50,'TBC'],
+  ['ACT','Canberra',null,null,null,0.52,0.4982,1055158,44158,0.0437,'50%',0.50,'12:00',0.4426,1187821,176821,0.1749,'60%',0.40,'TBC'],
+  ['QLD','Sunshine Coast',null,null,null,0.65,0.6917,1170006,-74994,-0.0602,'20%',0.80,'for eval',0.6144,1317108,72108,0.0579,'50%',0.50,'TBC'],
+  ['NSW','Central Coast',null,null,null,0.47,0.5609,883968,-171032,-0.1621,'10%',0.90,'for eval',0.4983,995107,-59893,-0.0568,'20%',0.80,'TBC'],
+  ['VIC','Greater Geelong',null,null,null,0.45,0.4017,817802,87802,0.1203,'50%',0.50,'11:30',0.3568,920622,190622,0.2611,'60%',0.40,'TBC'],
+  ['QLD','Ipswich',null,null,null,0.44,0.4767,792004,-65996,-0.0769,'20%',0.80,'for eval',0.4234,891581,33581,0.0391,'50%',0.50,'Area Open'],
+  ['TAS','Greater Hobart',null,null,null,0.49,0.4563,805368,55368,0.0738,'50%',0.50,'11:30',0.4053,906625,156625,0.2088,'60%',0.40,'TBC'],
+  ['NSW','Wollongong',null,null,null,0.53,0.6513,996814,-228186,-0.1863,'10%',0.90,'for eval',0.5786,1122141,-102859,-0.0840,'20%',0.80,'TBC'],
+  ['QLD','Townsville',null,null,null,0.5,0.3778,900005,220005,0.3235,'70%',0.30,'10:30',0.3356,1013160,333160,0.4899,'70%',0.30,'TBC'],
+  ['QLD','Toowoomba',null,null,null,0.42,0.4456,756004,-45996,-0.0574,'20%',0.80,'for eval',0.3958,851054,49054,0.0612,'50%',0.50,'Area Open'],
+  ['QLD','Cairns',null,null,null,0.63,0.4335,1134006,353756,0.4534,'70%',0.30,'9:30',0.3851,1276582,496332,0.6361,'80%',0.20,'TBC'],
+  ['NSW','Newcastle',null,null,null,0.45,0.6035,846352,-288648,-0.2543,'10%',0.90,'for eval',0.5361,952762,-182238,-0.1606,'10%',0.90,'TBC'],
+  ['WA','Rockingham',null,null,null,0.47,0.4092,930287,120287,0.1485,'50%',0.50,'11:30',0.3635,1047249,237249,0.2929,'60%',0.40,'Area Open'],
+  ['NT','Darwin',null,null,null,0.54,0.3965,950598,255598,0.3678,'70%',0.30,'10:00',0.3522,1070114,375114,0.5397,'80%',0.20,'TBC'],
+  ['QLD','Mackay',null,null,null,0.53,0.3806,954005,269005,0.3927,'70%',0.30,'10:00',0.3381,1073950,388950,0.5678,'80%',0.20,'Area Open'],
+  ['VIC','Greater Bendigo',null,null,null,0.42,0.3494,763282,128282,0.2020,'60%',0.40,'11:00',0.3104,859247,224247,0.3531,'70%',0.30,'HOLD / Possibly Close'],
+  ['VIC','Ballarat',null,null,null,0.42,0.3302,763282,163282,0.2721,'60%',0.40,'10:30',0.2933,859247,259247,0.4321,'70%',0.30,'HOLD / Possible Close'],
+  ['QLD','Bundaberg',null,null,null,0.39,0.3806,702004,17004,0.0248,'50%',0.50,'12:00',0.3381,790265,105265,0.1537,'60%',0.40,'TBC'],
+  ['WA','Mandurah',null,null,null,0.54,0.3941,1068840,288840,0.3703,'70%',0.30,'10:00',0.3501,1203223,423223,0.5426,'80%',0.20,'TBC'],
+  ['NSW','Port Macquarie-Hastings',null,null,null,0.48,0.4705,902775,17775,0.0201,'50%',0.50,'12:00',0.4180,1016279,131279,0.1483,'50%',0.50,'TBC'],
+  ['QLD','Rockhampton',null,null,null,0.38,0.3167,684004,114004,0.2000,'60%',0.40,'11:00',0.2813,770002,200002,0.3509,'70%',0.30,'TBC'],
+  ['NSW','Coffs Harbour',null,null,null,0.48,0.5078,902775,-52225,-0.0547,'20%',0.80,'for eval',0.4511,1016279,61279,0.0642,'50%',0.50,'TBC'],
+  ['TAS','Launceston',null,null,null,0.37,0.3778,608135,-12865,-0.0207,'30%',0.70,'12:30',0.3356,684594,63594,0.1024,'50%',0.50,'TBC'],
+  ['NSW','Wagga Wagga',null,null,null,0.38,0.3706,714697,17697,0.0254,'50%',0.50,'12:00',0.3292,804554,107554,0.1543,'60%',0.40,'TBC'],
+  ['QLD','Gladstone',null,null,null,0.55,0.3506,990005,359005,0.5689,'80%',0.20,'9:00',0.3114,1114476,483476,0.7662,'90%',0.10,'TBC'],
+  ['NSW','Tamworth Regional',null,null,null,0.34,0.3376,639466,4466,0.0070,'50%',0.50,'12:00',0.2999,719864,84864,0.1336,'50%',0.50,'TBC'],
+  ['NSW','Albury',null,null,null,0.38,0.3616,714697,34697,0.0510,'50%',0.50,'11:30',0.3212,804554,124554,0.1832,'60%',0.40,'TBC'],
+  ['VIC','Mildura',null,null,null,0.35,0.3026,636068,86068,0.1565,'60%',0.40,'11:00',0.2688,716039,166039,0.3019,'70%',0.30,'TBC'],
+  ['VIC','Wodonga',null,null,null,0.43,0.3551,781455,136205,0.2111,'60%',0.40,'11:00',0.3154,879705,234455,0.3634,'70%',0.30,'TBC'],
+  ['NSW','Orange',null,null,null,0.38,0.3988,714697,-35298,-0.0471,'30%',0.70,'12:30',0.3542,804554,54559,0.0727,'50%',0.50,'TBC'],
+  ['WA','Bunbury',null,null,null,0.41,0.3415,811527,135527,0.2005,'60%',0.40,'11:00',0.3034,913558,237558,0.3514,'70%',0.30,'TBC'],
 ];
 
 const UNITS_DATA = [
-  ['NSW','Sydney',null,null,null,null,0.4493,978007,133007,0.1574,'60%',0.40,'11:00',0.3991,1100969,255969,0.3029,'70%',0.30,null],
-  ['QLD','Gold Coast',null,null,null,null,0.4944,936005,46005,0.0517,'50%',0.50,'11:30',0.4392,1053686,163686,0.1839,'60%',0.40,null],
-  ['QLD','Sunshine Coast',null,null,null,null,0.4792,882005,19505,0.0226,'50%',0.50,'12:00',0.4256,992897,130397,0.1512,'60%',0.40,null],
-  ['NSW','Wollongong',null,null,null,null,0.4174,902775,117775,0.1500,'60%',0.40,'11:00',0.3708,1016279,231279,0.2946,'60%',0.40,null],
-  ['NSW','Newcastle',null,null,null,null,0.4223,789928,-4234,-0.0053,'30%',0.70,'12:30',0.3751,889244,95082,0.1197,'50%',0.50,null],
-  ['NSW','Central Coast',null,null,null,null,0.3988,771121,21121,0.0282,'50%',0.50,'12:00',0.3542,868072,118072,0.1574,'60%',0.40,null],
-  ['QLD','Brisbane',null,null,null,null,0.4394,846004,55004,0.0695,'50%',0.50,'11:30',0.3904,952370,161370,0.2040,'60%',0.40,'Areas Open'],
-  ['ACT','Canberra',null,null,null,null,0.2991,831952,224952,0.3706,'70%',0.30,'10:00',0.2657,936551,329551,0.5429,'80%',0.20,null],
-  ['NSW','Coffs Harbour',null,null,null,null,0.3429,601850,-43150,-0.0669,'20%',0.80,'for eval',0.3046,677519,32519,0.0504,'50%',0.50,null],
-  ['VIC','Melbourne',null,null,null,null,0.3549,872322,227322,0.3524,'70%',0.30,'10:00',0.3153,981997,336997,0.5225,'80%',0.20,null],
-  ['NSW','Port Macquarie-Hastings',null,null,null,null,0.3270,677082,62082,0.1009,'50%',0.50,'11:30',0.2905,762209,147209,0.2394,'60%',0.40,null],
-  ['SA','Adelaide',null,null,null,null,0.3836,663633,-6367,-0.0095,'30%',0.70,'12:30',0.3408,747070,77070,0.1150,'50%',0.50,null],
-  ['WA','Perth',null,null,null,null,0.3448,950080,267580,0.3921,'70%',0.30,'10:00',0.3063,1069531,387031,0.5671,'80%',0.20,'Area Open'],
-  ['TAS','Greater Hobart',null,null,null,null,0.3547,641007,58007,0.0995,'50%',0.50,'11:30',0.3151,721600,138600,0.2377,'60%',0.40,null],
-  ['VIC','Greater Geelong',null,null,null,null,0.3087,672415,111415,0.1986,'60%',0.40,'11:00',0.2742,756956,195956,0.3493,'70%',0.30,null],
-  ['QLD','Ipswich',null,null,null,null,0.3639,684004,29004,0.0443,'50%',0.50,'12:00',0.3232,770002,115002,0.1756,'60%',0.40,'Area Open'],
-  ['WA','Mandurah',null,null,null,null,0.2785,890700,339450,0.6158,'80%',0.20,'9:00',0.2474,1002686,451436,0.8189,'90%',0.10,null],
-  ['QLD','Toowoomba',null,null,null,null,0.3472,612003,-12997,-0.0208,'30%',0.70,'12:30',0.3084,688949,63949,0.1023,'50%',0.50,'Area Open'],
-  ['WA','Rockingham',null,null,null,null,0.2930,672973,92973,0.1603,'60%',0.40,'11:00',0.2603,757585,177585,0.3062,'70%',0.30,'Area Open'],
-  ['TAS','Launceston',null,null,null,null,0.2878,509519,36519,0.0772,'50%',0.50,'11:30',0.2556,573579,100579,0.2126,'60%',0.40,null],
-  ['VIC','Wodonga',null,null,null,null,0.2292,690588,274088,0.6581,'80%',0.20,'8:30',0.2036,777414,360914,0.8665,'90%',0.10,null],
-  ['WA','Bunbury',null,null,null,null,0.3055,811527,206777,0.3419,'70%',0.30,'10:30',0.2714,913558,308808,0.5106,'80%',0.20,null],
-  ['NSW','Orange',null,null,null,null,0.2624,601850,108350,0.2196,'60%',0.40,'11:00',0.2331,677519,184019,0.3729,'70%',0.30,null],
-  ['QLD','Bundaberg',null,null,null,null,0.2875,774004,256504,0.4957,'70%',0.30,'9:30',0.2554,871318,353818,0.6837,'80%',0.20,null],
-  ['VIC ','Greater Bendigo',null,null,null,null,0.2641,654241,174241,0.3630,'70%',0.30,'10:00',0.2346,736497,256497,0.5344,'80%',0.20,'HOLD / Possibly Close'],
-  ['NSW','Wagga Wagga',null,null,null,null,0.2605,601850,111850,0.2283,'60%',0.40,'11:00',0.2314,677519,187519,0.3827,'70%',0.30,null],
-  ['QLD','Cairns',null,null,null,null,0.2625,684004,211504,0.4476,'70%',0.30,'10:00',0.2332,770002,297502,0.6296,'80%',0.20,null],
-  ['QLD','Mackay',null,null,null,null,0.2327,774004,355116,0.8478,'90%',0.10,'8:00',0.2067,871318,452430,1.0801,'95%',0.05,'Area Open'],
-  ['NSW','Albury',null,null,null,null,0.2124,620658,221158,0.5536,'80%',0.20,'9:00',0.1887,698692,299192,0.7489,'80%',0.20,null],
-  ['VIC','Ballarat',null,null,null,null,0.2407,636068,198568,0.4539,'70%',0.30,'9:30',0.2139,716039,278539,0.6367,'80%',0.20,'HOLD / Possible Close'],
-  ['QLD','Townsville',null,null,null,null,0.2576,792004,328254,0.7078,'80%',0.20,'8:30',0.2289,891581,427831,0.9225,'90%',0.10,null],
-  ['QLD','Rockhampton',null,null,null,null,0.2736,756004,263504,0.5350,'80%',0.20,'9:30',0.2431,851054,358554,0.7280,'80%',0.20,null],
-  ['NT','Darwin',null,null,null,null,0.2510,718689,278689,0.6334,'80%',0.20,'9:00',0.2230,809048,369048,0.8387,'90%',0.10,null],
-  ['NSW','Tamworth Regional',null,null,null,null,0.2100,601850,206850,0.5237,'80%',0.20,'9:30',0.1866,677519,282519,0.7152,'80%',0.20,null],
-  ['QLD','Gladstone',null,null,null,null,0.2097,936005,558505,1.4795,'95%',0.05,'5:30',0.1863,1053686,676186,1.7912,'95%',0.05,null],
-  ['VIC','Mildura',null,null,null,null,0.2091,690588,310588,0.8173,'90%',0.10,'8:00',0.1857,777414,397414,1.0458,'95%',0.05,null],
+  ['NSW','Sydney',null,null,0.52,null,0.4493,978007,133007,0.1574,'60%',0.40,'11:00',0.3991,1100969,255969,0.3029,'70%',0.30,null],
+  ['QLD','Gold Coast',null,null,0.52,null,0.4944,936005,46005,0.0517,'50%',0.50,'11:30',0.4392,1053686,163686,0.1839,'60%',0.40,null],
+  ['QLD','Sunshine Coast',null,null,0.49,null,0.4792,882005,19505,0.0226,'50%',0.50,'12:00',0.4256,992897,130397,0.1512,'60%',0.40,null],
+  ['NSW','Wollongong',null,null,0.48,null,0.4174,902775,117775,0.1500,'60%',0.40,'11:00',0.3708,1016279,231279,0.2946,'60%',0.40,null],
+  ['NSW','Newcastle',null,null,0.42,null,0.4223,789928,-4234,-0.0053,'30%',0.70,'12:30',0.3751,889244,95082,0.1197,'50%',0.50,null],
+  ['NSW','Central Coast',null,null,0.41,null,0.3988,771121,21121,0.0282,'50%',0.50,'12:00',0.3542,868072,118072,0.1574,'60%',0.40,null],
+  ['QLD','Brisbane',null,null,0.47,null,0.4394,846004,55004,0.0695,'50%',0.50,'11:30',0.3904,952370,161370,0.2040,'60%',0.40,'Areas Open'],
+  ['ACT','Canberra',null,null,0.41,null,0.2991,831952,224952,0.3706,'70%',0.30,'10:00',0.2657,936551,329551,0.5429,'80%',0.20,null],
+  ['NSW','Coffs Harbour',null,null,0.32,null,0.3429,601850,-43150,-0.0669,'20%',0.80,'for eval',0.3046,677519,32519,0.0504,'50%',0.50,null],
+  ['VIC','Melbourne',null,null,0.48,null,0.3549,872322,227322,0.3524,'70%',0.30,'10:00',0.3153,981997,336997,0.5225,'80%',0.20,null],
+  ['NSW','Port Macquarie-Hastings',null,null,0.36,null,0.3270,677082,62082,0.1009,'50%',0.50,'11:30',0.2905,762209,147209,0.2394,'60%',0.40,null],
+  ['SA','Adelaide',null,null,0.38,null,0.3836,663633,-6367,-0.0095,'30%',0.70,'12:30',0.3408,747070,77070,0.1150,'50%',0.50,null],
+  ['WA','Perth',null,null,0.48,null,0.3448,950080,267580,0.3921,'70%',0.30,'10:00',0.3063,1069531,387031,0.5671,'80%',0.20,'Area Open'],
+  ['TAS','Greater Hobart',null,null,0.39,null,0.3547,641007,58007,0.0995,'50%',0.50,'11:30',0.3151,721600,138600,0.2377,'60%',0.40,null],
+  ['VIC','Greater Geelong',null,null,0.37,null,0.3087,672415,111415,0.1986,'60%',0.40,'11:00',0.2742,756956,195956,0.3493,'70%',0.30,null],
+  ['QLD','Ipswich',null,null,0.38,null,0.3639,684004,29004,0.0443,'50%',0.50,'12:00',0.3232,770002,115002,0.1756,'60%',0.40,'Area Open'],
+  ['WA','Mandurah',null,null,0.45,null,0.2785,890700,339450,0.6158,'80%',0.20,'9:00',0.2474,1002686,451436,0.8189,'90%',0.10,null],
+  ['QLD','Toowoomba',null,null,0.34,null,0.3472,612003,-12997,-0.0208,'30%',0.70,'12:30',0.3084,688949,63949,0.1023,'50%',0.50,'Area Open'],
+  ['WA','Rockingham',null,null,0.34,null,0.2930,672973,92973,0.1603,'60%',0.40,'11:00',0.2603,757585,177585,0.3062,'70%',0.30,'Area Open'],
+  ['TAS','Launceston',null,null,0.31,null,0.2878,509519,36519,0.0772,'50%',0.50,'11:30',0.2556,573579,100579,0.2126,'60%',0.40,null],
+  ['VIC','Wodonga',null,null,0.38,null,0.2292,690588,274088,0.6581,'80%',0.20,'8:30',0.2036,777414,360914,0.8665,'90%',0.10,null],
+  ['WA','Bunbury',null,null,0.41,null,0.3055,811527,206777,0.3419,'70%',0.30,'10:30',0.2714,913558,308808,0.5106,'80%',0.20,null],
+  ['NSW','Orange',null,null,0.32,null,0.2624,601850,108350,0.2196,'60%',0.40,'11:00',0.2331,677519,184019,0.3729,'70%',0.30,null],
+  ['QLD','Bundaberg',null,null,0.43,null,0.2875,774004,256504,0.4957,'70%',0.30,'9:30',0.2554,871318,353818,0.6837,'80%',0.20,null],
+  ['VIC ','Greater Bendigo',null,null,0.36,null,0.2641,654241,174241,0.3630,'70%',0.30,'10:00',0.2346,736497,256497,0.5344,'80%',0.20,'HOLD / Possibly Close'],
+  ['NSW','Wagga Wagga',null,null,0.32,null,0.2605,601850,111850,0.2283,'60%',0.40,'11:00',0.2314,677519,187519,0.3827,'70%',0.30,null],
+  ['QLD','Cairns',null,null,0.38,null,0.2625,684004,211504,0.4476,'70%',0.30,'10:00',0.2332,770002,297502,0.6296,'80%',0.20,null],
+  ['QLD','Mackay',null,null,0.43,null,0.2327,774004,355116,0.8478,'90%',0.10,'8:00',0.2067,871318,452430,1.0801,'95%',0.05,'Area Open'],
+  ['NSW','Albury',null,null,0.33,null,0.2124,620658,221158,0.5536,'80%',0.20,'9:00',0.1887,698692,299192,0.7489,'80%',0.20,null],
+  ['VIC','Ballarat',null,null,0.35,null,0.2407,636068,198568,0.4539,'70%',0.30,'9:30',0.2139,716039,278539,0.6367,'80%',0.20,'HOLD / Possible Close'],
+  ['QLD','Townsville',null,null,0.44,null,0.2576,792004,328254,0.7078,'80%',0.20,'8:30',0.2289,891581,427831,0.9225,'90%',0.10,null],
+  ['QLD','Rockhampton',null,null,0.42,null,0.2736,756004,263504,0.5350,'80%',0.20,'9:30',0.2431,851054,358554,0.7280,'80%',0.20,null],
+  ['NT','Darwin',null,null,0.41,null,0.2510,718689,278689,0.6334,'80%',0.20,'9:00',0.2230,809048,369048,0.8387,'90%',0.10,null],
+  ['NSW','Tamworth Regional',null,null,0.32,null,0.2100,601850,206850,0.5237,'80%',0.20,'9:30',0.1866,677519,282519,0.7152,'80%',0.20,null],
+  ['QLD','Gladstone',null,null,0.52,null,0.2097,936005,558505,1.4795,'95%',0.05,'5:30',0.1863,1053686,676186,1.7912,'95%',0.05,null],
+  ['VIC','Mildura',null,null,0.38,null,0.2091,690588,310588,0.8173,'90%',0.10,'8:00',0.1857,777414,397414,1.0458,'95%',0.05,null],
 ];
 
 const WAGE_HOUSES_DATA = [
@@ -2570,6 +3085,9 @@ function onRateChange() {
     void el.offsetWidth;
     el.classList.add('recalc-flash');
   });
+  // Refresh sensitivity tab if it's been initialised — its calc depends on
+  // bankMargin/apraF/cashRate/icForecast from the Houses (IC) variables.
+  if (sensInitialised) sensitivityRecalc();
   // Flip the indicator state to "Modified · not saved"
   if (typeof versionsMenu !== 'undefined' && versionsMenu.markModified) {
     versionsMenu.markModified();
@@ -2590,6 +3108,10 @@ function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('panel-' + name).classList.add('active');
   document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'sensitivity') {
+    sensitivityInit();
+    sensitivityRefresh();
+  }
 }
 
 // ── COLUMN SORTING ───────────────────────────────────────────────────────────
@@ -2748,22 +3270,84 @@ function toggleHideEmptyPrice(tableId, on) {
 // Key format: state-aware lowercased name with state suffix stripped.
 // Built once at boot from the initial HOUSES_DATA contents.
 const MAIN_REGION_NAMES = new Set();
+// Bundled AIC defaults captured before any live fetch can overwrite them.
+// Keyed by `STATE::normalisedRegion`, value is the original AIC fraction.
+// These are the "Performance Property official" values for the curated 36 regions.
+const BUNDLED_AIC_HOUSES = {};
+const BUNDLED_AIC_UNITS = {};
+
 function _initMainRegionNames() {
   HOUSES_DATA.forEach(row => {
     const state = String(row[0] || '').trim().toUpperCase();
     const region = normalizeRegion(row[1]);
-    MAIN_REGION_NAMES.add(state + '::' + region);
+    const key = state + '::' + region;
+    MAIN_REGION_NAMES.add(key);
+    if (row[5] != null && !isNaN(Number(row[5]))) {
+      BUNDLED_AIC_HOUSES[key] = Number(row[5]);
+    }
   });
   UNITS_DATA.forEach(row => {
     const state = String(row[0] || '').trim().toUpperCase();
     const region = normalizeRegion(row[1]);
-    MAIN_REGION_NAMES.add(state + '::' + region);
+    const key = state + '::' + region;
+    MAIN_REGION_NAMES.add(key);
+    if (row[4] != null && !isNaN(Number(row[4]))) {
+      BUNDLED_AIC_UNITS[key] = Number(row[4]);
+    }
   });
 }
 
 function isMainRegion(state, region) {
   const key = String(state || '').trim().toUpperCase() + '::' + normalizeRegion(region);
   return MAIN_REGION_NAMES.has(key);
+}
+
+// ── AIC toggle: bundled-defaults vs live ─────────────────────────────────
+// useBundledAIC=true → main regions show the offline-runway baseline values.
+// useBundledAIC=false → main regions reflect whatever live fetch returned.
+// Toggle is sticky across page loads via sessionStorage.
+let useBundledAIC = (() => {
+  try {
+    const saved = sessionStorage.getItem('useBundledAIC');
+    if (saved === null) return true;   // default ON
+    return saved === 'true';
+  } catch (e) { return true; }
+})();
+
+// Apply the AIC preference: when ON, force main-region rows in HOUSES_DATA /
+// UNITS_DATA back to the bundled values. When OFF, do nothing — the rows keep
+// whatever's currently there (live or whatever's been loaded).
+function applyAICPreference() {
+  if (!useBundledAIC) return;
+  HOUSES_DATA.forEach(row => {
+    const state = String(row[0] || '').trim().toUpperCase();
+    const region = normalizeRegion(row[1]);
+    const key = state + '::' + region;
+    if (key in BUNDLED_AIC_HOUSES) {
+      row[5] = BUNDLED_AIC_HOUSES[key];
+    }
+  });
+  UNITS_DATA.forEach(row => {
+    const state = String(row[0] || '').trim().toUpperCase();
+    const region = normalizeRegion(row[1]);
+    const key = state + '::' + region;
+    if (key in BUNDLED_AIC_UNITS) {
+      row[4] = BUNDLED_AIC_UNITS[key];
+    }
+  });
+}
+
+// Toggle handler — flip the preference, persist, re-apply, re-render
+function toggleBundledAIC(checked) {
+  useBundledAIC = !!checked;
+  try { sessionStorage.setItem('useBundledAIC', String(useBundledAIC)); } catch (e) {}
+  applyAICPreference();
+  recalcAll();
+  if (typeof sensInitialised !== 'undefined' && sensInitialised) sensitivityRecalc();
+  // Mark indicator state as Modified
+  if (typeof versionsMenu !== 'undefined' && versionsMenu.markModified) {
+    versionsMenu.markModified();
+  }
 }
 
 function filterTable(tableId, query) {
@@ -3219,6 +3803,9 @@ async function loadLatestPrices(force) {
         });
       });
       HOUSES_DATA.forEach(row => {
+        // When the bundled-AIC toggle is ON, main regions keep their bundled
+        // values — live fetch only updates the dynamically-added LGAs.
+        if (useBundledAIC && isMainRegion(row[0], row[1])) return;
         const key = normalizeRegion(row[1]);
         const hit = aicMap[key];
         if (hit && hit.H != null && !isNaN(Number(hit.H))) {
@@ -3229,6 +3816,7 @@ async function loadLatestPrices(force) {
         }
       });
       UNITS_DATA.forEach(row => {
+        if (useBundledAIC && isMainRegion(row[0], row[1])) return;
         const key = normalizeRegion(row[1]);
         const hit = aicMap[key];
         if (hit && hit.U != null && !isNaN(Number(hit.U))) {
@@ -3707,6 +4295,11 @@ const versionsMenu = (() => {
       setText('.col-price-date',  subs.colPriceDate);
       setText('.col-income-date', subs.colIncomeDate);
 
+      // Re-apply the AIC preference: the snapshot may have stored live AIC
+      // values for main regions, but if the user has the bundled toggle ON,
+      // we want bundled values displayed.
+      applyAICPreference();
+
       recalcAll();
     } finally {
       isApplyingProgrammaticChange = false;
@@ -4153,13 +4746,246 @@ const exportMenu = (() => {
   return { openExport, exportExcel, exportPdf };
 })();
 
+// ═══════════════════════════════════════════════════════════════════════════
+// SENSITIVITY ANALYSIS — per-region cash-rate sensitivity grid
+// Produces Ceiling Price / Growth in AUD / Growth % across N user-editable
+// cash rate scenarios. Uses Forecast bank margin + APRA (matches what the
+// Wage Growth · Houses tab applies). Years and wage growth defaults are
+// pulled from the Wage Growth tab on first activation but become editable
+// on this tab without affecting the source.
+// ═══════════════════════════════════════════════════════════════════════════
+function _sensEscapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+const SENS_DEFAULT_RATES = [5.00, 4.50, 4.35, 3.50, 3.00, 2.69, 2.00, 1.50, 1.00];
+let sensRates = null;          // user-editable list of cash rates (all editable)
+let sensInitialised = false;   // first-show one-time setup flag
+let sensSelected = null;       // currently selected region key "STATE::Region"
+
+// Force-init helper — used by switchTab() and the Generate button so that
+// state setup is guaranteed regardless of which path opens the tab.
+function sensitivityInit() {
+  if (sensInitialised) return;
+  const yearsEl = document.getElementById('sens-years');
+  const capEl   = document.getElementById('sens-capWage');
+  const regEl   = document.getElementById('sens-regWage');
+  // Seed inputs from Wage Growth tab values if present
+  const wgYears = document.getElementById('wg-years')?.value;
+  const wgCap   = document.getElementById('wg-capCity')?.value;
+  const wgReg   = document.getElementById('wg-regional')?.value;
+  if (yearsEl && wgYears) yearsEl.value = wgYears;
+  if (capEl   && wgCap)   capEl.value   = wgCap;
+  if (regEl   && wgReg)   regEl.value   = wgReg;
+  sensRates = SENS_DEFAULT_RATES.slice();
+  sensInitialised = true;
+}
+
+// Generate button handler — full reset + recalc with current selections.
+// Re-seeds the default cash rates (so users can recover the standard 9 rows
+// after editing/deleting) and forces a full render.
+function sensitivityGenerate() {
+  sensInitialised = false;       // force re-init
+  sensitivityInit();
+  sensitivityRefresh();
+}
+
+function sensitivityRefresh() {
+  // Repopulate the region dropdown based on the state filter
+  const stateFilter = document.getElementById('sens-state-filter').value;
+  const regionSelect = document.getElementById('sens-region-select');
+  const prev = regionSelect.value;
+
+  // Build candidate list from HOUSES_DATA — match same logic as filterTable.
+  // We DO NOT filter by price here, because the bundled main-region rows have
+  // null price (price arrives only via live fetch). Without this fix the
+  // dropdown would be empty before the user clicks Update.
+  const opts = [];
+  HOUSES_DATA.forEach(row => {
+    const state = row[0];
+    const region = row[1];
+    let pass = true;
+    if (stateFilter === 'main') {
+      pass = isMainRegion(state, region);
+    } else if (stateFilter === 'capcity') {
+      pass = isCapCity(region);
+    } else if (stateFilter.startsWith('state:')) {
+      pass = String(state || '').toLowerCase() === stateFilter.slice(6);
+    }
+    if (pass) opts.push({ key: `${state}::${region}`, label: `${region} (${state})` });
+  });
+  opts.sort((a, b) => a.label.localeCompare(b.label));
+
+  regionSelect.innerHTML = opts
+    .map(o => `<option value="${_sensEscapeHtml(o.key)}">${_sensEscapeHtml(o.label)}</option>`)
+    .join('');
+  if (opts.find(o => o.key === prev)) {
+    regionSelect.value = prev;
+  } else if (opts.length) {
+    regionSelect.value = opts[0].key;
+  }
+  sensSelected = regionSelect.value || null;
+  sensitivityRecalc();
+}
+
+function sensitivityAddRow() {
+  if (!sensRates) return;
+  // Append a new editable rate row at the end. Default value picks something
+  // visibly distinct from the last row so the new row reads as "new".
+  const lastRate = sensRates.length ? sensRates[sensRates.length - 1] : 3.50;
+  const newRate = Math.max(0, parseFloat((lastRate - 0.5).toFixed(2)));
+  sensRates.push(newRate);
+  sensitivityRecalc();
+}
+
+function sensitivityDeleteRow(index) {
+  if (!sensRates) return;
+  sensRates.splice(index, 1);
+  sensitivityRecalc();
+}
+
+function sensitivityUpdateRate(index, value) {
+  if (!sensRates) return;
+  const v = parseFloat(value);
+  if (!isNaN(v)) sensRates[index] = v;
+  sensitivityRecalc();
+}
+
+// Sort direction toggles on each click of the header sort button.
+// 'desc' = highest → lowest (default); 'asc' = lowest → highest.
+let sensSortDir = 'desc';
+
+function sensitivitySort() {
+  if (!sensRates) return;
+  // Flip direction: each click reverses
+  sensSortDir = sensSortDir === 'desc' ? 'asc' : 'desc';
+  sensRates.sort((a, b) => sensSortDir === 'desc' ? b - a : a - b);
+  sensitivityRecalc();
+  // Update the button's icon to reflect new direction
+  _sensUpdateSortBtnIcon();
+}
+
+function _sensUpdateSortBtnIcon() {
+  const btn = document.getElementById('sens-sort-btn');
+  if (!btn) return;
+  // Two icons: descending = bars get shorter top→bottom; ascending = shorter top→bottom reversed
+  const desc = sensSortDir === 'desc';
+  btn.setAttribute('title', desc ? 'Sort descending (highest to lowest) — click to reverse' : 'Sort ascending (lowest to highest) — click to reverse');
+  btn.innerHTML = desc
+    ? `<svg viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h8M3 7h6M3 11h4"/></svg>`
+    : `<svg viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h4M3 7h6M3 11h8"/></svg>`;
+}
+
+function sensitivityRecalc() {
+  // Auto-init if first call hasn't happened yet (e.g. dropdown change before
+  // tab switch). This guarantees sensRates is populated before render.
+  if (!sensInitialised) sensitivityInit();
+  const regionKey = document.getElementById('sens-region-select').value;
+  const tbody = document.getElementById('sens-combined-tbody');
+  if (!regionKey) {
+    tbody.innerHTML = `<tr><td colspan="8" style="padding:24px;color:var(--text-light)">No region selected.</td></tr>`;
+    document.getElementById('sens-house-mhp').textContent = '—';
+    document.getElementById('sens-unit-mhp').textContent = '—';
+    return;
+  }
+  sensSelected = regionKey;
+  const [state, region] = regionKey.split('::');
+  const houseRow = HOUSES_DATA.find(r => r[0] === state && r[1] === region);
+  const unitRow  = UNITS_DATA.find(r => r[0] === state && r[1] === region);
+
+  // Inputs from this tab
+  const years   = parseFloat(document.getElementById('sens-years').value)   || 5;
+  const capWg   = parseFloat(document.getElementById('sens-capWage').value) || 3.0;
+  const regWg   = parseFloat(document.getElementById('sens-regWage').value) || 2.0;
+  const wgRate  = isCapCity(region) ? capWg / 100 : regWg / 100;
+
+  // Inputs read-only from Houses (IC) tab
+  const p = getParams();
+  const bankMargin = p.bankMargin;       // %
+  const apraF      = p.apraF;            // %
+
+  // House and Unit per-region values
+  const housePrice  = houseRow ? houseRow[3] : null;
+  const houseIncome = houseRow ? houseRow[4] : null;
+  const houseAIC    = houseRow ? houseRow[5] : null;
+  const unitPrice   = unitRow  ? unitRow[2]  : null;
+  const unitIncome  = unitRow  ? lookupIncome(unitRow[1]) : null;
+  const unitAIC     = unitRow  ? unitRow[4]  : null;
+
+  // Update the MHP / MUP banners
+  document.getElementById('sens-house-mhp').textContent =
+    housePrice != null ? '$' + Math.round(housePrice).toLocaleString('en-AU') : '—';
+  document.getElementById('sens-unit-mhp').textContent =
+    unitPrice != null ? '$' + Math.round(unitPrice).toLocaleString('en-AU') : '—';
+
+  // Build display entries — preserve insertion order in sensRates so that
+  // user-controlled ordering (Add appends, Up/Down swaps neighbors) is
+  // respected. The sourceIndex is the position in sensRates for editing.
+  const entries = sensRates.map((rate, sourceIndex) => ({ rate, sourceIndex }));
+
+  // Compute one trio of cells (Ceiling / AUD / %) for either house or unit
+  function calcTrio(rate, income, aiCeiling, currentPrice) {
+    if (income == null || aiCeiling == null || currentPrice == null) {
+      return { ceiling: null, audStr: '—', pctStr: '—', cls: '' };
+    }
+    const wgIncome = income * Math.pow(1 + wgRate, years);
+    const bankRate = rate + bankMargin + apraF;
+    const ceiling  = calcCeilingPrice(bankRate, wgIncome, aiCeiling);
+    if (ceiling == null || isNaN(ceiling)) {
+      return { ceiling: null, audStr: '—', pctStr: '—', cls: '' };
+    }
+    const growthAUD = ceiling - currentPrice;
+    const growthPct = currentPrice > 0 ? growthAUD / currentPrice : null;
+    const audStr   = (growthAUD >= 0 ? '+' : '−') + '$' + Math.round(Math.abs(growthAUD)).toLocaleString('en-AU');
+    const pctStr   = growthPct == null ? '—' : ((growthPct >= 0 ? '+' : '') + (growthPct * 100).toFixed(2) + '%');
+    const cls      = growthAUD >= 0 ? 'sens-pos' : 'sens-neg';
+    return { ceiling, audStr, pctStr, cls };
+  }
+
+  // Combined-row renderer — one cash rate, then 3 House cells + 3 Unit cells + actions
+  function renderRow(entry, displayIdx, total) {
+    const h = calcTrio(entry.rate, houseIncome, houseAIC, housePrice);
+    const u = calcTrio(entry.rate, unitIncome,  unitAIC,  unitPrice);
+    const idx = entry.sourceIndex;
+
+    return `<tr data-sens-idx="${idx}">
+      <td>${rateInput(entry)}</td>
+      <td class="sens-section-house">${h.ceiling != null ? '$' + Math.round(h.ceiling).toLocaleString('en-AU') : '—'}</td>
+      <td class="sens-section-house ${h.cls}">${h.audStr}</td>
+      <td class="sens-section-house ${h.cls}">${h.pctStr}</td>
+      <td class="sens-section-unit">${u.ceiling != null ? '$' + Math.round(u.ceiling).toLocaleString('en-AU') : '—'}</td>
+      <td class="sens-section-unit ${u.cls}">${u.audStr}</td>
+      <td class="sens-section-unit ${u.cls}">${u.pctStr}</td>
+      <td class="sens-actions-cell">${delBtn(entry)}</td>
+    </tr>`;
+  }
+  function rateInput(entry) {
+    return `<input type="number" class="sens-rate-input" step="0.05" min="0" max="20" value="${entry.rate.toFixed(2)}" onchange="sensitivityUpdateRate(${entry.sourceIndex}, this.value)">`;
+  }
+  function delBtn(entry) {
+    const disabled = sensRates.length <= 1 ? 'disabled' : '';
+    return `<button class="sens-del-btn" onclick="sensitivityDeleteRow(${entry.sourceIndex})" title="Remove this row" ${disabled}>×</button>`;
+  }
+
+  const total = entries.length;
+  tbody.innerHTML = entries.map((e, i) => renderRow(e, i, total)).join('') ||
+    `<tr><td colspan="8" style="padding:24px;color:var(--text-light)">No region data available.</td></tr>`;
+}
+
 // ── INIT ─────────────────────────────────────────────────────────────────────
 // NOTE: we no longer auto-fetch live data on page load. Instead:
 //   1. versionsMenu.init() establishes Supabase session
 //   2. versionsMenu.bootstrapFromLatestSnapshot() either loads the latest
 //      saved snapshot, OR shows a sign-in prompt if no session
 //   3. User clicks Update button to pull fresh live data
-_initMainRegionNames();   // capture the curated 36 before any LGAs are appended
+_initMainRegionNames();   // capture the curated 36 + bundled AIC defaults
+// Apply the AIC preference (default ON) — this restores bundled values if the
+// page reloaded with anything stale in HOUSES_DATA / UNITS_DATA.
+applyAICPreference();
+// Sync the toggle checkbox with the stored preference
+const _aicToggleEl = document.getElementById('aic-toggle-input');
+if (_aicToggleEl) _aicToggleEl.checked = useBundledAIC;
 recalcAll();
 attachHeaderSortHandlers();
 versionsMenu.init();
