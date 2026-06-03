@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CGT Calculator</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #f5f6f8;
+    margin: 0;
+    padding: 24px;
+    color: #1a1a1a;
+    line-height: 1.4;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  h1 { margin: 0 0 4px 0; font-size: 28px; color: #0d2840; }
+  .subtitle { color: #5a6878; font-size: 14px; margin-bottom: 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border: 1px solid #e4e8ed;
+  }
+  .card h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;
+    color: #5a6878; margin: 0 0 16px 0; font-weight: 600;
+  }
+  .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+  .input-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .input-row label { flex: 1; font-size: 14px; color: #1a1a1a; }
+  .input-wrap { position: relative; width: 200px; }
+  .input-wrap input, .input-wrap select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #d4dae0;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    background: white;
+    font-variant-numeric: tabular-nums;
+  }
+  .input-wrap.money input { padding-left: 22px; }
+  .input-wrap.money::before {
+    content: '$';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #5a6878;
+    font-size: 14px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .input-wrap.percent input { padding-right: 28px; }
+  .input-wrap.percent::after {
+    content: '%';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #5a6878;
+    font-size: 14px;
+    pointer-events: none;
+  }
+  .input-wrap.years input { padding-right: 40px; }
+  .input-wrap.years::after {
+    content: 'yrs';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #5a6878;
+    font-size: 14px;
+    pointer-events: none;
+  }
+  .input-wrap input:focus, .input-wrap select:focus {
+    outline: none;
+    border-color: #4a90c2;
+    box-shadow: 0 0 0 3px rgba(74,144,194,0.1);
+  }
+  .or-divider {
+    display: flex; align-items: center; gap: 8px; margin: 12px 0;
+    color: #94a3b0; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: #e4e8ed; }
+  .section-label {
+    font-size: 11px; text-transform: uppercase; color: #94a3b0;
+    font-weight: 600; letter-spacing: 0.5px; margin-bottom: 6px;
+  }
+  .hint { font-size: 12px; color: #94a3b0; margin-top: -4px; margin-bottom: 4px; }
+  .result-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; border-bottom: 1px solid #f0f3f6; }
+  .result-row:last-child { border-bottom: none; }
+  .result-row.has-explanation { border-bottom: none; padding-bottom: 4px; }
+  .result-row.total { font-weight: 600; border-top: 2px solid #0d2840; margin-top: 8px; padding-top: 12px; font-size: 16px; }
+  .result-row .label { color: #5a6878; }
+  .result-row .value { color: #0d2840; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .result-row.total .value { color: #0d2840; font-weight: 700; }
+  .explanation {
+    font-size: 12px;
+    color: #5a6878;
+    padding: 4px 0 12px 12px;
+    border-left: 2px solid #d4dae0;
+    margin-left: 4px;
+    margin-bottom: 4px;
+    line-height: 1.5;
+    font-style: italic;
+    border-bottom: 1px solid #f0f3f6;
+  }
+  .explanation:last-child { border-bottom: none; padding-bottom: 4px; }
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .badge.old { background: #e8f1fb; color: #2563a8; }
+  .badge.new { background: #fef0e8; color: #c2510d; }
+  .badge.transitional { background: #fef9e8; color: #856404; }
+  .final-result {
+    background: linear-gradient(135deg, #0d2840 0%, #1c4870 100%);
+    color: white; border-radius: 10px; padding: 24px; margin-top: 20px;
+  }
+  .final-result h2 {
+    color: #99b6d4; font-size: 13px; text-transform: uppercase;
+    margin: 0 0 8px 0; letter-spacing: 0.5px;
+  }
+  .final-explainer {
+    color: #b8cfe6;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+  .final-result .amount {
+    font-size: 36px; font-weight: 700; margin: 6px 0 4px 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .final-result .meta { font-size: 14px; color: #b8cfe6; }
+  .final-result .compare {
+    display: flex; gap: 16px; margin-top: 16px; padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+  .final-result .compare-item { flex: 1; }
+  .final-result .compare-label {
+    font-size: 11px; color: #99b6d4; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .final-result .compare-value {
+    font-size: 18px; font-weight: 600; color: white; margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .footnote {
+    margin-top: 24px; padding: 16px; background: #fef9e8;
+    border-radius: 8px; border-left: 3px solid #d4a017;
+    font-size: 13px; color: #6e5814;
+  }
+  .footnote strong { color: #856404; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>CGT Calculator</h1>
+  <div class="subtitle">Australian 2026-27 Budget reforms: Old rules vs New rules vs Transitional</div>
+
+  <div class="footnote" style="margin-top: 0; margin-bottom: 24px;">
+    <strong>Notes:</strong>
+    The announcement date (12 May 2026) and new-rules commencement (1 Jul 2027) are based on the 2026-27 Budget proposals.
+    Old rules apply automatically for properties purchased before the announcement, or sold before new rules begin.
+    Transitional treatment applies only when the property is held across the 1 Jul 2027 boundary.
+    New build properties may elect any regime, and the calculator picks the cheapest.
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2>Property &amp; Tax Settings</h2>
+        <div class="input-group">
+          <div class="input-row">
+            <label for="propType">Property Type</label>
+            <div class="input-wrap">
+              <select id="propType">
+                <option value="New">New build</option>
+                <option value="Established">Established</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-row">
+            <label for="taxRate">Marginal Tax Rate</label>
+            <div class="input-wrap percent"><input type="number" id="taxRate" step="0.1" value="47.5"></div>
+          </div>
+          <div class="input-row">
+            <label for="minTax">Minimum Tax Rate (new CGT floor)</label>
+            <div class="input-wrap percent"><input type="number" id="minTax" step="0.1" value="30"></div>
+          </div>
+          <div class="input-row">
+            <label for="cpiRate">CPI Rate (for indexation)</label>
+            <div class="input-wrap percent"><input type="number" id="cpiRate" step="0.1" value="2.5"></div>
+          </div>
+          <div class="input-row">
+            <label for="discount">CGT Discount (old rules)</label>
+            <div class="input-wrap percent"><input type="number" id="discount" step="1" value="50"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 20px;">
+        <h2>Hold Period</h2>
+        <div class="section-label">Option A: From dates</div>
+        <div class="input-group">
+          <div class="input-row">
+            <label for="purchaseDate">Purchase Date</label>
+            <div class="input-wrap"><input type="date" id="purchaseDate" value=""></div>
+          </div>
+          <div class="input-row">
+            <label for="soldDate">Sold Date</label>
+            <div class="input-wrap"><input type="date" id="soldDate" value=""></div>
+          </div>
+        </div>
+        <div class="or-divider">or</div>
+        <div class="section-label">Option B: Direct</div>
+        <div class="input-group">
+          <div class="input-row">
+            <label for="yearsHeldOverride">Years Held (override)</label>
+            <div class="input-wrap years"><input type="number" id="yearsHeldOverride" step="0.1" value="10"></div>
+          </div>
+          <div class="hint">Leave blank to derive from dates above.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 20px;">
+        <h2>Profit</h2>
+        <div class="section-label">Option A: From prices</div>
+        <div class="input-group">
+          <div class="input-row">
+            <label for="purchasePrice">Purchase Price</label>
+            <div class="input-wrap money"><input type="text" id="purchasePrice" value="1,000,000" inputmode="numeric"></div>
+          </div>
+          <div class="input-row">
+            <label for="soldPrice">Sold Price</label>
+            <div class="input-wrap money"><input type="text" id="soldPrice" value="1,967,151" inputmode="numeric"></div>
+          </div>
+        </div>
+        <div class="or-divider">or</div>
+        <div class="section-label">Option B: Direct</div>
+        <div class="input-group">
+          <div class="input-row">
+            <label for="grossProfitOverride">Gross Profit (override)</label>
+            <div class="input-wrap money"><input type="text" id="grossProfitOverride" placeholder="" inputmode="numeric"></div>
+          </div>
+          <div class="hint">Leave blank to derive from prices above.</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Derived Values</h2>
+        <div class="result-row"><span class="label">Hold Period</span><span class="value" id="outHoldYears"></span></div>
+        <div class="result-row"><span class="label">Gross Profit</span><span class="value" id="outGrossProfit"></span></div>
+        <div class="result-row"><span class="label">Effective Purchase Price</span><span class="value" id="outEffPurchase"></span></div>
+        <div class="result-row"><span class="label">Effective Sold Price</span><span class="value" id="outEffSold"></span></div>
+        <div class="result-row has-explanation"><span class="label">Detected Rule</span><span class="value" id="outDetectedRule"></span></div>
+        <div class="explanation" id="outDetectedRuleDesc"></div>
+        <div class="result-row has-explanation"><span class="label">Election Status</span><span class="value" id="outElectionStatus"></span></div>
+        <div class="explanation" id="outElectionStatusDesc"></div>
+      </div>
+
+      <div class="card" style="margin-top: 20px;">
+        <h2>Old CGT <span class="badge old">50% discount</span></h2>
+        <div class="result-row"><span class="label">Nominal capital gain</span><span class="value" id="outOldGain"></span></div>
+        <div class="result-row"><span class="label">Discounted gain (× 50%)</span><span class="value" id="outOldDiscountedGain"></span></div>
+        <div class="result-row"><span class="label">Effective tax rate (pre-reform)</span><span class="value" id="outOldEffRate"></span></div>
+        <div class="result-row total"><span class="label">Tax payable</span><span class="value" id="outOldTax"></span></div>
+      </div>
+
+      <div class="card" style="margin-top: 20px;">
+        <h2>New CGT <span class="badge new">Indexation + 30% min</span></h2>
+        <div class="result-row"><span class="label">Indexation factor</span><span class="value" id="outIndexFactor"></span></div>
+        <div class="result-row"><span class="label">Indexed cost base</span><span class="value" id="outIndexedCost"></span></div>
+        <div class="result-row"><span class="label">Real capital gain</span><span class="value" id="outRealGain"></span></div>
+        <div class="result-row"><span class="label">Applicable tax rate</span><span class="value" id="outNewRate"></span></div>
+        <div class="result-row"><span class="label">Effective tax rate (indexation)</span><span class="value" id="outNewEffRate"></span></div>
+        <div class="result-row total"><span class="label">Tax payable</span><span class="value" id="outNewTax"></span></div>
+      </div>
+
+      <div class="card" style="margin-top: 20px;" id="transitionalCard">
+        <h2>Transitional CGT <span class="badge transitional">Split treatment</span></h2>
+        <div class="result-row"><span class="label">Years before 1 Jul 2027</span><span class="value" id="outYearsBefore"></span></div>
+        <div class="result-row"><span class="label">Years after 1 Jul 2027</span><span class="value" id="outYearsAfter"></span></div>
+        <div class="result-row"><span class="label">Pre-period tax (50% discount)</span><span class="value" id="outPreTax"></span></div>
+        <div class="result-row"><span class="label">Post-period tax (no discount)</span><span class="value" id="outPostTax"></span></div>
+        <div class="result-row total"><span class="label">Total transitional tax</span><span class="value" id="outTransTax"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="final-result">
+    <h2>Final Result</h2>
+    <div class="final-explainer">The amount of CGT actually payable under the regime that applies to this property. Only one of the three regimes below applies. New builds may elect the cheapest; other properties are stuck with the detected rule.</div>
+    <div class="amount" id="outFinalTax"></div>
+    <div class="meta">
+      <span id="outAppliedRule"></span>
+      &nbsp;·&nbsp; Effective rate on nominal gain: <span id="outEffectiveRate"></span>
+    </div>
+    <div class="compare">
+      <div class="compare-item">
+        <div class="compare-label">Old Rules</div>
+        <div class="compare-value" id="outCompareOld"></div>
+      </div>
+      <div class="compare-item">
+        <div class="compare-label">New Rules</div>
+        <div class="compare-value" id="outCompareNew"></div>
+      </div>
+      <div class="compare-item" id="compareTransWrap">
+        <div class="compare-label">Transitional</div>
+        <div class="compare-value" id="outCompareTrans"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const fmtDollar = (n) => {
+  if (!isFinite(n)) return '';
+  const rounded = Math.round(n);
+  return (rounded < 0 ? '-$' : '$') + Math.abs(rounded).toLocaleString('en-AU');
+};
+const fmtPct = (n) => isFinite(n) ? (n * 100).toFixed(2) + '%' : '';
+const fmtYrs = (n) => isFinite(n) ? n.toFixed(2) + ' yrs' : '';
+const fmtFactor = (n) => isFinite(n) ? n.toFixed(4) : '';
+
+const parseMoney = (s) => {
+  if (typeof s !== 'string') return NaN;
+  const cleaned = s.replace(/[^\d.-]/g, '');
+  return cleaned === '' ? NaN : parseFloat(cleaned);
+};
+
+function formatMoneyInput(input) {
+  const cursorPos = input.selectionStart;
+  const oldLength = input.value.length;
+  const raw = input.value.replace(/[^\d]/g, '');
+  if (raw === '') { input.value = ''; return; }
+  const formatted = parseInt(raw, 10).toLocaleString('en-AU');
+  input.value = formatted;
+  const newLength = formatted.length;
+  const diff = newLength - oldLength;
+  try { input.setSelectionRange(cursorPos + diff, cursorPos + diff); } catch (e) {}
+}
+
+const ANNOUNCEMENT_DATE = new Date('2026-05-12');
+const NEW_RULES_BEGIN = new Date('2027-07-01');
+const LAST_OLD_SALE_DATE = new Date('2027-06-30');
+
+function yearFrac(d1, d2) {
+  return (d2 - d1) / (365.25 * 86400000);
+}
+
+function calc() {
+  const propType = document.getElementById('propType').value;
+  const taxRate = (parseFloat(document.getElementById('taxRate').value) || 0) / 100;
+  const minTax = (parseFloat(document.getElementById('minTax').value) || 0) / 100;
+  const cpi = (parseFloat(document.getElementById('cpiRate').value) || 0) / 100;
+  const discount = (parseFloat(document.getElementById('discount').value) || 0) / 100;
+
+  const purchaseDateStr = document.getElementById('purchaseDate').value;
+  const soldDateStr = document.getElementById('soldDate').value;
+  const yearsOverrideRaw = document.getElementById('yearsHeldOverride').value;
+  const yearsOverride = yearsOverrideRaw === '' ? NaN : parseFloat(yearsOverrideRaw);
+
+  const purchasePrice_raw = parseMoney(document.getElementById('purchasePrice').value);
+  const soldPrice_raw = parseMoney(document.getElementById('soldPrice').value);
+  const grossOverride_raw = parseMoney(document.getElementById('grossProfitOverride').value);
+
+  let holdYears;
+  let hasDates = false;
+  let purchaseDate = null, soldDate = null;
+  if (purchaseDateStr && soldDateStr) {
+    purchaseDate = new Date(purchaseDateStr);
+    soldDate = new Date(soldDateStr);
+    hasDates = !isNaN(purchaseDate) && !isNaN(soldDate);
+  }
+  if (!isNaN(yearsOverride)) {
+    holdYears = yearsOverride;
+  } else if (hasDates) {
+    holdYears = Math.round(yearFrac(purchaseDate, soldDate) * 100) / 100;
+  } else {
+    holdYears = NaN;
+  }
+
+  let purchasePrice, soldPrice, grossProfit;
+  if (!isNaN(grossOverride_raw)) {
+    grossProfit = grossOverride_raw;
+    if (!isNaN(purchasePrice_raw)) {
+      purchasePrice = purchasePrice_raw;
+      soldPrice = purchasePrice_raw + grossOverride_raw;
+    } else if (!isNaN(soldPrice_raw)) {
+      soldPrice = soldPrice_raw;
+      purchasePrice = soldPrice_raw - grossOverride_raw;
+    } else {
+      purchasePrice = 0;
+      soldPrice = grossOverride_raw;
+    }
+  } else if (!isNaN(purchasePrice_raw) && !isNaN(soldPrice_raw)) {
+    purchasePrice = purchasePrice_raw;
+    soldPrice = soldPrice_raw;
+    grossProfit = soldPrice_raw - purchasePrice_raw;
+  } else {
+    purchasePrice = NaN; soldPrice = NaN; grossProfit = NaN;
+  }
+
+  document.getElementById('outHoldYears').textContent = fmtYrs(holdYears);
+  document.getElementById('outGrossProfit').textContent = fmtDollar(grossProfit);
+  document.getElementById('outEffPurchase').textContent = fmtDollar(purchasePrice);
+  document.getElementById('outEffSold').textContent = fmtDollar(soldPrice);
+
+  let detectedRule = 'Indeterminate (provide dates for rule detection)';
+  let detectedRuleDesc = 'Without purchase and sold dates, the calculator cannot determine which regime applies. Compare all three calculations below to see your options.';
+  let electionStatus = 'Manual, using inputs as provided';
+  let electionStatusDesc = 'Using the inputs as provided without regime detection.';
+  let isTransitional = false;
+  let isGrandfathered = false;
+  let isPostCutoff = false;
+  let preCutoffSale = false;
+
+  if (hasDates) {
+    if (purchaseDate < ANNOUNCEMENT_DATE) {
+      detectedRule = 'Old rules (pre-announcement purchase)';
+      detectedRuleDesc = 'The property was purchased before the 12 May 2026 announcement, so it is grandfathered under the existing CGT rules. The 50% CGT discount applies and there are no changes to negative gearing.';
+      electionStatus = 'Grandfathered, Old rules automatic';
+      electionStatusDesc = 'No election is available or needed. Pre-announcement purchases are not affected by the 2026-27 Budget reforms.';
+      isGrandfathered = true;
+    } else if (soldDate <= LAST_OLD_SALE_DATE && purchaseDate < NEW_RULES_BEGIN) {
+      detectedRule = 'Old rules (sold before new rules begin)';
+      detectedRuleDesc = 'The property was sold before 1 July 2027, when the new rules take effect. Old rules apply to the entire transaction with the full 50% CGT discount.';
+      electionStatus = 'Old rules automatic (pre-cutoff sale)';
+      electionStatusDesc = 'No election is needed. Any sale before 1 July 2027 is taxed under existing rules.';
+      preCutoffSale = true;
+    } else if (purchaseDate >= NEW_RULES_BEGIN) {
+      detectedRule = 'New rules (post-cutoff purchase)';
+      detectedRuleDesc = 'The property was purchased after 1 July 2027, when new rules took effect. Indexation applies to the cost base, the 50% discount is removed, and a 30% minimum tax floor applies.';
+      if (propType === 'New') {
+        electionStatus = 'Election available, choose cheapest';
+        electionStatusDesc = 'As a new build, the investor can elect either Old rules (50% discount) or New rules (indexation + 30% min). The calculator picks whichever produces the lower tax.';
+      } else {
+        electionStatus = 'Mandatory, no election available';
+        electionStatusDesc = 'Established properties purchased after the cutoff have no election. New rules apply with indexation and the 30% minimum tax floor.';
+      }
+      isPostCutoff = true;
+    } else {
+      if (propType === 'New') {
+        detectedRule = 'New build: investor may elect any regime';
+        detectedRuleDesc = 'The property was purchased in the transitional window (12 May 2026 to 30 June 2027) and is being held across the 1 July 2027 boundary. As a new build, the investor can elect Old, New, or Transitional treatment.';
+        electionStatus = 'Election available, choose cheapest';
+        electionStatusDesc = 'The calculator compares all three regimes (Old, New, Transitional) and applies the cheapest. New build investors retain the right to elect under the reforms.';
+      } else {
+        detectedRule = 'Transitional (split treatment)';
+        detectedRuleDesc = 'The property was purchased in the transitional window and held across 1 July 2027. The gain is split: the portion attributable to the pre-cutoff period uses Old rules (50% discount), the post-cutoff portion uses New rules (indexation + 30% min).';
+        electionStatus = 'Mandatory, no election available';
+        electionStatusDesc = 'Established properties in the transitional window must use the split treatment, no election is available.';
+      }
+      isTransitional = true;
+    }
+  } else {
+    if (propType === 'New') {
+      electionStatus = 'Assume election available (no dates provided)';
+      electionStatusDesc = 'Without dates, the calculator assumes a new build can elect any regime and shows all three results for comparison.';
+      detectedRule = 'No dates, comparing all regimes';
+      detectedRuleDesc = 'Provide purchase and sold dates to determine which regime applies based on the 2026-27 Budget timeline.';
+    } else {
+      electionStatus = 'Assume new rules apply (no dates provided)';
+      electionStatusDesc = 'Without dates, the calculator defaults to New rules for established properties (the post-1 July 2027 regime).';
+      detectedRule = 'No dates, assuming new rules';
+      detectedRuleDesc = 'Provide purchase and sold dates to determine whether old, transitional, or new rules apply.';
+    }
+  }
+  document.getElementById('outDetectedRule').textContent = detectedRule;
+  document.getElementById('outDetectedRuleDesc').textContent = detectedRuleDesc;
+  document.getElementById('outElectionStatus').textContent = electionStatus;
+  document.getElementById('outElectionStatusDesc').textContent = electionStatusDesc;
+
+  const oldGain = isFinite(grossProfit) ? grossProfit : NaN;
+  const oldDiscounted = oldGain * (1 - discount);
+  const oldTax = oldDiscounted * taxRate;
+  const oldEffRate = oldGain > 0 ? oldTax / oldGain : NaN;
+  document.getElementById('outOldGain').textContent = fmtDollar(oldGain);
+  document.getElementById('outOldDiscountedGain').textContent = fmtDollar(oldDiscounted);
+  document.getElementById('outOldEffRate').textContent = fmtPct(oldEffRate);
+  document.getElementById('outOldTax').textContent = fmtDollar(oldTax);
+
+  const indexFactor = Math.pow(1 + cpi, holdYears);
+  const indexedCost = purchasePrice * indexFactor;
+  const realGain = Math.max(0, soldPrice - indexedCost);
+  const newRate = Math.max(taxRate, minTax);
+  const newTax = realGain * newRate;
+  const newEffRate = oldGain > 0 ? newTax / oldGain : NaN;
+  document.getElementById('outIndexFactor').textContent = fmtFactor(indexFactor);
+  document.getElementById('outIndexedCost').textContent = fmtDollar(indexedCost);
+  document.getElementById('outRealGain').textContent = fmtDollar(realGain);
+  document.getElementById('outNewRate').textContent = fmtPct(newRate);
+  document.getElementById('outNewEffRate').textContent = fmtPct(newEffRate);
+  document.getElementById('outNewTax').textContent = fmtDollar(newTax);
+
+  let yearsBefore = 0, yearsAfter = 0, preTax = 0, postTax = 0, transTax = NaN;
+  if (hasDates && isTransitional) {
+    yearsBefore = Math.max(0, yearFrac(purchaseDate, NEW_RULES_BEGIN < soldDate ? NEW_RULES_BEGIN : soldDate));
+    yearsAfter = Math.max(0, yearFrac(purchaseDate > NEW_RULES_BEGIN ? purchaseDate : NEW_RULES_BEGIN, soldDate));
+    const preShare = holdYears > 0 ? yearsBefore / holdYears : 0;
+    const boundaryValue = purchasePrice + (oldGain * preShare);
+    preTax = (boundaryValue - purchasePrice) * taxRate * (1 - discount);
+    const indexedBoundary = boundaryValue * Math.pow(1 + cpi, yearsAfter);
+    const postRealGain = Math.max(0, soldPrice - indexedBoundary);
+    postTax = Math.max(postRealGain * taxRate, postRealGain * minTax);
+    transTax = preTax + postTax;
+    document.getElementById('outYearsBefore').textContent = fmtYrs(yearsBefore);
+    document.getElementById('outYearsAfter').textContent = fmtYrs(yearsAfter);
+    document.getElementById('outPreTax').textContent = fmtDollar(preTax);
+    document.getElementById('outPostTax').textContent = fmtDollar(postTax);
+    document.getElementById('outTransTax').textContent = fmtDollar(transTax);
+    document.getElementById('transitionalCard').style.display = 'block';
+    document.getElementById('compareTransWrap').style.display = 'block';
+  } else {
+    document.getElementById('transitionalCard').style.display = 'none';
+    document.getElementById('compareTransWrap').style.display = 'none';
+  }
+
+  let finalTax, appliedRule;
+  if (isGrandfathered || preCutoffSale) {
+    finalTax = oldTax;
+    appliedRule = 'Old rules';
+  } else if (isPostCutoff) {
+    if (propType === 'New') {
+      finalTax = Math.min(oldTax, newTax);
+      appliedRule = finalTax === oldTax ? 'Old rules (elected by new build)' : 'New rules (elected)';
+    } else {
+      finalTax = newTax;
+      appliedRule = 'New rules (mandatory)';
+    }
+  } else if (isTransitional) {
+    if (propType === 'New') {
+      finalTax = Math.min(oldTax, newTax, transTax);
+      if (finalTax === oldTax) appliedRule = 'Old rules (elected by new build)';
+      else if (finalTax === newTax) appliedRule = 'New rules (elected)';
+      else appliedRule = 'Transitional (elected)';
+    } else {
+      finalTax = transTax;
+      appliedRule = 'Transitional (mandatory)';
+    }
+  } else {
+    if (propType === 'New') {
+      finalTax = Math.min(oldTax, newTax);
+      appliedRule = finalTax === oldTax ? 'Old rules (cheaper, election assumed)' : 'New rules (cheaper, election assumed)';
+    } else {
+      finalTax = newTax;
+      appliedRule = 'New rules (assumed)';
+    }
+  }
+
+  const effectiveRate = oldGain > 0 ? finalTax / oldGain : 0;
+  document.getElementById('outFinalTax').textContent = fmtDollar(finalTax);
+  document.getElementById('outAppliedRule').textContent = appliedRule;
+  document.getElementById('outEffectiveRate').textContent = fmtPct(effectiveRate);
+  document.getElementById('outCompareOld').textContent = fmtDollar(oldTax);
+  document.getElementById('outCompareNew').textContent = fmtDollar(newTax);
+  document.getElementById('outCompareTrans').textContent = isFinite(transTax) ? fmtDollar(transTax) : '';
+}
+
+['purchasePrice', 'soldPrice'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    formatMoneyInput(el);
+    calc();
+  });
+});
+
+// Gross Profit override: when filled, clear Option A prices
+const grossOverrideEl = document.getElementById('grossProfitOverride');
+grossOverrideEl.addEventListener('input', () => {
+  formatMoneyInput(grossOverrideEl);
+  if (grossOverrideEl.value.trim() !== '') {
+    document.getElementById('purchasePrice').value = '';
+    document.getElementById('soldPrice').value = '';
+  }
+  calc();
+});
+
+// Years Held override: when filled, clear Option A dates
+const yearsOverrideEl = document.getElementById('yearsHeldOverride');
+yearsOverrideEl.addEventListener('input', () => {
+  if (yearsOverrideEl.value.trim() !== '') {
+    document.getElementById('purchaseDate').value = '';
+    document.getElementById('soldDate').value = '';
+  }
+  calc();
+});
+
+document.querySelectorAll('input:not([id="purchasePrice"]):not([id="soldPrice"]):not([id="grossProfitOverride"]):not([id="yearsHeldOverride"]), select').forEach(el => {
+  el.addEventListener('input', calc);
+  el.addEventListener('change', calc);
+});
+
+calc();
+</script>
+</body>
+</html>
