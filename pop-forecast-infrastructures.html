@@ -79,7 +79,23 @@
   th{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);font-weight:700}
   td.num{text-align:right;font-variant-numeric:tabular-nums}
   #yearTable th,#yearTable td{text-align:center}
+  /* center all values except the first (Region/Project) column */
+  #summaryTable th,#summaryTable td,#projTable th,#projTable td{text-align:center}
+  #summaryTable th:first-child,#summaryTable td:first-child,#projTable th:first-child,#projTable td:first-child{text-align:left}
   #yearTable th:first-child,#yearTable td:first-child{text-align:center}
+
+  table.summary tbody tr{cursor:pointer;transition:background .1s ease}
+  table.summary tbody tr:hover{background:var(--paper)}
+  table.summary tbody tr.cur{background:rgba(0,161,180,.10)}
+  table.summary tbody tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--teal)}
+  table.summary td:first-child{font-weight:600;color:var(--navy)}
+  table.summary tfoot td{border-top:2px solid var(--navy);font-weight:800;color:var(--navy);background:#fff}
+  .note-card h2{margin:0 0 6px}
+  .note-card h3{font-size:12.5px;color:var(--teal);margin:18px 0 6px;font-weight:800;letter-spacing:.01em}
+  .note-card p{font-size:13px;color:var(--ink);margin:0 0 8px;line-height:1.55;max-width:80ch}
+  .note-card ul{margin:0 0 8px;padding-left:20px}
+  .note-card li{font-size:13px;color:var(--ink);margin:3px 0;line-height:1.5;max-width:78ch}
+  table.summary .st{font-size:11px;color:var(--mute);font-weight:600}
   tr:last-child td{border-bottom:none}
   .pill{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px}
   .Underway{background:#dcefe1;color:#1c6b3a} .Confirmed{background:#fdf3d3;color:#8a6400} .Planning{background:#dde9f7;color:#2b4d7a}
@@ -110,6 +126,47 @@
   </div>
   <div class="controls ver" id="versionChips"><span class="lbl">Version</span></div>
 
+  <div class="card" id="summaryCard">
+    <h2 id="summaryTitle">Summary — all regions</h2>
+    <p class="note" id="summaryNote"></p>
+    <div style="overflow-x:auto">
+      <table id="summaryTable" class="summary">
+        <thead><tr>
+          <th>Region</th><th>State</th>
+          <th class="num">Population</th>
+          <th class="num">Total infrastructure spend</th>
+          <th class="num">Infra per person</th>
+          <th class="num">Forecasted job increase</th>
+          <th class="num">% increase per pop</th>
+        </tr></thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div class="card note-card" id="methodNote">
+    <h2>About these figures</h2>
+    <p>This table reports verified major infrastructure only. A project is included on a region tab solely if it has a verifiable estimated cost, start year and end year, and is a confirmed major project (~$50M+) located within the named region. Completed, cancelled and uncertain projects are excluded.</p>
+
+    <h3>Inclusion rules — a project appears on a region tab only if ALL of the following are true</h3>
+    <ul>
+      <li>Cost, start year AND end year are all verifiable from a credible source.</li>
+      <li>It is a confirmed major project of roughly $50 million or more.</li>
+      <li>It is physically located within the named region (not state/territory-wide).</li>
+      <li>It is not completed, cancelled or merely speculative/unconfirmed.</li>
+    </ul>
+    <p>Construction jobs are always shown — the published figure where one exists, otherwise a sector-based estimate (jobs per $1B).</p>
+
+    <h3>Why some regions are lower than earlier versions</h3>
+    <p>Earlier versions counted projects broadly — including small works, state/territory-wide programs and unconfirmed proposals. This version applies one consistent standard, so some regions total less. It reflects stricter measurement, not a decline in activity, and is not directly comparable to the earlier broad lists.</p>
+
+    <h3>Why this version is easier to maintain</h3>
+    <p>Every quarter, the same rule decides which projects count. So when a region's total goes up or down, it's because projects were genuinely added, finished, or changed — not because we counted differently this time.</p>
+    <p>The old version had no set rule, so a total could change just because the list was put together differently. With a fixed rule, the numbers stay consistent and you can compare one quarter to the next with confidence.</p>
+  </div>
+
+  <div id="detailSection">
   <div class="stats" id="stats"></div>
 
   <div class="card">
@@ -144,6 +201,7 @@
       </table>
     </div>
   </div>
+  </div>
 
   <footer>
     <b>How the timeline is built.</b> For each year: jobs added = construction jobs of projects starting that year; jobs finalised = construction jobs of projects ending that year; operational jobs begin the year a project completes. Total active jobs = cumulative added − cumulative finalised + operational to date. Timeline floored at 2025. <b>V1 (2025)</b> is the earlier broad list; <b>June 2026</b> is the verified set (confirmed major projects with cost, start and end). Job figures are published where available, otherwise sector-estimated — order-of-magnitude only.
@@ -156,8 +214,12 @@ const VERSIONS = [['v2','June 2026'],['v1','V1 (2025)']];
 const REGIONS = Object.keys(RAW.v2);
 const fmt = n => Math.round(n).toLocaleString();
 const fmtCost = c => c>=1e9 ? '$'+(c/1e9).toFixed(c/1e9>=10?0:2)+'B' : c>=1e6 ? '$'+(c/1e6).toFixed(0)+'M' : '$'+fmt(c);
+const POP={Melbourne:5328274,Darwin:145019,Sydney:5219674,Brisbane:2745086,Perth:2430757,Gladstone:69046,Townsville:206260,Rockhampton:85794,'Gold Coast':691230,'Sunshine Coast':381957,Mackay:129253};
+const STATE={Melbourne:'VIC',Darwin:'NT',Sydney:'NSW',Brisbane:'QLD',Perth:'WA',Gladstone:'QLD',Townsville:'QLD',Rockhampton:'QLD','Gold Coast':'QLD','Sunshine Coast':'QLD',Mackay:'QLD'};
+const ALL='All Regions (Summary)';
+const MENU=[ALL,...REGIONS];
 
-let current = REGIONS[0], ver='v2', view='active', chart;
+let current = ALL, ver='v2', view='active', chart;
 
 function projects(){ return (RAW[ver][current]||[]); }
 
@@ -185,7 +247,7 @@ function series(){
 
 function buildChips(){
   const menu=document.getElementById('regionMenu');
-  menu.innerHTML=REGIONS.map(r=>`<li role="option" data-r="${r}" aria-selected="${r===current?'true':'false'}">${r}<span class="tick">\u2713</span></li>`).join('');
+  menu.innerHTML=MENU.map(r=>`<li role="option" data-r="${r}" aria-selected="${r===current?'true':'false'}">${r}<span class="tick">\u2713</span></li>`).join('');
   document.getElementById('regionLabel').textContent=current;
   const vb=document.getElementById('versionChips');
   VERSIONS.forEach(([code,label])=>{const b=document.createElement('button');b.className='chip'+(code===ver?' active':'');b.textContent=label;b.onclick=()=>{ver=code;refresh()};b.dataset.code=code;vb.appendChild(b)});
@@ -231,6 +293,16 @@ function syncRegionMenu(){
 function refresh(){
   syncRegionMenu();
   document.querySelectorAll('#versionChips .chip').forEach(c=>c.classList.toggle('active',c.dataset.code===ver));
+
+  const showAll = current===ALL;
+  document.getElementById('summaryCard').style.display = showAll ? 'block' : 'none';
+  document.getElementById('detailSection').style.display = showAll ? 'none' : 'block';
+  document.getElementById('methodNote').style.display = (showAll && ver==='v2') ? 'block' : 'none';
+
+  drawSummary(); // always refresh the summary table so it's ready and reflects the version
+
+  if(showAll) return; // nothing else to draw when viewing the all-regions summary
+
   const s=series(), ps=projects();
   const totCon=ps.reduce((a,p)=>a+(p.con||0),0), totOp=ps.reduce((a,p)=>a+(p.op||0),0), totCost=ps.reduce((a,p)=>a+(p.cost||0),0);
   let peakVal=0,peakYear='—'; s.active.forEach((v,i)=>{if(v>peakVal){peakVal=v;peakYear=s.years[i]}});
@@ -242,6 +314,60 @@ function refresh(){
   ].map(([k,v,sm,peak])=>`<div class="stat${peak?' peak':''}"><p class="k">${k}</p><p class="v">${v}${sm?` <small>${sm}</small>`:''}</p></div>`).join('');
   document.getElementById('chartNote').textContent = s.years.length ? `${current} · ${VERSIONS.find(x=>x[0]===ver)[1]} · ${s.years[0]}–${s.years[s.years.length-1]}` : 'No dated projects for this selection.';
   drawChart(s); drawYearTable(s); drawTable(); applyView();
+}
+
+function peakActive(ps){
+  // total active jobs peak for a region's project list, using the same series logic
+  const list=ps.filter(p=>p.start || p.end);
+  if(!list.length) return 0;
+  const allY=list.flatMap(p=>[p.start,p.end]).filter(y=>typeof y==='number');
+  const maxY=Math.max(...allY), sy=2025; let cA=0,cF=0,cO=0,pk=0;
+  for(let y=sy;y<=maxY;y++){
+    let a=0,f=0,o=0;
+    list.forEach(p=>{
+      if(typeof p.start==='number' && (p.start===y||(y===sy&&p.start<y))) a+=p.con;
+      if(typeof p.end==='number' && p.end===y){ f+=p.con; o+=p.op; }
+    });
+    cA+=a;cF+=f;cO+=o; pk=Math.max(pk,cA-cF+cO);
+  }
+  return pk;
+}
+
+function drawSummary(){
+  const verLabel=VERSIONS.find(x=>x[0]===ver)[1];
+  document.getElementById('summaryTitle').textContent=`Summary — all regions (${verLabel})`;
+  document.getElementById('summaryNote').textContent='Per-region totals for the selected version. Click any region to load its detail below.';
+  const tb=document.querySelector('#summaryTable tbody');
+  const tf=document.querySelector('#summaryTable tfoot');
+  let tSpend=0,tJobs=0,tPop=0;
+  const rows=REGIONS.map(r=>{
+    const ps=RAW[ver][r]||[];
+    const spend=ps.reduce((a,p)=>a+(p.cost||0),0);
+    const jobs=ps.reduce((a,p)=>a+(p.con||0),0);
+    const pop=POP[r]||0;
+    tSpend+=spend;tJobs+=jobs;tPop+=pop;
+    const perPerson=pop?spend/pop:0;
+    const pctPop=pop?jobs/pop:0;
+    return {r,spend,jobs,pop,perPerson,pctPop};
+  });
+  tb.innerHTML=rows.map(o=>`<tr data-r="${o.r}" class="${o.r===current?'cur':''}">
+    <td>${o.r}</td>
+    <td class="st">${STATE[o.r]||''}</td>
+    <td class="num">${fmt(o.pop)}</td>
+    <td class="num">${fmtCost(o.spend)}</td>
+    <td class="num">$${fmt(o.perPerson)}</td>
+    <td class="num">${fmt(o.jobs)}</td>
+    <td class="num">${(o.pctPop*100).toFixed(2)}%</td>
+  </tr>`).join('');
+  tf.innerHTML=`<tr>
+    <td>TOTAL</td><td></td>
+    <td class="num">${fmt(tPop)}</td>
+    <td class="num">${fmtCost(tSpend)}</td>
+    <td class="num">$${fmt(tPop?tSpend/tPop:0)}</td>
+    <td class="num">${fmt(tJobs)}</td>
+    <td class="num">${(tPop?tJobs/tPop*100:0).toFixed(2)}%</td>
+  </tr>`;
+  tb.querySelectorAll('tr').forEach(tr=>tr.onclick=()=>{current=tr.dataset.r;refresh();document.getElementById('chartNote').scrollIntoView({behavior:'smooth',block:'center'});});
 }
 
 function applyView(){
