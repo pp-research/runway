@@ -95,6 +95,8 @@
   .note-card p{font-size:13px;color:var(--ink);margin:0 0 8px;line-height:1.55;max-width:80ch}
   .note-card ul{margin:0 0 8px;padding-left:20px}
   .note-card li{font-size:13px;color:var(--ink);margin:3px 0;line-height:1.5;max-width:78ch}
+  .note-card.v1{border-left:4px solid #9aa7ab}
+  .note-card.v1 h3{color:var(--mute)}
   table.summary .st{font-size:11px;color:var(--mute);font-weight:600}
   tr:last-child td{border-bottom:none}
   .pill{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px}
@@ -164,6 +166,22 @@
     <h3>Why this version is easier to maintain</h3>
     <p>Every quarter, the same rule decides which projects count. So when a region's total goes up or down, it's because projects were genuinely added, finished, or changed — not because we counted differently this time.</p>
     <p>The old version had no set rule, so a total could change just because the list was put together differently. With a fixed rule, the numbers stay consistent and you can compare one quarter to the next with confidence.</p>
+  </div>
+
+  <div class="card note-card v1" id="methodNoteV1">
+    <h2>About this version</h2>
+    <p>This is the earlier, broader version of the dataset. It was compiled before a consistent inclusion rule was applied, so it covers a much wider range of projects — and the totals are correspondingly higher.</p>
+
+    <h3>What it includes</h3>
+    <ul>
+      <li>Projects of all sizes, including small council works well under the $50M threshold used later.</li>
+      <li>State- and territory-wide programs counted against a single region — for example, NT-wide road, rail and energy projects all sit under Darwin, which is the main reason Darwin's numbers look so high here.</li>
+      <li>Proposed, speculative and unconfirmed projects that may not have firm costs or timelines.</li>
+      <li>Some projects without a verified cost, start year or end year.</li>
+    </ul>
+
+    <h3>Why the numbers are higher</h3>
+    <p>Because the list was assembled broadly rather than against a fixed standard, it captures far more projects than the verified June 2026 version. The higher spend and job figures reflect that wider, looser scope — not greater real activity. Treat these figures as an inclusive long-list, and use the June 2026 version for like-for-like, verified comparisons.</p>
   </div>
 
   <div id="detailSection">
@@ -298,6 +316,7 @@ function refresh(){
   document.getElementById('summaryCard').style.display = showAll ? 'block' : 'none';
   document.getElementById('detailSection').style.display = showAll ? 'none' : 'block';
   document.getElementById('methodNote').style.display = (showAll && ver==='v2') ? 'block' : 'none';
+  document.getElementById('methodNoteV1').style.display = (showAll && ver==='v1') ? 'block' : 'none';
 
   drawSummary(); // always refresh the summary table so it's ready and reflects the version
 
