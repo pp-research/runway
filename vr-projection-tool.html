@@ -93,8 +93,6 @@ h2{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;c
 .axis{position:relative;height:22px;margin-top:2px}
 .ax-t{position:absolute;top:0;width:1px;height:5px;background:var(--pp-light-gray)}
 .ax-l{position:absolute;top:8px;transform:translateX(-50%);font-size:10.5px;color:var(--pp-dark-gray)}
-.legend{display:flex;gap:18px;margin-top:9px;font-size:12px;color:var(--pp-dark-gray)}
-.legend .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
 
 table{width:100%;border-collapse:collapse;border-style:hidden;box-shadow:0 0 0 1px var(--pp-light-gray);border-radius:10px}
 th,td{padding:11px 15px;font-size:14px}
@@ -342,15 +340,10 @@ function render(){
           ${[0,1,2,3,4,5,6].map(v=>{const L=(v/6.5*100).toFixed(1);return `<div class="ax-t" style="left:${L}%"></div><div class="ax-l num" style="left:${L}%">${v}%</div>`}).join("")}
         </div>
       </div>
-      <div class="legend">
-        <span><span class="dot" style="background:var(--pp-teal)"></span>Current</span>
-        <span><span class="dot" style="background:var(--pp-cobalt)"></span>1 yr</span>
-        <span><span class="dot" style="background:var(--pp-dark-teal)"></span>2 yr</span>
       </div>
     </div>
 
     <section>
-      <h2>How the forecast is built</h2>
       <div class="bd">
         <div class="bdr hdr">
           <div class="hl"></div><div class="hl">People</div><div class="hl">\u00f7 Household size</div>
