@@ -126,9 +126,9 @@ footer{border-top:1px solid var(--pp-light-gray);padding:20px 24px 40px;font-siz
 <body>
 <header class="masthead">
   <div class="wrap">
-    <p class="eyebrow">Performance Property · Rental Supply</p>
+    <p class="eyebrow">Performance Property &middot; Rental Supply</p>
     <h1>Vacancy Rate Projection</h1>
-    <p>Where each market's vacancy rate is heading — incoming population weighed against incoming dwelling supply. Lower vacancy means a tighter rental market. <strong>Read the direction, not the decimal.</strong></p>
+    <p>Where each market&rsquo;s vacancy rate is heading &mdash; incoming population weighed against incoming dwelling supply. Lower vacancy means a tighter rental market. <strong>Read the direction, not the decimal.</strong></p>
   </div>
 </header>
 
@@ -139,15 +139,22 @@ footer{border-top:1px solid var(--pp-light-gray);padding:20px 24px 40px;font-siz
       <select id="region"></select>
     </div>
     <div class="field">
-      <span class="lbl" id="dsl">Data version</span>
-      <div class="seg" role="group" aria-labelledby="dsl">
-        <button type="button" id="ds-updated" aria-pressed="true">V1: 2yr avg</button>
-        <button type="button" id="ds-july" aria-pressed="false">V2: 3yr avg</button>
+      <span class="lbl" id="l-vr">VR source</span>
+      <div class="seg" role="group" aria-labelledby="l-vr">
+        <button type="button" id="vr-sqm" aria-pressed="false">SQM</button>
+        <button type="button" id="vr-cot" aria-pressed="true">Cotality</button>
       </div>
     </div>
     <div class="field">
-      <span class="lbl" id="wfl">Infrastructure workforce</span>
-      <div class="seg" role="group" aria-labelledby="wfl">
+      <span class="lbl" id="l-ver">Data version</span>
+      <div class="seg" role="group" aria-labelledby="l-ver">
+        <button type="button" id="ver-v1" aria-pressed="false">V1 (2yr)</button>
+        <button type="button" id="ver-v2" aria-pressed="true">V2 (3yr)</button>
+      </div>
+    </div>
+    <div class="field">
+      <span class="lbl" id="l-wf">Infrastructure WF</span>
+      <div class="seg" role="group" aria-labelledby="l-wf">
         <button type="button" id="wf-on" aria-pressed="true">Included</button>
         <button type="button" id="wf-off" aria-pressed="false">Excluded</button>
       </div>
@@ -156,166 +163,234 @@ footer{border-top:1px solid var(--pp-light-gray);padding:20px 24px 40px;font-siz
 </div>
 
 <main><div class="wrap" id="content"></div></main>
-
 <footer><div class="wrap" id="foot"></div></footer>
 
 <script>
 /* ============================================================
-   DATA — from UPDATED_Vacancy_Rate_Projections (6).xlsx
-   1 yr sheet, 2 yr sheet, IM tab (incl. WF Modifier), PRESENTATION.
-   Verified: recomputing the chain below reproduces the workbook's
-   1-yr and 2-yr VR for all 37 regions exactly.
+   Vacancy Rate Projection — three independent switches.
 
-   Forecast years: year 1 = FY2025-26, year 2 = FY2026-27.
-   im   = IM tab column B (average past 2 years), workforce excluded
-   wf1  = WF Modifier 2026   wf2 = WF Modifier 2027
-   Note: the workbook's 2 yr sheet repeats year-1 household formation,
-   so wf2 is carried in the data but not yet used by the 2-yr figure.
+   VR source      SQM Research  |  Cotality / workbook series
+   Data version   V1 (2yr avg, UPDATED workbook)  |  V2 (3yr avg, July 2026)
+   Workforce      infrastructure modifier included | excluded
+
+   Shared across every combination: ABS estimated resident population at
+   30 June 2025 (Regional Population 2024-25, released 31 Mar 2026) and
+   Census average household size. Total properties are derived from the
+   selected VR, so switching VR source changes the implied dwelling stock.
+
+   Verified: each version reproduces its own workbook's 1-yr and 2-yr VR
+   on its own VR series to under 1e-8.
    ============================================================ */
-const DATASETS = {
-  updated: {
-    label: "V1: 2yr avg",
-    note: "Demand from the UPDATED workbook. Natural increase and internal migration are single <strong>2-year averages</strong> used for both forecast years, overseas migration is one forecast year repeated, and year 2 copies year-1 household formation \u2014 so demand is identical in both years and the year-2 movement comes from supply alone.",
-    yr2: "repeat",
-    rows: [
-  { region:"National", state:null, mkt:null, pop:27969588, hh:2.575062, cur:0.013, hhNow:10861713.74376, propNow:11004775.829544, sup1:174010.5, sup2:174010.5, nb1:104400, nb2:104400, im1:0, im2:0, om1:260000, om2:260000, wf1:null, wf2:null, oo:null, hRent:740, hSlope:-19146, uRent:580, uSlope:-13014 },
-  { region:"Melbourne", state:"VIC", mkt:null, pop:5435590, hh:2.6, cur:0.0187, hhNow:2090611.538462, propNow:2130450.971631, sup1:44845.15, sup2:50053, nb1:32525, nb2:32525, im1:-2761, im2:-2761, om1:72465.28736, om2:72465.28736, wf1:null, wf2:null, oo:0.5868, hRent:788, hSlope:-6723, uRent:573, uSlope:-4804 },
-  { region:"Greater Sydney", state:"NSW", mkt:null, pop:5638830, hh:2.7, cur:0.0223, hhNow:2088455.555556, propNow:2136090.370825, sup1:32500.23, sup2:37843, nb1:30777, nb2:30777, im1:-27339, im2:-27339, om1:72253.70115, om2:72253.70115, wf1:null, wf2:null, oo:0.6791, hRent:1114, hSlope:-7450, uRent:731, uSlope:-3962 },
-  { region:"Brisbane", state:"QLD", mkt:null, pop:2833524, hh:2.5, cur:0.0191, hhNow:1133409.6, propNow:1155479.253747, sup1:21805.79, sup2:24465, nb1:19760, nb2:19760, im1:24978, im2:24978, om1:26453.65517, om2:26453.65517, wf1:null, wf2:null, oo:0.6658, hRent:788, hSlope:-7576, uRent:627, uSlope:-5357 },
-  { region:"Greater Perth", state:"WA", mkt:null, pop:2452765, hh:2.6, cur:0.0108, hhNow:943371.153846, propNow:953670.79847, sup1:19542.95, sup2:22249, nb1:13927, nb2:13927, im1:12144, im2:12144, om1:31925.6092, om2:31925.6092, wf1:286, wf2:958.285714, oo:0.7523, hRent:865, hSlope:-5607, uRent:654, uSlope:-3976 },
-  { region:"Adelaide", state:"SA", mkt:null, pop:1491015, hh:2.5, cur:0.011, hhNow:596406, propNow:603039.433771, sup1:11154.91, sup2:11976, nb1:2504, nb2:2504, im1:-1526, im2:-1526, om1:12964.13793, om2:12964.13793, wf1:null, wf2:null, oo:0.6777, hRent:687, hSlope:-16953, uRent:528, uSlope:-11222 },
-  { region:"Gold Coast", state:"QLD", mkt:null, pop:691230, hh:2.5, cur:0.0198, hhNow:276492, propNow:282077.127117, sup1:5078.73, sup2:6237, nb1:2388, nb2:2388, im1:1661, im2:1661, om1:7131.770115, om2:7131.770115, wf1:null, wf2:null, oo:0.6769, hRent:1100, hSlope:-16830, uRent:850, uSlope:-12575 },
-  { region:"Canberra", state:"ACT", mkt:null, pop:484630, hh:2.5, cur:0.0116, hhNow:193852, propNow:196127.074059, sup1:1438.63, sup2:1537, nb1:2719, nb2:2719, im1:-1109, im2:-1109, om1:3733.241379, om2:3733.241379, wf1:null, wf2:null, oo:0.6193, hRent:775, hSlope:143, uRent:587, uSlope:1067 },
-  { region:"Sunshine Coast", state:"QLD", mkt:null, pop:381957, hh:2.5, cur:0.0143, hhNow:152782.8, propNow:154999.289845, sup1:4089.67, sup2:4964, nb1:501, nb2:501, im1:4848, im2:4848, om1:2737.471264, om2:2737.471264, wf1:null, wf2:null, oo:0.7268, hRent:808, hSlope:-16467, uRent:688, uSlope:-14688 },
-  { region:"Central Coast (NSW)", state:"NSW", mkt:null, pop:357816, hh:2.5, cur:0.0194, hhNow:143126.4, propNow:145957.984907, sup1:1093.5, sup2:1093.5, nb1:110, nb2:110, im1:-54, im2:-54, om1:1512.183908, om2:1512.183908, wf1:null, wf2:null, oo:0.7146, hRent:751, hSlope:-8430, uRent:610, uSlope:-4642 },
-  { region:"Ipswich", state:"QLD", mkt:null, pop:268272, hh:2.7, cur:0.0206, hhNow:99360, propNow:101449.867266, sup1:2868.3, sup2:2868.3, nb1:2380, nb2:2380, im1:3837, im2:3837, om1:2269.471264, om2:2269.471264, wf1:null, wf2:null, oo:0.6602, hRent:605, hSlope:-7880, uRent:485, uSlope:-5311 },
-  { region:"Hobart", state:"TAS", mkt:null, pop:255250, hh:2.4, cur:0.0207, hhNow:106354.166667, propNow:108602.232887, sup1:1288.99, sup2:1565, nb1:123, nb2:123, im1:-2332, im2:-2332, om1:1484.689655, om2:1484.689655, wf1:null, wf2:null, oo:0.6993, hRent:604, hSlope:-10543, uRent:546, uSlope:-10384 },
-  { region:"Wollongong", state:"NSW", mkt:null, pop:224327, hh:2.5, cur:0.0125, hhNow:89730.8, propNow:90866.632911, sup1:1403.1, sup2:1403.1, nb1:502, nb2:502, im1:-435, im2:-435, om1:1240.229885, om2:1240.229885, wf1:null, wf2:null, oo:0.7058, hRent:705, hSlope:-8761, uRent:610, uSlope:-6714 },
-  { region:"Townsville", state:"QLD", mkt:null, pop:206260, hh:2.5, cur:0.0244, hhNow:82504, propNow:84567.445674, sup1:1149.75, sup2:1313, nb1:1175, nb2:1175, im1:412, im2:412, om1:1042.390805, om2:1042.390805, wf1:1805, wf2:942, oo:0.6572, hRent:662, hSlope:-2311, uRent:525, uSlope:-1993 },
-  { region:"Toowoomba", state:"QLD", mkt:null, pop:186276, hh:2.5, cur:0.0154, hhNow:74510.4, propNow:75675.807434, sup1:1211.26, sup2:1399, nb1:609, nb2:609, im1:997, im2:997, om1:959.908046, om2:959.908046, wf1:null, wf2:null, oo:0.7573, hRent:580, hSlope:-4266, uRent:440, uSlope:-2891 },
-  { region:"Cairns", state:"QLD", mkt:null, pop:179334, hh:2.4, cur:0.015, hhNow:74722.5, propNow:75860.406091, sup1:1452.78, sup2:1606, nb1:756, nb2:756, im1:52, im2:52, om1:1873.793103, om2:1873.793103, wf1:null, wf2:null, oo:0.5941, hRent:690, hSlope:-13367, uRent:500, uSlope:-9285 },
-  { region:"Newcastle", state:"NSW", mkt:null, pop:178935, hh:2.4, cur:0.013, hhNow:74556.25, propNow:75538.247214, sup1:2421.4, sup2:2736, nb1:299, nb2:299, im1:-11, im2:-11, om1:1820, om2:1820, wf1:null, wf2:null, oo:0.6427, hRent:586, hSlope:-12304, uRent:687, uSlope:-9904 },
-  { region:"Rockingham", state:"WA", mkt:null, pop:159934, hh:2, cur:0.0158, hhNow:79967, propNow:81250.76204, sup1:1574.1, sup2:1574.1, nb1:813, nb2:813, im1:1967, im2:1967, om1:1358.574713, om2:1358.574713, wf1:254.28, wf2:257.14, oo:0.7303, hRent:605, hSlope:-3206, uRent:560, uSlope:-3261 },
-  { region:"Darwin", state:"NT", mkt:null, pop:159284, hh:2.6, cur:0.0174, hhNow:61263.076923, propNow:62347.930921, sup1:626, sup2:878, nb1:2105, nb2:2105, im1:-2055, im2:-2055, om1:1637.701149, om2:1637.701149, wf1:819.123809, wf2:239.2, oo:0.4687, hRent:763, hSlope:-5218, uRent:584, uSlope:-2100 },
-  { region:"Mackay", state:"QLD", mkt:null, pop:129253, hh:2.6, cur:0.0206, hhNow:49712.692308, propNow:50758.313567, sup1:1058.07, sup2:1201, nb1:624, nb2:624, im1:398, im2:398, om1:783.586207, om2:783.586207, wf1:2142.4, wf2:240.933333, oo:0.708, hRent:699, hSlope:-2806, uRent:497, uSlope:-1984 },
-  { region:"Bendigo", state:"VIC", mkt:null, pop:126568, hh:2.4, cur:0.0185, hhNow:52736.666667, propNow:53730.684327, sup1:1100.44, sup2:1287, nb1:393, nb2:393, im1:511, im2:511, om1:479.356322, om2:479.356322, wf1:null, wf2:null, oo:0.8208, hRent:589, hSlope:-7074, uRent:530, uSlope:-5612 },
-  { region:"Ballarat", state:"VIC", mkt:null, pop:122661, hh:2.4, cur:0.0175, hhNow:51108.75, propNow:52019.083969, sup1:1392, sup2:1644, nb1:347, nb2:347, im1:1363, im2:1363, om1:552.275862, om2:552.275862, wf1:null, wf2:null, oo:0.7366, hRent:468, hSlope:-4487, uRent:385, uSlope:-3250 },
-  { region:"Geelong", state:"VIC", mkt:null, pop:295052, hh:2.5, cur:0.014, hhNow:118020.8, propNow:119696.551724, sup1:3392.9, sup2:3951, nb1:1087, nb2:1087, im1:2933, im2:2933, om1:1578.528736, om2:1578.528736, wf1:null, wf2:null, oo:0.7242, hRent:653, hSlope:-4350, uRent:532, uSlope:-3147 },
-  { region:"Bundaberg", state:"QLD", mkt:null, pop:107297, hh:2.4, cur:0.0232, hhNow:44707.083333, propNow:45768.922331, sup1:817.2, sup2:817.2, nb1:-207, nb2:-207, im1:1406, im2:1406, om1:459.034483, om2:459.034483, wf1:null, wf2:null, oo:0.7522, hRent:627, hSlope:-7840, uRent:509, uSlope:-4576 },
-  { region:"Mandurah", state:"WA", mkt:null, pop:106827, hh:2.4, cur:0.0211, hhNow:44511.25, propNow:45470.681377, sup1:1311.3, sup2:1311.3, nb1:46, nb2:46, im1:2198, im2:2198, om1:875.632184, om2:875.632184, wf1:169.26, wf2:169.26, oo:0.7016, hRent:624, hSlope:-3784, uRent:549, uSlope:-2945 },
-  { region:"Port Macquarie", state:"NSW", mkt:null, pop:92432, hh:2.3, cur:0.0106, hhNow:40187.826087, propNow:40618.380925, sup1:537.3, sup2:537.3, nb1:-341, nb2:-341, im1:1185, im2:1185, om1:219.356322, om2:219.356322, wf1:null, wf2:null, oo:0.7478, hRent:720, hSlope:-11388, uRent:517, uSlope:-7176 },
-  { region:"Rockhampton", state:"QLD", mkt:null, pop:85794, hh:2.5, cur:0.0208, hhNow:34317.6, propNow:35046.568627, sup1:181.8, sup2:181.8, nb1:305, nb2:305, im1:104, im2:104, om1:332.91954, om2:332.91954, wf1:120, wf2:82.5, oo:0.7073, hRent:567, hSlope:-2863, uRent:348, uSlope:-1937 },
-  { region:"Coffs Harbour", state:"NSW", mkt:null, pop:82109, hh:2.4, cur:0.0204, hhNow:34212.083333, propNow:34924.544032, sup1:706.43, sup2:706.43, nb1:66, nb2:66, im1:-4, im2:-4, om1:499.08046, om2:499.08046, wf1:null, wf2:null, oo:0.7478, hRent:704, hSlope:-14855, uRent:595, uSlope:-10984 },
-  { region:"Launceston", state:"TAS", mkt:null, pop:71341, hh:2.4, cur:0.022, hhNow:29725.416667, propNow:30394.086571, sup1:855.54, sup2:855.54, nb1:65, nb2:65, im1:-925, im2:-925, om1:543.310345, om2:543.310345, wf1:null, wf2:null, oo:0.7592, hRent:587, hSlope:-6795, uRent:469, uSlope:-5498 },
-  { region:"Wagga Wagga", state:"NSW", mkt:null, pop:69108, hh:2.5, cur:0.0302, hhNow:27643.2, propNow:28504.021448, sup1:279.9, sup2:279.9, nb1:415, nb2:415, im1:-601, im2:-601, om1:345.471264, om2:345.471264, wf1:null, wf2:null, oo:0.6865, hRent:589, hSlope:-4361, uRent:427, uSlope:-2797 },
-  { region:"Gladstone", state:"QLD", mkt:null, pop:69046, hh:2.5, cur:0.0321, hhNow:27618.4, propNow:28534.352722, sup1:288, sup2:288, nb1:361, nb2:361, im1:555, im2:555, om1:261.195402, om2:261.195402, wf1:26.25, wf2:168.075, oo:0.6925, hRent:549, hSlope:-1713, uRent:411, uSlope:-839 },
-  { region:"Tamworth", state:"NSW", mkt:null, pop:66403, hh:2.4, cur:0.0301, hhNow:27667.916667, propNow:28526.566313, sup1:309.6, sup2:309.6, nb1:295, nb2:295, im1:-60, im2:-60, om1:278.528736, om2:278.528736, wf1:null, wf2:null, oo:0.733, hRent:495, hSlope:-3472, uRent:350, uSlope:-1369 },
-  { region:"Mildura", state:"VIC", mkt:null, pop:57309, hh:2.4, cur:0.0305, hhNow:23878.75, propNow:24629.963899, sup1:235.8, sup2:235.8, nb1:166, nb2:166, im1:-524, im2:-524, om1:283.310345, om2:283.310345, wf1:null, wf2:null, oo:0.7456, hRent:539, hSlope:-12246, uRent:370, uSlope:-9412 },
-  { region:"Albury", state:"NSW", mkt:null, pop:59538, hh:2.3, cur:0.0251, hhNow:25886.086957, propNow:26552.556115, sup1:288, sup2:288, nb1:206, nb2:206, im1:246, im2:246, om1:213.37931, om2:213.37931, wf1:null, wf2:null, oo:0.71, hRent:582, hSlope:-5842, uRent:403, uSlope:-3549 },
-  { region:"Wodonga", state:"VIC", mkt:null, pop:44717, hh:2.4, cur:0.0212, hhNow:18632.083333, propNow:19035.638878, sup1:297, sup2:297, nb1:236, nb2:236, im1:67, im2:67, om1:236.091954, om2:236.091954, wf1:null, wf2:null, oo:0.7753, hRent:551, hSlope:-8935, uRent:400, uSlope:-6739 },
-  { region:"Orange", state:"NSW", mkt:null, pop:44990, hh:2.5, cur:0.018, hhNow:17996, propNow:18325.86558, sup1:141.3, sup2:141.3, nb1:181, nb2:181, im1:-147, im2:-147, om1:191.264368, om2:191.264368, wf1:null, wf2:null, oo:0.8146, hRent:629, hSlope:-4097, uRent:457, uSlope:-3048 },
-  { region:"Bunbury", state:"WA", mkt:null, pop:35730, hh:2.4, cur:0.0136, hhNow:14887.5, propNow:15092.761557, sup1:105.3, sup2:105.3, nb1:7, nb2:7, im1:-16, im2:-16, om1:940.781609, om2:940.781609, wf1:null, wf2:null, oo:0.5346, hRent:637, hSlope:-3786, uRent:623, uSlope:-3260 }
-]
-  },
-  july: {
-    label: "V2: 3yr avg",
-    note: "Demand from the July 2026 workbook. Natural increase is a per-capita rate built on the <strong>3-year average</strong> and applied to projected population; internal migration uses the current year for year 1 and a 50/50 blend of current and the <strong>3-year average</strong> for year 2; overseas migration is year-specific; and supply uses the matching OE commencement year \u2014 so each year has its own demand and supply.",
-    yr2: "own",
-    rows: [
-  { region:"National", state:null, mkt:null, pop:27969588, hh:2.575062, cur:0.013, hhNow:10861713.74, propNow:11004775.83, sup1:174010.5, sup2:174010.5, nb1:103967, nb2:105450.018, im1:0, im2:0, om1:295000, om2:245000, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Melbourne", state:"VIC", mkt:"Smooth", pop:5435590, hh:2.6, cur:0.0187, hhNow:2090611.538, propNow:2130450.972, sup1:44845.15, sup2:50053, nb1:30460, nb2:31078.9791, im1:441, im2:-285.5, om1:79555.88102, om2:66071.83339, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Greater Sydney", state:"NSW", mkt:"Smooth", pop:5638830, hh:2.7, cur:0.0223, hhNow:2088455.556, propNow:2136090.371, sup1:32500.23, sup2:37843, nb1:32823, nb2:33374.3263, im1:-23353, im2:-25534.5, om1:85245.14736, om2:70796.8173, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Brisbane", state:"QLD", mkt:"Smooth", pop:2833524, hh:2.5, cur:0.0191, hhNow:1133409.6, propNow:1155479.254, sup1:21805.79, sup2:24465, nb1:20628, nb2:21257.17201, im1:19092, im2:22317, om1:46704.95597, om2:38788.86174, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Greater Perth", state:"WA", mkt:"Workforce", pop:2452765, hh:2.6, cur:0.0108, hhNow:943371.1538, propNow:953670.7985, sup1:19542.95, sup2:22249, nb1:14022, nb2:14368.88516, im1:10272, im2:10734.999996, om1:36098.0613, om2:29979.74583, wf1:286, wf2:958.285714, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Adelaide", state:"SA", mkt:"Smooth", pop:1491015, hh:2.5, cur:0.011, hhNow:596406, propNow:603039.4338, sup1:11154.91, sup2:11976, nb1:2694, nb2:2725.356503, im1:-1026, im2:-1162.5, om1:15686.49745, om2:13027.76907, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Gold Coast", state:"QLD", mkt:"Smooth", pop:691230, hh:2.5, cur:0.0198, hhNow:276492, propNow:282077.1271, sup1:5078.73, sup2:6237, nb1:2359, nb2:2397.037278, im1:658, im2:992.5, om1:8128.615765, om2:6750.884279, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Canberra", state:"ACT", mkt:"Smooth", pop:484630, hh:2.5, cur:0.0116, hhNow:193852, propNow:196127.0741, sup1:1438.63, sup2:1537, nb1:2789, nb2:2819.207445, im1:-1686, im2:-1591, om1:4145.990286, om2:3443.280068, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Sunshine Coast", state:"QLD", mkt:"Smooth", pop:381957, hh:2.5, cur:0.0143, hhNow:152782.8, propNow:154999.2898, sup1:4089.67, sup2:4964, nb1:527, nb2:537.191745, im1:4159, im2:4388.5, om1:2700.733109, om2:2242.981735, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Central Coast (NSW)", state:"NSW", mkt:"Smooth", pop:357816, hh:2.5, cur:0.0194, hhNow:143126.4, propNow:145957.9849, sup1:1093.5, sup2:1093.5, nb1:207, nb2:208.247962, im1:238, im2:141, om1:1712.202226, om2:1421.998459, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Ipswich", state:"QLD", mkt:"Smooth", pop:268272, hh:2.7, cur:0.0206, hhNow:99360, propNow:101449.8673, sup1:2868.3, sup2:2868.3, nb1:2426, nb2:2505.978653, im1:4893, im2:4541, om1:1525.201658, om2:1266.692902, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Hobart", state:"TAS", mkt:"Smooth", pop:255250, hh:2.4, cur:0.0207, hhNow:106354.1667, propNow:108602.2329, sup1:1288.99, sup2:1565, nb1:275, nb2:275.390728, im1:-1644, im2:-2049, om1:1731.666969, om2:1438.164093, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Wollongong", state:"NSW", mkt:"Smooth", pop:224327, hh:2.5, cur:0.0125, hhNow:89730.8, propNow:90866.63291, sup1:1403.1, sup2:1403.1, nb1:522, nb2:526.736076, im1:-112, im2:-219.5, om1:1625.306051, om2:1349.830449, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Townsville", state:"QLD", mkt:"Workforce", pop:206260, hh:2.5, cur:0.0244, hhNow:82504, propNow:84567.44567, sup1:1149.75, sup2:1313, nb1:1080, nb2:1101.446519, im1:173, im2:252.5, om1:1037.88791, om2:861.974705, wf1:1805, wf2:942, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Toowoomba", state:"QLD", mkt:"Smooth", pop:186276, hh:2.5, cur:0.0154, hhNow:74510.4, propNow:75675.80743, sup1:1211.26, sup2:1399, nb1:612, nb2:618.766577, im1:564, im2:708, om1:883.560304, om2:733.80432, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Cairns", state:"QLD", mkt:"Workforce", pop:179334, hh:2.4, cur:0.015, hhNow:74722.5, propNow:75860.40609, sup1:1452.78, sup2:1606, nb1:718, nb2:723.813975, im1:-741, im2:-477, om1:1475.149461, om2:1225.124129, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Newcastle", state:"NSW", mkt:"Smooth", pop:178935, hh:2.4, cur:0.013, hhNow:74556.25, propNow:75538.24721, sup1:2421.4, sup2:2736, nb1:344, nb2:347.185732, im1:-185, im2:-127, om1:1498.090052, om2:1244.176483, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Rockingham", state:"WA", mkt:"Workforce", pop:159934, hh:2, cur:0.0158, hhNow:79967, propNow:81250.76204, sup1:1574.1, sup2:1574.1, nb1:852, nb2:878.471251, im1:2380, im2:2242, om1:1482.796325, om2:1231.474914, wf1:254.28, wf2:257.14, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Darwin", state:"NT", mkt:"Workforce", pop:159284, hh:2.6, cur:0.0174, hhNow:61263.07692, propNow:62347.93092, sup1:626, sup2:878, nb1:2045, nb2:2089.03582, im1:-2096, im2:-2429, om1:2661.803623, om2:2210.650466, wf1:819.123809, wf2:239.2, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Mackay", state:"QLD", mkt:"Workforce", pop:129253, hh:2.6, cur:0.0206, hhNow:49712.69231, propNow:50758.31357, sup1:1058.07, sup2:1201, nb1:618, nb2:633.391958, im1:25, im2:149.0, om1:433.785704, om2:360.262703, wf1:2142.4, wf2:240.933333, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Bendigo", state:"VIC", mkt:"Smooth", pop:126568, hh:2.4, cur:0.0185, hhNow:52736.66667, propNow:53730.68433, sup1:1100.44, sup2:1287, nb1:412, nb2:416.007913, im1:423, im2:452.5, om1:396.246557, om2:329.086123, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Ballarat", state:"VIC", mkt:"Smooth", pop:122661, hh:2.4, cur:0.0175, hhNow:51108.75, propNow:52019.08397, sup1:1392, sup2:1644, nb1:421, nb2:427.723004, im1:1047, im2:1152, om1:490.789595, om2:407.604918, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Geelong", state:"VIC", mkt:"Smooth", pop:295052, hh:2.5, cur:0.014, hhNow:118020.8, propNow:119696.5517, sup1:3392.9, sup2:3951, nb1:1248, nb2:1273.499043, im1:3281, im2:3165, om1:1499.48039, om2:1245.331172, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Bundaberg", state:"QLD", mkt:"Workforce", pop:107297, hh:2.4, cur:0.0232, hhNow:44707.08333, propNow:45768.92233, sup1:817.2, sup2:817.2, nb1:-189, nb2:-191.21021, im1:905, im2:1072, om1:538.756283, om2:447.441659, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Mandurah", state:"WA", mkt:"Workforce", pop:106827, hh:2.4, cur:0.0211, hhNow:44511.25, propNow:45470.68138, sup1:1311.3, sup2:1311.3, nb1:58, nb2:59.92296, im1:2456, im2:2370, om1:858.534206, om2:713.019934, wf1:169.26, wf2:169.26, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Port Macquarie", state:"NSW", mkt:"Smooth", pop:92432, hh:2.3, cur:0.0106, hhNow:40187.82609, propNow:40618.38092, sup1:537.3, sup2:537.3, nb1:-323, nb2:-327.642154, im1:1397, im2:1326.5, om1:254.431999, om2:211.307932, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Rockhampton", state:"QLD", mkt:"Workforce", pop:85794, hh:2.5, cur:0.0208, hhNow:34317.6, propNow:35046.56863, sup1:181.8, sup2:181.8, nb1:302, nb2:304.517814, im1:2, im2:36, om1:291.275978, om2:241.907168, wf1:120, wf2:82.5, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Coffs Harbour", state:"NSW", mkt:"Smooth", pop:82109, hh:2.4, cur:0.0204, hhNow:34212.08333, propNow:34924.54403, sup1:706.43, sup2:804, nb1:75, nb2:75.506796, im1:53, im2:34, om1:426.83401, om2:354.489263, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Launceston", state:"TAS", mkt:"Smooth", pop:71341, hh:2.4, cur:0.022, hhNow:29725.41667, propNow:30394.08657, sup1:855.54, sup2:938, nb1:45, nb2:44.854979, im1:-708, im2:-780, om1:433.090535, om2:359.685359, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Wagga Wagga", state:"NSW", mkt:"Smooth", pop:69108, hh:2.5, cur:0.0302, hhNow:27643.2, propNow:28504.02145, sup1:279.9, sup2:279.9, nb1:425, nb2:424.840683, im1:-754, im2:-703, om1:303.093857, om2:251.722017, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Gladstone", state:"QLD", mkt:"Workforce", pop:69046, hh:2.5, cur:0.0321, hhNow:27618.4, propNow:28534.35272, sup1:288, sup2:288, nb1:357, nb2:362.717661, im1:432, im2:473.0, om1:290.580808, om2:241.329824, wf1:26.25, wf2:168.075, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Tamworth", state:"NSW", mkt:"Workforce", pop:66403, hh:2.4, cur:0.0301, hhNow:27667.91667, propNow:28526.56631, sup1:309.6, sup2:309.6, nb1:277, nb2:278.580366, im1:-179, im2:-139, om1:280.848437, om2:233.247007, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Mildura", state:"VIC", mkt:"Smooth", pop:57309, hh:2.4, cur:0.0305, hhNow:23878.75, propNow:24629.9639, sup1:235.8, sup2:235.8, nb1:187, nb2:187.435646, im1:-383, im2:-430, om1:329.510294, om2:273.661092, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Albury", state:"NSW", mkt:"Smooth", pop:59538, hh:2.3, cur:0.0251, hhNow:25886.08696, propNow:26552.55612, sup1:288, sup2:288, nb1:204, nb2:206.635235, im1:335, im2:305, om1:230.101071, om2:191.100889, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Wodonga", state:"VIC", mkt:"Smooth", pop:44717, hh:2.4, cur:0.0212, hhNow:18632.08333, propNow:19035.63888, sup1:297, sup2:297, nb1:247, nb2:249.523273, im1:68, im2:67.5, om1:141.814557, om2:117.778192, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Orange", state:"NSW", mkt:"Smooth", pop:44990, hh:2.5, cur:0.018, hhNow:17996, propNow:18325.86558, sup1:141.3, sup2:141.3, nb1:186, nb2:187.061998, im1:-105, im2:-119, om1:175.877858, om2:146.068051, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null },
-  { region:"Bunbury", state:"WA", mkt:"Workforce", pop:35730, hh:2.4, cur:0.0136, hhNow:14887.5, propNow:15092.76156, sup1:1743.5, sup2:2000, nb1:10, nb2:10.087541, im1:56, im2:32, om1:246.785136, om2:204.957147, wf1:null, wf2:null, oo:null, hRent:null, hSlope:null, uRent:null, uSlope:null }
-]
-  }
+const DATA = [
+  { region:"National", state:null, mkt:null, pop:27969588, hh:2.575062, hhNow:10861713.74, vrCot:0.013, vrSqm:0.0134, oo:null, hRent:740, hSlope:-19146, uRent:580, uSlope:-13014,
+    v1:{ sup1:174010.5, sup2:174010.5, nb1:104400, nb2:104400, im1:0, im2:0, om1:260000, om2:260000, wf1:null, wf2:null },
+    v2:{ sup1:174010.5, sup2:174010.5, nb1:103967, nb2:105450.018, im1:0, im2:0, om1:295000, om2:245000, wf1:null, wf2:null } },
+
+  { region:"Melbourne", state:"VIC", mkt:"Smooth", pop:5435590, hh:2.6, hhNow:2090611.538, vrCot:0.0187, vrSqm:0.0175, oo:0.5868, hRent:788, hSlope:-6723, uRent:573, uSlope:-4804,
+    v1:{ sup1:44845.15, sup2:50053, nb1:32525, nb2:32525, im1:-2761, im2:-2761, om1:72465.28736, om2:72465.28736, wf1:null, wf2:null },
+    v2:{ sup1:44845.15, sup2:50053, nb1:30460, nb2:31078.9791, im1:441, im2:-285.5, om1:79555.88102, om2:66071.83339, wf1:null, wf2:null } },
+
+  { region:"Greater Sydney", state:"NSW", mkt:"Smooth", pop:5638830, hh:2.7, hhNow:2088455.556, vrCot:0.0223, vrSqm:0.0171, oo:0.6791, hRent:1114, hSlope:-7450, uRent:731, uSlope:-3962,
+    v1:{ sup1:32500.23, sup2:37843, nb1:30777, nb2:30777, im1:-27339, im2:-27339, om1:72253.70115, om2:72253.70115, wf1:null, wf2:null },
+    v2:{ sup1:32500.23, sup2:37843, nb1:32823, nb2:33374.3263, im1:-23353, im2:-25534.5, om1:85245.14736, om2:70796.8173, wf1:null, wf2:null } },
+
+  { region:"Brisbane", state:"QLD", mkt:"Smooth", pop:2833524, hh:2.5, hhNow:1133409.6, vrCot:0.0191, vrSqm:0.0086, oo:0.6658, hRent:788, hSlope:-7576, uRent:627, uSlope:-5357,
+    v1:{ sup1:21805.79, sup2:24465, nb1:19760, nb2:19760, im1:24978, im2:24978, om1:26453.65517, om2:26453.65517, wf1:null, wf2:null },
+    v2:{ sup1:21805.79, sup2:24465, nb1:20628, nb2:21257.17201, im1:19092, im2:22317, om1:46704.95597, om2:38788.86174, wf1:null, wf2:null } },
+
+  { region:"Greater Perth", state:"WA", mkt:"Workforce", pop:2452765, hh:2.6, hhNow:943371.1538, vrCot:0.0108, vrSqm:0.0064, oo:0.7523, hRent:865, hSlope:-5607, uRent:654, uSlope:-3976,
+    v1:{ sup1:19542.95, sup2:22249, nb1:13927, nb2:13927, im1:12144, im2:12144, om1:31925.6092, om2:31925.6092, wf1:286, wf2:958.285714 },
+    v2:{ sup1:19542.95, sup2:22249, nb1:14022, nb2:14368.88516, im1:10272, im2:10734.999996, om1:36098.0613, om2:29979.74583, wf1:286, wf2:958.285714 } },
+
+  { region:"Adelaide", state:"SA", mkt:"Smooth", pop:1491015, hh:2.5, hhNow:596406, vrCot:0.011, vrSqm:0.0065, oo:0.6777, hRent:687, hSlope:-16953, uRent:528, uSlope:-11222,
+    v1:{ sup1:11154.91, sup2:11976, nb1:2504, nb2:2504, im1:-1526, im2:-1526, om1:12964.13793, om2:12964.13793, wf1:null, wf2:null },
+    v2:{ sup1:11154.91, sup2:11976, nb1:2694, nb2:2725.356503, im1:-1026, im2:-1162.5, om1:15686.49745, om2:13027.76907, wf1:null, wf2:null } },
+
+  { region:"Gold Coast", state:"QLD", mkt:"Smooth", pop:691230, hh:2.5, hhNow:276492, vrCot:0.0198, vrSqm:0.0193, oo:0.6769, hRent:1100, hSlope:-16830, uRent:850, uSlope:-12575,
+    v1:{ sup1:5078.73, sup2:6237, nb1:2388, nb2:2388, im1:1661, im2:1661, om1:7131.770115, om2:7131.770115, wf1:null, wf2:null },
+    v2:{ sup1:5078.73, sup2:6237, nb1:2359, nb2:2397.037278, im1:658, im2:992.5, om1:8128.615765, om2:6750.884279, wf1:null, wf2:null } },
+
+  { region:"Canberra", state:"ACT", mkt:"Smooth", pop:484630, hh:2.5, hhNow:193852, vrCot:0.0116, vrSqm:0.0177, oo:0.6193, hRent:775, hSlope:143, uRent:587, uSlope:1067,
+    v1:{ sup1:1438.63, sup2:1537, nb1:2719, nb2:2719, im1:-1109, im2:-1109, om1:3733.241379, om2:3733.241379, wf1:null, wf2:null },
+    v2:{ sup1:1438.63, sup2:1537, nb1:2789, nb2:2819.207445, im1:-1686, im2:-1591, om1:4145.990286, om2:3443.280068, wf1:null, wf2:null } },
+
+  { region:"Sunshine Coast", state:"QLD", mkt:"Smooth", pop:381957, hh:2.5, hhNow:152782.8, vrCot:0.0143, vrSqm:0.0101, oo:0.7268, hRent:808, hSlope:-16467, uRent:688, uSlope:-14688,
+    v1:{ sup1:4089.67, sup2:4964, nb1:501, nb2:501, im1:4848, im2:4848, om1:2737.471264, om2:2737.471264, wf1:null, wf2:null },
+    v2:{ sup1:4089.67, sup2:4964, nb1:527, nb2:537.191745, im1:4159, im2:4388.5, om1:2700.733109, om2:2242.981735, wf1:null, wf2:null } },
+
+  { region:"Central Coast (NSW)", state:"NSW", mkt:"Smooth", pop:357816, hh:2.5, hhNow:143126.4, vrCot:0.0194, vrSqm:0.0111, oo:0.7146, hRent:751, hSlope:-8430, uRent:610, uSlope:-4642,
+    v1:{ sup1:1093.5, sup2:1093.5, nb1:110, nb2:110, im1:-54, im2:-54, om1:1512.183908, om2:1512.183908, wf1:null, wf2:null },
+    v2:{ sup1:1093.5, sup2:1093.5, nb1:207, nb2:208.247962, im1:238, im2:141, om1:1712.202226, om2:1421.998459, wf1:null, wf2:null } },
+
+  { region:"Ipswich", state:"QLD", mkt:"Smooth", pop:268272, hh:2.7, hhNow:99360, vrCot:0.0206, vrSqm:0.0074, oo:0.6602, hRent:605, hSlope:-7880, uRent:485, uSlope:-5311,
+    v1:{ sup1:2868.3, sup2:2868.3, nb1:2380, nb2:2380, im1:3837, im2:3837, om1:2269.471264, om2:2269.471264, wf1:null, wf2:null },
+    v2:{ sup1:2868.3, sup2:2868.3, nb1:2426, nb2:2505.978653, im1:4893, im2:4541, om1:1525.201658, om2:1266.692902, wf1:null, wf2:null } },
+
+  { region:"Hobart", state:"TAS", mkt:"Smooth", pop:255250, hh:2.4, hhNow:106354.1667, vrCot:0.0207, vrSqm:0.0059, oo:0.6993, hRent:604, hSlope:-10543, uRent:546, uSlope:-10384,
+    v1:{ sup1:1288.99, sup2:1565, nb1:123, nb2:123, im1:-2332, im2:-2332, om1:1484.689655, om2:1484.689655, wf1:null, wf2:null },
+    v2:{ sup1:1288.99, sup2:1565, nb1:275, nb2:275.390728, im1:-1644, im2:-2049, om1:1731.666969, om2:1438.164093, wf1:null, wf2:null } },
+
+  { region:"Wollongong", state:"NSW", mkt:"Smooth", pop:224327, hh:2.5, hhNow:89730.8, vrCot:0.0125, vrSqm:0.0081, oo:0.7058, hRent:705, hSlope:-8761, uRent:610, uSlope:-6714,
+    v1:{ sup1:1403.1, sup2:1403.1, nb1:502, nb2:502, im1:-435, im2:-435, om1:1240.229885, om2:1240.229885, wf1:null, wf2:null },
+    v2:{ sup1:1403.1, sup2:1403.1, nb1:522, nb2:526.736076, im1:-112, im2:-219.5, om1:1625.306051, om2:1349.830449, wf1:null, wf2:null } },
+
+  { region:"Townsville", state:"QLD", mkt:"Workforce", pop:206260, hh:2.5, hhNow:82504, vrCot:0.0244, vrSqm:0.0126, oo:0.6572, hRent:662, hSlope:-2311, uRent:525, uSlope:-1993,
+    v1:{ sup1:1149.75, sup2:1313, nb1:1175, nb2:1175, im1:412, im2:412, om1:1042.390805, om2:1042.390805, wf1:1805, wf2:942 },
+    v2:{ sup1:1149.75, sup2:1313, nb1:1080, nb2:1101.446519, im1:173, im2:252.5, om1:1037.88791, om2:861.974705, wf1:1805, wf2:942 } },
+
+  { region:"Toowoomba", state:"QLD", mkt:"Smooth", pop:186276, hh:2.5, hhNow:74510.4, vrCot:0.0154, vrSqm:0.0063, oo:0.7573, hRent:580, hSlope:-4266, uRent:440, uSlope:-2891,
+    v1:{ sup1:1211.26, sup2:1399, nb1:609, nb2:609, im1:997, im2:997, om1:959.908046, om2:959.908046, wf1:null, wf2:null },
+    v2:{ sup1:1211.26, sup2:1399, nb1:612, nb2:618.766577, im1:564, im2:708, om1:883.560304, om2:733.80432, wf1:null, wf2:null } },
+
+  { region:"Cairns", state:"QLD", mkt:"Workforce", pop:179334, hh:2.4, hhNow:74722.5, vrCot:0.015, vrSqm:0.0073, oo:0.5941, hRent:690, hSlope:-13367, uRent:500, uSlope:-9285,
+    v1:{ sup1:1452.78, sup2:1606, nb1:756, nb2:756, im1:52, im2:52, om1:1873.793103, om2:1873.793103, wf1:null, wf2:null },
+    v2:{ sup1:1452.78, sup2:1606, nb1:718, nb2:723.813975, im1:-741, im2:-477, om1:1475.149461, om2:1225.124129, wf1:null, wf2:null } },
+
+  { region:"Newcastle", state:"NSW", mkt:"Smooth", pop:178935, hh:2.4, hhNow:74556.25, vrCot:0.013, vrSqm:0.013, oo:0.6427, hRent:586, hSlope:-12304, uRent:687, uSlope:-9904,
+    v1:{ sup1:2421.4, sup2:2736, nb1:299, nb2:299, im1:-11, im2:-11, om1:1820, om2:1820, wf1:null, wf2:null },
+    v2:{ sup1:2421.4, sup2:2736, nb1:344, nb2:347.185732, im1:-185, im2:-127, om1:1498.090052, om2:1244.176483, wf1:null, wf2:null } },
+
+  { region:"Rockingham", state:"WA", mkt:"Workforce", pop:159934, hh:2, hhNow:79967, vrCot:0.0158, vrSqm:0.0069, oo:0.7303, hRent:605, hSlope:-3206, uRent:560, uSlope:-3261,
+    v1:{ sup1:1574.1, sup2:1574.1, nb1:813, nb2:813, im1:1967, im2:1967, om1:1358.574713, om2:1358.574713, wf1:254.28, wf2:257.14 },
+    v2:{ sup1:1574.1, sup2:1574.1, nb1:852, nb2:878.471251, im1:2380, im2:2242, om1:1482.796325, om2:1231.474914, wf1:254.28, wf2:257.14 } },
+
+  { region:"Darwin", state:"NT", mkt:"Workforce", pop:159284, hh:2.6, hhNow:61263.07692, vrCot:0.0174, vrSqm:0.0027, oo:0.4687, hRent:763, hSlope:-5218, uRent:584, uSlope:-2100,
+    v1:{ sup1:626, sup2:878, nb1:2105, nb2:2105, im1:-2055, im2:-2055, om1:1637.701149, om2:1637.701149, wf1:819.123809, wf2:239.2 },
+    v2:{ sup1:626, sup2:878, nb1:2045, nb2:2089.03582, im1:-2096, im2:-2429, om1:2661.803623, om2:2210.650466, wf1:819.123809, wf2:239.2 } },
+
+  { region:"Mackay", state:"QLD", mkt:"Workforce", pop:129253, hh:2.6, hhNow:49712.69231, vrCot:0.0206, vrSqm:0.0103, oo:0.708, hRent:699, hSlope:-2806, uRent:497, uSlope:-1984,
+    v1:{ sup1:1058.07, sup2:1201, nb1:624, nb2:624, im1:398, im2:398, om1:783.586207, om2:783.586207, wf1:2142.4, wf2:240.933333 },
+    v2:{ sup1:1058.07, sup2:1201, nb1:618, nb2:633.391958, im1:25, im2:149.0, om1:433.785704, om2:360.262703, wf1:2142.4, wf2:240.933333 } },
+
+  { region:"Bendigo", state:"VIC", mkt:"Smooth", pop:126568, hh:2.4, hhNow:52736.66667, vrCot:0.0185, vrSqm:0.0179, oo:0.8208, hRent:589, hSlope:-7074, uRent:530, uSlope:-5612,
+    v1:{ sup1:1100.44, sup2:1287, nb1:393, nb2:393, im1:511, im2:511, om1:479.356322, om2:479.356322, wf1:null, wf2:null },
+    v2:{ sup1:1100.44, sup2:1287, nb1:412, nb2:416.007913, im1:423, im2:452.5, om1:396.246557, om2:329.086123, wf1:null, wf2:null } },
+
+  { region:"Ballarat", state:"VIC", mkt:"Smooth", pop:122661, hh:2.4, hhNow:51108.75, vrCot:0.0175, vrSqm:0.007, oo:0.7366, hRent:468, hSlope:-4487, uRent:385, uSlope:-3250,
+    v1:{ sup1:1392, sup2:1644, nb1:347, nb2:347, im1:1363, im2:1363, om1:552.275862, om2:552.275862, wf1:null, wf2:null },
+    v2:{ sup1:1392, sup2:1644, nb1:421, nb2:427.723004, im1:1047, im2:1152, om1:490.789595, om2:407.604918, wf1:null, wf2:null } },
+
+  { region:"Geelong", state:"VIC", mkt:"Smooth", pop:295052, hh:2.5, hhNow:118020.8, vrCot:0.014, vrSqm:0.0174, oo:0.7242, hRent:653, hSlope:-4350, uRent:532, uSlope:-3147,
+    v1:{ sup1:3392.9, sup2:3951, nb1:1087, nb2:1087, im1:2933, im2:2933, om1:1578.528736, om2:1578.528736, wf1:null, wf2:null },
+    v2:{ sup1:3392.9, sup2:3951, nb1:1248, nb2:1273.499043, im1:3281, im2:3165, om1:1499.48039, om2:1245.331172, wf1:null, wf2:null } },
+
+  { region:"Bundaberg", state:"QLD", mkt:"Workforce", pop:107297, hh:2.4, hhNow:44707.08333, vrCot:0.0232, vrSqm:0.0113, oo:0.7522, hRent:627, hSlope:-7840, uRent:509, uSlope:-4576,
+    v1:{ sup1:817.2, sup2:817.2, nb1:-207, nb2:-207, im1:1406, im2:1406, om1:459.034483, om2:459.034483, wf1:null, wf2:null },
+    v2:{ sup1:817.2, sup2:817.2, nb1:-189, nb2:-191.21021, im1:905, im2:1072, om1:538.756283, om2:447.441659, wf1:null, wf2:null } },
+
+  { region:"Mandurah", state:"WA", mkt:"Workforce", pop:106827, hh:2.4, hhNow:44511.25, vrCot:0.0211, vrSqm:0.0169, oo:0.7016, hRent:624, hSlope:-3784, uRent:549, uSlope:-2945,
+    v1:{ sup1:1311.3, sup2:1311.3, nb1:46, nb2:46, im1:2198, im2:2198, om1:875.632184, om2:875.632184, wf1:169.26, wf2:169.26 },
+    v2:{ sup1:1311.3, sup2:1311.3, nb1:58, nb2:59.92296, im1:2456, im2:2370, om1:858.534206, om2:713.019934, wf1:169.26, wf2:169.26 } },
+
+  { region:"Port Macquarie", state:"NSW", mkt:"Smooth", pop:92432, hh:2.3, hhNow:40187.82609, vrCot:0.0106, vrSqm:0.0112, oo:0.7478, hRent:720, hSlope:-11388, uRent:517, uSlope:-7176,
+    v1:{ sup1:537.3, sup2:537.3, nb1:-341, nb2:-341, im1:1185, im2:1185, om1:219.356322, om2:219.356322, wf1:null, wf2:null },
+    v2:{ sup1:537.3, sup2:537.3, nb1:-323, nb2:-327.642154, im1:1397, im2:1326.5, om1:254.431999, om2:211.307932, wf1:null, wf2:null } },
+
+  { region:"Rockhampton", state:"QLD", mkt:"Workforce", pop:85794, hh:2.5, hhNow:34317.6, vrCot:0.0208, vrSqm:0.0105, oo:0.7073, hRent:567, hSlope:-2863, uRent:348, uSlope:-1937,
+    v1:{ sup1:181.8, sup2:181.8, nb1:305, nb2:305, im1:104, im2:104, om1:332.91954, om2:332.91954, wf1:120, wf2:82.5 },
+    v2:{ sup1:181.8, sup2:181.8, nb1:302, nb2:304.517814, im1:2, im2:36, om1:291.275978, om2:241.907168, wf1:120, wf2:82.5 } },
+
+  { region:"Coffs Harbour", state:"NSW", mkt:"Smooth", pop:82109, hh:2.4, hhNow:34212.08333, vrCot:0.0204, vrSqm:0.0114, oo:0.7478, hRent:704, hSlope:-14855, uRent:595, uSlope:-10984,
+    v1:{ sup1:706.43, sup2:706.43, nb1:66, nb2:66, im1:-4, im2:-4, om1:499.08046, om2:499.08046, wf1:null, wf2:null },
+    v2:{ sup1:706.43, sup2:804, nb1:75, nb2:75.506796, im1:53, im2:34, om1:426.83401, om2:354.489263, wf1:null, wf2:null } },
+
+  { region:"Launceston", state:"TAS", mkt:"Smooth", pop:71341, hh:2.4, hhNow:29725.41667, vrCot:0.022, vrSqm:0.0078, oo:0.7592, hRent:587, hSlope:-6795, uRent:469, uSlope:-5498,
+    v1:{ sup1:855.54, sup2:855.54, nb1:65, nb2:65, im1:-925, im2:-925, om1:543.310345, om2:543.310345, wf1:null, wf2:null },
+    v2:{ sup1:855.54, sup2:938, nb1:45, nb2:44.854979, im1:-708, im2:-780, om1:433.090535, om2:359.685359, wf1:null, wf2:null } },
+
+  { region:"Wagga Wagga", state:"NSW", mkt:"Smooth", pop:69108, hh:2.5, hhNow:27643.2, vrCot:0.0302, vrSqm:0.0111, oo:0.6865, hRent:589, hSlope:-4361, uRent:427, uSlope:-2797,
+    v1:{ sup1:279.9, sup2:279.9, nb1:415, nb2:415, im1:-601, im2:-601, om1:345.471264, om2:345.471264, wf1:null, wf2:null },
+    v2:{ sup1:279.9, sup2:279.9, nb1:425, nb2:424.840683, im1:-754, im2:-703, om1:303.093857, om2:251.722017, wf1:null, wf2:null } },
+
+  { region:"Gladstone", state:"QLD", mkt:"Workforce", pop:69046, hh:2.5, hhNow:27618.4, vrCot:0.0321, vrSqm:0.0178, oo:0.6925, hRent:549, hSlope:-1713, uRent:411, uSlope:-839,
+    v1:{ sup1:288, sup2:288, nb1:361, nb2:361, im1:555, im2:555, om1:261.195402, om2:261.195402, wf1:26.25, wf2:168.075 },
+    v2:{ sup1:288, sup2:288, nb1:357, nb2:362.717661, im1:432, im2:473.0, om1:290.580808, om2:241.329824, wf1:26.25, wf2:168.075 } },
+
+  { region:"Tamworth", state:"NSW", mkt:"Workforce", pop:66403, hh:2.4, hhNow:27667.91667, vrCot:0.0301, vrSqm:0.019, oo:0.733, hRent:495, hSlope:-3472, uRent:350, uSlope:-1369,
+    v1:{ sup1:309.6, sup2:309.6, nb1:295, nb2:295, im1:-60, im2:-60, om1:278.528736, om2:278.528736, wf1:null, wf2:null },
+    v2:{ sup1:309.6, sup2:309.6, nb1:277, nb2:278.580366, im1:-179, im2:-139, om1:280.848437, om2:233.247007, wf1:null, wf2:null } },
+
+  { region:"Mildura", state:"VIC", mkt:"Smooth", pop:57309, hh:2.4, hhNow:23878.75, vrCot:0.0305, vrSqm:0.019, oo:0.7456, hRent:539, hSlope:-12246, uRent:370, uSlope:-9412,
+    v1:{ sup1:235.8, sup2:235.8, nb1:166, nb2:166, im1:-524, im2:-524, om1:283.310345, om2:283.310345, wf1:null, wf2:null },
+    v2:{ sup1:235.8, sup2:235.8, nb1:187, nb2:187.435646, im1:-383, im2:-430, om1:329.510294, om2:273.661092, wf1:null, wf2:null } },
+
+  { region:"Albury", state:"NSW", mkt:"Smooth", pop:59538, hh:2.3, hhNow:25886.08696, vrCot:0.0251, vrSqm:0.0137, oo:0.71, hRent:582, hSlope:-5842, uRent:403, uSlope:-3549,
+    v1:{ sup1:288, sup2:288, nb1:206, nb2:206, im1:246, im2:246, om1:213.37931, om2:213.37931, wf1:null, wf2:null },
+    v2:{ sup1:288, sup2:288, nb1:204, nb2:206.635235, im1:335, im2:305, om1:230.101071, om2:191.100889, wf1:null, wf2:null } },
+
+  { region:"Wodonga", state:"VIC", mkt:"Smooth", pop:44717, hh:2.4, hhNow:18632.08333, vrCot:0.0212, vrSqm:0.008, oo:0.7753, hRent:551, hSlope:-8935, uRent:400, uSlope:-6739,
+    v1:{ sup1:297, sup2:297, nb1:236, nb2:236, im1:67, im2:67, om1:236.091954, om2:236.091954, wf1:null, wf2:null },
+    v2:{ sup1:297, sup2:297, nb1:247, nb2:249.523273, im1:68, im2:67.5, om1:141.814557, om2:117.778192, wf1:null, wf2:null } },
+
+  { region:"Orange", state:"NSW", mkt:"Smooth", pop:44990, hh:2.5, hhNow:17996, vrCot:0.018, vrSqm:0.0066, oo:0.8146, hRent:629, hSlope:-4097, uRent:457, uSlope:-3048,
+    v1:{ sup1:141.3, sup2:141.3, nb1:181, nb2:181, im1:-147, im2:-147, om1:191.264368, om2:191.264368, wf1:null, wf2:null },
+    v2:{ sup1:141.3, sup2:141.3, nb1:186, nb2:187.061998, im1:-105, im2:-119, om1:175.877858, om2:146.068051, wf1:null, wf2:null } },
+
+  { region:"Bunbury", state:"WA", mkt:"Workforce", pop:35730, hh:2.4, hhNow:14887.5, vrCot:0.0136, vrSqm:0.007, oo:0.5346, hRent:637, hSlope:-3786, uRent:623, uSlope:-3260,
+    v1:{ sup1:105.3, sup2:105.3, nb1:7, nb2:7, im1:-16, im2:-16, om1:940.781609, om2:940.781609, wf1:null, wf2:null },
+    v2:{ sup1:1743.5, sup2:2000, nb1:10, nb2:10.087541, im1:56, im2:32, om1:246.785136, om2:204.957147, wf1:null, wf2:null } }
+];
+
+const VERSIONS = {
+  v1: { label: "V1 (2yr)", yr2: "repeat",
+        note: "Demand from the UPDATED workbook. Natural increase and internal migration are single <strong>2-year averages</strong> used for both forecast years, overseas migration is one forecast year repeated, and year 2 copies year-1 household formation &mdash; so demand is identical in both years and the year-2 movement comes from supply alone." },
+  v2: { label: "V2 (3yr)", yr2: "own",
+        note: "Demand from the July 2026 workbook. Natural increase is a per-capita rate built on the <strong>3-year average</strong> applied to projected population; internal migration uses the current year for year 1 and a 50/50 blend of current and the <strong>3-year average</strong> for year 2; overseas migration is year-specific; supply uses the matching OE commencement year &mdash; so each year has its own demand and supply." }
+};
+const VRSRC = {
+  cot: { label: "Cotality / workbook series", note: "House-basis vacancy rate as carried in the workbooks." },
+  sqm: { label: "SQM Research", note: "SQM measures all dwellings against a Census-renters denominator, so it is not like-for-like with the house-basis series." }
 };
 
-/* ---------- engine (mirrors the workbook) ---------- */
-function project(r, includeWF, yr2mode){
-  const wf1 = includeWF && r.wf1 != null ? r.wf1 : 0;
-  const wf2 = includeWF && r.wf2 != null ? r.wf2 : 0;
-  const people1 = r.nb1 + r.im1 + wf1 + r.om1;
+function project(r, ver, vrsrc, includeWF){
+  const v   = r[ver];
+  const cur = vrsrc === "sqm" ? r.vrSqm : r.vrCot;
+  const hhNow   = r.hhNow;
+  const propNow = hhNow / (1 - cur);
+  const wf1 = includeWF && v.wf1 != null ? v.wf1 : 0;
+  const wf2 = includeWF && v.wf2 != null ? v.wf2 : 0;
+  const people1 = v.nb1 + v.im1 + wf1 + v.om1;
   const newHH1  = people1 / r.hh;
-  const prop1   = r.propNow + r.sup1;
-  const hh1     = r.hhNow + newHH1;
+  const prop1   = propNow + v.sup1;
+  const hh1     = hhNow + newHH1;
   const raw1    = (prop1 - hh1) / prop1;
   const vr1     = Math.max(0.001, raw1);
-  /* year 2: "repeat" carries year-1 household formation; "own" uses its own components */
-  const repeat  = yr2mode === "repeat";
-  const people2 = repeat ? people1 : (r.nb2 + r.im2 + wf2 + r.om2);
+  const repeat  = VERSIONS[ver].yr2 === "repeat";
+  const people2 = repeat ? people1 : (v.nb2 + v.im2 + wf2 + v.om2);
   const newHH2  = people2 / r.hh;
-  const prop2   = prop1 + r.sup2;
+  const prop2   = prop1 + v.sup2;
   const hh2     = hh1 + newHH2;
   const raw2    = (prop2 - hh2) / prop2;
   const vr2     = Math.max(0.001, raw2);
-  return { wf1, wf2: repeat ? wf1 : wf2, repeat,
+  return { cur, hhNow, propNow, repeat, wf1, wf2,
            people1, newHH1, people2, newHH2, prop1, hh1, vr1, raw1, prop2, hh2, vr2, raw2,
-           surplus0: r.propNow - r.hhNow, surplus1: prop1 - hh1, surplus2: prop2 - hh2,
-           hRent1: r.hRent != null && r.hSlope != null ? r.hRent + r.hSlope * (vr1 - r.cur) : null,
-           uRent1: r.uRent != null && r.uSlope != null ? r.uRent + r.uSlope * (vr1 - r.cur) : null };
+           surplus0: propNow - hhNow, surplus1: prop1 - hh1, surplus2: prop2 - hh2,
+           hRent1: r.hRent != null && r.hSlope != null ? r.hRent + r.hSlope * (vr1 - cur) : null,
+           uRent1: r.uRent != null && r.uSlope != null ? r.uRent + r.uSlope * (vr1 - cur) : null };
 }
 
 const pct  = v => (v*100).toFixed(2) + "%";
-const pct1 = v => (v*100).toFixed(1) + "%";
 const int  = v => Math.round(v).toLocaleString("en-AU");
 const sgn  = v => (v>=0?"+":"\u2212") + Math.abs(Math.round(v)).toLocaleString("en-AU");
 const pp   = v => (v>=0?"+":"\u2212") + Math.abs(v*100).toFixed(1) + " pp";
 const SPEC_MAX = 0.065, SPEC_BAL = 0.03;
 const spos = v => Math.min(97.5, Math.max(2.5, v/SPEC_MAX*100)).toFixed(1);
-const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc  = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-let state = { ds: "updated", region: DATASETS.updated.rows[0].region, wf: true };
-function DS(){ return DATASETS[state.ds]; }
-function ROWS(){ return DS().rows; }
+let state = { region: DATA[0].region, vr: "cot", ver: "v2", wf: true };
 
 function render(){
-  const ds = DS();
-  const r = ROWS().find(d => d.region === state.region) || ROWS()[0];
+  const r  = DATA.find(d => d.region === state.region) || DATA[0];
   state.region = r.region;
-  const p = project(r, state.wf, ds.yr2);
-  const hasWF = r.wf1 != null;
-  const d2 = p.vr2 - r.cur;
+  const V  = VERSIONS[state.ver], S = VRSRC[state.vr];
+  const p  = project(r, state.ver, state.vr, state.wf);
+  const v  = r[state.ver];
+  const hasWF = v.wf1 != null;
+  const alt = hasWF ? project(r, state.ver, state.vr, !state.wf) : null;
+  const d2  = p.vr2 - p.cur;
   const cls = Math.abs(d2) < 0.0005 ? "flat" : (d2 > 0 ? "loose" : "tight");
   const txt = cls === "flat" ? "\u2192 Stable" : (d2>0 ? "\u25B2 Loosening" : "\u25BC Tightening");
-  const c1 = (p.vr1-r.cur) > 0.00005 ? "up" : ((p.vr1-r.cur) < -0.00005 ? "down" : "");
-  const c2 = d2 > 0.00005 ? "up" : (d2 < -0.00005 ? "down" : "");
   const bal = (SPEC_BAL/SPEC_MAX*100).toFixed(1);
-
-  /* comparison when WF is available */
-  const alt = hasWF ? project(r, !state.wf, ds.yr2) : null;
 
   document.getElementById("content").innerHTML = `
     <div class="hero">
@@ -332,14 +407,13 @@ function render(){
         <span class="sp-bal num" style="left:${bal}%">balanced ~3%</span>
         <div class="sp-bar">
           <div class="sp-tick" style="left:${bal}%"></div>
-          <div class="sp-dot d0" style="left:${spos(r.cur)}%" title="Current ${pct(r.cur)}"></div>
+          <div class="sp-dot d0" style="left:${spos(p.cur)}%" title="Current ${pct(p.cur)}"></div>
           <div class="sp-dot d1" style="left:${spos(p.vr1)}%" title="1 yr ${pct(p.vr1)}"></div>
           <div class="sp-dot d2" style="left:${spos(p.vr2)}%" title="2 yr ${pct(p.vr2)}"></div>
         </div>
         <div class="axis">
-          ${[0,1,2,3,4,5,6].map(v=>{const L=(v/6.5*100).toFixed(1);return `<div class="ax-t" style="left:${L}%"></div><div class="ax-l num" style="left:${L}%">${v}%</div>`}).join("")}
+          ${[0,1,2,3,4,5,6].map(n=>{const L=(n/6.5*100).toFixed(1);return `<div class="ax-t" style="left:${L}%"></div><div class="ax-l num" style="left:${L}%">${n}%</div>`}).join("")}
         </div>
-      </div>
       </div>
     </div>
 
@@ -353,24 +427,24 @@ function render(){
           <div class="yl"><span class="bul b0"></span><span>Current<span class="fy">FY2024-25</span></span></div>
           <div><div class="bv num">${int(r.pop)}</div><div class="bs">total population</div></div>
           <div><div class="bv num">${r.hh.toFixed(2)}</div><div class="bs">ABS Census</div></div>
-          <div><div class="bv num hh">${int(r.hhNow)}</div><div class="bs">total households</div></div>
-          <div><div class="bv num">${int(r.propNow)}</div><div class="bs">total properties</div></div>
-          <div><div class="bv num v0">${pct(r.cur)}</div><div class="bs num">surplus ${int(p.surplus0)}</div></div>
+          <div><div class="bv num hh">${int(p.hhNow)}</div><div class="bs">total households</div></div>
+          <div><div class="bv num">${int(p.propNow)}</div><div class="bs">total properties</div></div>
+          <div><div class="bv num v0">${pct(p.cur)}</div><div class="bs num">surplus ${int(p.surplus0)}</div><div class="bs">${esc(S.label)}</div></div>
         </div>
         <div class="bdr">
           <div class="yl"><span class="bul b1"></span><span>Year 1<span class="fy">FY2025-26</span></span></div>
           <div>
             <div class="bv num">${sgn(p.people1)}</div>
             <div class="comp">
-              <span class="ck">NI</span><span class="cv num">${sgn(r.nb1)}</span>
-              <span class="ck ${r.im1<0?"neg":""}">IM</span><span class="cv num ${r.im1<0?"neg":""}">${sgn(r.im1)}</span>
-              <span class="ck">OM</span><span class="cv num">${sgn(r.om1)}</span>
-              ${hasWF && state.wf ? `<span class="ck wf">WF</span><span class="cv num wf">${sgn(r.wf1)}</span>` : ""}
+              <span class="ck">NI</span><span class="cv num">${sgn(v.nb1)}</span>
+              <span class="ck ${v.im1<0?"neg":""}">IM</span><span class="cv num ${v.im1<0?"neg":""}">${sgn(v.im1)}</span>
+              <span class="ck">OM</span><span class="cv num">${sgn(v.om1)}</span>
+              ${hasWF && state.wf ? `<span class="ck wf">WF</span><span class="cv num wf">${sgn(v.wf1)}</span>` : ""}
             </div>
           </div>
           <div><div class="bv num">${r.hh.toFixed(2)}</div><div class="bs">unchanged</div></div>
           <div><div class="bv num hh">${sgn(p.newHH1)}</div><div class="bs">new households</div></div>
-          <div><div class="bv num">${sgn(r.sup1)}</div><div class="bs">commencements</div></div>
+          <div><div class="bv num">${sgn(v.sup1)}</div><div class="bs">commencements</div></div>
           <div><div class="bv num v1">${pct(p.vr1)}</div><div class="bs num">surplus ${int(p.surplus1)}</div>${p.raw1<0.001?'<div class="bs floor">at 0.1% floor</div>':""}</div>
         </div>
         <div class="bdr">
@@ -378,15 +452,15 @@ function render(){
           <div>
             <div class="bv num">${sgn(p.people2)}</div>
             ${p.repeat ? '<div class="bs flag">held at year-1 level</div>' : `<div class="comp">
-              <span class="ck">NI</span><span class="cv num">${sgn(r.nb2)}</span>
-              <span class="ck ${r.im2<0?"neg":""}">IM</span><span class="cv num ${r.im2<0?"neg":""}">${sgn(r.im2)}</span>
-              <span class="ck">OM</span><span class="cv num">${sgn(r.om2)}</span>
-              ${hasWF && state.wf && r.wf2 != null ? `<span class="ck wf">WF</span><span class="cv num wf">${sgn(r.wf2)}</span>` : ""}
+              <span class="ck">NI</span><span class="cv num">${sgn(v.nb2)}</span>
+              <span class="ck ${v.im2<0?"neg":""}">IM</span><span class="cv num ${v.im2<0?"neg":""}">${sgn(v.im2)}</span>
+              <span class="ck">OM</span><span class="cv num">${sgn(v.om2)}</span>
+              ${hasWF && state.wf && v.wf2 != null ? `<span class="ck wf">WF</span><span class="cv num wf">${sgn(v.wf2)}</span>` : ""}
             </div>`}
           </div>
           <div><div class="bv num">${r.hh.toFixed(2)}</div><div class="bs">unchanged</div></div>
           <div><div class="bv num hh">${sgn(p.newHH2)}</div><div class="bs">new households</div></div>
-          <div><div class="bv num">${sgn(r.sup2)}</div><div class="bs">commencements</div></div>
+          <div><div class="bv num">${sgn(v.sup2)}</div><div class="bs">commencements</div></div>
           <div><div class="bv num v2">${pct(p.vr2)}</div><div class="bs num">surplus ${int(p.surplus2)}</div>${p.raw2<0.001?'<div class="bs floor">at 0.1% floor</div>':""}</div>
         </div>
       </div>
@@ -399,31 +473,31 @@ function render(){
         <tbody>
           <tr><td>1-yr vacancy rate</td><td class="num">${pct(state.wf?alt.vr1:p.vr1)}</td><td class="num">${pct(state.wf?p.vr1:alt.vr1)}</td><td class="num">${pp((state.wf?p.vr1:alt.vr1)-(state.wf?alt.vr1:p.vr1))}</td></tr>
           <tr><td>2-yr vacancy rate</td><td class="num">${pct(state.wf?alt.vr2:p.vr2)}</td><td class="num">${pct(state.wf?p.vr2:alt.vr2)}</td><td class="num">${pp((state.wf?p.vr2:alt.vr2)-(state.wf?alt.vr2:p.vr2))}</td></tr>
-          <tr><td>Workforce added, FY2025-26</td><td class="num">\u2014</td><td class="num">${sgn(r.wf1)} people</td><td class="num">${sgn(r.wf1/r.hh)} households</td></tr>
+          <tr><td>Workforce added, FY2025-26</td><td class="num">\u2014</td><td class="num">${sgn(v.wf1)} people</td><td class="num">${sgn(v.wf1/r.hh)} households</td></tr>
+        </tbody>
+      </table>
+    </section>` : ""}
+
+    ${r.hRent != null ? `<section>
+      <h2>Rent outlook</h2>
+      <table>
+        <thead><tr><th scope="col">Median rent</th><th scope="col">Current</th><th scope="col">1-yr forecast</th></tr></thead>
+        <tbody>
+          <tr><td>House \u00b7 $/wk</td><td class="num">$${int(r.hRent)}</td><td class="num">${p.hRent1!=null?"$"+int(p.hRent1):"\u2014"}</td></tr>
+          <tr><td>Unit \u00b7 $/wk</td><td class="num">${r.uRent!=null?"$"+int(r.uRent):"\u2014"}</td><td class="num">${p.uRent1!=null?"$"+int(p.uRent1):"\u2014"}</td></tr>
         </tbody>
       </table>
     </section>` : ""}
 
     <section>
-      <h2>Rent outlook</h2>
-      <table>
-        <thead><tr><th scope="col">Median rent</th><th scope="col">Current</th><th scope="col">1-yr forecast</th></tr></thead>
-        <tbody>
-          <tr><td>House \u00b7 $/wk</td><td class="num">${r.hRent!=null?"$"+int(r.hRent):"\u2014"}</td><td class="num">${p.hRent1!=null?"$"+int(p.hRent1):"\u2014"}</td></tr>
-          <tr><td>Unit \u00b7 $/wk</td><td class="num">${r.uRent!=null?"$"+int(r.uRent):"\u2014"}</td><td class="num">${p.uRent1!=null?"$"+int(p.uRent1):"\u2014"}</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section>
       <h2>Market context</h2>
       <div class="ctx">
         <div class="ci"><div class="l">Household size</div><div class="v num">${r.hh.toFixed(2)}</div></div>
-        <div class="ci"><div class="l">Households now</div><div class="v num">${int(r.hhNow)}</div></div>
-        <div class="ci"><div class="l">Properties now</div><div class="v num">${int(r.propNow)}</div></div>
+        <div class="ci"><div class="l">Households now</div><div class="v num">${int(p.hhNow)}</div></div>
+        <div class="ci"><div class="l">Properties now</div><div class="v num">${int(p.propNow)}</div></div>
         <div class="ci"><div class="l">Surplus now</div><div class="v num">${int(p.surplus0)}</div></div>
-        <div class="ci"><div class="l">Supply FY2025-26</div><div class="v num">${int(r.sup1)}</div></div>
-        <div class="ci"><div class="l">Supply FY2026-27</div><div class="v num">${int(r.sup2)}</div></div>
+        <div class="ci"><div class="l">Supply FY2025-26</div><div class="v num">${int(v.sup1)}</div></div>
+        <div class="ci"><div class="l">Supply FY2026-27</div><div class="v num">${int(v.sup2)}</div></div>
         <div class="ci"><div class="l">Surplus in 1 yr</div><div class="v num">${int(p.surplus1)}</div></div>
         <div class="ci"><div class="l">Surplus in 2 yrs</div><div class="v num">${int(p.surplus2)}</div></div>
       </div>
@@ -431,63 +505,54 @@ function render(){
 
     <section>
       <h2>Method &amp; assumptions</h2>
-      <div class="note">
-        <strong>Shared population base.</strong> Both versions use the same current population, household size and current vacancy rate, so switching between them isolates the difference in <em>method</em> rather than data vintage. The base is <strong>ABS estimated resident population at 30 June 2025</strong> (Regional Population, 2024-25 financial year, released 31 March 2026), as carried in the July 2026 workbook. For the eight capitals this differs from the UPDATED workbook's own population figures, so V1 here will not reproduce that file exactly.
-      </div>
-      <div class="note warn">
-        <strong>Household formation.</strong> Incoming people are assumed to form households at the region's average size (${r.hh.toFixed(2)} people per dwelling). Recent arrivals, particularly overseas migrants and construction workers, typically share at higher densities — so household formation may be lower than shown and demand is closer to a ceiling than a midpoint.
-      </div>
-      <div class="note">
-        <strong>Method.</strong> Vacancy rate = surplus properties \u00f7 total properties. Each year adds incoming dwellings and the households formed by incoming people, then recomputes. Year 1 is FY2025-26, year 2 FY2026-27. A 0.1% floor applies, so a market shown at 0.1% has run out of surplus rather than being forecast at that level.
-      </div>
-      <div class="note">
-        <strong>${esc(ds.label)}.</strong> ${ds.note}
-      </div>
-      <div class="note">
-        <strong>Infrastructure workforce.</strong> Applied to eight markets with major project data \u2014 Greater Perth, Darwin, Gladstone, Townsville, Rockhampton, Mackay, Rockingham and Mandurah \u2014 folded into net internal migration on the IM tab. No local-hire, FIFO or camp-accommodation discount is applied; the conversion from jobs to residents is an interim assumption pending calibration against QGSO non-resident population data.
-      </div>
-      ${p.repeat ? `<div class="note">
-        <strong>Year 2 caveat.</strong> This version repeats year-1 household formation in year 2, so the change from year 1 to year 2 comes from supply alone. The FY2027 workforce modifier is held in the data but not applied.
-      </div>` : ""}
+      <div class="note"><strong>${esc(V.label)} demand.</strong> ${V.note}</div>
+      <div class="note"><strong>${esc(S.label)} vacancy rate.</strong> ${S.note} Total properties are derived as households \u00f7 (1 \u2212 current VR), so changing the VR source also changes the implied dwelling stock &mdash; the whole chain shifts, not just the starting point.</div>
+      <div class="note"><strong>Shared base.</strong> Every combination uses the same current population and household size: <strong>ABS estimated resident population at 30 June 2025</strong> (Regional Population 2024-25, released 31 March 2026) and Census average household size. For the eight capitals this population differs from the UPDATED workbook's own figures, so V1 here will not reproduce that file exactly.</div>
+      <div class="note warn"><strong>Household formation.</strong> Incoming people are assumed to form households at the region's average size (${r.hh.toFixed(2)} people per dwelling). Recent arrivals, particularly overseas migrants and construction workers, typically share at higher densities &mdash; so household formation may be lower than shown and demand is closer to a ceiling than a midpoint.</div>
+      <div class="note"><strong>Infrastructure workforce.</strong> Applied to eight markets with major project data &mdash; Greater Perth, Darwin, Gladstone, Townsville, Rockhampton, Mackay, Rockingham and Mandurah &mdash; folded into net internal migration on the IM tab. No local-hire, FIFO or camp-accommodation discount is applied; the conversion from jobs to residents is an interim assumption pending calibration against QGSO non-resident population data.</div>
+      <div class="note"><strong>Method.</strong> Vacancy rate = surplus properties \u00f7 total properties. Each year adds incoming dwellings and the households formed by incoming people, then recomputes. Year 1 is FY2025-26, year 2 FY2026-27. A 0.1% floor applies, so a market shown at 0.1% has run out of surplus rather than being forecast at that level.</div>
+      ${p.repeat ? '<div class="note"><strong>Year 2 caveat.</strong> V1 repeats year-1 household formation, so the change from year 1 to year 2 comes from supply alone. The FY2027 workforce modifier is held in the data but not applied.</div>' : ""}
     </section>
   `;
 }
 
-function fillRegions(){
-  const sel = document.getElementById("region");
-  const keep = state.region;
-  sel.innerHTML = "";
-  ROWS().forEach(d => { const o=document.createElement("option"); o.value=d.region; o.textContent=d.region; sel.appendChild(o); });
-  sel.value = ROWS().some(d=>d.region===keep) ? keep : ROWS()[0].region;
-  state.region = sel.value;
-}
 function init(){
   const sel = document.getElementById("region");
-  fillRegions();
+  DATA.forEach(d => { const o=document.createElement("option"); o.value=d.region; o.textContent=d.region; sel.appendChild(o); });
+  sel.value = state.region;
   sel.addEventListener("change", () => { state.region = sel.value; syncWF(); render(); });
-  const on=document.getElementById("wf-on"), off=document.getElementById("wf-off");
-  function set(v){ state.wf=v; on.setAttribute("aria-pressed",v?"true":"false"); off.setAttribute("aria-pressed",v?"false":"true"); render(); }
-  on.addEventListener("click",()=>set(true));
-  off.addEventListener("click",()=>set(false));
-  const bu=document.getElementById("ds-updated"), bj=document.getElementById("ds-july");
-  function setDS(k){
-    state.ds=k;
-    bu.setAttribute("aria-pressed", k==="updated"?"true":"false");
-    bj.setAttribute("aria-pressed", k==="july"?"true":"false");
-    fillRegions(); syncWF(); render();
+
+  const pairs = [
+    ["vr",  {sqm:"vr-sqm", cot:"vr-cot"}],
+    ["ver", {v1:"ver-v1", v2:"ver-v2"}],
+    ["wf",  {true:"wf-on", false:"wf-off"}]
+  ];
+  function paint(){
+    for (const [key, map] of pairs){
+      for (const k in map){
+        const on = String(state[key]) === k;
+        document.getElementById(map[k]).setAttribute("aria-pressed", on ? "true" : "false");
+      }
+    }
   }
-  bu.addEventListener("click",()=>setDS("updated"));
-  bj.addEventListener("click",()=>setDS("july"));
+  function set(key, val){ state[key] = val; paint(); syncWF(); render(); }
+  document.getElementById("vr-sqm").addEventListener("click", ()=>set("vr","sqm"));
+  document.getElementById("vr-cot").addEventListener("click", ()=>set("vr","cot"));
+  document.getElementById("ver-v1").addEventListener("click", ()=>set("ver","v1"));
+  document.getElementById("ver-v2").addEventListener("click", ()=>set("ver","v2"));
+  document.getElementById("wf-on").addEventListener("click", ()=>set("wf",true));
+  document.getElementById("wf-off").addEventListener("click", ()=>set("wf",false));
 
   function syncWF(){
-    const r=ROWS().find(d=>d.region===state.region);
-    const has=r.wf1!=null;
+    const r = DATA.find(d=>d.region===state.region);
+    const has = r[state.ver].wf1 != null;
+    const on=document.getElementById("wf-on"), off=document.getElementById("wf-off");
     on.disabled=!has; off.disabled=!has;
-    on.title=has?"":"No infrastructure workforce data for this market";
+    on.title = has ? "" : "No infrastructure workforce data for this market";
   }
-  syncWF();
+  paint(); syncWF();
   document.getElementById("foot").textContent =
-    "Data: V1 UPDATED (2yr averages) and V2 July 2026 (3yr averages) Vacancy Rate Projections \u00b7 37 markets each \u00b7 workforce modifier on 8 markets \u00b7 built " +
+    "37 markets \u00b7 VR source SQM or Cotality \u00b7 method V1 (2yr avg) or V2 (3yr avg) \u00b7 workforce modifier on 8 markets \u00b7 built " +
     new Date().toLocaleDateString("en-AU",{day:"numeric",month:"long",year:"numeric"});
   render();
 }
