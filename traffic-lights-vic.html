@@ -300,15 +300,8 @@ table.calc tr.tot td{background:var(--surface-2);font-weight:800;color:var(--ink
 table.calc td.seg{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 table.calc.c3 th:nth-child(n+2),table.calc.c3 td:nth-child(n+2){text-align:right}
 table.calc.c3 td.nm{width:54%}
-.slist .sl-head{cursor:pointer;user-select:none}
 .slist .sl-head .lbl{flex:0 1 auto}
 .slist .sl-head .cnt{font-size:10px;font-weight:800;color:var(--text-faint);background:var(--surface-2);border:1px solid var(--border);border-radius:999px;padding:1.5px 7px;font-variant-numeric:tabular-nums;letter-spacing:0}
-.slist .sl-head .chev{margin-left:auto;font-size:10px;color:var(--text-faint);line-height:1;transition:transform .18s ease;transform-origin:50% 50%}
-.slist.collapsed .sl-head .chev{transform:rotate(-90deg)}
-.slist.collapsed .sl-head{margin-bottom:0}
-.slist.collapsed .sl-body{display:none}
-.slist .sl-head:hover .chev,.slist .sl-head:focus-visible .chev{color:var(--text)}
-.slist .sl-head:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:5px}
 .sl-more{margin-top:7px;font-size:11.5px;font-weight:700;color:var(--text-faint);cursor:pointer;padding:7px 12px;border-radius:9px;border:1px dashed var(--border-strong);text-align:center;transition:background .15s,color .15s}
 .sl-more:hover{background:var(--surface-2);color:var(--text)}
 .sl-item.pinned{margin-top:7px;border-top:1px solid var(--border);border-radius:0;padding-top:13px}
@@ -458,11 +451,11 @@ table.srctbl tr.sec td{background:var(--surface-2);font-weight:800;color:var(--t
         <h3>LGA Summary</h3>
         <div class="sub">Numbers in the lights are each LGA&rsquo;s rank &mdash; supply &amp; demand, value, confidence</div>
         <div class="ssort" id="ssort" role="group" aria-label="Sort LGAs by"><button data-k="overall" data-label="Overall" aria-pressed="true">Overall</button><button data-k="sd" data-label="S&amp;D">S&amp;D</button><button data-k="value" data-label="Val">Val</button><button data-k="conf" data-label="Conf">Conf</button></div>
-        <div class="slist peak" data-sec="peak"><div class="sl-head"><span class="dot"></span><span class="lbl">Past its peak</span><span class="cnt"></span><span class="chev" aria-hidden="true">&#9662;</span></div><div class="sl-body"><div id="peakList"></div><div class="sl-more" style="display:none"></div></div></div>
-        <div class="slist good" data-sec="best"><div class="sl-head"><span class="dot"></span><span class="lbl">Best time to invest</span><span class="cnt"></span><span class="chev" aria-hidden="true">&#9662;</span></div><div class="sl-body"><div id="bestList"></div><div class="sl-more" style="display:none"></div><div class="sl-empty" id="bestEmpty" style="display:none">Waiting on the Confidence pillar &mdash; an LGA lands here when supply &amp; demand and value are green while confidence is still depressed (the contrarian window). Green-everything markets sit under Past its peak until then.</div></div></div>
-        <div class="slist mid" data-sec="mid"><div class="sl-head"><span class="dot"></span><span class="lbl">Worth watching</span><span class="cnt"></span><span class="chev" aria-hidden="true">&#9662;</span></div><div class="sl-body"><div id="midList"></div><div class="sl-more" style="display:none"></div></div></div>
-        <div class="slist watch" data-sec="watch"><div class="sl-head"><span class="dot"></span><span class="lbl">Not the best time</span><span class="cnt"></span><span class="chev" aria-hidden="true">&#9662;</span></div><div class="sl-body"><div id="watchList"></div><div class="sl-more" style="display:none"></div></div></div>
-        <div class="slist rank" id="rankSec" data-sec="rank" style="display:none"><div class="sl-head"><span class="dot"></span><span class="lbl" id="rankHead"></span><span class="cnt"></span><span class="chev" aria-hidden="true">&#9662;</span></div><div class="sl-body"><div id="rankList"></div><div class="sl-more" style="display:none"></div></div></div>
+        <div class="slist peak" data-sec="peak"><div class="sl-head"><span class="dot"></span><span class="lbl">Past its peak</span><span class="cnt"></span></div><div class="sl-body"><div id="peakList"></div><div class="sl-more" style="display:none"></div></div></div>
+        <div class="slist good" data-sec="best"><div class="sl-head"><span class="dot"></span><span class="lbl">Best time to invest</span><span class="cnt"></span></div><div class="sl-body"><div id="bestList"></div><div class="sl-more" style="display:none"></div><div class="sl-empty" id="bestEmpty" style="display:none">Waiting on the Confidence pillar &mdash; an LGA lands here when supply &amp; demand and value are green while confidence is still depressed (the contrarian window). Green-everything markets sit under Past its peak until then.</div></div></div>
+        <div class="slist mid" data-sec="mid"><div class="sl-head"><span class="dot"></span><span class="lbl">Worth watching</span><span class="cnt"></span></div><div class="sl-body"><div id="midList"></div><div class="sl-more" style="display:none"></div></div></div>
+        <div class="slist watch" data-sec="watch"><div class="sl-head"><span class="dot"></span><span class="lbl">Not the best time</span><span class="cnt"></span></div><div class="sl-body"><div id="watchList"></div><div class="sl-more" style="display:none"></div></div></div>
+        <div class="slist rank" id="rankSec" data-sec="rank" style="display:none"><div class="sl-head"><span class="dot"></span><span class="lbl" id="rankHead"></span><span class="cnt"></span></div><div class="sl-body"><div id="rankList"></div><div class="sl-more" style="display:none"></div></div></div>
       </div>
     </div>
   </div>
@@ -500,7 +493,7 @@ const CONF={"state_indicators":[{"name":"Business Confidence","latest":"-16.00",
 const LGAS=Object.keys(DATA).sort();
 let current="Melbourne";
 const CAP=10;                 // rows shown per summary section before "Show all"
-const COLL={}, MORE={};       // per-section collapsed / expanded-past-cap state, kept across re-renders
+const MORE={};                // per-section expanded-past-cap state, kept across re-renders
 
 function money(v){ if(v==null||v==='')return '&mdash;'; v=+v; return v>=1e6?'$'+(v/1e6).toFixed(2)+'m':'$'+Math.round(v/1000)+'k'; }
 function ord(n){ n=Math.round(n); const s=["th","st","nd","rd"],v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
@@ -756,15 +749,6 @@ function buildSummary(){
     fill('rankList',ordered,l=>{const rk=rankOf(l); return rk<999?rk:'&ndash;';});
     rankSec.style.display='';
   }
-  document.querySelectorAll('.slist').forEach(sec=>{
-    const h=sec.querySelector('.sl-head'), key=sec.dataset.sec; if(!h||!key) return;
-    sec.classList.toggle('collapsed', !!COLL[key]);
-    h.setAttribute('role','button'); h.setAttribute('tabindex','0');
-    h.setAttribute('aria-expanded', String(!COLL[key]));
-    h.setAttribute('title', COLL[key]?'Expand':'Collapse');
-    h.onclick=()=>{COLL[key]=!COLL[key];buildSummary();};
-    h.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();h.onclick();}};
-  });
   document.querySelectorAll('.sl-item').forEach(el=>el.addEventListener('click',()=>{current=el.dataset.lga; ddInput.placeholder=current; render(current); buildSummary(); document.querySelector('.card').scrollIntoView({behavior:'smooth',block:'nearest'});}));
   document.querySelectorAll('#ssort button').forEach(b=>{
     const dis=b.getAttribute('aria-disabled')==='true';
