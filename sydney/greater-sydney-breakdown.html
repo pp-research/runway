@@ -1204,8 +1204,10 @@ function pLights(){
     +'<div style="color:#68727F;margin-top:4px">click to '+(hidden.has(d)?'show':'hide')+'</div>',
     e.clientX,e.clientY)};
   p.onpointerleave=()=>TIP.hide()});
- seriesLegend('l-lgd',[['var(--green)','Best time'],['var(--orange)','Past its peak'],
-  ['var(--blue)','Worth watching'],['var(--red)','Not the best time']],
+ /* squares, not line glyphs: these key filled map regions, not series lines - the
+    third element in each item is what switches seriesLegend to a swatch */
+ seriesLegend('l-lgd',[['var(--green)','Best time',1],['var(--orange)','Past its peak',1],
+  ['var(--blue)','Worth watching',1],['var(--red)','Not the best time',1]],
   'map shows the house verdict; click a region to hide that district');
 }
 function pDistricts(){
