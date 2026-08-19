@@ -1,0 +1,10 @@
+# watcher bookkeeping
+.auto-push.log
+
+# editor / OS noise
+*.tmp
+*.bak
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
