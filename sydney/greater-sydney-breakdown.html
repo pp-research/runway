@@ -1217,109 +1217,76 @@ function pVRRent(){
   +'\u00b7 both measured, Cotality LGA VR &amp; Rent');
 }
 
-/* ---------- vacancy-rate ruler: all six districts on one shared axis ----------
-   Each district is a row: hollow dot = now, half dot = +1yr, solid dot = +2yr,
-   connected so the direction of travel is the shape rather than a number. */
-function rulerChart(hostId){
- const host=gid(hostId); if(!host) return;
- const W=1000, RH=24, TOP=7, AX=30;
- const list=vis();
- const Ht=TOP+list.length*RH+AX;
- const P=[TOP,150,AX,96];              // top, right (labels), bottom (axis), left (names)
- const vals=list.flatMap(d=>[MOCK.divisions[d].vr,MOCK.divisions[d].vr1,MOCK.divisions[d].vr2]);
- const hi=Math.max(4, Math.ceil(Math.max(...vals,3)+0.6));
- const x=v=>P[3]+v/hi*(W-P[1]-P[3]);
- let g='<svg class="ch" viewBox="0 0 '+W+' '+Ht+'" xmlns="http://www.w3.org/2000/svg" role="img">'
-  +'<title>Vacancy rate now and projected, six districts</title>'
-  +'<defs><linearGradient id="vrband" x1="0" x2="1">'
-  +'<stop offset="0" stop-color="#F6C6CC"/><stop offset=".38" stop-color="#FBE2BE"/>'
-  +'<stop offset=".55" stop-color="#E8EFC7"/><stop offset=".78" stop-color="#CDE8D9"/>'
-  +'<stop offset="1" stop-color="#C4E6EB"/></linearGradient></defs>';
- const bandTop=P[0], bandH=list.length*RH;
- g+='<rect x="'+x(0)+'" y="'+bandTop+'" width="'+(x(hi)-x(0))+'" height="'+bandH
-  +'" rx="5" fill="url(#vrband)"/>';
- // balanced marker
- g+='<line x1="'+x(3).toFixed(1)+'" x2="'+x(3).toFixed(1)+'" y1="'+(bandTop-4)+'" y2="'
-  +(bandTop+bandH+4)+'" stroke="#171B24" stroke-width="1.4"/>'
-  +'<text x="'+x(3).toFixed(1)+'" y="'+(bandTop-8)+'" text-anchor="middle" font-size="10.5"'
-  +' fill="var(--ink-dim)">balanced ~3%</text>'
-  +'<text x="'+x(0)+'" y="'+(bandTop-8)+'" font-size="10" font-weight="700" fill="var(--ink-dim)"'
-  +' letter-spacing=".08em">TIGHTER</text>'
-  +'<text x="'+(x(hi)).toFixed(1)+'" y="'+(bandTop-8)+'" text-anchor="end" font-size="10"'
-  +' font-weight="700" fill="var(--ink-dim)" letter-spacing=".08em">LOOSER</text>';
- const hit=[];
- list.forEach((d,i)=>{
-  const m=MOCK.divisions[d], cy=bandTop+RH*i+RH/2;
-  const pts=[['now',m.vr,0],['+1yr',m.vr1,1],['+2yr',m.vr2,2]];
-  g+='<text x="'+(P[3]-8)+'" y="'+(cy+3.6).toFixed(1)+'" text-anchor="end" font-size="11"'
-   +' font-weight="700" fill="var(--ink)">'+d+'</text>';
-  g+='<line x1="'+x(m.vr).toFixed(1)+'" x2="'+x(m.vr2).toFixed(1)+'" y1="'+cy+'" y2="'+cy
-   +'" stroke="'+C(d)+'" stroke-width="1.6" stroke-opacity=".55"/>';
-  pts.forEach(([lab,v,k])=>{
-   const fill=k===0?'#FFFFFF':(k===1?C(d):C(d));
-   const op=k===1?0.55:1;
-   g+='<circle cx="'+x(v).toFixed(1)+'" cy="'+cy+'" r="5.2" fill="'+fill+'" fill-opacity="'+op
-    +'" stroke="'+C(d)+'" stroke-width="2"/>';
-   hit.push({cx:x(v),cy:cy,d:d,lab:lab,v:v,
-             floored:(k===1&&m.vr1_floored)||(k===2&&m.vr2_floored)});
-  });
-  // direction of travel, and the floor disclosure where it applies
-  const dv=m.vr2-m.vr, tight=dv<0;
-  g+='<text x="'+(W-P[1]+10)+'" y="'+(cy+3.6).toFixed(1)+'" font-size="10.5" font-weight="700"'
-   +' fill="'+(tight?'#8A4B00':'#1F6B4F')+'">'+(tight?'\u25b2 tightening':'\u25bc loosening')
-   +' '+(dv>0?'+':'')+dv.toFixed(2)+'pp</text>';
-  if(m.vr2_floored)
-   g+='<text x="'+(x(m.vr2)+9).toFixed(1)+'" y="'+(cy-7).toFixed(1)+'" font-size="9"'
-    +' font-weight="700" fill="#8A4B00">at floor</text>';
- });
- for(let v=0;v<=hi;v++)
-  g+='<line x1="'+x(v).toFixed(1)+'" x2="'+x(v).toFixed(1)+'" y1="'+(bandTop+bandH)+'" y2="'
-   +(bandTop+bandH+4)+'" stroke="var(--ink-faint)"/>'
-   +'<text x="'+x(v).toFixed(1)+'" y="'+(bandTop+bandH+16)+'" text-anchor="middle" font-size="10"'
-   +' fill="var(--ink-faint)">'+v+'%</text>';
- host.innerHTML=g+'</svg>';
- CH[hostId]={W:W,Ht:Ht,hit(vx,vy){
-  const h=hit.find(q=>Math.abs(q.cx-vx)<9&&Math.abs(q.cy-vy)<9);
-  if(!h) return null;
-  const m=MOCK.divisions[h.d];
-  return '<b>'+swatch(C(h.d))+h.d+' \u00b7 '+h.lab+'</b><table>'
-   +'<tr><td>Vacancy rate</td><td><b>'+h.v.toFixed(2)+'%</b></td></tr>'
-   +(h.floored?'<tr><td colspan="2" style="color:#8A4B00">at the 0.1% floor \u2014 not a forecast</td></tr>':'')
-   +'<tr><td>Households</td><td>'+Math.round(m.hholds).toLocaleString()+'</td></tr>'
-   +'<tr><td>Dwellings</td><td>'+Math.round(m.props).toLocaleString()+'</td></tr>'
-   +'<tr><td>Commencements/yr</td><td>'+Math.round(m.appr*0.9).toLocaleString()+'</td></tr>'
-   +'</table>';
- }};
- bind(hostId);
+/* ---------- vacancy-rate cards: one per district ----------
+   Ported from the single-market layout in vr-projection-tool.html. That layout is
+   per-market; this page carries six districts, so the 0-6% axis is drawn once
+   beneath the grid instead of six times inside it \u2014 see the .vrgrid budget note.
+   Rates are the STORED vr/vr1/vr2, never recomputed: deriving them from the
+   rounded hh (2.6 for North against ~2.54 actual) drifts ~0.03pp off the stored
+   value. Surplus is derived as rate x properties so the two figures in the
+   vacancy cell always agree \u2014 that reproduces the stored surplus (North: 5,646
+   stored, 5,661 derived) and props-hholds exactly for the current year. */
+const SP_MAX=6.5, SP_BAL=3;
+const spos=v=>Math.max(1.4,Math.min(98.6,v/SP_MAX*100));
+const LABS=['Current','Year 1','Year 2'], FYS=['FY2024-25','FY2025-26','FY2026-27'];
+function vrCard(d){
+ const m=MOCK.divisions[d], col=C(d);
+ const comm=m.appr*0.9;                    // approvals discounted to commencements
+ const people=m.ni+m.im+m.om;              // equals the stored mig; summed so the
+ const newHH=people/m.hh;                  //   NI/IM/OM breakdown always reconciles
+ const props=[m.props,m.props+comm,m.props+2*comm];
+ const rate=[m.vr,m.vr1,m.vr2];
+ const sur=rate.map((r,i)=>Math.round(r/100*props[i]));
+ const dv=m.vr2-m.vr;
+ const cls=Math.abs(dv)<0.005?'flat':(dv>0?'loose':'tight');
+ const txt=cls==='flat'?'\u2192 Stable':(dv>0?'\u25bc Loosening':'\u25b2 Tightening');
+ const N=v=>Math.round(v).toLocaleString();
+ const S=v=>(v>0?'+':'')+Math.round(v).toLocaleString();
+ const floored=i=>(i===1&&m.vr1_floored)||(i===2&&m.vr2_floored);
+ const dot=i=>'<span class="dot" style="left:'+spos(rate[i]).toFixed(1)+'%;border-color:'+col
+  +';background:'+(i===0?'#FFFFFF':col)+';opacity:'+(i===1?'.55':'1')+'" title="'+LABS[i]+' '
+  +rate[i].toFixed(2)+'%"></span>';
+ const comp='<div class="vrc-comp"><b>NI</b> '+S(m.ni)+' <b class="'+(m.im<0?'neg':'')+'">IM</b> '
+  +'<span class="'+(m.im<0?'neg':'')+'">'+S(m.im)+'</span> <b>OM</b> '+S(m.om)+'</div>';
+ const cap=t=>'<div class="vrc-c">'+t+'</div>';
+ const cell=(v,acc,sub)=>'<div><div class="vrc-v'+(acc?' acc':'')+'">'+v+'</div>'+sub+'</div>';
+ const row=i=>'<div class="vrc-r'+(i===0?' band':'')+'">'
+  +'<div class="rl">'+LABS[i]+'<span class="fy">'+FYS[i]+'</span></div>'
+  +cell(i===0?N(m.pop):S(people),false,
+        i===1?comp:cap(i===0?'total population':'held at year-1 level'))
+  +cell(m.hh.toFixed(2),false,cap(i===0?'ABS Census':'unchanged'))
+  +cell(i===0?N(m.hholds):S(newHH),true,cap(i===0?'total households':'new households'))
+  +cell(i===0?N(m.props):S(comm),false,cap(i===0?'total properties':'commencements'))
+  +cell(rate[i].toFixed(2)+'%',true,'<div class="vrc-c">surplus '+N(sur[i])
+        +(floored(i)?' <span class="vrc-floor">at floor</span>':'')+'</div>')
+  +'</div>';
+ return '<div class="vrc'+(hidden.has(d)?' off':'')+'">'
+  +'<div class="vrc-top"><div>'
+   +'<div class="vrc-nm"><i style="background:'+col+'"></i>'+d+'</div>'
+   +'<div class="vrc-sub">'+(MEMBERS[d]?MEMBERS[d].length+' LGAs \u00b7 ':'')+'pop '+N(m.pop)
+   +'</div></div>'
+   +'<div class="vrc-bdg '+cls+'"><div class="b1">'+txt+'</div>'
+   +'<div class="b2">2-yr direction</div></div></div>'
+  +'<div class="vrc-sp"><span class="bal" style="left:'+(SP_BAL/SP_MAX*100).toFixed(1)+'%"></span>'
+   +dot(0)+dot(1)+dot(2)+'</div>'
+  +'<div class="vrc-rows">'
+   +'<div class="vrc-r"><div class="vrc-h"></div><div class="vrc-h">People</div>'
+   +'<div class="vrc-h">\u00f7 HH size</div><div class="vrc-h">= Households</div>'
+   +'<div class="vrc-h">Dwellings</div><div class="vrc-h">Vacancy rate</div></div>'
+   +row(0)+row(1)+row(2)+'</div></div>';
 }
 function pVRProj(){
- rulerChart('c-vrp');
- seriesLegend('c-vrp-lg',[],'hollow = now \u00b7 half = +1 year \u00b7 solid = +2 years '
-  +'\u00b7 floored at 0.1%, disclosed where it bites');
- /* the derivation, read left to right: people \u00f7 household size = households, against dwellings */
- const cols=['District','People','\u00f7 HH size','= Households','Dwellings',
-             '+ Commencements','Surplus','Vacancy rate'];
- const rows=ORDER.map(d=>{const m=MOCK.divisions[d];
-  return {d:d,k:[d,m.pop,m.hh,m.hholds,m.props,m.appr*0.9,m.surplus,m.vr],m:m}});
- const floorLbl=(v,fl)=>fl
-  ? v.toFixed(2)+'% <b style="color:#8A4B00" title="at the 0.1% floor, not a forecast">at floor</b>'
-  : v.toFixed(2)+'%';
- sortable('c-vrp-tbl',rows,cols,o=>{const m=o.m;
-  const sub=(t,v,col)=>'<span style="color:'+col+'">'+t+' '+(v>0?'+':'')+v.toLocaleString()+'</span>';
-  return '<tr class="'+(hidden.has(o.d)?'off':'')+'">'
-   +'<td class="dv" data-d="'+o.d+'"><i style="background:'+C(o.d)+'"></i>'+o.d+'</td>'
-   +'<td>'+m.pop.toLocaleString()+'<div style="font-size:.62cqw;line-height:1.35">'
-     +sub('NI',m.ni,'var(--ink-dim)')+' '+sub('IM',m.im,'#8A4B00')+' '
-     +sub('OM',m.om,'var(--ink-dim)')+'</div></td>'
-   +'<td>'+m.hh.toFixed(2)+'</td>'
-   +'<td><b>'+m.hholds.toLocaleString()+'</b><div style="font-size:.62cqw;color:var(--ink-dim)">'
-     +'+'+Math.round((m.ni+m.im+m.om)/m.hh).toLocaleString()+' new/yr</div></td>'
-   +'<td>'+m.props.toLocaleString()+'</td>'
-   +'<td>'+Math.round(m.appr*0.9).toLocaleString()+'<div style="font-size:.62cqw;'
-     +'color:var(--ink-dim)">'+m.appr.toLocaleString()+' approvals \u00d7 0.9</div></td>'
-   +'<td>'+m.surplus.toLocaleString()+'</td>'
-   +'<td><b>'+m.vr.toFixed(2)+'%</b><div style="font-size:.62cqw;color:var(--ink-dim)">'
-     +floorLbl(m.vr2,m.vr2_floored)+' in 2 yr</div></td></tr>'});
+ put('c-vrp-cards',ORDER.map(vrCard).join(''));
+ /* the axis the six cards share: ticks and numbers on the first line, the
+    balanced marker and the two end labels on the second so nothing collides at 3% */
+ let ax='';
+ for(let n=0;n<=6;n++){const L=(n/SP_MAX*100).toFixed(1);
+  ax+='<span class="t" style="left:'+L+'%"></span>'
+   +'<span class="l" style="left:'+L+'%">'+n+'%</span>';}
+ ax+='<span class="l bal" style="left:'+(SP_BAL/SP_MAX*100).toFixed(1)+'%">balanced ~3%</span>'
+  +'<span class="ends" style="left:0">Tighter (undersupplied)</span>'
+  +'<span class="ends" style="right:0">Looser (oversupplied)</span>';
+ put('c-vrp-ax',ax);
 }
 function pDemand(){
  bars('c-dem',ORDER,[
