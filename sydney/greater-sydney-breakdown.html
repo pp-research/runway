@@ -1239,7 +1239,10 @@ function vrCard(d){
  const sur=rate.map((r,i)=>Math.round(r/100*props[i]));
  const dv=m.vr2-m.vr;
  const cls=Math.abs(dv)<0.005?'flat':(dv>0?'loose':'tight');
- const txt=cls==='flat'?'\u2192 Stable':(dv>0?'\u25bc Loosening':'\u25b2 Tightening');
+ /* the arrow tracks the vacancy RATE, matching vr-projection-tool: up = looser.
+    The ruler this replaced used the opposite sense (up = tightening market), so
+    if any other page grows a direction arrow, follow this one. */
+ const txt=cls==='flat'?'\u2192 Stable':(dv>0?'\u25b2 Loosening':'\u25bc Tightening');
  const N=v=>Math.round(v).toLocaleString();
  const S=v=>(v>0?'+':'')+Math.round(v).toLocaleString();
  const floored=i=>(i===1&&m.vr1_floored)||(i===2&&m.vr2_floored);
