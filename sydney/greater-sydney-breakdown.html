@@ -1281,14 +1281,16 @@ function pVR(){
    so the cards stay comparable with each other.
    Type and stroke widths are ~3x the values used by panels(): this viewBox spans a
    third of the page width, so a 9pt label there needs ~28 here to look the same. */
-const VRR_GLYPH=(col,dash)=>'<svg viewBox="0 0 30 10" aria-hidden="true">'
+const VRR_GLYPH=(col,dash,opq)=>'<svg viewBox="0 0 30 10" aria-hidden="true">'
  +'<line x1="1" x2="29" y1="5" y2="5" stroke="'+col+'" stroke-width="2.6"'
- +' stroke-linecap="round"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/></svg>';
+ +' stroke-linecap="round" stroke-opacity="'+(opq==null?1:opq)+'"'
+ +(dash?' stroke-dasharray="'+dash+'"':'')+'/></svg>';
 function vrRentChart(hostId,d,lo,hi,VMAX){
  const host=gid(hostId); if(!host) return;
  /* left padding has to clear "$1560" at font 28 - Montserrat digits are wide and at
-    96 the dollar sign was clipping off the card edge */
- const W=1000, Ht=566, P=[14,70,44,116];  // top, right (VR axis), bottom (years), left ($)
+    96 the dollar sign was clipping off the card edge. The bottom is deep enough for
+    a four-digit year turned on its side. */
+ const W=1000, Ht=566, P=[14,70,96,116];  // top, right (VR axis), bottom (years), left ($)
  const rs=GR(d,'house').rs, us=GR(d,'unit').rs, vs=H[d].vr;
  const ys=yl(rs), y0=ys[0], y1=ys[ys.length-1];
  const L=P[3], R=W-P[1], T=P[0], B=Ht-P[2];
