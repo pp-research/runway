@@ -799,8 +799,9 @@ function multiLine(hostId,pick,opt){
  opt=opt||{}; const W=1000, Ht=opt.H||390;
  /* the right padding exists to hold the end-of-line series labels. With opt.noEnds a
     legend names the series instead, so the plot reclaims that 150 units. */
- /* the bottom deepens for opt.xrot: a four-digit year on its side needs the room */
- const P=[26,opt.noEnds?26:150,opt.xrot?88:52,74];
+ /* The bottom deepens for opt.xrot: a four-digit year on its side needs the room, plus
+    ~20 units of clearance so the labels do not sit against the panel's bottom edge. */
+ const P=[26,opt.noEnds?26:150,opt.xrot?108:52,74];
  const ser=vis().map(d=>({d:d,o:pick(d)})).filter(s=>s.o);
  if(!ser.length){host.innerHTML='<svg class="ch" viewBox="0 0 10 10"></svg>';
   CH[hostId]={W:10,Ht:10,hit:()=>null};return}
