@@ -1329,8 +1329,13 @@ function vrRentChart(hostId,d,lo,hi,VMAX){
  [0,3,VMAX].forEach(v=>g+='<text x="'+(R+10)+'" y="'+(fv(v)+9).toFixed(1)+'" font-size="28"'
   +' fill="'+(v===3?'#8A4B00':AXT)+'">'+v+'%</text>');
  g+='<line x1="'+L+'" x2="'+R+'" y1="'+B+'" y2="'+B+'" stroke="'+AX+'" stroke-width="3"/>';
- [y0,Math.round((y0+y1)/2),y1].forEach(y=>g+='<text x="'+x(y).toFixed(1)+'" y="'+(B+32)
-  +'" text-anchor="middle" font-size="28" fill="'+AXT+'">'+String(y).slice(2)+'</text>');
+ /* every year, turned 90 degrees so all of them fit. rotate(-90) about the anchor
+    with text-anchor:end makes the label hang straight down from the axis. */
+ ys.forEach(y=>{const px=x(y).toFixed(1), py=B+10;
+  g+='<line x1="'+px+'" x2="'+px+'" y1="'+B+'" y2="'+(B+5)+'" stroke="'+AX+'"'
+   +' stroke-width="2" stroke-opacity=".6"/>'
+   +'<text x="'+px+'" y="'+py+'" transform="rotate(-90 '+px+' '+py+')" text-anchor="end"'
+   +' font-size="24" fill="'+AXT+'">'+y+'</text>'});
  g+='<g id="'+hostId+'-cross"></g>';
  host.innerHTML=g+'</svg>';
  CH[hostId]={W:W,Ht:Ht,hit(vx,vy){
