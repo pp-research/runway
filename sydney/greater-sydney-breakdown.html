@@ -814,8 +814,10 @@ function multiLine(hostId,pick,opt){
  if(opt.ref!=null&&opt.ref.v>=lo&&opt.ref.v<=hi){const ry=f(opt.ref.v).toFixed(1);
   g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+ry+'" y2="'+ry+'" stroke="'
    +(opt.ref.col||AX)+'" stroke-width="1.4" stroke-dasharray="6 4" stroke-opacity=".75"/>'
-   +'<text x="'+(P[3]+8)+'" y="'+(+ry-6).toFixed(1)+'" font-size="10.5" font-weight="700"'
-   +' fill="'+(opt.ref.col||AX)+'" fill-opacity=".9">'+(opt.ref.label||'')+'</text>'}
+   /* halo via paint-order so the label stays legible where a series crosses it */
+   +'<text x="'+(P[3]+8)+'" y="'+(+ry-7).toFixed(1)+'" font-size="10.5" font-weight="700"'
+   +' paint-order="stroke" stroke="var(--pnl)" stroke-width="3.2" stroke-linejoin="round"'
+   +' fill="'+(opt.ref.col||AX)+'">'+(opt.ref.label||'')+'</text>'}
  if(lo<0&&hi>0) g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+f(0).toFixed(1)+'" y2="'
   +f(0).toFixed(1)+'" stroke="'+AX+'" stroke-width="1.2"/>';
  if(opt.lta!=null) g+=ltaMark(opt.lta,f,P[3],W-P[1],opt.ltaL||'');
@@ -1256,7 +1258,10 @@ function pVR(){
     district pills were naming them a second time */
  /* no ytitle: the rotated "Vacancy Rate" label repeated the slide heading and cost
     40 units of plot width. nice+ref give round ticks and the shared 3% threshold. */
- multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',
+ /* H is the viewBox aspect, not a pixel height - the svg is width-driven. 466 against
+    W=1000 matches the panel now that the page carries no kick line and no caption;
+    the default 390 left a third of the panel empty below the chart. */
+ multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',H:466,
   nice:1,ref:{v:3,label:'balanced 3%',col:'#8A4B00'}});
 }
 /* ---------- vacancy rate v rent: six separate charts, one per district ----------
