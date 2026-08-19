@@ -136,6 +136,11 @@ body.railshut .stage{margin-left:56px}
 .two.wide{grid-template-columns:1.7fr 1fr}
 .pnum{position:absolute;bottom:.5cqw;right:.85cqw;font-size:.62cqw;color:#8A939D;
  letter-spacing:.02em;line-height:1.2}
+/* The legend row: mark buttons, then a note. Neither .lgd nor .st had a rule at
+   all, so the note butted straight against the last button with no separation and
+   the whole row read as one crowded run-on line. */
+.lgd{display:flex;flex-wrap:wrap;align-items:center;gap:.3cqw .55cqw;margin-bottom:.55cqw}
+.lgd .st{flex:1 1 20cqw;min-width:0;font-size:.78cqw;color:var(--ink-dim);line-height:1.35}
 .dm{border-bottom:.1cqw dotted var(--orange)}
 .dm::after{content:'\00b0';color:var(--orange);font-weight:700;font-size:.85em}
 /* ---------- vacancy-rate cards: one per district ----------
