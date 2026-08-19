@@ -165,9 +165,11 @@ body.railshut .stage{margin-left:56px}
    as the Current row's People figure, so a second copy cost a line for nothing */
 .vrc-sub{font-size:.66cqw;font-weight:400;color:var(--ink-faint);white-space:nowrap}
 .vrc-bdg{flex:none;text-align:right;border:.08cqw solid;border-radius:.3cqw;
- padding:.2cqw .42cqw;line-height:1.15}
-.vrc-bdg .b1{font-size:.7cqw;font-weight:700;white-space:nowrap}
-.vrc-bdg .b2{font-size:.52cqw;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+ padding:.16cqw .4cqw;line-height:1.15}
+/* the badge, not the district name, sets the height of the top row - it is two
+   stacked lines plus padding and border. Size it before sizing anything else. */
+.vrc-bdg .b1{font-size:.66cqw;font-weight:700;white-space:nowrap}
+.vrc-bdg .b2{font-size:.48cqw;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
 .vrc-bdg.tight{color:#8A4B00;border-color:rgba(138,75,0,.4);background:rgba(255,169,31,.10)}
 .vrc-bdg.loose{color:#1F6B4F;border-color:rgba(31,107,79,.4);background:rgba(31,107,79,.08)}
 .vrc-bdg.flat{color:var(--ink-dim);border-color:rgba(74,85,102,.35);background:rgba(74,85,102,.06)}
@@ -180,8 +182,11 @@ body.railshut .stage{margin-left:56px}
 .vrc-key .hi{position:absolute;right:0;bottom:0}
 .vrc-key .bal{position:absolute;bottom:0;transform:translateX(-50%);letter-spacing:.02em;
  text-transform:none;font-size:.58cqw;font-weight:700;color:var(--ink-dim);white-space:nowrap}
-/* the band, with its own scale immediately beneath it */
-.vrc-sp{position:relative;height:1cqw;border-radius:.5cqw;margin:.06cqw 0 0;
+/* the band, with its own scale immediately beneath it.
+   flex:none is load-bearing. The card is a flex column; without it the band is the
+   only shrinkable child, so any overflow crushes it to zero height and the gradient
+   silently disappears while the dots stay put, floating on white. */
+.vrc-sp{position:relative;flex:none;height:.9cqw;border-radius:.45cqw;margin:.06cqw 0 0;
  background:linear-gradient(90deg,#F6C6CC 0%,#FBE2BE 38%,#E8EFC7 55%,#CDE8D9 78%,#C4E6EB 100%)}
 .vrc-sp .bal{position:absolute;top:-.14cqw;bottom:-.14cqw;width:.11cqw;background:var(--ink);
  transform:translateX(-50%)}
