@@ -798,10 +798,24 @@ function multiLine(hostId,pick,opt){
   if(z<=a)return;
   g+='<rect x="'+x(a).toFixed(1)+'" y="'+P[0]+'" width="'+(x(z)-x(a)).toFixed(1)+'" height="'
    +(plotB-P[0])+'" fill="'+(b.type==='growth'?'#D6EEF5':'#CBD6DA')+'" fill-opacity=".75"/>'});
- for(let i=0;i<=4;i++){const v=lo+(hi-lo)*i/4, yy=f(v).toFixed(1);
+ /* opt.nice rounds the axis onto whole steps. Opt-in, because the other callers are
+    happy with data-fitted bounds. f() closes over lo/hi, so they must be reassigned
+    before the first f() call - which is this tick loop. */
+ let ticks=[];
+ if(opt.nice&&vAll.length){const nb=niceBounds(Math.min(...vAll),Math.max(...vAll),5);
+  lo=nb[0];hi=nb[1];
+  for(let v=lo;v<=hi+nb[2]*1e-6;v+=nb[2]) ticks.push(v)}
+ else for(let i=0;i<=4;i++) ticks.push(lo+(hi-lo)*i/4);
+ ticks.forEach(v=>{const yy=f(v).toFixed(1);
   g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+yy+'" y2="'+yy+'" stroke="'+GRID+'"/>'
    +'<text x="'+(P[3]-9)+'" y="'+(+yy+3.6).toFixed(1)+'" text-anchor="end" font-size="10"'
-   +' fill="'+AXT+'">'+(opt.fmt?opt.fmt(v):v.toFixed(0))+'</text>'}
+   +' fill="'+AXT+'">'+(opt.fmt?opt.fmt(v):v.toFixed(0))+'</text>'});
+ /* an opt-in threshold rule, so every vacancy page marks 3% the same way */
+ if(opt.ref!=null&&opt.ref.v>=lo&&opt.ref.v<=hi){const ry=f(opt.ref.v).toFixed(1);
+  g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+ry+'" y2="'+ry+'" stroke="'
+   +(opt.ref.col||AX)+'" stroke-width="1.4" stroke-dasharray="6 4" stroke-opacity=".75"/>'
+   +'<text x="'+(P[3]+8)+'" y="'+(+ry-6).toFixed(1)+'" font-size="10.5" font-weight="700"'
+   +' fill="'+(opt.ref.col||AX)+'" fill-opacity=".9">'+(opt.ref.label||'')+'</text>'}
  if(lo<0&&hi>0) g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+f(0).toFixed(1)+'" y2="'
   +f(0).toFixed(1)+'" stroke="'+AX+'" stroke-width="1.2"/>';
  if(opt.lta!=null) g+=ltaMark(opt.lta,f,P[3],W-P[1],opt.ltaL||'');
@@ -1240,7 +1254,10 @@ function pIncRent(){
 function pVR(){
  /* no legend row: multiLine() labels each series at the end of its own line, so the
     district pills were naming them a second time */
- multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',ytitle:'Vacancy Rate'});
+ /* no ytitle: the rotated "Vacancy Rate" label repeated the slide heading and cost
+    40 units of plot width. nice+ref give round ticks and the shared 3% threshold. */
+ multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',
+  nice:1,ref:{v:3,label:'balanced 3%',col:'#8A4B00'}});
 }
 /* ---------- vacancy rate v rent: six separate charts, one per district ----------
    Six independent SVGs in six cards, each carrying its own key, rather than one
