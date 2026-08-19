@@ -189,7 +189,13 @@ body.railshut .stage{margin-left:56px}
 .vrc-r.band{background:var(--band)}
 .vrc-h{font-size:.5cqw;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
  color:var(--ink-faint);white-space:nowrap}
-.vrc-r .rl{font-size:.72cqw;font-weight:700;color:var(--ink);line-height:1.15}
+/* the three rows ARE the band's legend, so each carries the same marker as its
+   dot - fill, border and opacity all come from vrCard's dstyle(), one source of
+   truth, so a change to the band cannot silently desync the legend */
+.vrc-r .rl{display:flex;align-items:baseline;gap:.3cqw;font-size:.72cqw;font-weight:700;
+ color:var(--ink);line-height:1.15}
+.vrc-r .rl .bul{width:.5cqw;height:.5cqw;border-radius:50%;flex:none;border:.11cqw solid;
+ position:relative;top:-.03cqw}
 .vrc-r .rl .fy{display:block;font-size:.52cqw;font-weight:400;color:var(--ink-faint)}
 .vrc-v{font-size:.95cqw;font-weight:700;color:var(--ink);line-height:1.15;white-space:nowrap}
 .vrc-v.acc{color:var(--teal-text)}
@@ -1266,15 +1272,19 @@ function vrCard(d){
  const N=v=>Math.round(v).toLocaleString();
  const S=v=>(v>0?'+':'')+Math.round(v).toLocaleString();
  const floored=i=>(i===1&&m.vr1_floored)||(i===2&&m.vr2_floored);
- const dot=i=>'<span class="dot" style="left:'+spos(rate[i]).toFixed(1)+'%;border-color:'+col
-  +';background:'+(i===0?'#FFFFFF':col)+';opacity:'+(i===1?'.55':'1')+'" title="'+LABS[i]+' '
-  +rate[i].toFixed(2)+'%"></span>';
+ /* hollow now, half-strength at year 1, solid at year 2 - the deck's established
+    convention. Shared by the band dot and the row's legend bullet. */
+ const dstyle=i=>'border-color:'+col+';background:'+(i===0?'#FFFFFF':col)
+  +';opacity:'+(i===1?'.55':'1');
+ const dot=i=>'<span class="dot" style="left:'+spos(rate[i]).toFixed(1)+'%;'+dstyle(i)
+  +'" title="'+LABS[i]+' '+rate[i].toFixed(2)+'%"></span>';
  const comp='<div class="vrc-comp"><b>NI</b> '+S(m.ni)+' <b class="'+(m.im<0?'neg':'')+'">IM</b> '
   +'<span class="'+(m.im<0?'neg':'')+'">'+S(m.im)+'</span> <b>OM</b> '+S(m.om)+'</div>';
  const cap=t=>'<div class="vrc-c">'+t+'</div>';
  const cell=(v,acc,sub)=>'<div><div class="vrc-v'+(acc?' acc':'')+'">'+v+'</div>'+sub+'</div>';
  const row=i=>'<div class="vrc-r'+(i===0?' band':'')+'">'
-  +'<div class="rl">'+LABS[i]+'<span class="fy">'+FYS[i]+'</span></div>'
+  +'<div class="rl"><span class="bul" style="'+dstyle(i)+'"></span>'
+   +'<span>'+LABS[i]+'<span class="fy">'+FYS[i]+'</span></span></div>'
   +cell(i===0?N(m.pop):S(people),false,
         i===1?comp:cap(i===0?'total population':'held at year-1 level'))
   +cell(m.hh.toFixed(2),false,cap(i===0?'ABS Census':'unchanged'))
