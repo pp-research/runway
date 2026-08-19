@@ -1251,7 +1251,11 @@ function vrRentChart(hostId,d,lo,hi,VMAX){
  /* left padding has to clear "$1560" at font 28 - Montserrat digits are wide and at
     96 the dollar sign was clipping off the card edge. The bottom is deep enough for
     a four-digit year turned on its side. */
- const W=1000, Ht=566, P=[14,70,96,116];  // top, right (VR axis), bottom (years), left ($)
+ /* Ht is the card's aspect, not an arbitrary height: the svg is width-driven
+    (height:auto), so this ratio is what makes the chart fill the card instead of
+    leaving a gap beneath it. Cards are ~29.5 x 19.2cqw now that the page carries no
+    kick line and no caption - re-derive this if that changes. */
+ const W=1000, Ht=650, P=[14,70,96,116];  // top, right (VR axis), bottom (years), left ($)
  const rs=GR(d,'house').rs, us=GR(d,'unit').rs, vs=H[d].vr;
  const ys=yl(rs), y0=ys[0], y1=ys[ys.length-1];
  const L=P[3], R=W-P[1], T=P[0], B=Ht-P[2];
