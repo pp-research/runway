@@ -1284,7 +1284,8 @@ function vrCard(d){
  return '<div class="vrc'+(hidden.has(d)?' off':'')+'">'
   +'<div class="vrc-top">'
    +'<div class="vrc-nm"><i style="background:'+col+'"></i>'+d
-   +(MEMBERS[d]?'<span class="vrc-sub">'+MEMBERS[d].length+' LGAs</span>':'')+'</div>'
+   +(MEMBERS[d]?'<span class="vrc-sub">'+MEMBERS[d].length+' LGA'
+     +(MEMBERS[d].length===1?'':'s')+'</span>':'')+'</div>'
    +'<div class="vrc-bdg '+cls+'"><div class="b1">'+txt+'</div>'
    +'<div class="b2">2-yr direction</div></div></div>'
   +'<div class="vrc-sp"><span class="bal" style="left:'+(SP_BAL/SP_MAX*100).toFixed(1)+'%"></span>'
