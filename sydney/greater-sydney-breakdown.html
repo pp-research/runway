@@ -192,6 +192,11 @@ body.railshut .stage{margin-left:56px}
 .pnl td.dv{cursor:pointer}
 .pnl td.dv i{display:inline-block;width:.55cqw;height:.55cqw;border-radius:.12cqw;
  margin-right:.42cqw;vertical-align:-.02cqw}
+/* Twelve rows in a full-height panel: spaced to fill it rather than crowding into
+   the top third and leaving two thirds of the panel blank. */
+#l-tbl table{font-size:.92cqw}
+#l-tbl thead th{padding-bottom:.5cqw}
+#l-tbl tbody td{padding:.78cqw .5cqw}
 /* ---------- traffic-light dots ----------
    Two per pillar: now, then forecast. These had no rule either, so every light on
    the Traffic lights page rendered as nothing at all - the page named after them
@@ -202,9 +207,12 @@ body.railshut .stage{margin-left:56px}
 .dot.GREEN{color:#2F8F52}
 .dot.ORANGE{color:#D9962B}
 .dot.RED{color:#C4203C}
-/* hollow for "now", solid for the forecast - the same reading the projection
-   bands use, so the two pages agree on what a hollow marker means */
-.dot:first-child{background:transparent;box-shadow:inset 0 0 0 .13cqw currentColor}
+/* Hollow for "now", solid for the forecast - the same reading the projection bands
+   use. :not(:last-child) is essential: .dot is also used ON ITS OWN elsewhere (the
+   verdict groups on Market summary, the confidence indicators), and those single
+   dots must stay solid rather than being turned into rings. */
+.dot:first-child:not(:last-child){background:transparent;
+ box-shadow:inset 0 0 0 .13cqw currentColor}
 /* ---------- vacancy rate v rent: one card per district ----------
    Six independent charts rather than one gridded figure, each stating its own key,
    so no shared legend sits above the grid. The card is a flex column: title row
