@@ -167,8 +167,17 @@ body.railshut .stage{margin-left:56px}
 .vrc-bdg.tight{color:#8A4B00;border-color:rgba(138,75,0,.4);background:rgba(255,169,31,.10)}
 .vrc-bdg.loose{color:#1F6B4F;border-color:rgba(31,107,79,.4);background:rgba(31,107,79,.08)}
 .vrc-bdg.flat{color:var(--ink-dim);border-color:rgba(74,85,102,.35);background:rgba(74,85,102,.06)}
+/* the ruler's end labels and balanced marker, on the band rather than above the
+   grid. "balanced ~3%" is positioned at the true 3% coordinate so it sits over the
+   marker line drawn in the band below it. */
+.vrc-key{position:relative;height:.68cqw;margin-top:.28cqw;flex:none;font-size:.46cqw;
+ font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.vrc-key .lo{position:absolute;left:0;bottom:0}
+.vrc-key .hi{position:absolute;right:0;bottom:0}
+.vrc-key .bal{position:absolute;bottom:0;transform:translateX(-50%);letter-spacing:.02em;
+ text-transform:none;font-size:.5cqw;font-weight:700;color:var(--ink-dim);white-space:nowrap}
 /* the band, with its own scale immediately beneath it */
-.vrc-sp{position:relative;height:.8cqw;border-radius:.4cqw;margin:.36cqw 0 0;
+.vrc-sp{position:relative;height:.8cqw;border-radius:.4cqw;margin:.06cqw 0 0;
  background:linear-gradient(90deg,#F6C6CC 0%,#FBE2BE 38%,#E8EFC7 55%,#CDE8D9 78%,#C4E6EB 100%)}
 .vrc-sp .bal{position:absolute;top:-.12cqw;bottom:-.12cqw;width:.1cqw;background:var(--ink);
  transform:translateX(-50%)}
@@ -1240,6 +1249,7 @@ function pVRRent(){
    vacancy cell always agree \u2014 that reproduces the stored surplus (North: 5,646
    stored, 5,661 derived) and props-hholds exactly for the current year. */
 const SP_MAX=6.5, SP_BAL=3;
+const BALX=(SP_BAL/SP_MAX*100).toFixed(1);   // the 3% coordinate, as a percentage
 const spos=v=>Math.max(1.4,Math.min(98.6,v/SP_MAX*100));
 const LABS=['Current','Year 1','Year 2'], FYS=['FY2024-25','FY2025-26','FY2026-27'];
 /* The scale is identical in all six cards, so build the ticks and labels once. */
