@@ -1303,7 +1303,10 @@ function vrCard(d){
      +(MEMBERS[d].length===1?'':'s')+'</span>':'')+'</div>'
    +'<div class="vrc-bdg '+cls+'"><div class="b1">'+txt+'</div>'
    +'<div class="b2">2-yr direction</div></div></div>'
-  +'<div class="vrc-sp"><span class="bal" style="left:'+(SP_BAL/SP_MAX*100).toFixed(1)+'%"></span>'
+  +'<div class="vrc-key"><span class="lo">Tighter</span>'
+   +'<span class="bal" style="left:'+BALX+'%">balanced ~3%</span>'
+   +'<span class="hi">Looser</span></div>'
+  +'<div class="vrc-sp"><span class="bal" style="left:'+BALX+'%"></span>'
    +dot(0)+dot(1)+dot(2)+'</div>'
   +VRAXIS
   +'<div class="vrc-rows">'
