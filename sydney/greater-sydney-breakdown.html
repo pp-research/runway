@@ -174,26 +174,27 @@ body.railshut .stage{margin-left:56px}
 /* the ruler's end labels and balanced marker, on the band rather than above the
    grid. "balanced ~3%" is positioned at the true 3% coordinate so it sits over the
    marker line drawn in the band below it. */
-.vrc-key{position:relative;height:.68cqw;margin-top:.28cqw;flex:none;font-size:.46cqw;
+.vrc-key{position:relative;height:.78cqw;margin-top:.34cqw;flex:none;font-size:.52cqw;
  font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
 .vrc-key .lo{position:absolute;left:0;bottom:0}
 .vrc-key .hi{position:absolute;right:0;bottom:0}
 .vrc-key .bal{position:absolute;bottom:0;transform:translateX(-50%);letter-spacing:.02em;
- text-transform:none;font-size:.5cqw;font-weight:700;color:var(--ink-dim);white-space:nowrap}
+ text-transform:none;font-size:.58cqw;font-weight:700;color:var(--ink-dim);white-space:nowrap}
 /* the band, with its own scale immediately beneath it */
-.vrc-sp{position:relative;height:.8cqw;border-radius:.4cqw;margin:.06cqw 0 0;
+.vrc-sp{position:relative;height:1cqw;border-radius:.5cqw;margin:.06cqw 0 0;
  background:linear-gradient(90deg,#F6C6CC 0%,#FBE2BE 38%,#E8EFC7 55%,#CDE8D9 78%,#C4E6EB 100%)}
-.vrc-sp .bal{position:absolute;top:-.12cqw;bottom:-.12cqw;width:.1cqw;background:var(--ink);
+.vrc-sp .bal{position:absolute;top:-.14cqw;bottom:-.14cqw;width:.11cqw;background:var(--ink);
  transform:translateX(-50%)}
-.vrc-sp .dot{position:absolute;top:50%;width:.6cqw;height:.6cqw;border-radius:50%;
- transform:translate(-50%,-50%);border:.13cqw solid}
-.vrc-rows{display:flex;flex-direction:column;margin-top:.28cqw;gap:.06cqw}
+.vrc-sp .dot{position:absolute;top:50%;width:.72cqw;height:.72cqw;border-radius:50%;
+ transform:translate(-50%,-50%);border:.15cqw solid}
+.vrc-rows{display:flex;flex-direction:column;margin-top:.34cqw;gap:.07cqw}
 /* People is 1.5fr, not 1fr: the NI/IM/OM breakdown is the widest string on the
-   card and at nowrap it otherwise spills into the HH-size caption beside it. */
-.vrc-r{display:grid;grid-template-columns:6.2cqw 1.5fr repeat(4,1fr);align-items:center;
- padding:.13cqw .18cqw;border-radius:.22cqw}
+   card and at nowrap it otherwise spills into the HH-size caption beside it.
+   Any type increase here has to be checked against that string specifically. */
+.vrc-r{display:grid;grid-template-columns:7cqw 1.55fr repeat(4,1fr);align-items:center;
+ padding:.17cqw .2cqw;border-radius:.22cqw}
 .vrc-r.band{background:var(--band)}
-.vrc-h{font-size:.5cqw;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+.vrc-h{font-size:.56cqw;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
  color:var(--ink-faint);white-space:nowrap}
 /* the three rows ARE the band's legend, so each carries the same marker as its
    dot - fill, border and opacity all come from vrCard's dstyle(), one source of
