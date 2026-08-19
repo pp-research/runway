@@ -136,6 +136,20 @@ body.railshut .stage{margin-left:56px}
 .two.wide{grid-template-columns:1.7fr 1fr}
 .pnum{position:absolute;bottom:.5cqw;right:.85cqw;font-size:.62cqw;color:#8A939D;
  letter-spacing:.02em;line-height:1.2}
+/* The chart tooltip. It had no rule at all outside @media print, so it had no
+   position and no box: TIP.show() computes left/top and assigns them, but a
+   statically-positioned element ignores both, which dumped every chart's tooltip
+   unstyled at the foot of the document instead of beside the cursor. */
+#tip{position:fixed;z-index:80;display:none;pointer-events:none;max-width:280px;
+ background:rgba(9,18,24,.95);color:#E7ECF1;border:1px solid rgba(143,227,239,.28);
+ border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.4;
+ box-shadow:0 6px 22px rgba(0,0,0,.4)}
+#tip b{color:#FFFFFF;font-size:12.5px}
+#tip table{border-collapse:collapse;margin-top:5px;width:100%}
+#tip td{padding:1px 0;vertical-align:middle;white-space:nowrap}
+#tip td:last-child{text-align:right;padding-left:14px;font-variant-numeric:tabular-nums}
+#tip i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;
+ vertical-align:-1px}
 /* The legend row: mark buttons, then a note. Neither .lgd nor .st had a rule at
    all, so the note butted straight against the last button with no separation and
    the whole row read as one crowded run-on line. */
