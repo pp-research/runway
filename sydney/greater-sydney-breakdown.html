@@ -1261,115 +1261,104 @@ function pVR(){
    balanced marker the projection slide uses, and the rents sit on top in the
    district colour - house solid, unit dashed. Rents share one scale across all six
    panels so districts stay comparable. */
-function vrRentPanels(hostId){
+/* ---------- vacancy rate v rent: six separate charts, one per district ----------
+   Six independent SVGs in six cards, each carrying its own key, rather than one
+   gridded chart under a shared legend. panels() is left alone: it computes a
+   right-hand scale for ax:'r' series but never labels it, and twelve other slides
+   call it, so fixing that in place would move all of them.
+   Within a chart, solid means rent and dashed means vacancy. That is why unit rent
+   is a lighter solid rather than a dash - a dashed unit line would read as vacancy.
+   The rent scale and the vacancy ceiling are computed once across all six districts
+   so the cards stay comparable with each other.
+   Type and stroke widths are ~3x the values used by panels(): this viewBox spans a
+   third of the page width, so a 9pt label there needs ~28 here to look the same. */
+const VRR_GLYPH=(col,dash)=>'<svg viewBox="0 0 30 10" aria-hidden="true">'
+ +'<line x1="1" x2="29" y1="5" y2="5" stroke="'+col+'" stroke-width="2.6"'
+ +' stroke-linecap="round"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/></svg>';
+function vrRentChart(hostId,d,lo,hi,VMAX){
  const host=gid(hostId); if(!host) return;
- const W=1000, Ht=376;
- const list=DIV6().filter(it=>!hidden.has(it.d));
- if(!list.length){host.innerHTML='<svg class="ch" viewBox="0 0 10 10"></svg>';
-  CH[hostId]={W:10,Ht:10,hit:()=>null};return}
- const cols=3, rows=Math.ceil(list.length/cols);
- const gx=46, gy=34, TOP=16;          // gx also has to clear the right-hand axis
- const cw=(W-gx*(cols-1))/cols, chh=(Ht-gy*(rows-1)-rows*TOP)/rows;
- const P=[6,26,17,44];                // top, right (VR axis), bottom, left ($ axis)
- const rentVals=list.flatMap(it=>[GR(it.d,'house').rs,GR(it.d,'unit').rs]
-  .flatMap(o=>Object.values(o).filter(x=>x!=null&&isFinite(x))));
- const [lo,hi]=scale(rentVals);
- /* the VR axis is fixed across panels and never clipped: take the top from the data
-    so an early-1990s spike cannot draw outside its own plot box */
- const vAll=list.flatMap(it=>Object.values(H[it.d].vr).filter(x=>x!=null&&isFinite(x)));
- const VMAX=Math.max(6,Math.ceil(Math.max(...vAll)));
+ const W=1000, Ht=566, P=[14,70,44,96];   // top, right (VR axis), bottom (years), left ($)
+ const rs=GR(d,'house').rs, us=GR(d,'unit').rs, vs=H[d].vr;
+ const ys=yl(rs), y0=ys[0], y1=ys[ys.length-1];
+ const L=P[3], R=W-P[1], T=P[0], B=Ht-P[2];
+ const x=y=>L+(y-y0)/((y1-y0)||1)*(R-L);
+ const f=v=>T+(hi-v)/((hi-lo)||1)*(B-T);
+ const fv=v=>T+(VMAX-v)/VMAX*(B-T);
  let g='<svg class="ch" viewBox="0 0 '+W+' '+Ht+'" xmlns="http://www.w3.org/2000/svg"'
-  +' role="img"><title>House and unit rents against the vacancy rate, six districts</title>';
- const geom=[];
- list.forEach((it,i)=>{
-  const ox=(i%cols)*(cw+gx), oy=Math.floor(i/cols)*(TOP+chh+gy)+TOP;
-  const rs=GR(it.d,'house').rs, us=GR(it.d,'unit').rs, vs=H[it.d].vr;
-  const ys=yl(rs), y0=ys[0], y1=ys[ys.length-1];
-  const x=y=>ox+P[3]+(y-y0)/((y1-y0)||1)*(cw-P[1]-P[3]);
-  const f=v=>oy+P[0]+(hi-v)/((hi-lo)||1)*(chh-P[0]-P[2]);      // rent, left axis
-  const fv=v=>oy+P[0]+(VMAX-v)/VMAX*(chh-P[0]-P[2]);           // vacancy, right axis
-  const L=ox+P[3], R=ox+cw-P[1], T=oy+P[0], B=oy+chh-P[2];
-  geom.push({it:it,ox:ox,oy:oy,cw:cw,chh:chh,x:x,f:f,fv:fv,y0:y0,y1:y1,rs:rs,us:us,vs:vs});
-  g+='<rect x="'+L.toFixed(1)+'" y="'+(oy-13).toFixed(1)+'" width="7.5" height="7.5" rx="1.5"'
-   +' fill="'+C(it.d)+'"/><text x="'+(L+11.5).toFixed(1)+'" y="'+(oy-6).toFixed(1)+'"'
-   +' font-size="10.8" font-weight="700" fill="var(--ink)">'+it.label+'</text>';
-  g+='<rect x="'+L.toFixed(1)+'" y="'+T.toFixed(1)+'" width="'+(R-L).toFixed(1)+'" height="'
-   +(B-T).toFixed(1)+'" fill="#FFFFFF" fill-opacity=".55" stroke="rgba(23,27,36,.10)"/>';
-  for(let k=1;k<=2;k++){const gl=T+(B-T)*k/3;
-   g+='<line x1="'+L.toFixed(1)+'" x2="'+R.toFixed(1)+'" y1="'+gl.toFixed(1)+'" y2="'
-    +gl.toFixed(1)+'" stroke="'+GRID+'"/>'}
-  /* vacancy first, as filled context behind the rents */
-  let a='',open=false;
-  ys.forEach(y=>{const v=at(vs,y);
-   if(v==null||!isFinite(v)){open=false;return}
-   a+=(open?'L':'M')+x(y).toFixed(1)+' '+fv(v).toFixed(1)+' ';open=true});
-  if(a) g+='<path d="'+a.trim()+'L'+R.toFixed(1)+' '+B.toFixed(1)+'L'+L.toFixed(1)+' '
-   +B.toFixed(1)+'Z" fill="#8FA9B4" fill-opacity=".22"/>'
-   +'<path d="'+a.trim()+'" fill="none" stroke="#5A6B75" stroke-width="1.3"'
-   +' stroke-dasharray="5 3"/>';   // dash pattern matches the legend glyph exactly
-  g+='<line x1="'+L.toFixed(1)+'" x2="'+R.toFixed(1)+'" y1="'+fv(3).toFixed(1)+'" y2="'
-   +fv(3).toFixed(1)+'" stroke="#8A4B00" stroke-width=".9" stroke-dasharray="5 3"'
-   +' stroke-opacity=".7"/>';
-  /* Both rents are SOLID so the legend's rule holds everywhere on the slide: solid
-     means rent, dashed means vacancy. House is full strength, unit the lighter of
-     the pair - if unit were dashed it would read as vacancy. */
-  [[rs,1],[us,.45]].forEach(([o,opq])=>{let dd='',op=false;
-   ys.forEach(y=>{const v=at(o,y);
-    if(v==null||!isFinite(v)){op=false;return}
-    dd+=(op?'L':'M')+x(y).toFixed(1)+' '+f(v).toFixed(1)+' ';op=true});
-   g+='<path d="'+dd.trim()+'" fill="none" stroke="'+C(it.d)+'" stroke-width="2.3"'
-    +' stroke-opacity="'+opq+'" stroke-linejoin="round" stroke-linecap="round"/>'});
-  /* both axes labelled - the omission that made the old version unreadable */
-  [hi,(hi+lo)/2,lo].forEach(v=>g+='<text x="'+(L-4).toFixed(1)+'" y="'+(f(v)+3.4).toFixed(1)
-   +'" text-anchor="end" font-size="9" fill="'+AXT+'">$'+Math.round(v)+'</text>');
-  [0,3,VMAX].forEach(v=>g+='<text x="'+(R+4).toFixed(1)+'" y="'+(fv(v)+3.4).toFixed(1)
-   +'" font-size="9" fill="'+(v===3?'#8A4B00':AXT)+'">'+v+'%</text>');
-  g+='<line x1="'+L.toFixed(1)+'" x2="'+R.toFixed(1)+'" y1="'+B.toFixed(1)+'" y2="'
-   +B.toFixed(1)+'" stroke="'+AX+'" stroke-width="1"/>';
-  [y0,Math.round((y0+y1)/2),y1].forEach(y=>g+='<text x="'+x(y).toFixed(1)+'" y="'
-   +(B+12).toFixed(1)+'" text-anchor="middle" font-size="9.2" fill="'+AXT+'">'
-   +String(y).slice(2)+'</text>');
- });
+  +' role="img"><title>'+d+': house and unit rent against the vacancy rate</title>';
+ g+='<rect x="'+L+'" y="'+T+'" width="'+(R-L)+'" height="'+(B-T)+'" fill="#FFFFFF"'
+  +' fill-opacity=".55" stroke="rgba(23,27,36,.10)" stroke-width="2.5"/>';
+ for(let k=1;k<=2;k++){const gl=T+(B-T)*k/3;
+  g+='<line x1="'+L+'" x2="'+R+'" y1="'+gl.toFixed(1)+'" y2="'+gl.toFixed(1)
+   +'" stroke="'+GRID+'" stroke-width="3"/>'}
+ /* vacancy first, as shaded context behind the rents */
+ let a='',open=false;
+ ys.forEach(y=>{const v=at(vs,y);
+  if(v==null||!isFinite(v)){open=false;return}
+  a+=(open?'L':'M')+x(y).toFixed(1)+' '+fv(v).toFixed(1)+' ';open=true});
+ if(a) g+='<path d="'+a.trim()+'L'+R+' '+B+'L'+L+' '+B+'Z" fill="#8FA9B4" fill-opacity=".22"/>'
+  +'<path d="'+a.trim()+'" fill="none" stroke="#5A6B75" stroke-width="6"'
+  +' stroke-dasharray="18 10" stroke-linecap="round"/>';
+ g+='<line x1="'+L+'" x2="'+R+'" y1="'+fv(3).toFixed(1)+'" y2="'+fv(3).toFixed(1)
+  +'" stroke="#8A4B00" stroke-width="4" stroke-dasharray="16 10" stroke-opacity=".65"/>'
+  +'<text x="'+(R-6)+'" y="'+(fv(3)-10).toFixed(1)+'" text-anchor="end" font-size="24"'
+  +' font-weight="700" fill="#8A4B00" fill-opacity=".8">balanced 3%</text>';
+ /* rents on top and heavier, because they are the subject of the slide */
+ [[rs,1],[us,.45]].forEach(([o,opq])=>{let dd='',op=false;
+  ys.forEach(y=>{const v=at(o,y);
+   if(v==null||!isFinite(v)){op=false;return}
+   dd+=(op?'L':'M')+x(y).toFixed(1)+' '+f(v).toFixed(1)+' ';op=true});
+  g+='<path d="'+dd.trim()+'" fill="none" stroke="'+C(d)+'" stroke-width="7"'
+   +' stroke-opacity="'+opq+'" stroke-linejoin="round" stroke-linecap="round"/>'});
+ /* both axes labelled - rents left, vacancy right */
+ [hi,(hi+lo)/2,lo].forEach(v=>g+='<text x="'+(L-10)+'" y="'+(f(v)+9).toFixed(1)
+  +'" text-anchor="end" font-size="28" fill="'+AXT+'">$'+Math.round(v)+'</text>');
+ [0,3,VMAX].forEach(v=>g+='<text x="'+(R+10)+'" y="'+(fv(v)+9).toFixed(1)+'" font-size="28"'
+  +' fill="'+(v===3?'#8A4B00':AXT)+'">'+v+'%</text>');
+ g+='<line x1="'+L+'" x2="'+R+'" y1="'+B+'" y2="'+B+'" stroke="'+AX+'" stroke-width="3"/>';
+ [y0,Math.round((y0+y1)/2),y1].forEach(y=>g+='<text x="'+x(y).toFixed(1)+'" y="'+(B+32)
+  +'" text-anchor="middle" font-size="28" fill="'+AXT+'">'+String(y).slice(2)+'</text>');
  g+='<g id="'+hostId+'-cross"></g>';
  host.innerHTML=g+'</svg>';
  CH[hostId]={W:W,Ht:Ht,hit(vx,vy){
-  const p=geom.find(q=>vx>=q.ox&&vx<=q.ox+q.cw&&vy>=q.oy-14&&vy<=q.oy+q.chh);
-  if(!p){const c=gid(hostId+'-cross'); if(c)c.innerHTML=''; return null}
-  const yr=Math.max(p.y0,Math.min(p.y1,
-   Math.round(p.y0+(vx-p.ox-P[3])/(p.cw-P[1]-P[3])*(p.y1-p.y0))));
-  const cx=p.x(yr), hr=at(p.rs,yr), hu=at(p.us,yr), hv=at(p.vs,yr);
   const c=gid(hostId+'-cross');
-  if(c) c.innerHTML='<line x1="'+cx.toFixed(1)+'" x2="'+cx.toFixed(1)+'" y1="'+(p.oy+P[0])
-   +'" y2="'+(p.oy+p.chh-P[2]).toFixed(1)+'" stroke="'+AX+'" stroke-width="1"'
-   +' stroke-dasharray="3 3"/>'
-   +[[hr,p.f,C(p.it.d)],[hu,p.f,C(p.it.d)],[hv,p.fv,'#5A6B75']]
-    .map(([v,ff,col])=>v==null||!isFinite(v)?''
-     :'<circle cx="'+cx.toFixed(1)+'" cy="'+ff(v).toFixed(1)+'" r="3.4" fill="'+col
-      +'" stroke="#FBFDFE" stroke-width="1.2"/>').join('');
+  if(vx<L-14||vx>R+14||vy<T-14||vy>B+14){if(c)c.innerHTML='';return null}
+  const yr=Math.max(y0,Math.min(y1,Math.round(y0+(vx-L)/((R-L)||1)*(y1-y0))));
+  const cx=x(yr), hr=at(rs,yr), hu=at(us,yr), hv=at(vs,yr);
+  if(c) c.innerHTML='<line x1="'+cx.toFixed(1)+'" x2="'+cx.toFixed(1)+'" y1="'+T+'" y2="'+B
+   +'" stroke="'+AX+'" stroke-width="3" stroke-dasharray="9 9"/>'
+   +[[hr,f,C(d)],[hu,f,C(d)],[hv,fv,'#5A6B75']].map(([v,ff,col])=>
+     v==null||!isFinite(v)?'':'<circle cx="'+cx.toFixed(1)+'" cy="'+ff(v).toFixed(1)
+      +'" r="11" fill="'+col+'" stroke="#FBFDFE" stroke-width="4"/>').join('');
   const money=v=>'$'+Math.round(v).toLocaleString();
   const row=(n,v,col,fm)=>v==null||!isFinite(v)?''
    :'<tr><td>'+swatch(col)+n+'</td><td><b>'+fm(v)+'</b></td></tr>';
-  return '<b>'+p.it.label+' \u00b7 '+yr+'</b><table>'
-   +row('House rent',hr,C(p.it.d),money)
-   +row('Unit rent',hu,C(p.it.d),money)
+  return '<b>'+d+' · '+yr+'</b><table>'
+   +row('House rent',hr,C(d),money)
+   +row('Unit rent',hu,C(d),money)
    +row('Vacancy rate',hv,'#5A6B75',v=>v.toFixed(2)+'%')+'</table>';
  }};
  bind(hostId);
 }
 function pVRRent(){
- vrRentPanels('c-vrrent');
- /* No district pills here: every panel is already titled with its district, so the
-    row of six toggles was saying it a second time. The two keys draw the actual
-    line they describe rather than naming it in words. */
- const glyph=(col,dash,opq)=>'<svg viewBox="0 0 30 10" aria-hidden="true">'
-  +'<line x1="1" x2="29" y1="5" y2="5" stroke="'+col+'" stroke-width="2.4"'
-  +' stroke-linecap="round" stroke-opacity="'+(opq||1)+'"'
-  +(dash?' stroke-dasharray="'+dash+'"':'')+'/></svg>';
- put('c-vrrent-lg',
-  '<span class="key">'+glyph('var(--ink)',null)+'Rent</span>'
-  +'<span class="key">'+glyph('#5A6B75','5 3')+'Vacancy rate</span>'
-  +'<span class="st">house full strength, unit lighter \u00b7 rent left axis, vacancy right '
-  +'\u00b7 measured, Cotality LGA vacancy rate and asking rent</span>');
+ const list=ORDER.filter(d=>!hidden.has(d));
+ /* one rent scale and one vacancy ceiling across all six, so cards stay comparable.
+    Derived from ORDER, not the visible list, so hiding a district does not silently
+    rescale the ones still on screen. */
+ const rentVals=ORDER.flatMap(d=>[GR(d,'house').rs,GR(d,'unit').rs]
+  .flatMap(o=>Object.values(o).filter(x=>x!=null&&isFinite(x))));
+ const [lo,hi]=scale(rentVals);
+ const vAll=ORDER.flatMap(d=>Object.values(H[d].vr).filter(x=>x!=null&&isFinite(x)));
+ const VMAX=Math.max(6,Math.ceil(Math.max(...vAll)));
+ const cid=d=>'c-vrrent-'+d.replace(/\s+/g,'');
+ /* every card states its own key, drawn as the line it describes. The rent glyph
+    takes the district colour so the key belongs to that card's lines. */
+ put('c-vrrent-cards',list.map(d=>'<div class="vrrc">'
+  +'<div class="vrrc-top"><div class="vrrc-nm"><i style="background:'+C(d)+'"></i>'+d+'</div>'
+  +'<div class="vrrc-key"><span>'+VRR_GLYPH(C(d),null)+'Rent</span>'
+  +'<span>'+VRR_GLYPH('#5A6B75','7 4')+'Vacancy rate</span></div></div>'
+  +'<div class="vrrc-ch" id="'+cid(d)+'"></div></div>').join(''));
+ list.forEach(d=>vrRentChart(cid(d),d,lo,hi,VMAX));
 }
 
 /* ---------- vacancy-rate cards: one per district ----------
