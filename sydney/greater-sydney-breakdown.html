@@ -1174,13 +1174,19 @@ function pLights(){
  const cols=['Market','Value','','S&amp;D','','Confidence','','Verdict'];
  const rows=ORDER.flatMap(d=>SEGS.map(s=>{const x=MOCK.divisions[d].seg[s], c=MOCK.divisions[d].conf;
   return {d:d,s:s,k:[d+' '+s,x.vscore,0,x.dscore,0,c.cscore,0,x.bucket],x:x,c:c}}));
+ /* The verdict carries the map's colour so the table and the choropleth agree at a
+    glance. Darker than the map's own fills: those sit at 55% opacity on the panel,
+    but text needs full contrast against it. */
+ const vdInk=b=>b==='Best time to invest'?'#1F6B4F':b==='Not the best time'?'#A81028'
+  :b==='Past its peak'?'#8A4B00':'#1D6A8C';
  sortable('l-tbl',rows,cols,r=>{const dot=v=>'<span class="dot '+v+'"></span>';
   return '<tr class="'+(hidden.has(r.d)?'off':'')+'">'
    +'<td class="dv" data-d="'+r.d+'"><i style="background:'+C(r.d)+'"></i>'+r.d+' \u00b7 '+r.s+'</td>'
    +'<td>'+dm(r.x.vscore.toFixed(1))+'</td><td>'+dot(r.x.vsig)+dot(r.x.fvsig)+'</td>'
    +'<td>'+dm(r.x.dscore.toFixed(0))+'</td><td>'+dot(r.x.dsig)+dot(r.x.fdsig)+'</td>'
    +'<td>'+dm(r.c.cscore.toFixed(1))+'</td><td>'+dot(r.c.csig)+dot(r.c.fcsig)+'</td>'
-   +'<td style="text-align:left">'+dm(r.x.bucket)+'</td></tr>'});
+   +'<td style="text-align:left;font-weight:700;color:'+vdInk(r.x.bucket)+'">'
+     +dm(r.x.bucket)+'</td></tr>'});
  const col=b=>b==='Best time to invest'?'var(--green)':b==='Not the best time'?'var(--red)'
   :b==='Past its peak'?'var(--orange)':'var(--blue)';
  put('l-map','<svg viewBox="0 0 '+MAPD.w+' '+MAPD.h+'" xmlns="http://www.w3.org/2000/svg" role="img">'
