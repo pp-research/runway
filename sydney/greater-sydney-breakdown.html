@@ -1343,11 +1343,18 @@ function vrRentChart(hostId,d,lo,hi,VMAX){
   if(vx<L-14||vx>R+14||vy<T-14||vy>B+14){if(c)c.innerHTML='';return null}
   const yr=Math.max(y0,Math.min(y1,Math.round(y0+(vx-L)/((R-L)||1)*(y1-y0))));
   const cx=x(yr), hr=at(rs,yr), hu=at(us,yr), hv=at(vs,yr);
+  /* the year is named on the chart itself, not only in the tooltip, so the reader can
+     see which point they are on without moving their eyes off the line */
   if(c) c.innerHTML='<line x1="'+cx.toFixed(1)+'" x2="'+cx.toFixed(1)+'" y1="'+T+'" y2="'+B
    +'" stroke="'+AX+'" stroke-width="3" stroke-dasharray="9 9"/>'
-   +[[hr,f,C(d)],[hu,f,C(d)],[hv,fv,'#5A6B75']].map(([v,ff,col])=>
+   +[[hr,f,C(d),1],[hu,f,C(d),.45],[hv,fv,'#5A6B75',1]].map(([v,ff,col,opq])=>
      v==null||!isFinite(v)?'':'<circle cx="'+cx.toFixed(1)+'" cy="'+ff(v).toFixed(1)
-      +'" r="11" fill="'+col+'" stroke="#FBFDFE" stroke-width="4"/>').join('');
+      +'" r="11" fill="'+col+'" fill-opacity="'+opq+'" stroke="#FBFDFE" stroke-width="4"/>')
+    .join('')
+   +'<rect x="'+(cx-34).toFixed(1)+'" y="'+(T+2)+'" width="68" height="30" rx="5"'
+   +' fill="var(--ink)" fill-opacity=".82"/>'
+   +'<text x="'+cx.toFixed(1)+'" y="'+(T+23)+'" text-anchor="middle" font-size="23"'
+   +' font-weight="700" fill="#FFFFFF">'+yr+'</text>';
   const money=v=>'$'+Math.round(v).toLocaleString();
   const row=(n,v,col,fm)=>v==null||!isFinite(v)?''
    :'<tr><td>'+swatch(col)+n+'</td><td><b>'+fm(v)+'</b></td></tr>';
@@ -1369,12 +1376,15 @@ function pVRRent(){
  const vAll=ORDER.flatMap(d=>Object.values(H[d].vr).filter(x=>x!=null&&isFinite(x)));
  const VMAX=Math.max(6,Math.ceil(Math.max(...vAll)));
  const cid=d=>'c-vrrent-'+d.replace(/\s+/g,'');
- /* every card states its own key, drawn as the line it describes. The rent glyph
-    takes the district colour so the key belongs to that card's lines. */
+ /* every card states its own key, drawn as the line it describes - including the
+    house/unit distinction, which is opacity rather than dash, so the glyphs carry
+    the same opacities the chart does. The rent glyphs take the district colour so
+    the key belongs to that card's own lines. */
  put('c-vrrent-cards',list.map(d=>'<div class="vrrc">'
   +'<div class="vrrc-top"><div class="vrrc-nm"><i style="background:'+C(d)+'"></i>'+d+'</div>'
-  +'<div class="vrrc-key"><span>'+VRR_GLYPH(C(d),null)+'Rent</span>'
-  +'<span>'+VRR_GLYPH('#5A6B75','7 4')+'Vacancy rate</span></div></div>'
+  +'<div class="vrrc-key"><span>'+VRR_GLYPH(C(d),null,1)+'House rent</span>'
+  +'<span>'+VRR_GLYPH(C(d),null,.45)+'Unit rent</span>'
+  +'<span>'+VRR_GLYPH('#5A6B75','7 4',.85)+'Vacancy rate</span></div></div>'
   +'<div class="vrrc-ch" id="'+cid(d)+'"></div></div>').join(''));
  list.forEach(d=>vrRentChart(cid(d),d,lo,hi,VMAX));
 }
