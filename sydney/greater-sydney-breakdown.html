@@ -141,6 +141,10 @@ body.railshut .stage{margin-left:56px}
    the whole row read as one crowded run-on line. */
 .lgd{display:flex;flex-wrap:wrap;align-items:center;gap:.3cqw .55cqw;margin-bottom:.55cqw}
 .lgd .st{flex:1 1 20cqw;min-width:0;font-size:.78cqw;color:var(--ink-dim);line-height:1.35}
+/* a key that draws the line it describes, rather than spelling out "solid"/"dashed" */
+.lgd .key{display:inline-flex;align-items:center;gap:.35cqw;flex:none;font-size:.82cqw;
+ font-weight:700;color:var(--ink)}
+.lgd .key svg{width:2.1cqw;height:.8cqw;flex:none;overflow:visible}
 .dm{border-bottom:.1cqw dotted var(--orange)}
 .dm::after{content:'\00b0';color:var(--orange);font-weight:700;font-size:.85em}
 /* ---------- vacancy-rate cards: one per district ----------
@@ -1354,11 +1358,19 @@ function vrRentPanels(hostId){
 }
 function pVRRent(){
  vrRentPanels('c-vrrent');
- /* both axes are labelled now, so the note carries mark styles and provenance
-    rather than having to explain which series sits on which side */
- divLegend('c-vrrent-lg','house rent solid, unit rent dashed \u00b7 vacancy shaded against '
-  +'the right axis, with the 3% balanced line \u00b7 measured, Cotality LGA vacancy rate '
-  +'and asking rent');
+ /* No district pills here: every panel is already titled with its district, so the
+    row of six toggles was saying it a second time. The two keys draw the actual
+    line they describe rather than naming it in words. */
+ const glyph=(col,dash,opq)=>'<svg viewBox="0 0 30 10" aria-hidden="true">'
+  +'<line x1="1" x2="29" y1="5" y2="5" stroke="'+col+'" stroke-width="2.4"'
+  +' stroke-linecap="round" stroke-opacity="'+(opq||1)+'"'
+  +(dash?' stroke-dasharray="'+dash+'"':'')+'/></svg>';
+ put('c-vrrent-lg',
+  '<span class="key">'+glyph('var(--ink)',null)+'Rent</span>'
+  +'<span class="key">'+glyph('#5A6B75','5 3')+'Vacancy rate</span>'
+  +'<span class="st">rent in the district colour, house full strength and unit lighter, '
+  +'against the left axis \u00b7 vacancy shaded against the right, with the 3% balanced line '
+  +'\u00b7 measured, Cotality LGA vacancy rate and asking rent</span>');
 }
 
 /* ---------- vacancy-rate cards: one per district ----------
