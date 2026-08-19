@@ -759,6 +759,16 @@ const MARK=(cx,cy,col)=>'<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r
  +col+'" stroke="#FBFDFE" stroke-width="1.1"/>';
 
 /* ---------- scale helper ---------- */
+/* Round axis bounds to a readable step so ticks land on 0/2/4/6/8 rather than the
+   1.5/3.6/5.8/7.9 that scale()'s data-fitted padding produces. Feed it the RAW min
+   and max, not scale()'s padded output, or the top tick floats above the data. */
+function niceBounds(lo,hi,n){
+ const raw=(hi-lo)/n;
+ if(!isFinite(raw)||raw<=0) return [lo,hi,1];
+ const mag=Math.pow(10,Math.floor(Math.log10(raw)));
+ const step=[1,2,2.5,5,10].map(m=>m*mag).find(s=>s>=raw)||10*mag;
+ return [Math.floor(lo/step)*step, Math.ceil(hi/step)*step, step];
+}
 function scale(vals,zero){
  const v=vals.filter(x=>x!=null&&isFinite(x));
  let lo=Math.min(...v), hi=Math.max(...v);
@@ -777,7 +787,8 @@ function multiLine(hostId,pick,opt){
  if(!ser.length){host.innerHTML='<svg class="ch" viewBox="0 0 10 10"></svg>';
   CH[hostId]={W:10,Ht:10,hit:()=>null};return}
  const ys=yl(ser[0].o), y0=ys[0], y1=ys[ys.length-1];
- const [lo,hi]=scale(ser.flatMap(s=>ys.map(y=>at(s.o,y))),opt.zeroL);
+ const vAll=ser.flatMap(s=>ys.map(y=>at(s.o,y))).filter(v=>v!=null&&isFinite(v));
+ let [lo,hi]=scale(vAll,opt.zeroL);
  const x=y=>P[3]+(y-y0)/((y1-y0)||1)*(W-P[1]-P[3]);
  const f=v=>P[0]+(hi-v)/((hi-lo)||1)*(Ht-P[0]-P[2]);
  const plotB=Ht-P[2];
