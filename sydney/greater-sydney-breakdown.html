@@ -157,10 +157,13 @@ body.railshut .stage{margin-left:56px}
 .vrrc-nm{display:flex;align-items:center;gap:.35cqw;font-size:1cqw;font-weight:700;
  color:var(--ink);letter-spacing:-.01em}
 .vrrc-nm i{width:.58cqw;height:.58cqw;border-radius:.12cqw;flex:none}
-.vrrc-key{display:flex;align-items:center;gap:.5cqw;flex:none}
-.vrrc-key span{display:inline-flex;align-items:center;gap:.24cqw;font-size:.58cqw;
+/* three keys have to sit beside the district name in a third-width card, so they are
+   allowed to wrap rather than squeezing the title */
+.vrrc-key{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;
+ gap:.12cqw .45cqw;flex:1 1 auto;min-width:0}
+.vrrc-key span{display:inline-flex;align-items:center;gap:.22cqw;font-size:.56cqw;
  font-weight:700;color:var(--ink-dim);white-space:nowrap}
-.vrrc-key svg{width:1.4cqw;height:.5cqw;flex:none;overflow:visible}
+.vrrc-key svg{width:1.25cqw;height:.5cqw;flex:none;overflow:visible}
 /* the viewBox aspect is cut to the space left after the title row, so height:auto
    fills the card rather than leaving a gap under the chart */
 .vrrc-ch{flex:1;min-height:0}
