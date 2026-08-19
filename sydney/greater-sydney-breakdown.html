@@ -799,7 +799,8 @@ function multiLine(hostId,pick,opt){
  opt=opt||{}; const W=1000, Ht=opt.H||390;
  /* the right padding exists to hold the end-of-line series labels. With opt.noEnds a
     legend names the series instead, so the plot reclaims that 150 units. */
- const P=[26,opt.noEnds?26:150,52,74];
+ /* the bottom deepens for opt.xrot: a four-digit year on its side needs the room */
+ const P=[26,opt.noEnds?26:150,opt.xrot?88:52,74];
  const ser=vis().map(d=>({d:d,o:pick(d)})).filter(s=>s.o);
  if(!ser.length){host.innerHTML='<svg class="ch" viewBox="0 0 10 10"></svg>';
   CH[hostId]={W:10,Ht:10,hit:()=>null};return}
@@ -849,7 +850,7 @@ function multiLine(hostId,pick,opt){
   ys.forEach(y=>{const v=at(s.o,y);
    if(v==null||!isFinite(v)){open=false;return}
    d+=(open?'L':'M')+x(y).toFixed(1)+' '+f(v).toFixed(1)+' ';open=true});
-  const dsh=DASH(s.d);
+  const dsh=opt.solid?'none':DASH(s.d);   // opt.solid drops the per-district dash
   g+='<path d="'+d.trim()+'" fill="none" stroke="'+C(s.d)+'" stroke-width="2.1"'
    +' stroke-linejoin="round" stroke-linecap="round"'
    +(dsh!=='none'?' stroke-dasharray="'+dsh+'"':'')+'/>';
@@ -864,7 +865,13 @@ function multiLine(hostId,pick,opt){
    +' fill="var(--ink)">'+e.d+'</text>'});
  g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+plotB+'" y2="'+plotB+'" stroke="'+AX
   +'" stroke-width="1"/>';
- g+=xLabels(ys,x,plotB+15);
+ /* opt.xrot turns every year on its side instead of staggering them over two rows */
+ if(opt.xrot) ys.forEach(y=>{const px=x(y).toFixed(1), py=plotB+9;
+  g+='<line x1="'+px+'" x2="'+px+'" y1="'+plotB+'" y2="'+(plotB+4)+'" stroke="'+AX
+   +'" stroke-width="1" stroke-opacity=".55"/>'
+   +'<text x="'+px+'" y="'+py+'" transform="rotate(-90 '+px+' '+py+')" text-anchor="end"'
+   +' font-size="10" fill="'+AXT+'">'+y+'</text>'});
+ else g+=xLabels(ys,x,plotB+15);
  g+='<g id="'+hostId+'-cross"></g>';
  host.innerHTML=g+'</svg>';
  const fmt=opt.fmt||(v=>v.toFixed(1));
@@ -1286,8 +1293,8 @@ function pVR(){
     and 466 against W=1000 matches the panel now the page has no kick line or caption
     (the default 390 left a third of the panel empty below the chart). */
  multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',H:466,
-  nice:1,noEnds:1,ref:{v:3,label:'balanced 3%',col:'#8A4B00'}});
- divLegend('c-vr-lg');   /* pills only - the explanatory note is deliberately gone */
+  nice:1,noEnds:1,solid:1,xrot:1,ref:{v:3,label:'balanced 3%',col:'#8A4B00'}});
+ dotLegend('c-vr-lg');   /* dot + name, no note */
 }
 /* ---------- vacancy rate v rent: six separate charts, one per district ----------
    Six independent SVGs in six cards, each carrying its own key, rather than one
