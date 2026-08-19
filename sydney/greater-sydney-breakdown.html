@@ -376,7 +376,7 @@ body.presenting .exitfs{display:grid}
 </header>
 <nav class="rail" id="rail" aria-label="Pages"></nav>
 <main class="stage">
-<section class="page cover" id="pg-cover"><div class="slide"><div class="dban ref"><span class="lbl">Reference</span><span class="det">Every page is labelled below. Values marked ° are sample.</span></div><div class="pad" id="p-cover"></div><div class="disc">The data presented in this report are sourced from third-party resources selected for reliability and availability over the historical periods required. Because the current year is not complete, figures for the current year are estimated to represent a full year. &copy; 2026 PPA Services Pty Ltd</div><div class="pnum">1 / 30</div></div></section><section class="page " id="pg-glance">
+<section class="page cover" id="pg-cover"><div class="slide"><div class="dban ref"><span class="lbl">Reference</span><span class="det">Every page is labelled below. Values marked ° are sample.</span></div><div class="pad" id="p-cover"></div><div class="disc">&copy; 2026 PPA Services Pty Ltd</div><div class="pnum">1 / 30</div></div></section><section class="page " id="pg-glance">
  <div class="slide">
   <div class="dban mixed"><span class="lbl">Mixed — sample marked °</span><span class="det">Population, vacancy rate and all CoreLogic figures measured; unemployment and job index sample.</span></div>
   <div class="pad">
@@ -502,7 +502,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>Vacancy rate</h2>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: SQM Research / Cotality</span></div><div class="pnl"><div class="lgd" id="c-vr-lg"></div><div class="chbox" id="c-vr"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: SQM Research / Cotality</span></div><div class="pnl"><div class="chbox" id="c-vr"></div></div></div>
   </div>
   <div class="pnum">14 / 30</div>
  </div>
@@ -1227,9 +1227,9 @@ function pIncRent(){
  divLegend('c-incrent-lg','dark = rent share of wage, teal = affordability index');
 }
 function pVR(){
+ /* no legend row: multiLine() labels each series at the end of its own line, so the
+    district pills were naming them a second time */
  multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',ytitle:'Vacancy Rate'});
- divLegend('c-vr-lg','whole-market measure \u2014 one series per district \u00b7 measured '
-  +'monthly series, Cotality LGA vacancy rate, averaged by calendar year');
 }
 /* ---------- vacancy rate v rent: six separate charts, one per district ----------
    Six independent SVGs in six cards, each carrying its own key, rather than one
