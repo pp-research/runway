@@ -196,15 +196,13 @@ body.railshut .stage{margin-left:56px}
 .vrc-comp b{font-weight:700;color:var(--ink-dim)}
 .vrc-comp .neg{color:#8A4B00}
 .vrc-floor{color:#8A4B00;font-weight:700}
-/* one axis serving all six cards */
-.vrax{position:relative;height:1.9cqw;margin-top:.4cqw;flex:none}
-.vrax .t{position:absolute;top:0;width:.08cqw;height:.28cqw;background:var(--ink-faint);
+/* one compact scale per card, sharing the band's coordinate space so the ticks
+   line up with the dots above them */
+.vrax{position:relative;height:1cqw;flex:none}
+.vrax .t{position:absolute;top:0;width:.07cqw;height:.22cqw;background:var(--ink-faint);
  transform:translateX(-50%)}
-.vrax .l{position:absolute;top:.34cqw;font-size:.58cqw;color:var(--ink-faint);
+.vrax .l{position:absolute;top:.26cqw;font-size:.52cqw;color:var(--ink-faint);
  transform:translateX(-50%);white-space:nowrap}
-.vrax .l.bal{top:1.08cqw;font-weight:700;color:var(--ink-dim)}
-.vrax .ends{position:absolute;top:1.08cqw;font-size:.55cqw;font-weight:700;
- letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);white-space:nowrap}
 .cover .pad{justify-content:center}
 .cover .slide{background:radial-gradient(115% 85% at 12% 14%,#1E525E 0%,#16303A 48%,#0F1A20 100%)}
 .page.cover{background:#0F1A20}   /* matches the gradient's outer stop at the screen edge */
