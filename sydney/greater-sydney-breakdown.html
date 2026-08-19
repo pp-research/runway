@@ -136,9 +136,203 @@ body.railshut .stage{margin-left:56px}
 .two.wide{grid-template-columns:1.7fr 1fr}
 .pnum{position:absolute;bottom:.5cqw;right:.85cqw;font-size:.62cqw;color:#8A939D;
  letter-spacing:.02em;line-height:1.2}
+/* The chart tooltip. It had no rule at all outside @media print, so it had no
+   position and no box: TIP.show() computes left/top and assigns them, but a
+   statically-positioned element ignores both, which dumped every chart's tooltip
+   unstyled at the foot of the document instead of beside the cursor. */
+#tip{position:fixed;z-index:80;display:none;pointer-events:none;max-width:280px;
+ background:rgba(9,18,24,.95);color:#E7ECF1;border:1px solid rgba(143,227,239,.28);
+ border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.4;
+ box-shadow:0 6px 22px rgba(0,0,0,.4)}
+#tip b{color:#FFFFFF;font-size:12.5px}
+#tip table{border-collapse:collapse;margin-top:5px;width:100%}
+#tip td{padding:1px 0;vertical-align:middle;white-space:nowrap}
+#tip td:last-child{text-align:right;padding-left:14px;font-variant-numeric:tabular-nums}
+#tip i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;
+ vertical-align:-1px}
+/* The legend row: mark buttons, then a note. Neither .lgd nor .st had a rule at
+   all, so the note butted straight against the last button with no separation and
+   the whole row read as one crowded run-on line. */
+.lgd{display:flex;flex-wrap:wrap;align-items:center;gap:.3cqw .55cqw;margin-bottom:.55cqw}
+.lgd .st{flex:1 1 20cqw;min-width:0;font-size:.78cqw;color:var(--ink-dim);line-height:1.35}
+/* a key that draws the line it describes, rather than spelling out "solid"/"dashed" */
+.lgd .key{display:inline-flex;align-items:center;gap:.35cqw;flex:none;font-size:.82cqw;
+ font-weight:700;color:var(--ink)}
+.lgd .key svg{width:2.1cqw;height:.8cqw;flex:none;overflow:visible}
+/* Flat dot-and-name toggles. The "pill" look was never styled - it was the browser's
+   default <button> border and background, so this strips both. */
+.lgd .tog{display:inline-flex;align-items:center;gap:.32cqw;background:none;border:0;
+ padding:0 .12cqw;font-size:.86cqw;font-weight:700;color:var(--ink);letter-spacing:-.01em;
+ transition:.12s}
+/* rounded square, not a circle: the deck reserves circles for data points (line
+   markers, the dots on the projection bands) and uses squares for category keys -
+   the cover's district list, panel titles, end labels and the tooltip swatch */
+.lgd .tog i{width:.6cqw;height:.6cqw;border-radius:.12cqw;flex:none}
+.lgd .tog[aria-pressed=false]{opacity:.34}
+.lgd .tog:hover{color:var(--teal-text)}
+.lgd .tog:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
+/* ---------- panel tables ----------
+   There was no table, th, td or .dv rule anywhere in the file, so every sortable
+   table in the deck rendered with browser defaults: columns butted together, no
+   header rule, and tr.off did nothing at all - hidden districts stayed at full
+   strength in tables while dimming everywhere else. */
+.pnl table{width:100%;border-collapse:collapse;font-size:.82cqw}
+.pnl thead th{text-align:right;font-weight:700;color:var(--ink-dim);font-size:.7cqw;
+ letter-spacing:.05em;text-transform:uppercase;padding:0 .5cqw .32cqw;white-space:nowrap;
+ border-bottom:.09cqw solid rgba(23,27,36,.2);cursor:pointer;user-select:none}
+.pnl thead th:first-child{text-align:left;padding-left:0}
+.pnl thead th:hover{color:var(--teal-text)}
+.pnl thead th .ar{font-size:.6cqw;opacity:.7}
+.pnl tbody td{text-align:right;padding:.28cqw .5cqw;white-space:nowrap;
+ border-bottom:.06cqw solid rgba(23,27,36,.07);font-variant-numeric:tabular-nums}
+.pnl tbody td:first-child{text-align:left;padding-left:0;font-weight:700;color:var(--ink)}
+.pnl tbody tr:last-child td{border-bottom:0}
+.pnl tbody tr:hover td{background:rgba(23,27,36,.045)}
+.pnl tbody tr.off{opacity:.34}
+.pnl td.dv{cursor:pointer}
+.pnl td.dv i{display:inline-block;width:.55cqw;height:.55cqw;border-radius:.12cqw;
+ margin-right:.42cqw;vertical-align:-.02cqw}
+/* Twelve rows in a full-height panel: spaced to fill it rather than crowding into
+   the top third and leaving two thirds of the panel blank. */
+#l-tbl table{font-size:.92cqw}
+#l-tbl thead th{padding-bottom:.5cqw}
+#l-tbl tbody td{padding:.78cqw .5cqw}
+/* ---------- traffic-light dots ----------
+   Two per pillar: now, then forecast. These had no rule either, so every light on
+   the Traffic lights page rendered as nothing at all - the page named after them
+   showed none. Colour comes from currentColor so one ring rule serves all three. */
+.dot{display:inline-block;width:.62cqw;height:.62cqw;border-radius:50%;
+ margin-right:.26cqw;vertical-align:-.05cqw;background:currentColor}
+.dot:last-child{margin-right:0}
+.dot.GREEN{color:#2F8F52}
+.dot.ORANGE{color:#D9962B}
+.dot.RED{color:#C4203C}
+/* Hollow for "now", solid for the forecast - the same reading the projection bands
+   use. The "now" case is marked with an explicit class, NOT by position: .dot is also
+   used on its own (the confidence indicators), and there the value that follows is
+   itself a <span class="dm">, so every positional selector - :first-child,
+   :not(:last-child) - matches the lone dot too and turns it into a ring. */
+.dot.now{background:transparent;box-shadow:inset 0 0 0 .13cqw currentColor}
+/* ---------- vacancy rate v rent: one card per district ----------
+   Six independent charts rather than one gridded figure, each stating its own key,
+   so no shared legend sits above the grid. The card is a flex column: title row
+   fixed, chart takes the rest. */
+.vrrgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.55cqw;flex:1;min-height:0}
+.vrrc{background:#FFFFFF;border-radius:.45cqw;padding:.5cqw .6cqw;display:flex;
+ flex-direction:column;min-height:0;box-shadow:0 .05cqw .25cqw rgba(23,27,36,.07)}
+.vrrc-top{display:flex;align-items:center;justify-content:space-between;gap:.4cqw;flex:none;
+ margin-bottom:.28cqw}
+.vrrc-nm{display:flex;align-items:center;gap:.35cqw;font-size:1cqw;font-weight:700;
+ color:var(--ink);letter-spacing:-.01em}
+.vrrc-nm i{width:.58cqw;height:.58cqw;border-radius:.12cqw;flex:none}
+/* three keys have to sit beside the district name in a third-width card, so they are
+   allowed to wrap rather than squeezing the title */
+.vrrc-key{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;
+ gap:.12cqw .45cqw;flex:1 1 auto;min-width:0}
+.vrrc-key span{display:inline-flex;align-items:center;gap:.22cqw;font-size:.56cqw;
+ font-weight:700;color:var(--ink-dim);white-space:nowrap}
+.vrrc-key svg{width:1.25cqw;height:.5cqw;flex:none;overflow:visible}
+/* the viewBox aspect is cut to the space left after the title row, so height:auto
+   fills the card rather than leaving a gap under the chart */
+.vrrc-ch{flex:1;min-height:0}
+.vrrc-ch svg{width:100%;height:auto;display:block}
 .dm{border-bottom:.1cqw dotted var(--orange)}
 .dm::after{content:'\00b0';color:var(--orange);font-weight:700;font-size:.85em}
+/* ---------- vacancy-rate cards: one per district ----------
+   The source layout (vr-projection-tool) is single-market: one hero, one spectrum,
+   three time rows. Six districts only fit a 16:9 page if the 0-6% axis is drawn
+   ONCE beneath the grid rather than repeated inside all six cards. Budget: the
+   panel affords ~40.5cqw of height, so a 2x3 grid gives each card ~12.2cqw and
+   the content below totals ~11.0cqw. Do not add a per-card axis — it overflows. */
+/* Everything the ruler needs to be read - its end labels, its balanced marker and
+   its 0-6% scale - sits INSIDE each card, on the band it describes. Panel-level
+   versions of any of these fail the same way: two cards to a row means a
+   panel-width strip aligns with neither band, and the lower rows end up read
+   against a key several cards away. */
+/* one gap value, so the gutter down the middle matches the gutters between rows */
+.vrgrid{display:grid;grid-template-columns:1fr 1fr;gap:.55cqw;flex:1;min-height:0}
+/* Sizes here are tuned to the room this page actually has. It carries no kick line,
+   no caption and no .pnl wrapper - all dropped so six cards could breathe - leaving
+   the grid ~46cqw tall and each card row ~15cqw against ~13.6cqw of content. Put a
+   caption or a panel back and the type has to come down again.
+   The cards sit straight on the slide, so the gaps between them are the slide
+   colour: there is deliberately no surface behind the grid. */
+.vrc{background:#FFFFFF;border-radius:.45cqw;padding:.55cqw .85cqw;display:flex;
+ flex-direction:column;min-height:0;box-shadow:0 .05cqw .25cqw rgba(23,27,36,.07)}
+.vrc.off{opacity:.32}
+.vrc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5cqw}
+/* no colour dot beside the name: the three row bullets already carry the district
+   colour, so a fourth swatch in the title was redundant */
+.vrc-nm{display:flex;align-items:baseline;gap:.45cqw;font-size:1.28cqw;font-weight:700;
+ color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+/* inline beside the name rather than on its own line - population already appears
+   as the Current row's People figure, so a second copy cost a line for nothing */
+.vrc-sub{font-size:.66cqw;font-weight:400;color:var(--ink-faint);white-space:nowrap}
+.vrc-bdg{flex:none;text-align:right;border:.08cqw solid;border-radius:.3cqw;
+ padding:.16cqw .4cqw;line-height:1.15}
+/* the badge, not the district name, sets the height of the top row - it is two
+   stacked lines plus padding and border. Size it before sizing anything else. */
+.vrc-bdg .b1{font-size:.66cqw;font-weight:700;white-space:nowrap}
+.vrc-bdg .b2{font-size:.48cqw;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.vrc-bdg.tight{color:#8A4B00;border-color:rgba(138,75,0,.4);background:rgba(255,169,31,.10)}
+.vrc-bdg.loose{color:#1F6B4F;border-color:rgba(31,107,79,.4);background:rgba(31,107,79,.08)}
+.vrc-bdg.flat{color:var(--ink-dim);border-color:rgba(74,85,102,.35);background:rgba(74,85,102,.06)}
+/* the ruler's end labels and balanced marker, on the band rather than above the
+   grid. "balanced ~3%" is positioned at the true 3% coordinate so it sits over the
+   marker line drawn in the band below it. */
+.vrc-key{position:relative;height:.72cqw;margin-top:.26cqw;flex:none;font-size:.52cqw;
+ font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.vrc-key .lo{position:absolute;left:0;bottom:0}
+.vrc-key .hi{position:absolute;right:0;bottom:0}
+.vrc-key .bal{position:absolute;bottom:0;transform:translateX(-50%);letter-spacing:.02em;
+ text-transform:none;font-size:.58cqw;font-weight:700;color:var(--ink-dim);white-space:nowrap}
+/* the band, with its own scale immediately beneath it.
+   flex:none is load-bearing. The card is a flex column; without it the band is the
+   only shrinkable child, so any overflow crushes it to zero height and the gradient
+   silently disappears while the dots stay put, floating on white. */
+.vrc-sp{position:relative;flex:none;height:.9cqw;border-radius:.45cqw;margin:.06cqw 0 0;
+ background:linear-gradient(90deg,#F6C6CC 0%,#FBE2BE 38%,#E8EFC7 55%,#CDE8D9 78%,#C4E6EB 100%)}
+.vrc-sp .bal{position:absolute;top:-.14cqw;bottom:-.14cqw;width:.11cqw;background:var(--ink);
+ transform:translateX(-50%)}
+.vrc-sp .dot{position:absolute;top:50%;width:.72cqw;height:.72cqw;border-radius:50%;
+ transform:translate(-50%,-50%);border:.15cqw solid}
+.vrc-rows{display:flex;flex-direction:column;margin-top:.28cqw;gap:.07cqw}
+/* People is 1.5fr, not 1fr: the NI/IM/OM breakdown is the widest string on the
+   card and at nowrap it otherwise spills into the HH-size caption beside it.
+   Any type increase here has to be checked against that string specifically. */
+.vrc-r{display:grid;grid-template-columns:7cqw 1.55fr repeat(4,1fr);align-items:center;
+ padding:.14cqw .2cqw;border-radius:.22cqw}
+.vrc-r.band{background:var(--band)}
+.vrc-h{font-size:.56cqw;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+ color:var(--ink-faint);white-space:nowrap}
+/* the three rows ARE the band's legend, so each carries the same marker as its
+   dot - fill, border and opacity all come from vrCard's dstyle(), one source of
+   truth, so a change to the band cannot silently desync the legend */
+.vrc-r .rl{display:flex;align-items:baseline;gap:.34cqw;font-size:.82cqw;font-weight:700;
+ color:var(--ink);line-height:1.15}
+.vrc-r .rl .bul{width:.58cqw;height:.58cqw;border-radius:50%;flex:none;border:.12cqw solid;
+ position:relative;top:-.03cqw}
+.vrc-r .rl .fy{display:block;font-size:.58cqw;font-weight:400;color:var(--ink-faint)}
+.vrc-v{font-size:1.06cqw;font-weight:700;color:var(--ink);line-height:1.15;white-space:nowrap}
+.vrc-v.acc{color:var(--teal-text)}
+.vrc-c{font-size:.56cqw;color:var(--ink-faint);line-height:1.2;white-space:nowrap}
+.vrc-comp{font-size:.52cqw;line-height:1.25;color:var(--ink-faint);white-space:nowrap}
+.vrc-comp b{font-weight:700;color:var(--ink-dim)}
+.vrc-comp .neg{color:#8A4B00}
+.vrc-floor{color:#8A4B00;font-weight:700}
+/* one compact scale per card, sharing the band's coordinate space so the ticks
+   line up with the dots above them */
+.vrax{position:relative;height:1.05cqw;flex:none}
+.vrax .t{position:absolute;top:0;width:.08cqw;height:.26cqw;background:var(--ink-faint);
+ transform:translateX(-50%)}
+.vrax .l{position:absolute;top:.3cqw;font-size:.58cqw;color:var(--ink-faint);
+ transform:translateX(-50%);white-space:nowrap}
 .cover .pad{justify-content:center}
+/* The cover's footer line. It had no rule at all, so it flowed from the top of the
+   absolutely-positioned .slide and sat behind the data banner - which is why the old
+   long disclaimer appeared clipped across the top of page 1. */
+.cover .disc{position:absolute;left:3.4cqw;right:3.4cqw;bottom:1.5cqw;font-size:.72cqw;
+ color:#8FA0AB;font-style:italic;line-height:1.4}
 .cover .slide{background:radial-gradient(115% 85% at 12% 14%,#1E525E 0%,#16303A 48%,#0F1A20 100%)}
 .page.cover{background:#0F1A20}   /* matches the gradient's outer stop at the screen edge */
 .cover h1{font-size:4.6cqw;line-height:1.02;margin:0;font-weight:700;letter-spacing:-.03em;
@@ -241,14 +435,12 @@ body.presenting .exitfs{display:grid}
 </header>
 <nav class="rail" id="rail" aria-label="Pages"></nav>
 <main class="stage">
-<section class="page cover" id="pg-cover"><div class="slide"><div class="dban ref"><span class="lbl">Reference</span><span class="det">Every page is labelled below. Values marked ° are sample.</span></div><div class="pad" id="p-cover"></div><div class="disc">The data presented in this report are sourced from third-party resources selected for reliability and availability over the historical periods required. Because the current year is not complete, figures for the current year are estimated to represent a full year. &copy; 2026 PPA Services Pty Ltd</div><div class="pnum">1 / 30</div></div></section><section class="page " id="pg-glance">
+<section class="page cover" id="pg-cover"><div class="slide"><div class="dban ref"><span class="lbl">Reference</span><span class="det">Every page is labelled below. Values marked ° are sample.</span></div><div class="pad" id="p-cover"></div><div class="disc">&copy; 2026 PPA Services Pty Ltd</div><div class="pnum">1 / 30</div></div></section><section class="page " id="pg-glance">
  <div class="slide">
   <div class="dban mixed"><span class="lbl">Mixed — sample marked °</span><span class="det">Population, vacancy rate and all CoreLogic figures measured; unemployment and job index sample.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>At a glance</h2>
-   <p class="cap">One column per district, houses and units. Click a district name to hide it everywhere.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="agmx" id="g-wrap"></div></div>
   </div>
   <div class="pnum">2 / 30</div>
@@ -258,9 +450,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">All pillar scores and verdicts are placeholder.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Traffic lights</h2>
-   <p class="cap">Twelve markets — six districts by two segments — scored now and one year forward.</p>
    <div class="body"><div class="two wide"><div class="pnl"><h3>Twelve markets</h3><div id="l-tbl"></div><p style="font-size:.78cqw;color:var(--ink-dim);margin:.5cqw 0 0">Two dots per pillar: now, then forecast. Click a market name to hide that district everywhere.</p></div><div class="pnl"><h3>Verdict by district</h3><div class="mapwrap" id="l-map"></div><div class="lgd" id="l-lgd"></div></div></div></div>
   </div>
   <div class="pnum">3 / 30</div>
@@ -270,9 +460,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban real"><span class="lbl">Measured data</span><span class="det">CoreLogic Market Trends, May 2026 and ABS ASGS 2025 boundaries.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Districts and LGAs</h2>
-   <p class="cap">Every one of the 34 LGAs, and how wide each district’s internal price spread is.</p>
    <div class="body"><div class="two"><div class="pnl"><h3>Composite and range</h3><div id="d-tbl"></div><div id="d-mem" style="margin-top:.8cqw"></div></div><div class="pnl"><h3>Internal price spread</h3><div id="d-sp"></div></div></div></div>
   </div>
   <div class="pnum">4 / 30</div>
@@ -282,9 +470,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Back-cast from the real compound growth rates. Read the shape, not the level.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Price level</h2>
-   <p class="cap">Sales-weighted average of member-LGA medians, houses and units, with growth and correction reference bands behind. A district is not a CoreLogic geography, so no true district median exists.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-price-lg"></div><div class="chbox" id="c-price"></div></div></div>
   </div>
   <div class="pnum">5 / 30</div>
@@ -294,9 +480,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Derived from the back-cast price series.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Year on year price movement</h2>
-   <p class="cap">Annual percentage change, houses and units.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-yoy-lg"></div><div class="chbox" id="c-yoy"></div></div></div>
   </div>
   <div class="pnum">6 / 30</div>
@@ -306,9 +490,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Derived from the back-cast price series.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Unit price as a share of house price</h2>
-   <p class="cap">The house–unit gap over time. A falling line means units are being left behind.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-hvu-lg"></div><div class="chbox" id="c-hvu"></div></div></div>
   </div>
   <div class="pnum">7 / 30</div>
@@ -318,9 +500,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban mixed"><span class="lbl">Mixed — sample marked °</span><span class="det">Rent growth measured; price growth back-cast from the real compound growth rates.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Price v rent growth</h2>
-   <p class="cap">Twelve panels — each district by each segment. Shaded areas are underwater episodes of three years or more.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-pxr-lg"></div><div class="chbox" id="c-pxr"></div></div></div>
   </div>
   <div class="pnum">8 / 30</div>
@@ -330,9 +510,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban real"><span class="lbl">Measured data</span><span class="det">CoreLogic Market Trends, May 2026.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Long-term trends</h2>
-   <p class="cap">Compound annual growth by horizon.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-cagr-lg"></div><div class="chbox" id="c-cagr"></div></div></div>
   </div>
   <div class="pnum">9 / 30</div>
@@ -342,9 +520,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Derived from the back-cast price series and a placeholder income.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Affordability index</h2>
-   <p class="cap">Average mortgage repayments as a share of average income: district price level, 20% deposit, current variable rate, principal and interest over 30 years.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics &amp; CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-ai-lg"></div><div class="chbox" id="c-ai"></div></div></div>
   </div>
   <div class="pnum">10 / 30</div>
@@ -354,9 +530,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban mixed"><span class="lbl">Mixed — sample marked °</span><span class="det">Price level measured; income, ceiling and runway sample.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Runway</h2>
-   <p class="cap">Room remaining before each district reaches its affordability ceiling.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="two"><div class="pnl"><div class="lgd" id="c-rw-lg"></div><div class="chbox" id="c-rw"></div></div><div class="pnl"><h3>All six districts</h3><div id="c-rw-tbl"></div></div></div></div>
   </div>
   <div class="pnum">11 / 30</div>
@@ -366,9 +540,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Derived from the back-cast price series and a placeholder income.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Price to income ratio</h2>
-   <p class="cap">District price level against average annual income — the years needed to save a 20% deposit at a 20% savings rate.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics &amp; CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-pti-lg"></div><div class="chbox" id="c-pti"></div></div></div>
   </div>
   <div class="pnum">12 / 30</div>
@@ -378,9 +550,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Derived from the back-cast rent series and a placeholder income.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Income to rent v affordability index</h2>
-   <p class="cap">Share of average wage that pays the median rent, against the affordability index.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics</span></div><div class="pnl"><div class="lgd" id="c-incrent-lg"></div><div class="chbox" id="c-incrent"></div></div></div>
   </div>
   <div class="pnum">13 / 30</div>
@@ -390,9 +560,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban real"><span class="lbl">Measured data</span><span class="det">Cotality LGA vacancy rate, monthly 1991–2026, averaged by calendar year.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Vacancy rate</h2>
-   <p class="cap">A whole-market measure, so one line per district.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: SQM Research / Cotality</span></div><div class="pnl"><div class="lgd" id="c-vr-lg"></div><div class="chbox" id="c-vr"></div></div></div>
   </div>
   <div class="pnum">14 / 30</div>
@@ -402,10 +570,8 @@ body.presenting .exitfs{display:grid}
   <div class="dban real"><span class="lbl">Measured data</span><span class="det">Cotality LGA vacancy rate and asking rent, monthly 1991–2026.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Vacancy rate v rent</h2>
-   <p class="cap">House and unit rents against the vacancy rate.</p>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-vrrent-lg"></div><div class="chbox" id="c-vrrent"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="vrrgrid" id="c-vrrent-cards"></div></div>
   </div>
   <div class="pnum">15 / 30</div>
  </div>
@@ -414,10 +580,8 @@ body.presenting .exitfs{display:grid}
   <div class="dban real"><span class="lbl">Measured data</span><span class="det">ABS ERP 2024-25, Census 2021 household size, ABS 8731.0 approvals, 3-year migration average.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Vacancy rate projection</h2>
-   <p class="cap">The projection for every district, and the chain that produces it.</p>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl" style="flex:0 0 auto"><div class="chbox" id="c-vrp" style="min-height:0;height:14.2cqw"></div><div class="lgd" id="c-vrp-lg"></div></div><div class="pnl" style="margin-top:.7cqw"><div id="c-vrp-tbl"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="vrgrid" id="c-vrp-cards"></div></div>
   </div>
   <div class="pnum">16 / 30</div>
  </div>
@@ -426,9 +590,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban mixed"><span class="lbl">Mixed — sample marked °</span><span class="det">Listings, stock, days on market, vacancy rate and rent growth measured; the score chain is sample pending the benchmark decision.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Demand score</h2>
-   <p class="cap">Supply and demand through the grading sheet, houses and units, now and forecast.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="two"><div class="pnl"><div class="lgd" id="c-dem-lg"></div><div class="chbox" id="c-dem"></div></div><div class="pnl"><h3>Chain, all twelve markets</h3><div id="c-dem-tbl"></div></div></div></div>
   </div>
   <div class="pnum">17 / 30</div>
@@ -438,9 +600,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Placeholder monthly history.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Stock on market v days on market</h2>
-   <p class="cap">How much stock is listed against how long it takes to sell.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-somdom-lg"></div><div class="chbox" id="c-somdom"></div></div></div>
   </div>
   <div class="pnum">18 / 30</div>
@@ -450,9 +610,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">2026 anchored to the real 12-month count; earlier years back-cast.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Dwelling sales</h2>
-   <p class="cap">Sales volume, houses and units.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-sales-lg"></div><div class="chbox" id="c-sales"></div></div></div>
   </div>
   <div class="pnum">19 / 30</div>
@@ -462,9 +620,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Placeholder. Real approvals are computed but not yet wired in.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Approvals v population change</h2>
-   <p class="cap">Whether new supply is keeping pace with population.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics</span></div><div class="pnl"><div class="lgd" id="c-appr-lg"></div><div class="chbox" id="c-appr"></div></div></div>
   </div>
   <div class="pnum">20 / 30</div>
@@ -474,9 +630,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Placeholder household formation and approvals.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>New households v housing</h2>
-   <p class="cap">Household formation against building approvals.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics</span></div><div class="pnl"><div class="lgd" id="c-hholds-lg"></div><div class="chbox" id="c-hholds"></div></div></div>
   </div>
   <div class="pnum">21 / 30</div>
@@ -486,9 +640,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Placeholder population series.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Change in population</h2>
-   <p class="cap">Population growth rate by district.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics</span></div><div class="pnl"><div class="lgd" id="c-popch-lg"></div><div class="chbox" id="c-popch"></div></div></div>
   </div>
   <div class="pnum">22 / 30</div>
@@ -498,9 +650,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">All nine indicators are placeholder.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Confidence indicators</h2>
-   <p class="cap">Nine indicators across all six districts. Four are NSW-wide, so those rows are identical.</p>
    <div class="body"><div class="pnl"><div id="c-conf"></div><p class="cap" style="color:var(--ink-dim);font-size:.84cqw;max-width:none;margin-top:.7cqw" id="c-conf-note"></p></div></div>
   </div>
   <div class="pnum">23 / 30</div>
@@ -510,9 +660,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Placeholder. Needs the JSA Internet Vacancy Index and a district crosswalk.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Job creation index</h2>
-   <p class="cap">Internet Vacancy Index for online job advertisements.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Government</span></div><div class="pnl"><div class="lgd" id="c-ja-lg"></div><div class="chbox" id="c-ja"></div></div></div>
   </div>
   <div class="pnum">24 / 30</div>
@@ -522,9 +670,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Placeholder. Needs JSA Small Area Labour Markets.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Unemployment rate</h2>
-   <p class="cap">District unemployment as a yearly average.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics</span></div><div class="pnl"><div class="lgd" id="c-unemp-lg"></div><div class="chbox" id="c-unemp"></div></div></div>
   </div>
   <div class="pnum">25 / 30</div>
@@ -534,9 +680,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban real"><span class="lbl">Measured data</span><span class="det">CoreLogic Market Trends, May 2026.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Current investment value</h2>
-   <p class="cap">Gross yield for houses and units. The capital-city report compares five cities here.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-yield-lg"></div><div class="chbox" id="c-yield"></div></div></div>
   </div>
   <div class="pnum">26 / 30</div>
@@ -546,9 +690,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban sample"><span class="lbl">Sample data</span><span class="det">Placeholder yield, cash and variable rate history.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Yield v cash rate</h2>
-   <p class="cap">House and unit yields against the cash and variable rates.</p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-ycr-lg"></div><div class="chbox" id="c-ycr"></div></div></div>
   </div>
   <div class="pnum">27 / 30</div>
@@ -558,9 +700,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban mixed"><span class="lbl">Mixed — sample marked °</span><span class="det">Price ranks and the rent test measured; every score and verdict sample.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Market summary</h2>
-   <p class="cap">All twelve markets grouped by the national rules, plus the stagnation shortlist.</p>
    <div class="body"><div class="two"><div class="pnl"><h3>Grouped by verdict</h3><div id="c-mk"></div></div><div class="pnl"><h3>Stagnant, rents still rising</h3><div id="c-sl"></div></div></div></div>
   </div>
   <div class="pnum">28 / 30</div>
@@ -570,9 +710,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban ref"><span class="lbl">Reference</span><span class="det">No figures on this page — outstanding sources only.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>NSW context</h2>
-   <p class="cap">Exhibits that exist only at state level, held separately rather than split across districts.</p>
    <div class="body"><div class="two"><div class="pnl"><h3>State level only — shared across districts</h3><ul class="cols one"><li><b>Housing and investor lending</b><br>ABS Lending Indicators, NSW</li><li><b>Mortgage arrears</b><br>S&amp;P Global Ratings</li><li><b>Population movement, NIM / NOM / natural</b><br>ABS, NSW</li><li><b>Retail turnover</b><br>ABS, NSW</li><li><b>Business investment</b><br>ABS, NSW</li><li><b>First home buyers as a share of population</b><br>ABS, NSW</li></ul><p style="font-size:.84cqw;color:var(--ink-dim);margin:.6cqw 0 0">Splitting these across districts would mean inventing numbers.</p></div><div class="pnl"><h3>Pages still to build</h3><ul class="cols one"><li><b>Population pyramid</b><br>ABS ERP by age, LGA — one panel per district</li><li><b>Industry value added</b><br>economy.id / REMPLAN, LGA</li><li><b>Sydney v Melbourne median</b><br>CoreLogic capital-city series</li><li><b>NSW and national population lines</b><br>ABS 3218.0</li></ul></div></div></div>
   </div>
   <div class="pnum">29 / 30</div>
@@ -582,9 +720,7 @@ body.presenting .exitfs{display:grid}
   <div class="dban ref"><span class="lbl">Reference</span><span class="det">No figures on this page — method and sources.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Method and sources</h2>
-   <p class="cap">What is real, what is synthetic, and what the tool still needs.</p>
    <div class="body"><div class="pnl"><ul class="cols"><li><b>Districts</b><br>The five districts of the NSW Government&rsquo;s Greater Sydney Region Plan, plus Central Coast as a sixth. 34 LGAs = the ABS Greater Sydney GCCSA. <b>The compass names are ours</b>: the published names are Eastern City, Central City and Western City, and North District and South District are the only two we have kept verbatim. Central Coast is not a Region Plan district at all &mdash; it sits in the ABS statistical area and is carried separately.</li><li><b>Every page, every district</b><br>There is no district or segment selector. Segment-dependent exhibits show houses and units together — solid and dashed within a district panel, or paired series in a bar chart. Two exhibits use a 12-panel district-by-segment grid.</li><li><b>Interaction</b><br>Hover any chart for a crosshair and a readout of every visible series. Click a legend entry, a table row name, a map region or a confidence column header to hide that district everywhere; Show all restores. Table headers sort.</li><li><b>Price level, not median</b><br>A district is not a CoreLogic geography, so no district median is published. The figure shown is the <b>sales-weighted average of member-LGA medians</b>, each of which is a real CoreLogic median computed from transactions. Reconstructing a true district median from the Suburbs tab was tested and rejected: validated against published LGA medians it fell within &plusmn;2% for only 14 of 32 LGAs and erred by up to 16.3% (Woollahra), because suburb medians are themselves small-sample medians. The min&ndash;max range on every card is the honest signal of internal spread.</li><li><b>Composite figures</b><br>Sales-weighted for medians, DOM, discount and growth; rental-listing-weighted for rents; stock-weighted for yield, stock on market and hold period; simple sums for counts.</li><li><b>Price position</b><br>Ranked inside the 34-LGA distribution, not against the five sibling districts — a field of six cannot support percentile scoring.</li><li><b>Colour and dash</b><br>Each district has a fixed colour and dash pattern, with lines end-labelled in dark text, so no exhibit relies on colour alone. Luminance is spread across the six so they separate in greyscale.</li><li><b>Reference bands</b><br>Growth and correction periods sit behind the Price level exhibit, as in the printed report.</li><li><b>Live data</b><br>CoreLogic / Cotality Market Trends, LGA tab, May 2026. Boundaries: ABS ASGS 2025 LGA generalised layer, dissolved by district at 4% simplification.</li><li><b>Synthetic</b><br>Every value marked with a degree sign — vacancy rates, all pillar scores, runway, confidence indicators, and the 2006&ndash;2026 history. Seeded, reproducible, meaningless.</li><li><b>Still required</b><br>PP AI Ceiling workbook (NSW); NSW LGA VR &amp; Rent files; ABS 3218.0 &times;3; ABS 8731.0; Census G02; NAB NSW; ABS Lending Indicators; NSW underemployment; JSA SALM; JSA IVI plus a district crosswalk; a 36-month CoreLogic series pull.</li><li><b>Region plan provenance</b><br>Published by the Greater Sydney Commission, March 2018. That body became the Greater Cities Commission and was dissolved on 1 January 2024; the district plans remain statutory instruments under the EP&amp;A Act.</li></ul></div></div>
   </div>
   <div class="pnum">30 / 30</div>
@@ -682,6 +818,16 @@ const MARK=(cx,cy,col)=>'<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r
  +col+'" stroke="#FBFDFE" stroke-width="1.1"/>';
 
 /* ---------- scale helper ---------- */
+/* Round axis bounds to a readable step so ticks land on 0/2/4/6/8 rather than the
+   1.5/3.6/5.8/7.9 that scale()'s data-fitted padding produces. Feed it the RAW min
+   and max, not scale()'s padded output, or the top tick floats above the data. */
+function niceBounds(lo,hi,n){
+ const raw=(hi-lo)/n;
+ if(!isFinite(raw)||raw<=0) return [lo,hi,1];
+ const mag=Math.pow(10,Math.floor(Math.log10(raw)));
+ const step=[1,2,2.5,5,10].map(m=>m*mag).find(s=>s>=raw)||10*mag;
+ return [Math.floor(lo/step)*step, Math.ceil(hi/step)*step, step];
+}
 function scale(vals,zero){
  const v=vals.filter(x=>x!=null&&isFinite(x));
  let lo=Math.min(...v), hi=Math.max(...v);
@@ -695,12 +841,18 @@ function scale(vals,zero){
 /* ================= multi-line: one line per district ================= */
 function multiLine(hostId,pick,opt){
  const host=gid(hostId); if(!host) return;
- opt=opt||{}; const W=1000, Ht=opt.H||390, P=[26,150,52,74];
+ opt=opt||{}; const W=1000, Ht=opt.H||390;
+ /* the right padding exists to hold the end-of-line series labels. With opt.noEnds a
+    legend names the series instead, so the plot reclaims that 150 units. */
+ /* The bottom deepens for opt.xrot: a four-digit year on its side needs the room, plus
+    ~20 units of clearance so the labels do not sit against the panel's bottom edge. */
+ const P=[26,opt.noEnds?26:150,opt.xrot?108:52,74];
  const ser=vis().map(d=>({d:d,o:pick(d)})).filter(s=>s.o);
  if(!ser.length){host.innerHTML='<svg class="ch" viewBox="0 0 10 10"></svg>';
   CH[hostId]={W:10,Ht:10,hit:()=>null};return}
  const ys=yl(ser[0].o), y0=ys[0], y1=ys[ys.length-1];
- const [lo,hi]=scale(ser.flatMap(s=>ys.map(y=>at(s.o,y))),opt.zeroL);
+ const vAll=ser.flatMap(s=>ys.map(y=>at(s.o,y))).filter(v=>v!=null&&isFinite(v));
+ let [lo,hi]=scale(vAll,opt.zeroL);
  const x=y=>P[3]+(y-y0)/((y1-y0)||1)*(W-P[1]-P[3]);
  const f=v=>P[0]+(hi-v)/((hi-lo)||1)*(Ht-P[0]-P[2]);
  const plotB=Ht-P[2];
@@ -710,10 +862,26 @@ function multiLine(hostId,pick,opt){
   if(z<=a)return;
   g+='<rect x="'+x(a).toFixed(1)+'" y="'+P[0]+'" width="'+(x(z)-x(a)).toFixed(1)+'" height="'
    +(plotB-P[0])+'" fill="'+(b.type==='growth'?'#D6EEF5':'#CBD6DA')+'" fill-opacity=".75"/>'});
- for(let i=0;i<=4;i++){const v=lo+(hi-lo)*i/4, yy=f(v).toFixed(1);
+ /* opt.nice rounds the axis onto whole steps. Opt-in, because the other callers are
+    happy with data-fitted bounds. f() closes over lo/hi, so they must be reassigned
+    before the first f() call - which is this tick loop. */
+ let ticks=[];
+ if(opt.nice&&vAll.length){const nb=niceBounds(Math.min(...vAll),Math.max(...vAll),5);
+  lo=nb[0];hi=nb[1];
+  for(let v=lo;v<=hi+nb[2]*1e-6;v+=nb[2]) ticks.push(v)}
+ else for(let i=0;i<=4;i++) ticks.push(lo+(hi-lo)*i/4);
+ ticks.forEach(v=>{const yy=f(v).toFixed(1);
   g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+yy+'" y2="'+yy+'" stroke="'+GRID+'"/>'
    +'<text x="'+(P[3]-9)+'" y="'+(+yy+3.6).toFixed(1)+'" text-anchor="end" font-size="10"'
-   +' fill="'+AXT+'">'+(opt.fmt?opt.fmt(v):v.toFixed(0))+'</text>'}
+   +' fill="'+AXT+'">'+(opt.fmt?opt.fmt(v):v.toFixed(0))+'</text>'});
+ /* an opt-in threshold rule, so every vacancy page marks 3% the same way */
+ if(opt.ref!=null&&opt.ref.v>=lo&&opt.ref.v<=hi){const ry=f(opt.ref.v).toFixed(1);
+  g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+ry+'" y2="'+ry+'" stroke="'
+   +(opt.ref.col||AX)+'" stroke-width="1.4" stroke-dasharray="6 4" stroke-opacity=".75"/>'
+   /* halo via paint-order so the label stays legible where a series crosses it */
+   +'<text x="'+(P[3]+8)+'" y="'+(+ry-7).toFixed(1)+'" font-size="10.5" font-weight="700"'
+   +' paint-order="stroke" stroke="var(--pnl)" stroke-width="3.2" stroke-linejoin="round"'
+   +' fill="'+(opt.ref.col||AX)+'">'+(opt.ref.label||'')+'</text>'}
  if(lo<0&&hi>0) g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+f(0).toFixed(1)+'" y2="'
   +f(0).toFixed(1)+'" stroke="'+AX+'" stroke-width="1.2"/>';
  if(opt.lta!=null) g+=ltaMark(opt.lta,f,P[3],W-P[1],opt.ltaL||'');
@@ -728,13 +896,13 @@ function multiLine(hostId,pick,opt){
   ys.forEach(y=>{const v=at(s.o,y);
    if(v==null||!isFinite(v)){open=false;return}
    d+=(open?'L':'M')+x(y).toFixed(1)+' '+f(v).toFixed(1)+' ';open=true});
-  const dsh=DASH(s.d);
+  const dsh=opt.solid?'none':DASH(s.d);   // opt.solid drops the per-district dash
   g+='<path d="'+d.trim()+'" fill="none" stroke="'+C(s.d)+'" stroke-width="2.1"'
    +' stroke-linejoin="round" stroke-linecap="round"'
    +(dsh!=='none'?' stroke-dasharray="'+dsh+'"':'')+'/>';
   if(showMark) ys.forEach(y=>{const v=at(s.o,y);
    if(v!=null&&isFinite(v)) g+=MARK(x(y),f(v),C(s.d))})});
- ends.forEach(e=>{
+ if(!opt.noEnds) ends.forEach(e=>{
   g+='<line x1="'+(W-P[1]+3)+'" x2="'+(W-P[1]+11)+'" y1="'+e.y.toFixed(1)+'" y2="'+e.ly.toFixed(1)
    +'" stroke="'+C(e.d)+'" stroke-width="1.3"/>'
    +'<rect x="'+(W-P[1]+13)+'" y="'+(e.ly-4).toFixed(1)+'" width="7.5" height="7.5" rx="1.5"'
@@ -743,7 +911,13 @@ function multiLine(hostId,pick,opt){
    +' fill="var(--ink)">'+e.d+'</text>'});
  g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+plotB+'" y2="'+plotB+'" stroke="'+AX
   +'" stroke-width="1"/>';
- g+=xLabels(ys,x,plotB+15);
+ /* opt.xrot turns every year on its side instead of staggering them over two rows */
+ if(opt.xrot) ys.forEach(y=>{const px=x(y).toFixed(1), py=plotB+9;
+  g+='<line x1="'+px+'" x2="'+px+'" y1="'+plotB+'" y2="'+(plotB+4)+'" stroke="'+AX
+   +'" stroke-width="1" stroke-opacity=".55"/>'
+   +'<text x="'+px+'" y="'+py+'" transform="rotate(-90 '+px+' '+py+')" text-anchor="end"'
+   +' font-size="10" fill="'+AXT+'">'+y+'</text>'});
+ else g+=xLabels(ys,x,plotB+15);
  g+='<g id="'+hostId+'-cross"></g>';
  host.innerHTML=g+'</svg>';
  const fmt=opt.fmt||(v=>v.toFixed(1));
@@ -923,6 +1097,14 @@ function divLegend(hostId,note){
   +(note?'<span class="st">'+note+'</span>':''));
  $$('#'+hostId+' [data-tog]').forEach(b=>b.onclick=()=>toggle(b.dataset.tog));
 }
+/* A dot and the district name, nothing else - same toggle behaviour as divLegend but
+   without the line glyph and the default button chrome. */
+function dotLegend(hostId){
+ put(hostId,ORDER.map(d=>'<button class="tog" data-tog="'+d+'" aria-pressed="'+(!hidden.has(d))
+  +'" title="click to '+(hidden.has(d)?'show':'hide')+' '+d+' everywhere">'
+  +'<i style="background:'+C(d)+'"></i>'+d+'</button>').join(''));
+ $$('#'+hostId+' [data-tog]').forEach(b=>b.onclick=()=>toggle(b.dataset.tog));
+}
 function seriesLegend(hostId,items,note){
  put(hostId,items.map(x=>{
   const m=x[2]?'<svg width="11" height="11" viewBox="0 0 11 11" aria-hidden="true">'
@@ -1000,13 +1182,21 @@ function pLights(){
  const cols=['Market','Value','','S&amp;D','','Confidence','','Verdict'];
  const rows=ORDER.flatMap(d=>SEGS.map(s=>{const x=MOCK.divisions[d].seg[s], c=MOCK.divisions[d].conf;
   return {d:d,s:s,k:[d+' '+s,x.vscore,0,x.dscore,0,c.cscore,0,x.bucket],x:x,c:c}}));
- sortable('l-tbl',rows,cols,r=>{const dot=v=>'<span class="dot '+v+'"></span>';
+ /* The verdict carries the map's colour so the table and the choropleth agree at a
+    glance. Darker than the map's own fills: those sit at 55% opacity on the panel,
+    but text needs full contrast against it. */
+ const vdInk=b=>b==='Best time to invest'?'#1F6B4F':b==='Not the best time'?'#A81028'
+  :b==='Past its peak'?'#8A4B00':'#1D6A8C';
+ /* the second argument marks the "now" dot, which draws hollow; the forecast is solid */
+ sortable('l-tbl',rows,cols,r=>{const dot=(v,now)=>'<span class="dot '+v+(now?' now':'')
+   +'"></span>';
   return '<tr class="'+(hidden.has(r.d)?'off':'')+'">'
    +'<td class="dv" data-d="'+r.d+'"><i style="background:'+C(r.d)+'"></i>'+r.d+' \u00b7 '+r.s+'</td>'
-   +'<td>'+dm(r.x.vscore.toFixed(1))+'</td><td>'+dot(r.x.vsig)+dot(r.x.fvsig)+'</td>'
-   +'<td>'+dm(r.x.dscore.toFixed(0))+'</td><td>'+dot(r.x.dsig)+dot(r.x.fdsig)+'</td>'
-   +'<td>'+dm(r.c.cscore.toFixed(1))+'</td><td>'+dot(r.c.csig)+dot(r.c.fcsig)+'</td>'
-   +'<td style="text-align:left">'+dm(r.x.bucket)+'</td></tr>'});
+   +'<td>'+dm(r.x.vscore.toFixed(1))+'</td><td>'+dot(r.x.vsig,1)+dot(r.x.fvsig)+'</td>'
+   +'<td>'+dm(r.x.dscore.toFixed(0))+'</td><td>'+dot(r.x.dsig,1)+dot(r.x.fdsig)+'</td>'
+   +'<td>'+dm(r.c.cscore.toFixed(1))+'</td><td>'+dot(r.c.csig,1)+dot(r.c.fcsig)+'</td>'
+   +'<td style="text-align:left;font-weight:700;color:'+vdInk(r.x.bucket)+'">'
+     +dm(r.x.bucket)+'</td></tr>'});
  const col=b=>b==='Best time to invest'?'var(--green)':b==='Not the best time'?'var(--red)'
   :b==='Past its peak'?'var(--orange)':'var(--blue)';
  put('l-map','<svg viewBox="0 0 '+MAPD.w+' '+MAPD.h+'" xmlns="http://www.w3.org/2000/svg" role="img">'
@@ -1024,8 +1214,10 @@ function pLights(){
     +'<div style="color:#68727F;margin-top:4px">click to '+(hidden.has(d)?'show':'hide')+'</div>',
     e.clientX,e.clientY)};
   p.onpointerleave=()=>TIP.hide()});
- seriesLegend('l-lgd',[['var(--green)','Best time'],['var(--orange)','Past its peak'],
-  ['var(--blue)','Worth watching'],['var(--red)','Not the best time']],
+ /* squares, not line glyphs: these key filled map regions, not series lines - the
+    third element in each item is what switches seriesLegend to a swatch */
+ seriesLegend('l-lgd',[['var(--green)','Best time',1],['var(--orange)','Past its peak',1],
+  ['var(--blue)','Worth watching',1],['var(--red)','Not the best time',1]],
   'map shows the house verdict; click a region to hide that district');
 }
 function pDistricts(){
@@ -1150,123 +1342,217 @@ function pIncRent(){
  divLegend('c-incrent-lg','dark = rent share of wage, teal = affordability index');
 }
 function pVR(){
- multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',ytitle:'Vacancy Rate'});
- divLegend('c-vr-lg','whole-market measure \u2014 one series per district \u00b7 measured '
-  +'monthly series, Cotality LGA vacancy rate, averaged by calendar year');
+ /* Series are named by the legend pills, not at the end of each line, so noEnds
+    reclaims the 150 units of right padding those labels needed.
+    No ytitle: the rotated "Vacancy Rate" repeated the slide heading and cost another
+    40 units. H is the viewBox aspect, not a pixel height - the svg is width-driven,
+    and 505 against W=1000 fills the panel without the rotated years running past its
+    bottom edge (the default 390 left a third of the panel empty; 525 overflowed). */
+ multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',H:505,
+  nice:1,noEnds:1,solid:1,xrot:1,ref:{v:3,label:'balanced 3%',col:'#8A4B00'}});
+ dotLegend('c-vr-lg');   /* dot + name, no note */
 }
-function pVRRent(){
- panels('c-vrrent',DIV6(),it=>[
-  {d:GR(it.d,'house').rs,type:'line',col:C(it.d),name:'House rent'},
-  {d:GR(it.d,'unit').rs,type:'line',col:C(it.d),dash:'4 3',name:'Unit rent'},
-  {d:H[it.d].vr,type:'line',col:'#171B24',dash:'1 2',ax:'r',name:'Vacancy rate'}],
-  {fmt:v=>'$'+v.toFixed(0),title:'Vacancy rate v rent',ytitle:'Rent House / Rent Unit'});
- divLegend('c-vrrent-lg','rents on the left axis, vacancy rate (dotted, dark) on the right '
-  +'\u00b7 both measured, Cotality LGA VR &amp; Rent');
-}
-
-/* ---------- vacancy-rate ruler: all six districts on one shared axis ----------
-   Each district is a row: hollow dot = now, half dot = +1yr, solid dot = +2yr,
-   connected so the direction of travel is the shape rather than a number. */
-function rulerChart(hostId){
+/* ---------- vacancy rate v rent: six separate charts, one per district ----------
+   Six independent SVGs in six cards, each carrying its own key, rather than one
+   gridded chart under a shared legend. panels() is left alone: it computes a
+   right-hand scale for ax:'r' series but never labels it, and twelve other slides
+   call it, so fixing that in place would move all of them.
+   Within a chart, solid means rent and dashed means vacancy. That is why unit rent
+   is a lighter solid rather than a dash - a dashed unit line would read as vacancy.
+   The rent scale and the vacancy ceiling are computed once across all six districts
+   so the cards stay comparable with each other.
+   Type and stroke widths are ~3x the values used by panels(): this viewBox spans a
+   third of the page width, so a 9pt label there needs ~28 here to look the same. */
+const VRR_GLYPH=(col,dash,opq)=>'<svg viewBox="0 0 30 10" aria-hidden="true">'
+ +'<line x1="1" x2="29" y1="5" y2="5" stroke="'+col+'" stroke-width="2.6"'
+ +' stroke-linecap="round" stroke-opacity="'+(opq==null?1:opq)+'"'
+ +(dash?' stroke-dasharray="'+dash+'"':'')+'/></svg>';
+function vrRentChart(hostId,d,lo,hi,VMAX){
  const host=gid(hostId); if(!host) return;
- const W=1000, RH=24, TOP=7, AX=30;
- const list=vis();
- const Ht=TOP+list.length*RH+AX;
- const P=[TOP,150,AX,96];              // top, right (labels), bottom (axis), left (names)
- const vals=list.flatMap(d=>[MOCK.divisions[d].vr,MOCK.divisions[d].vr1,MOCK.divisions[d].vr2]);
- const hi=Math.max(4, Math.ceil(Math.max(...vals,3)+0.6));
- const x=v=>P[3]+v/hi*(W-P[1]-P[3]);
- let g='<svg class="ch" viewBox="0 0 '+W+' '+Ht+'" xmlns="http://www.w3.org/2000/svg" role="img">'
-  +'<title>Vacancy rate now and projected, six districts</title>'
-  +'<defs><linearGradient id="vrband" x1="0" x2="1">'
-  +'<stop offset="0" stop-color="#F6C6CC"/><stop offset=".38" stop-color="#FBE2BE"/>'
-  +'<stop offset=".55" stop-color="#E8EFC7"/><stop offset=".78" stop-color="#CDE8D9"/>'
-  +'<stop offset="1" stop-color="#C4E6EB"/></linearGradient></defs>';
- const bandTop=P[0], bandH=list.length*RH;
- g+='<rect x="'+x(0)+'" y="'+bandTop+'" width="'+(x(hi)-x(0))+'" height="'+bandH
-  +'" rx="5" fill="url(#vrband)"/>';
- // balanced marker
- g+='<line x1="'+x(3).toFixed(1)+'" x2="'+x(3).toFixed(1)+'" y1="'+(bandTop-4)+'" y2="'
-  +(bandTop+bandH+4)+'" stroke="#171B24" stroke-width="1.4"/>'
-  +'<text x="'+x(3).toFixed(1)+'" y="'+(bandTop-8)+'" text-anchor="middle" font-size="10.5"'
-  +' fill="var(--ink-dim)">balanced ~3%</text>'
-  +'<text x="'+x(0)+'" y="'+(bandTop-8)+'" font-size="10" font-weight="700" fill="var(--ink-dim)"'
-  +' letter-spacing=".08em">TIGHTER</text>'
-  +'<text x="'+(x(hi)).toFixed(1)+'" y="'+(bandTop-8)+'" text-anchor="end" font-size="10"'
-  +' font-weight="700" fill="var(--ink-dim)" letter-spacing=".08em">LOOSER</text>';
- const hit=[];
- list.forEach((d,i)=>{
-  const m=MOCK.divisions[d], cy=bandTop+RH*i+RH/2;
-  const pts=[['now',m.vr,0],['+1yr',m.vr1,1],['+2yr',m.vr2,2]];
-  g+='<text x="'+(P[3]-8)+'" y="'+(cy+3.6).toFixed(1)+'" text-anchor="end" font-size="11"'
-   +' font-weight="700" fill="var(--ink)">'+d+'</text>';
-  g+='<line x1="'+x(m.vr).toFixed(1)+'" x2="'+x(m.vr2).toFixed(1)+'" y1="'+cy+'" y2="'+cy
-   +'" stroke="'+C(d)+'" stroke-width="1.6" stroke-opacity=".55"/>';
-  pts.forEach(([lab,v,k])=>{
-   const fill=k===0?'#FFFFFF':(k===1?C(d):C(d));
-   const op=k===1?0.55:1;
-   g+='<circle cx="'+x(v).toFixed(1)+'" cy="'+cy+'" r="5.2" fill="'+fill+'" fill-opacity="'+op
-    +'" stroke="'+C(d)+'" stroke-width="2"/>';
-   hit.push({cx:x(v),cy:cy,d:d,lab:lab,v:v,
-             floored:(k===1&&m.vr1_floored)||(k===2&&m.vr2_floored)});
-  });
-  // direction of travel, and the floor disclosure where it applies
-  const dv=m.vr2-m.vr, tight=dv<0;
-  g+='<text x="'+(W-P[1]+10)+'" y="'+(cy+3.6).toFixed(1)+'" font-size="10.5" font-weight="700"'
-   +' fill="'+(tight?'#8A4B00':'#1F6B4F')+'">'+(tight?'\u25b2 tightening':'\u25bc loosening')
-   +' '+(dv>0?'+':'')+dv.toFixed(2)+'pp</text>';
-  if(m.vr2_floored)
-   g+='<text x="'+(x(m.vr2)+9).toFixed(1)+'" y="'+(cy-7).toFixed(1)+'" font-size="9"'
-    +' font-weight="700" fill="#8A4B00">at floor</text>';
- });
- for(let v=0;v<=hi;v++)
-  g+='<line x1="'+x(v).toFixed(1)+'" x2="'+x(v).toFixed(1)+'" y1="'+(bandTop+bandH)+'" y2="'
-   +(bandTop+bandH+4)+'" stroke="var(--ink-faint)"/>'
-   +'<text x="'+x(v).toFixed(1)+'" y="'+(bandTop+bandH+16)+'" text-anchor="middle" font-size="10"'
-   +' fill="var(--ink-faint)">'+v+'%</text>';
+ /* left padding has to clear "$1560" at font 28 - Montserrat digits are wide and at
+    96 the dollar sign was clipping off the card edge. The bottom is deep enough for
+    a four-digit year turned on its side. */
+ /* Ht is the card's aspect, not an arbitrary height: the svg is width-driven
+    (height:auto), so this ratio is what makes the chart fill the card instead of
+    leaving a gap beneath it. Cards are ~29.5 x 19.2cqw now that the page carries no
+    kick line and no caption - re-derive this if that changes. */
+ const W=1000, Ht=650, P=[14,70,96,116];  // top, right (VR axis), bottom (years), left ($)
+ const rs=GR(d,'house').rs, us=GR(d,'unit').rs, vs=H[d].vr;
+ const ys=yl(rs), y0=ys[0], y1=ys[ys.length-1];
+ const L=P[3], R=W-P[1], T=P[0], B=Ht-P[2];
+ const x=y=>L+(y-y0)/((y1-y0)||1)*(R-L);
+ const f=v=>T+(hi-v)/((hi-lo)||1)*(B-T);
+ const fv=v=>T+(VMAX-v)/VMAX*(B-T);
+ let g='<svg class="ch" viewBox="0 0 '+W+' '+Ht+'" xmlns="http://www.w3.org/2000/svg"'
+  +' role="img"><title>'+d+': house and unit rent against the vacancy rate</title>';
+ g+='<rect x="'+L+'" y="'+T+'" width="'+(R-L)+'" height="'+(B-T)+'" fill="#FFFFFF"'
+  +' fill-opacity=".55" stroke="rgba(23,27,36,.10)" stroke-width="2.5"/>';
+ for(let k=1;k<=2;k++){const gl=T+(B-T)*k/3;
+  g+='<line x1="'+L+'" x2="'+R+'" y1="'+gl.toFixed(1)+'" y2="'+gl.toFixed(1)
+   +'" stroke="'+GRID+'" stroke-width="3"/>'}
+ /* vacancy first, as shaded context behind the rents */
+ let a='',open=false;
+ ys.forEach(y=>{const v=at(vs,y);
+  if(v==null||!isFinite(v)){open=false;return}
+  a+=(open?'L':'M')+x(y).toFixed(1)+' '+fv(v).toFixed(1)+' ';open=true});
+ if(a) g+='<path d="'+a.trim()+'L'+R+' '+B+'L'+L+' '+B+'Z" fill="#8FA9B4" fill-opacity=".22"/>'
+  +'<path d="'+a.trim()+'" fill="none" stroke="#5A6B75" stroke-width="5"'
+  +' stroke-dasharray="18 10" stroke-linecap="round" stroke-opacity=".85"/>';
+ /* no "balanced 3%" caption: the orange 3% on the right axis already names this line,
+    and in the flatter cards the caption sat on top of the rent line */
+ g+='<line x1="'+L+'" x2="'+R+'" y1="'+fv(3).toFixed(1)+'" y2="'+fv(3).toFixed(1)
+  +'" stroke="#8A4B00" stroke-width="4" stroke-dasharray="16 10" stroke-opacity=".6"/>';
+ /* rents on top and heavier, because they are the subject of the slide */
+ [[rs,1],[us,.45]].forEach(([o,opq])=>{let dd='',op=false;
+  ys.forEach(y=>{const v=at(o,y);
+   if(v==null||!isFinite(v)){op=false;return}
+   dd+=(op?'L':'M')+x(y).toFixed(1)+' '+f(v).toFixed(1)+' ';op=true});
+  g+='<path d="'+dd.trim()+'" fill="none" stroke="'+C(d)+'" stroke-width="7"'
+   +' stroke-opacity="'+opq+'" stroke-linejoin="round" stroke-linecap="round"/>'});
+ /* both axes labelled - rents left, vacancy right */
+ [hi,(hi+lo)/2,lo].forEach(v=>g+='<text x="'+(L-10)+'" y="'+(f(v)+9).toFixed(1)
+  +'" text-anchor="end" font-size="28" fill="'+AXT+'">$'+Math.round(v)+'</text>');
+ [0,3,VMAX].forEach(v=>g+='<text x="'+(R+10)+'" y="'+(fv(v)+9).toFixed(1)+'" font-size="28"'
+  +' fill="'+(v===3?'#8A4B00':AXT)+'">'+v+'%</text>');
+ g+='<line x1="'+L+'" x2="'+R+'" y1="'+B+'" y2="'+B+'" stroke="'+AX+'" stroke-width="3"/>';
+ /* every year, turned 90 degrees so all of them fit. rotate(-90) about the anchor
+    with text-anchor:end makes the label hang straight down from the axis. */
+ ys.forEach(y=>{const px=x(y).toFixed(1), py=B+10;
+  g+='<line x1="'+px+'" x2="'+px+'" y1="'+B+'" y2="'+(B+5)+'" stroke="'+AX+'"'
+   +' stroke-width="2" stroke-opacity=".6"/>'
+   +'<text x="'+px+'" y="'+py+'" transform="rotate(-90 '+px+' '+py+')" text-anchor="end"'
+   +' font-size="24" fill="'+AXT+'">'+y+'</text>'});
+ g+='<g id="'+hostId+'-cross"></g>';
  host.innerHTML=g+'</svg>';
  CH[hostId]={W:W,Ht:Ht,hit(vx,vy){
-  const h=hit.find(q=>Math.abs(q.cx-vx)<9&&Math.abs(q.cy-vy)<9);
-  if(!h) return null;
-  const m=MOCK.divisions[h.d];
-  return '<b>'+swatch(C(h.d))+h.d+' \u00b7 '+h.lab+'</b><table>'
-   +'<tr><td>Vacancy rate</td><td><b>'+h.v.toFixed(2)+'%</b></td></tr>'
-   +(h.floored?'<tr><td colspan="2" style="color:#8A4B00">at the 0.1% floor \u2014 not a forecast</td></tr>':'')
-   +'<tr><td>Households</td><td>'+Math.round(m.hholds).toLocaleString()+'</td></tr>'
-   +'<tr><td>Dwellings</td><td>'+Math.round(m.props).toLocaleString()+'</td></tr>'
-   +'<tr><td>Commencements/yr</td><td>'+Math.round(m.appr*0.9).toLocaleString()+'</td></tr>'
-   +'</table>';
+  const c=gid(hostId+'-cross');
+  if(vx<L-14||vx>R+14||vy<T-14||vy>B+14){if(c)c.innerHTML='';return null}
+  const yr=Math.max(y0,Math.min(y1,Math.round(y0+(vx-L)/((R-L)||1)*(y1-y0))));
+  const cx=x(yr), hr=at(rs,yr), hu=at(us,yr), hv=at(vs,yr);
+  /* the year is named on the chart itself, not only in the tooltip, so the reader can
+     see which point they are on without moving their eyes off the line */
+  if(c) c.innerHTML='<line x1="'+cx.toFixed(1)+'" x2="'+cx.toFixed(1)+'" y1="'+T+'" y2="'+B
+   +'" stroke="'+AX+'" stroke-width="3" stroke-dasharray="9 9"/>'
+   +[[hr,f,C(d),1],[hu,f,C(d),.45],[hv,fv,'#5A6B75',1]].map(([v,ff,col,opq])=>
+     v==null||!isFinite(v)?'':'<circle cx="'+cx.toFixed(1)+'" cy="'+ff(v).toFixed(1)
+      +'" r="11" fill="'+col+'" fill-opacity="'+opq+'" stroke="#FBFDFE" stroke-width="4"/>')
+    .join('')
+   +'<rect x="'+(cx-34).toFixed(1)+'" y="'+(T+2)+'" width="68" height="30" rx="5"'
+   +' fill="var(--ink)" fill-opacity=".82"/>'
+   +'<text x="'+cx.toFixed(1)+'" y="'+(T+23)+'" text-anchor="middle" font-size="23"'
+   +' font-weight="700" fill="#FFFFFF">'+yr+'</text>';
+  const money=v=>'$'+Math.round(v).toLocaleString();
+  const row=(n,v,col,fm)=>v==null||!isFinite(v)?''
+   :'<tr><td>'+swatch(col)+n+'</td><td><b>'+fm(v)+'</b></td></tr>';
+  return '<b>'+d+' · '+yr+'</b><table>'
+   +row('House rent',hr,C(d),money)
+   +row('Unit rent',hu,C(d),money)
+   +row('Vacancy rate',hv,'#5A6B75',v=>v.toFixed(2)+'%')+'</table>';
  }};
  bind(hostId);
 }
+function pVRRent(){
+ const list=ORDER.filter(d=>!hidden.has(d));
+ /* one rent scale and one vacancy ceiling across all six, so cards stay comparable.
+    Derived from ORDER, not the visible list, so hiding a district does not silently
+    rescale the ones still on screen. */
+ const rentVals=ORDER.flatMap(d=>[GR(d,'house').rs,GR(d,'unit').rs]
+  .flatMap(o=>Object.values(o).filter(x=>x!=null&&isFinite(x))));
+ const [lo,hi]=scale(rentVals);
+ const vAll=ORDER.flatMap(d=>Object.values(H[d].vr).filter(x=>x!=null&&isFinite(x)));
+ const VMAX=Math.max(6,Math.ceil(Math.max(...vAll)));
+ const cid=d=>'c-vrrent-'+d.replace(/\s+/g,'');
+ /* every card states its own key, drawn as the line it describes - including the
+    house/unit distinction, which is opacity rather than dash, so the glyphs carry
+    the same opacities the chart does. The rent glyphs take the district colour so
+    the key belongs to that card's own lines. */
+ put('c-vrrent-cards',list.map(d=>'<div class="vrrc">'
+  +'<div class="vrrc-top"><div class="vrrc-nm"><i style="background:'+C(d)+'"></i>'+d+'</div>'
+  +'<div class="vrrc-key"><span>'+VRR_GLYPH(C(d),null,1)+'House rent</span>'
+  +'<span>'+VRR_GLYPH(C(d),null,.45)+'Unit rent</span>'
+  +'<span>'+VRR_GLYPH('#5A6B75','7 4',.85)+'Vacancy rate</span></div></div>'
+  +'<div class="vrrc-ch" id="'+cid(d)+'"></div></div>').join(''));
+ list.forEach(d=>vrRentChart(cid(d),d,lo,hi,VMAX));
+}
+
+/* ---------- vacancy-rate cards: one per district ----------
+   Ported from the single-market layout in vr-projection-tool.html. That layout is
+   per-market; this page carries six districts, so the 0-6% axis is drawn once
+   beneath the grid instead of six times inside it \u2014 see the .vrgrid budget note.
+   Rates are the STORED vr/vr1/vr2, never recomputed: deriving them from the
+   rounded hh (2.6 for North against ~2.54 actual) drifts ~0.03pp off the stored
+   value. Surplus is derived as rate x properties so the two figures in the
+   vacancy cell always agree \u2014 that reproduces the stored surplus (North: 5,646
+   stored, 5,661 derived) and props-hholds exactly for the current year. */
+const SP_MAX=6.5, SP_BAL=3;
+const BALX=(SP_BAL/SP_MAX*100).toFixed(1);   // the 3% coordinate, as a percentage
+const spos=v=>Math.max(1.4,Math.min(98.6,v/SP_MAX*100));
+const LABS=['Current','Year 1','Year 2'], FYS=['FY2024-25','FY2025-26','FY2026-27'];
+/* The scale is identical in all six cards, so build the ticks and labels once. */
+const VRAXIS=(()=>{let s='';
+ for(let n=0;n<=6;n++){const L=(n/SP_MAX*100).toFixed(1);
+  s+='<span class="t" style="left:'+L+'%"></span>'
+   +'<span class="l" style="left:'+L+'%">'+n+'%</span>';}
+ return '<div class="vrax">'+s+'</div>';})();
+function vrCard(d){
+ const m=MOCK.divisions[d], col=C(d);
+ const comm=m.appr*0.9;                    // approvals discounted to commencements
+ const people=m.ni+m.im+m.om;              // equals the stored mig; summed so the
+ const newHH=people/m.hh;                  //   NI/IM/OM breakdown always reconciles
+ const props=[m.props,m.props+comm,m.props+2*comm];
+ const rate=[m.vr,m.vr1,m.vr2];
+ const sur=rate.map((r,i)=>Math.round(r/100*props[i]));
+ const dv=m.vr2-m.vr;
+ const cls=Math.abs(dv)<0.005?'flat':(dv>0?'loose':'tight');
+ /* the arrow tracks the vacancy RATE, matching vr-projection-tool: up = looser.
+    The ruler this replaced used the opposite sense (up = tightening market), so
+    if any other page grows a direction arrow, follow this one. */
+ const txt=cls==='flat'?'\u2192 Stable':(dv>0?'\u25b2 Loosening':'\u25bc Tightening');
+ const N=v=>Math.round(v).toLocaleString();
+ const S=v=>(v>0?'+':'')+Math.round(v).toLocaleString();
+ const floored=i=>(i===1&&m.vr1_floored)||(i===2&&m.vr2_floored);
+ /* hollow now, half-strength at year 1, solid at year 2 - the deck's established
+    convention. Shared by the band dot and the row's legend bullet. */
+ const dstyle=i=>'border-color:'+col+';background:'+(i===0?'#FFFFFF':col)
+  +';opacity:'+(i===1?'.55':'1');
+ const dot=i=>'<span class="dot" style="left:'+spos(rate[i]).toFixed(1)+'%;'+dstyle(i)
+  +'" title="'+LABS[i]+' '+rate[i].toFixed(2)+'%"></span>';
+ const comp='<div class="vrc-comp"><b>NI</b> '+S(m.ni)+' <b class="'+(m.im<0?'neg':'')+'">IM</b> '
+  +'<span class="'+(m.im<0?'neg':'')+'">'+S(m.im)+'</span> <b>OM</b> '+S(m.om)+'</div>';
+ const cap=t=>'<div class="vrc-c">'+t+'</div>';
+ const cell=(v,acc,sub)=>'<div><div class="vrc-v'+(acc?' acc':'')+'">'+v+'</div>'+sub+'</div>';
+ const row=i=>'<div class="vrc-r'+(i===0?' band':'')+'">'
+  +'<div class="rl"><span class="bul" style="'+dstyle(i)+'"></span>'
+   +'<span>'+LABS[i]+'<span class="fy">'+FYS[i]+'</span></span></div>'
+  +cell(i===0?N(m.pop):S(people),false,
+        i===1?comp:cap(i===0?'total population':'held at year-1 level'))
+  +cell(m.hh.toFixed(2),false,cap(i===0?'ABS Census':'unchanged'))
+  +cell(i===0?N(m.hholds):S(newHH),true,cap(i===0?'total households':'new households'))
+  +cell(i===0?N(m.props):S(comm),false,cap(i===0?'total properties':'commencements'))
+  +cell(rate[i].toFixed(2)+'%',true,'<div class="vrc-c">surplus '+N(sur[i])
+        +(floored(i)?' <span class="vrc-floor">at floor</span>':'')+'</div>')
+  +'</div>';
+ return '<div class="vrc'+(hidden.has(d)?' off':'')+'">'
+  +'<div class="vrc-top">'
+   +'<div class="vrc-nm">'+d
+   +(MEMBERS[d]?'<span class="vrc-sub">'+MEMBERS[d].length+' LGA'
+     +(MEMBERS[d].length===1?'':'s')+'</span>':'')+'</div>'
+   +'<div class="vrc-bdg '+cls+'"><div class="b1">'+txt+'</div>'
+   +'<div class="b2">2-yr direction</div></div></div>'
+  +'<div class="vrc-key"><span class="lo">Tighter</span>'
+   +'<span class="bal" style="left:'+BALX+'%">balanced ~3%</span>'
+   +'<span class="hi">Looser</span></div>'
+  +'<div class="vrc-sp"><span class="bal" style="left:'+BALX+'%"></span>'
+   +dot(0)+dot(1)+dot(2)+'</div>'
+  +VRAXIS
+  +'<div class="vrc-rows">'
+   +'<div class="vrc-r"><div class="vrc-h"></div><div class="vrc-h">People</div>'
+   +'<div class="vrc-h">\u00f7 HH size</div><div class="vrc-h">= Households</div>'
+   +'<div class="vrc-h">Dwellings</div><div class="vrc-h">Vacancy rate</div></div>'
+   +row(0)+row(1)+row(2)+'</div></div>';
+}
 function pVRProj(){
- rulerChart('c-vrp');
- seriesLegend('c-vrp-lg',[],'hollow = now \u00b7 half = +1 year \u00b7 solid = +2 years '
-  +'\u00b7 floored at 0.1%, disclosed where it bites');
- /* the derivation, read left to right: people \u00f7 household size = households, against dwellings */
- const cols=['District','People','\u00f7 HH size','= Households','Dwellings',
-             '+ Commencements','Surplus','Vacancy rate'];
- const rows=ORDER.map(d=>{const m=MOCK.divisions[d];
-  return {d:d,k:[d,m.pop,m.hh,m.hholds,m.props,m.appr*0.9,m.surplus,m.vr],m:m}});
- const floorLbl=(v,fl)=>fl
-  ? v.toFixed(2)+'% <b style="color:#8A4B00" title="at the 0.1% floor, not a forecast">at floor</b>'
-  : v.toFixed(2)+'%';
- sortable('c-vrp-tbl',rows,cols,o=>{const m=o.m;
-  const sub=(t,v,col)=>'<span style="color:'+col+'">'+t+' '+(v>0?'+':'')+v.toLocaleString()+'</span>';
-  return '<tr class="'+(hidden.has(o.d)?'off':'')+'">'
-   +'<td class="dv" data-d="'+o.d+'"><i style="background:'+C(o.d)+'"></i>'+o.d+'</td>'
-   +'<td>'+m.pop.toLocaleString()+'<div style="font-size:.62cqw;line-height:1.35">'
-     +sub('NI',m.ni,'var(--ink-dim)')+' '+sub('IM',m.im,'#8A4B00')+' '
-     +sub('OM',m.om,'var(--ink-dim)')+'</div></td>'
-   +'<td>'+m.hh.toFixed(2)+'</td>'
-   +'<td><b>'+m.hholds.toLocaleString()+'</b><div style="font-size:.62cqw;color:var(--ink-dim)">'
-     +'+'+Math.round((m.ni+m.im+m.om)/m.hh).toLocaleString()+' new/yr</div></td>'
-   +'<td>'+m.props.toLocaleString()+'</td>'
-   +'<td>'+Math.round(m.appr*0.9).toLocaleString()+'<div style="font-size:.62cqw;'
-     +'color:var(--ink-dim)">'+m.appr.toLocaleString()+' approvals \u00d7 0.9</div></td>'
-   +'<td>'+m.surplus.toLocaleString()+'</td>'
-   +'<td><b>'+m.vr.toFixed(2)+'%</b><div style="font-size:.62cqw;color:var(--ink-dim)">'
-     +floorLbl(m.vr2,m.vr2_floored)+' in 2 yr</div></td></tr>'});
+ put('c-vrp-cards',ORDER.map(vrCard).join(''));
 }
 function pDemand(){
  bars('c-dem',ORDER,[
