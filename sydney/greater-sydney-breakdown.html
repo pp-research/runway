@@ -1246,14 +1246,118 @@ function pVR(){
  divLegend('c-vr-lg','whole-market measure \u2014 one series per district \u00b7 measured '
   +'monthly series, Cotality LGA vacancy rate, averaged by calendar year');
 }
+/* ---------- vacancy rate v rent: six district panels ----------
+   A dedicated renderer rather than panels(), for two reasons. panels() computes a
+   right-hand scale for ax:'r' series but never draws labels for it, so the vacancy
+   line came out with no readable scale at all - and since twelve slides call
+   panels(), fixing that in place would move all of them. It also strokes every
+   series identically, which put a near-black vacancy line on top of the rents this
+   slide is actually about.
+   Here vacancy is a shaded area on a labelled right axis carrying the same 3%
+   balanced marker the projection slide uses, and the rents sit on top in the
+   district colour - house solid, unit dashed. Rents share one scale across all six
+   panels so districts stay comparable. */
+function vrRentPanels(hostId){
+ const host=gid(hostId); if(!host) return;
+ const W=1000, Ht=376;
+ const list=DIV6().filter(it=>!hidden.has(it.d));
+ if(!list.length){host.innerHTML='<svg class="ch" viewBox="0 0 10 10"></svg>';
+  CH[hostId]={W:10,Ht:10,hit:()=>null};return}
+ const cols=3, rows=Math.ceil(list.length/cols);
+ const gx=46, gy=34, TOP=16;          // gx also has to clear the right-hand axis
+ const cw=(W-gx*(cols-1))/cols, chh=(Ht-gy*(rows-1)-rows*TOP)/rows;
+ const P=[6,26,17,44];                // top, right (VR axis), bottom, left ($ axis)
+ const rentVals=list.flatMap(it=>[GR(it.d,'house').rs,GR(it.d,'unit').rs]
+  .flatMap(o=>Object.values(o).filter(x=>x!=null&&isFinite(x))));
+ const [lo,hi]=scale(rentVals);
+ /* the VR axis is fixed across panels and never clipped: take the top from the data
+    so an early-1990s spike cannot draw outside its own plot box */
+ const vAll=list.flatMap(it=>Object.values(H[it.d].vr).filter(x=>x!=null&&isFinite(x)));
+ const VMAX=Math.max(6,Math.ceil(Math.max(...vAll)));
+ let g='<svg class="ch" viewBox="0 0 '+W+' '+Ht+'" xmlns="http://www.w3.org/2000/svg"'
+  +' role="img"><title>House and unit rents against the vacancy rate, six districts</title>';
+ const geom=[];
+ list.forEach((it,i)=>{
+  const ox=(i%cols)*(cw+gx), oy=Math.floor(i/cols)*(TOP+chh+gy)+TOP;
+  const rs=GR(it.d,'house').rs, us=GR(it.d,'unit').rs, vs=H[it.d].vr;
+  const ys=yl(rs), y0=ys[0], y1=ys[ys.length-1];
+  const x=y=>ox+P[3]+(y-y0)/((y1-y0)||1)*(cw-P[1]-P[3]);
+  const f=v=>oy+P[0]+(hi-v)/((hi-lo)||1)*(chh-P[0]-P[2]);      // rent, left axis
+  const fv=v=>oy+P[0]+(VMAX-v)/VMAX*(chh-P[0]-P[2]);           // vacancy, right axis
+  const L=ox+P[3], R=ox+cw-P[1], T=oy+P[0], B=oy+chh-P[2];
+  geom.push({it:it,ox:ox,oy:oy,cw:cw,chh:chh,x:x,f:f,fv:fv,y0:y0,y1:y1,rs:rs,us:us,vs:vs});
+  g+='<rect x="'+L.toFixed(1)+'" y="'+(oy-13).toFixed(1)+'" width="7.5" height="7.5" rx="1.5"'
+   +' fill="'+C(it.d)+'"/><text x="'+(L+11.5).toFixed(1)+'" y="'+(oy-6).toFixed(1)+'"'
+   +' font-size="10.8" font-weight="700" fill="var(--ink)">'+it.label+'</text>';
+  g+='<rect x="'+L.toFixed(1)+'" y="'+T.toFixed(1)+'" width="'+(R-L).toFixed(1)+'" height="'
+   +(B-T).toFixed(1)+'" fill="#FFFFFF" fill-opacity=".55" stroke="rgba(23,27,36,.10)"/>';
+  for(let k=1;k<=2;k++){const gl=T+(B-T)*k/3;
+   g+='<line x1="'+L.toFixed(1)+'" x2="'+R.toFixed(1)+'" y1="'+gl.toFixed(1)+'" y2="'
+    +gl.toFixed(1)+'" stroke="'+GRID+'"/>'}
+  /* vacancy first, as filled context behind the rents */
+  let a='',open=false;
+  ys.forEach(y=>{const v=at(vs,y);
+   if(v==null||!isFinite(v)){open=false;return}
+   a+=(open?'L':'M')+x(y).toFixed(1)+' '+fv(v).toFixed(1)+' ';open=true});
+  if(a) g+='<path d="'+a.trim()+'L'+R.toFixed(1)+' '+B.toFixed(1)+'L'+L.toFixed(1)+' '
+   +B.toFixed(1)+'Z" fill="#8FA9B4" fill-opacity=".22"/>'
+   +'<path d="'+a.trim()+'" fill="none" stroke="#5A6B75" stroke-width="1.1"'
+   +' stroke-dasharray="2 2"/>';
+  g+='<line x1="'+L.toFixed(1)+'" x2="'+R.toFixed(1)+'" y1="'+fv(3).toFixed(1)+'" y2="'
+   +fv(3).toFixed(1)+'" stroke="#8A4B00" stroke-width=".9" stroke-dasharray="5 3"'
+   +' stroke-opacity=".7"/>';
+  /* rents on top, and heavier, because they are the subject */
+  [[rs,null],[us,'4 3']].forEach(([o,dash])=>{let dd='',op=false;
+   ys.forEach(y=>{const v=at(o,y);
+    if(v==null||!isFinite(v)){op=false;return}
+    dd+=(op?'L':'M')+x(y).toFixed(1)+' '+f(v).toFixed(1)+' ';op=true});
+   g+='<path d="'+dd.trim()+'" fill="none" stroke="'+C(it.d)+'" stroke-width="2.2"'
+    +' stroke-linejoin="round" stroke-linecap="round"'
+    +(dash?' stroke-dasharray="'+dash+'"':'')+'/>'});
+  /* both axes labelled - the omission that made the old version unreadable */
+  [hi,(hi+lo)/2,lo].forEach(v=>g+='<text x="'+(L-4).toFixed(1)+'" y="'+(f(v)+3.4).toFixed(1)
+   +'" text-anchor="end" font-size="9" fill="'+AXT+'">$'+Math.round(v)+'</text>');
+  [0,3,VMAX].forEach(v=>g+='<text x="'+(R+4).toFixed(1)+'" y="'+(fv(v)+3.4).toFixed(1)
+   +'" font-size="9" fill="'+(v===3?'#8A4B00':AXT)+'">'+v+'%</text>');
+  g+='<line x1="'+L.toFixed(1)+'" x2="'+R.toFixed(1)+'" y1="'+B.toFixed(1)+'" y2="'
+   +B.toFixed(1)+'" stroke="'+AX+'" stroke-width="1"/>';
+  [y0,Math.round((y0+y1)/2),y1].forEach(y=>g+='<text x="'+x(y).toFixed(1)+'" y="'
+   +(B+12).toFixed(1)+'" text-anchor="middle" font-size="9.2" fill="'+AXT+'">'
+   +String(y).slice(2)+'</text>');
+ });
+ g+='<g id="'+hostId+'-cross"></g>';
+ host.innerHTML=g+'</svg>';
+ CH[hostId]={W:W,Ht:Ht,hit(vx,vy){
+  const p=geom.find(q=>vx>=q.ox&&vx<=q.ox+q.cw&&vy>=q.oy-14&&vy<=q.oy+q.chh);
+  if(!p){const c=gid(hostId+'-cross'); if(c)c.innerHTML=''; return null}
+  const yr=Math.max(p.y0,Math.min(p.y1,
+   Math.round(p.y0+(vx-p.ox-P[3])/(p.cw-P[1]-P[3])*(p.y1-p.y0))));
+  const cx=p.x(yr), hr=at(p.rs,yr), hu=at(p.us,yr), hv=at(p.vs,yr);
+  const c=gid(hostId+'-cross');
+  if(c) c.innerHTML='<line x1="'+cx.toFixed(1)+'" x2="'+cx.toFixed(1)+'" y1="'+(p.oy+P[0])
+   +'" y2="'+(p.oy+p.chh-P[2]).toFixed(1)+'" stroke="'+AX+'" stroke-width="1"'
+   +' stroke-dasharray="3 3"/>'
+   +[[hr,p.f,C(p.it.d)],[hu,p.f,C(p.it.d)],[hv,p.fv,'#5A6B75']]
+    .map(([v,ff,col])=>v==null||!isFinite(v)?''
+     :'<circle cx="'+cx.toFixed(1)+'" cy="'+ff(v).toFixed(1)+'" r="3.4" fill="'+col
+      +'" stroke="#FBFDFE" stroke-width="1.2"/>').join('');
+  const money=v=>'$'+Math.round(v).toLocaleString();
+  const row=(n,v,col,fm)=>v==null||!isFinite(v)?''
+   :'<tr><td>'+swatch(col)+n+'</td><td><b>'+fm(v)+'</b></td></tr>';
+  return '<b>'+p.it.label+' \u00b7 '+yr+'</b><table>'
+   +row('House rent',hr,C(p.it.d),money)
+   +row('Unit rent',hu,C(p.it.d),money)
+   +row('Vacancy rate',hv,'#5A6B75',v=>v.toFixed(2)+'%')+'</table>';
+ }};
+ bind(hostId);
+}
 function pVRRent(){
- panels('c-vrrent',DIV6(),it=>[
-  {d:GR(it.d,'house').rs,type:'line',col:C(it.d),name:'House rent'},
-  {d:GR(it.d,'unit').rs,type:'line',col:C(it.d),dash:'4 3',name:'Unit rent'},
-  {d:H[it.d].vr,type:'line',col:'#171B24',dash:'1 2',ax:'r',name:'Vacancy rate'}],
-  {fmt:v=>'$'+v.toFixed(0),title:'Vacancy rate v rent',ytitle:'Rent House / Rent Unit'});
- divLegend('c-vrrent-lg','rents on the left axis, vacancy rate (dotted, dark) on the right '
-  +'\u00b7 both measured, Cotality LGA VR &amp; Rent');
+ vrRentPanels('c-vrrent');
+ /* both axes are labelled now, so the note carries mark styles and provenance
+    rather than having to explain which series sits on which side */
+ divLegend('c-vrrent-lg','house rent solid, unit rent dashed \u00b7 vacancy shaded against '
+  +'the right axis, with the 3% balanced line \u00b7 measured, Cotality LGA vacancy rate '
+  +'and asking rent');
 }
 
 /* ---------- vacancy-rate cards: one per district ----------
