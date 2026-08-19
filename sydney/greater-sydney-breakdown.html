@@ -159,6 +159,15 @@ body.railshut .stage{margin-left:56px}
 .lgd .key{display:inline-flex;align-items:center;gap:.35cqw;flex:none;font-size:.82cqw;
  font-weight:700;color:var(--ink)}
 .lgd .key svg{width:2.1cqw;height:.8cqw;flex:none;overflow:visible}
+/* Flat dot-and-name toggles. The "pill" look was never styled - it was the browser's
+   default <button> border and background, so this strips both. */
+.lgd .tog{display:inline-flex;align-items:center;gap:.32cqw;background:none;border:0;
+ padding:0 .12cqw;font-size:.86cqw;font-weight:700;color:var(--ink);letter-spacing:-.01em;
+ transition:.12s}
+.lgd .tog i{width:.62cqw;height:.62cqw;border-radius:50%;flex:none}
+.lgd .tog[aria-pressed=false]{opacity:.34}
+.lgd .tog:hover{color:var(--teal-text)}
+.lgd .tog:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
 /* ---------- vacancy rate v rent: one card per district ----------
    Six independent charts rather than one gridded figure, each stating its own key,
    so no shared legend sits above the grid. The card is a flex column: title row
@@ -1033,6 +1042,14 @@ function divLegend(hostId,note){
  put(hostId,ORDER.map(d=>'<button data-tog="'+d+'" aria-pressed="'+(!hidden.has(d))+'"'
   +' title="click to '+(hidden.has(d)?'show':'hide')+' '+d+' everywhere">'+mk(d)+d+'</button>').join('')
   +(note?'<span class="st">'+note+'</span>':''));
+ $$('#'+hostId+' [data-tog]').forEach(b=>b.onclick=()=>toggle(b.dataset.tog));
+}
+/* A dot and the district name, nothing else - same toggle behaviour as divLegend but
+   without the line glyph and the default button chrome. */
+function dotLegend(hostId){
+ put(hostId,ORDER.map(d=>'<button class="tog" data-tog="'+d+'" aria-pressed="'+(!hidden.has(d))
+  +'" title="click to '+(hidden.has(d)?'show':'hide')+' '+d+' everywhere">'
+  +'<i style="background:'+C(d)+'"></i>'+d+'</button>').join(''));
  $$('#'+hostId+' [data-tog]').forEach(b=>b.onclick=()=>toggle(b.dataset.tog));
 }
 function seriesLegend(hostId,items,note){
