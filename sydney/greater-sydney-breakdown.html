@@ -144,15 +144,29 @@ body.railshut .stage{margin-left:56px}
    ONCE beneath the grid rather than repeated inside all six cards. Budget: the
    panel affords ~40.5cqw of height, so a 2x3 grid gives each card ~12.2cqw and
    the content below totals ~11.0cqw. Do not add a per-card axis — it overflows. */
-.vrgrid{display:grid;grid-template-columns:1fr 1fr;gap:.6cqw 1.1cqw;flex:1;min-height:0}
-.vrc{background:#FFFFFF;border-radius:.4cqw;padding:.5cqw .7cqw;display:flex;
+/* Tighter/Looser is stated once above the grid. The 0-6% scale, by contrast, sits
+   INSIDE each card: two cards to a row means a panel-width axis aligns with
+   neither band, and a single axis at the foot of the panel leaves the top two
+   rows reading their bands against a scale three cards away. */
+.vrends{display:flex;justify-content:space-between;align-items:baseline;flex:none;
+ font-size:.55cqw;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+ color:var(--ink-faint);margin:0 .1cqw .3cqw}
+.vrends .bal{font-weight:700;letter-spacing:.02em;text-transform:none;font-size:.58cqw;
+ color:var(--ink-dim)}
+/* the same glyph that marks 3% inside every band, so the label is self-explaining */
+.vrends .bal::before{content:'';display:inline-block;width:.1cqw;height:.6cqw;
+ background:var(--ink);vertical-align:-.08cqw;margin-right:.3cqw}
+.vrgrid{display:grid;grid-template-columns:1fr 1fr;gap:.55cqw 1.1cqw;flex:1;min-height:0}
+.vrc{background:#FFFFFF;border-radius:.4cqw;padding:.45cqw .7cqw;display:flex;
  flex-direction:column;min-height:0;box-shadow:0 .05cqw .25cqw rgba(23,27,36,.07)}
 .vrc.off{opacity:.32}
 .vrc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5cqw}
-.vrc-nm{display:flex;align-items:center;gap:.4cqw;font-size:1.1cqw;font-weight:700;
+.vrc-nm{display:flex;align-items:baseline;gap:.4cqw;font-size:1.1cqw;font-weight:700;
  color:var(--ink);letter-spacing:-.01em;line-height:1.1}
-.vrc-nm i{width:.62cqw;height:.62cqw;border-radius:50%;flex:none}
-.vrc-sub{font-size:.6cqw;color:var(--ink-faint);margin:.1cqw 0 0 1.02cqw;line-height:1.2}
+.vrc-nm i{width:.62cqw;height:.62cqw;border-radius:50%;flex:none;align-self:center}
+/* inline beside the name rather than on its own line - population already appears
+   as the Current row's People figure, so a second copy cost a line for nothing */
+.vrc-sub{font-size:.58cqw;font-weight:400;color:var(--ink-faint);white-space:nowrap}
 .vrc-bdg{flex:none;text-align:right;border:.08cqw solid;border-radius:.3cqw;
  padding:.16cqw .36cqw;line-height:1.15}
 .vrc-bdg .b1{font-size:.62cqw;font-weight:700;white-space:nowrap}
@@ -160,8 +174,8 @@ body.railshut .stage{margin-left:56px}
 .vrc-bdg.tight{color:#8A4B00;border-color:rgba(138,75,0,.4);background:rgba(255,169,31,.10)}
 .vrc-bdg.loose{color:#1F6B4F;border-color:rgba(31,107,79,.4);background:rgba(31,107,79,.08)}
 .vrc-bdg.flat{color:var(--ink-dim);border-color:rgba(74,85,102,.35);background:rgba(74,85,102,.06)}
-/* the band carries the same gradient stops as the shared axis below it */
-.vrc-sp{position:relative;height:.85cqw;border-radius:.42cqw;margin:.4cqw 0 .05cqw;
+/* the band, with its own scale immediately beneath it */
+.vrc-sp{position:relative;height:.8cqw;border-radius:.4cqw;margin:.36cqw 0 0;
  background:linear-gradient(90deg,#F6C6CC 0%,#FBE2BE 38%,#E8EFC7 55%,#CDE8D9 78%,#C4E6EB 100%)}
 .vrc-sp .bal{position:absolute;top:-.12cqw;bottom:-.12cqw;width:.1cqw;background:var(--ink);
  transform:translateX(-50%)}
