@@ -138,6 +138,59 @@ body.railshut .stage{margin-left:56px}
  letter-spacing:.02em;line-height:1.2}
 .dm{border-bottom:.1cqw dotted var(--orange)}
 .dm::after{content:'\00b0';color:var(--orange);font-weight:700;font-size:.85em}
+/* ---------- vacancy-rate cards: one per district ----------
+   The source layout (vr-projection-tool) is single-market: one hero, one spectrum,
+   three time rows. Six districts only fit a 16:9 page if the 0-6% axis is drawn
+   ONCE beneath the grid rather than repeated inside all six cards. Budget: the
+   panel affords ~40.5cqw of height, so a 2x3 grid gives each card ~12.2cqw and
+   the content below totals ~11.0cqw. Do not add a per-card axis — it overflows. */
+.vrgrid{display:grid;grid-template-columns:1fr 1fr;gap:.6cqw 1.1cqw;flex:1;min-height:0}
+.vrc{background:#FFFFFF;border-radius:.4cqw;padding:.5cqw .7cqw;display:flex;
+ flex-direction:column;min-height:0;box-shadow:0 .05cqw .25cqw rgba(23,27,36,.07)}
+.vrc.off{opacity:.32}
+.vrc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5cqw}
+.vrc-nm{display:flex;align-items:center;gap:.4cqw;font-size:1.1cqw;font-weight:700;
+ color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+.vrc-nm i{width:.62cqw;height:.62cqw;border-radius:50%;flex:none}
+.vrc-sub{font-size:.6cqw;color:var(--ink-faint);margin:.1cqw 0 0 1.02cqw;line-height:1.2}
+.vrc-bdg{flex:none;text-align:right;border:.08cqw solid;border-radius:.3cqw;
+ padding:.16cqw .36cqw;line-height:1.15}
+.vrc-bdg .b1{font-size:.62cqw;font-weight:700;white-space:nowrap}
+.vrc-bdg .b2{font-size:.46cqw;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.vrc-bdg.tight{color:#8A4B00;border-color:rgba(138,75,0,.4);background:rgba(255,169,31,.10)}
+.vrc-bdg.loose{color:#1F6B4F;border-color:rgba(31,107,79,.4);background:rgba(31,107,79,.08)}
+.vrc-bdg.flat{color:var(--ink-dim);border-color:rgba(74,85,102,.35);background:rgba(74,85,102,.06)}
+/* the band carries the same gradient stops as the shared axis below it */
+.vrc-sp{position:relative;height:.85cqw;border-radius:.42cqw;margin:.4cqw 0 .05cqw;
+ background:linear-gradient(90deg,#F6C6CC 0%,#FBE2BE 38%,#E8EFC7 55%,#CDE8D9 78%,#C4E6EB 100%)}
+.vrc-sp .bal{position:absolute;top:-.12cqw;bottom:-.12cqw;width:.1cqw;background:var(--ink);
+ transform:translateX(-50%)}
+.vrc-sp .dot{position:absolute;top:50%;width:.6cqw;height:.6cqw;border-radius:50%;
+ transform:translate(-50%,-50%);border:.13cqw solid}
+.vrc-rows{display:flex;flex-direction:column;margin-top:.28cqw;gap:.06cqw}
+.vrc-r{display:grid;grid-template-columns:5.4cqw repeat(5,1fr);align-items:center;
+ padding:.13cqw .18cqw;border-radius:.22cqw}
+.vrc-r.band{background:var(--band)}
+.vrc-h{font-size:.5cqw;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+ color:var(--ink-faint);white-space:nowrap}
+.vrc-r .rl{font-size:.72cqw;font-weight:700;color:var(--ink);line-height:1.15}
+.vrc-r .rl .fy{display:block;font-size:.52cqw;font-weight:400;color:var(--ink-faint)}
+.vrc-v{font-size:.95cqw;font-weight:700;color:var(--ink);line-height:1.15;white-space:nowrap}
+.vrc-v.acc{color:var(--teal-text)}
+.vrc-c{font-size:.5cqw;color:var(--ink-faint);line-height:1.2;white-space:nowrap}
+.vrc-comp{font-size:.48cqw;line-height:1.25;color:var(--ink-faint);white-space:nowrap}
+.vrc-comp b{font-weight:700;color:var(--ink-dim)}
+.vrc-comp .neg{color:#8A4B00}
+.vrc-floor{color:#8A4B00;font-weight:700}
+/* one axis serving all six cards */
+.vrax{position:relative;height:1.9cqw;margin-top:.4cqw;flex:none}
+.vrax .t{position:absolute;top:0;width:.08cqw;height:.28cqw;background:var(--ink-faint);
+ transform:translateX(-50%)}
+.vrax .l{position:absolute;top:.34cqw;font-size:.58cqw;color:var(--ink-faint);
+ transform:translateX(-50%);white-space:nowrap}
+.vrax .l.bal{top:1.08cqw;font-weight:700;color:var(--ink-dim)}
+.vrax .ends{position:absolute;top:1.08cqw;font-size:.55cqw;font-weight:700;
+ letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);white-space:nowrap}
 .cover .pad{justify-content:center}
 .cover .slide{background:radial-gradient(115% 85% at 12% 14%,#1E525E 0%,#16303A 48%,#0F1A20 100%)}
 .page.cover{background:#0F1A20}   /* matches the gradient's outer stop at the screen edge */
