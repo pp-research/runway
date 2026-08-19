@@ -1286,7 +1286,9 @@ const VRR_GLYPH=(col,dash)=>'<svg viewBox="0 0 30 10" aria-hidden="true">'
  +' stroke-linecap="round"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/></svg>';
 function vrRentChart(hostId,d,lo,hi,VMAX){
  const host=gid(hostId); if(!host) return;
- const W=1000, Ht=566, P=[14,70,44,96];   // top, right (VR axis), bottom (years), left ($)
+ /* left padding has to clear "$1560" at font 28 - Montserrat digits are wide and at
+    96 the dollar sign was clipping off the card edge */
+ const W=1000, Ht=566, P=[14,70,44,116];  // top, right (VR axis), bottom (years), left ($)
  const rs=GR(d,'house').rs, us=GR(d,'unit').rs, vs=H[d].vr;
  const ys=yl(rs), y0=ys[0], y1=ys[ys.length-1];
  const L=P[3], R=W-P[1], T=P[0], B=Ht-P[2];
@@ -1306,12 +1308,12 @@ function vrRentChart(hostId,d,lo,hi,VMAX){
   if(v==null||!isFinite(v)){open=false;return}
   a+=(open?'L':'M')+x(y).toFixed(1)+' '+fv(v).toFixed(1)+' ';open=true});
  if(a) g+='<path d="'+a.trim()+'L'+R+' '+B+'L'+L+' '+B+'Z" fill="#8FA9B4" fill-opacity=".22"/>'
-  +'<path d="'+a.trim()+'" fill="none" stroke="#5A6B75" stroke-width="6"'
-  +' stroke-dasharray="18 10" stroke-linecap="round"/>';
+  +'<path d="'+a.trim()+'" fill="none" stroke="#5A6B75" stroke-width="5"'
+  +' stroke-dasharray="18 10" stroke-linecap="round" stroke-opacity=".85"/>';
+ /* no "balanced 3%" caption: the orange 3% on the right axis already names this line,
+    and in the flatter cards the caption sat on top of the rent line */
  g+='<line x1="'+L+'" x2="'+R+'" y1="'+fv(3).toFixed(1)+'" y2="'+fv(3).toFixed(1)
-  +'" stroke="#8A4B00" stroke-width="4" stroke-dasharray="16 10" stroke-opacity=".65"/>'
-  +'<text x="'+(R-6)+'" y="'+(fv(3)-10).toFixed(1)+'" text-anchor="end" font-size="24"'
-  +' font-weight="700" fill="#8A4B00" fill-opacity=".8">balanced 3%</text>';
+  +'" stroke="#8A4B00" stroke-width="4" stroke-dasharray="16 10" stroke-opacity=".6"/>';
  /* rents on top and heavier, because they are the subject of the slide */
  [[rs,1],[us,.45]].forEach(([o,opq])=>{let dd='',op=false;
   ys.forEach(y=>{const v=at(o,y);
