@@ -1301,19 +1301,20 @@ function vrRentPanels(hostId){
    a+=(open?'L':'M')+x(y).toFixed(1)+' '+fv(v).toFixed(1)+' ';open=true});
   if(a) g+='<path d="'+a.trim()+'L'+R.toFixed(1)+' '+B.toFixed(1)+'L'+L.toFixed(1)+' '
    +B.toFixed(1)+'Z" fill="#8FA9B4" fill-opacity=".22"/>'
-   +'<path d="'+a.trim()+'" fill="none" stroke="#5A6B75" stroke-width="1.1"'
-   +' stroke-dasharray="2 2"/>';
+   +'<path d="'+a.trim()+'" fill="none" stroke="#5A6B75" stroke-width="1.3"'
+   +' stroke-dasharray="5 3"/>';   // dash pattern matches the legend glyph exactly
   g+='<line x1="'+L.toFixed(1)+'" x2="'+R.toFixed(1)+'" y1="'+fv(3).toFixed(1)+'" y2="'
    +fv(3).toFixed(1)+'" stroke="#8A4B00" stroke-width=".9" stroke-dasharray="5 3"'
    +' stroke-opacity=".7"/>';
-  /* rents on top, and heavier, because they are the subject */
-  [[rs,null],[us,'4 3']].forEach(([o,dash])=>{let dd='',op=false;
+  /* Both rents are SOLID so the legend's rule holds everywhere on the slide: solid
+     means rent, dashed means vacancy. House is full strength, unit the lighter of
+     the pair - if unit were dashed it would read as vacancy. */
+  [[rs,1],[us,.45]].forEach(([o,opq])=>{let dd='',op=false;
    ys.forEach(y=>{const v=at(o,y);
     if(v==null||!isFinite(v)){op=false;return}
     dd+=(op?'L':'M')+x(y).toFixed(1)+' '+f(v).toFixed(1)+' ';op=true});
-   g+='<path d="'+dd.trim()+'" fill="none" stroke="'+C(it.d)+'" stroke-width="2.2"'
-    +' stroke-linejoin="round" stroke-linecap="round"'
-    +(dash?' stroke-dasharray="'+dash+'"':'')+'/>'});
+   g+='<path d="'+dd.trim()+'" fill="none" stroke="'+C(it.d)+'" stroke-width="2.3"'
+    +' stroke-opacity="'+opq+'" stroke-linejoin="round" stroke-linecap="round"/>'});
   /* both axes labelled - the omission that made the old version unreadable */
   [hi,(hi+lo)/2,lo].forEach(v=>g+='<text x="'+(L-4).toFixed(1)+'" y="'+(f(v)+3.4).toFixed(1)
    +'" text-anchor="end" font-size="9" fill="'+AXT+'">$'+Math.round(v)+'</text>');
