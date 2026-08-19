@@ -1250,17 +1250,6 @@ function pVR(){
  divLegend('c-vr-lg','whole-market measure \u2014 one series per district \u00b7 measured '
   +'monthly series, Cotality LGA vacancy rate, averaged by calendar year');
 }
-/* ---------- vacancy rate v rent: six district panels ----------
-   A dedicated renderer rather than panels(), for two reasons. panels() computes a
-   right-hand scale for ax:'r' series but never draws labels for it, so the vacancy
-   line came out with no readable scale at all - and since twelve slides call
-   panels(), fixing that in place would move all of them. It also strokes every
-   series identically, which put a near-black vacancy line on top of the rents this
-   slide is actually about.
-   Here vacancy is a shaded area on a labelled right axis carrying the same 3%
-   balanced marker the projection slide uses, and the rents sit on top in the
-   district colour - house solid, unit dashed. Rents share one scale across all six
-   panels so districts stay comparable. */
 /* ---------- vacancy rate v rent: six separate charts, one per district ----------
    Six independent SVGs in six cards, each carrying its own key, rather than one
    gridded chart under a shared legend. panels() is left alone: it computes a
