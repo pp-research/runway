@@ -171,6 +171,40 @@ body.railshut .stage{margin-left:56px}
 .lgd .tog[aria-pressed=false]{opacity:.34}
 .lgd .tog:hover{color:var(--teal-text)}
 .lgd .tog:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
+/* ---------- panel tables ----------
+   There was no table, th, td or .dv rule anywhere in the file, so every sortable
+   table in the deck rendered with browser defaults: columns butted together, no
+   header rule, and tr.off did nothing at all - hidden districts stayed at full
+   strength in tables while dimming everywhere else. */
+.pnl table{width:100%;border-collapse:collapse;font-size:.82cqw}
+.pnl thead th{text-align:right;font-weight:700;color:var(--ink-dim);font-size:.7cqw;
+ letter-spacing:.05em;text-transform:uppercase;padding:0 .5cqw .32cqw;white-space:nowrap;
+ border-bottom:.09cqw solid rgba(23,27,36,.2);cursor:pointer;user-select:none}
+.pnl thead th:first-child{text-align:left;padding-left:0}
+.pnl thead th:hover{color:var(--teal-text)}
+.pnl thead th .ar{font-size:.6cqw;opacity:.7}
+.pnl tbody td{text-align:right;padding:.28cqw .5cqw;white-space:nowrap;
+ border-bottom:.06cqw solid rgba(23,27,36,.07);font-variant-numeric:tabular-nums}
+.pnl tbody td:first-child{text-align:left;padding-left:0;font-weight:700;color:var(--ink)}
+.pnl tbody tr:last-child td{border-bottom:0}
+.pnl tbody tr:hover td{background:rgba(23,27,36,.045)}
+.pnl tbody tr.off{opacity:.34}
+.pnl td.dv{cursor:pointer}
+.pnl td.dv i{display:inline-block;width:.55cqw;height:.55cqw;border-radius:.12cqw;
+ margin-right:.42cqw;vertical-align:-.02cqw}
+/* ---------- traffic-light dots ----------
+   Two per pillar: now, then forecast. These had no rule either, so every light on
+   the Traffic lights page rendered as nothing at all - the page named after them
+   showed none. Colour comes from currentColor so one ring rule serves all three. */
+.dot{display:inline-block;width:.62cqw;height:.62cqw;border-radius:50%;
+ margin-right:.26cqw;vertical-align:-.05cqw;background:currentColor}
+.dot:last-child{margin-right:0}
+.dot.GREEN{color:#2F8F52}
+.dot.ORANGE{color:#D9962B}
+.dot.RED{color:#C4203C}
+/* hollow for "now", solid for the forecast - the same reading the projection
+   bands use, so the two pages agree on what a hollow marker means */
+.dot:first-child{background:transparent;box-shadow:inset 0 0 0 .13cqw currentColor}
 /* ---------- vacancy rate v rent: one card per district ----------
    Six independent charts rather than one gridded figure, each stating its own key,
    so no shared legend sits above the grid. The card is a flex column: title row
