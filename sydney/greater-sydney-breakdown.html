@@ -164,7 +164,10 @@ body.railshut .stage{margin-left:56px}
 .lgd .tog{display:inline-flex;align-items:center;gap:.32cqw;background:none;border:0;
  padding:0 .12cqw;font-size:.86cqw;font-weight:700;color:var(--ink);letter-spacing:-.01em;
  transition:.12s}
-.lgd .tog i{width:.62cqw;height:.62cqw;border-radius:50%;flex:none}
+/* rounded square, not a circle: the deck reserves circles for data points (line
+   markers, the dots on the projection bands) and uses squares for category keys -
+   the cover's district list, panel titles, end labels and the tooltip swatch */
+.lgd .tog i{width:.6cqw;height:.6cqw;border-radius:.12cqw;flex:none}
 .lgd .tog[aria-pressed=false]{opacity:.34}
 .lgd .tog:hover{color:var(--teal-text)}
 .lgd .tog:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
