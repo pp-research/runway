@@ -274,6 +274,11 @@ body.railshut .stage{margin-left:56px}
 .vrax .l{position:absolute;top:.3cqw;font-size:.58cqw;color:var(--ink-faint);
  transform:translateX(-50%);white-space:nowrap}
 .cover .pad{justify-content:center}
+/* The cover's footer line. It had no rule at all, so it flowed from the top of the
+   absolutely-positioned .slide and sat behind the data banner - which is why the old
+   long disclaimer appeared clipped across the top of page 1. */
+.cover .disc{position:absolute;left:3.4cqw;right:3.4cqw;bottom:1.5cqw;font-size:.72cqw;
+ color:#8FA0AB;font-style:italic;line-height:1.4}
 .cover .slide{background:radial-gradient(115% 85% at 12% 14%,#1E525E 0%,#16303A 48%,#0F1A20 100%)}
 .page.cover{background:#0F1A20}   /* matches the gradient's outer stop at the screen edge */
 .cover h1{font-size:4.6cqw;line-height:1.02;margin:0;font-weight:700;letter-spacing:-.03em;
