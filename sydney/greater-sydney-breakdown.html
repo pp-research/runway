@@ -145,6 +145,26 @@ body.railshut .stage{margin-left:56px}
 .lgd .key{display:inline-flex;align-items:center;gap:.35cqw;flex:none;font-size:.82cqw;
  font-weight:700;color:var(--ink)}
 .lgd .key svg{width:2.1cqw;height:.8cqw;flex:none;overflow:visible}
+/* ---------- vacancy rate v rent: one card per district ----------
+   Six independent charts rather than one gridded figure, each stating its own key,
+   so no shared legend sits above the grid. The card is a flex column: title row
+   fixed, chart takes the rest. */
+.vrrgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.55cqw;flex:1;min-height:0}
+.vrrc{background:#FFFFFF;border-radius:.45cqw;padding:.5cqw .6cqw;display:flex;
+ flex-direction:column;min-height:0;box-shadow:0 .05cqw .25cqw rgba(23,27,36,.07)}
+.vrrc-top{display:flex;align-items:center;justify-content:space-between;gap:.4cqw;flex:none;
+ margin-bottom:.28cqw}
+.vrrc-nm{display:flex;align-items:center;gap:.35cqw;font-size:1cqw;font-weight:700;
+ color:var(--ink);letter-spacing:-.01em}
+.vrrc-nm i{width:.58cqw;height:.58cqw;border-radius:.12cqw;flex:none}
+.vrrc-key{display:flex;align-items:center;gap:.5cqw;flex:none}
+.vrrc-key span{display:inline-flex;align-items:center;gap:.24cqw;font-size:.58cqw;
+ font-weight:700;color:var(--ink-dim);white-space:nowrap}
+.vrrc-key svg{width:1.4cqw;height:.5cqw;flex:none;overflow:visible}
+/* the viewBox aspect is cut to the space left after the title row, so height:auto
+   fills the card rather than leaving a gap under the chart */
+.vrrc-ch{flex:1;min-height:0}
+.vrrc-ch svg{width:100%;height:auto;display:block}
 .dm{border-bottom:.1cqw dotted var(--orange)}
 .dm::after{content:'\00b0';color:var(--orange);font-weight:700;font-size:.85em}
 /* ---------- vacancy-rate cards: one per district ----------
@@ -503,7 +523,7 @@ body.presenting .exitfs{display:grid}
    <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Vacancy rate v rent</h2>
    <p class="cap">House and unit rents against the vacancy rate.</p>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-vrrent-lg"></div><div class="chbox" id="c-vrrent"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="vrrgrid" id="c-vrrent-cards"></div></div>
   </div>
   <div class="pnum">15 / 30</div>
  </div>
