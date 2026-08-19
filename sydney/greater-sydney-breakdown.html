@@ -144,18 +144,11 @@ body.railshut .stage{margin-left:56px}
    ONCE beneath the grid rather than repeated inside all six cards. Budget: the
    panel affords ~40.5cqw of height, so a 2x3 grid gives each card ~12.2cqw and
    the content below totals ~11.0cqw. Do not add a per-card axis — it overflows. */
-/* Tighter/Looser is stated once above the grid. The 0-6% scale, by contrast, sits
-   INSIDE each card: two cards to a row means a panel-width axis aligns with
-   neither band, and a single axis at the foot of the panel leaves the top two
-   rows reading their bands against a scale three cards away. */
-.vrends{display:flex;justify-content:space-between;align-items:baseline;flex:none;
- font-size:.55cqw;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
- color:var(--ink-faint);margin:0 .1cqw .3cqw}
-.vrends .bal{font-weight:700;letter-spacing:.02em;text-transform:none;font-size:.58cqw;
- color:var(--ink-dim)}
-/* the same glyph that marks 3% inside every band, so the label is self-explaining */
-.vrends .bal::before{content:'';display:inline-block;width:.1cqw;height:.6cqw;
- background:var(--ink);vertical-align:-.08cqw;margin-right:.3cqw}
+/* Everything the ruler needs to be read - its end labels, its balanced marker and
+   its 0-6% scale - sits INSIDE each card, on the band it describes. Panel-level
+   versions of any of these fail the same way: two cards to a row means a
+   panel-width strip aligns with neither band, and the lower rows end up read
+   against a key several cards away. */
 .vrgrid{display:grid;grid-template-columns:1fr 1fr;gap:.55cqw 1.1cqw;flex:1;min-height:0}
 .vrc{background:#FFFFFF;border-radius:.4cqw;padding:.45cqw .7cqw;display:flex;
  flex-direction:column;min-height:0;box-shadow:0 .05cqw .25cqw rgba(23,27,36,.07)}
