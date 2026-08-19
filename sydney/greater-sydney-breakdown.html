@@ -208,11 +208,11 @@ body.railshut .stage{margin-left:56px}
 .dot.ORANGE{color:#D9962B}
 .dot.RED{color:#C4203C}
 /* Hollow for "now", solid for the forecast - the same reading the projection bands
-   use. :not(:last-child) is essential: .dot is also used ON ITS OWN elsewhere (the
-   verdict groups on Market summary, the confidence indicators), and those single
-   dots must stay solid rather than being turned into rings. */
-.dot:first-child:not(:last-child){background:transparent;
- box-shadow:inset 0 0 0 .13cqw currentColor}
+   use. The "now" case is marked with an explicit class, NOT by position: .dot is also
+   used on its own (the confidence indicators), and there the value that follows is
+   itself a <span class="dm">, so every positional selector - :first-child,
+   :not(:last-child) - matches the lone dot too and turns it into a ring. */
+.dot.now{background:transparent;box-shadow:inset 0 0 0 .13cqw currentColor}
 /* ---------- vacancy rate v rent: one card per district ----------
    Six independent charts rather than one gridded figure, each stating its own key,
    so no shared legend sits above the grid. The card is a flex column: title row
