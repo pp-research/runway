@@ -150,10 +150,12 @@ body.railshut .stage{margin-left:56px}
    panel-width strip aligns with neither band, and the lower rows end up read
    against a key several cards away. */
 .vrgrid{display:grid;grid-template-columns:1fr 1fr;gap:.55cqw 1.1cqw;flex:1;min-height:0}
-/* Sizes here are tuned to the room this page actually has. It carries no kick line
-   and no caption - both were dropped so six cards could breathe - which leaves the
-   panel ~44cqw tall and each card row ~14.4cqw. Card content totals ~13.6cqw. Put
-   a caption back and the type must come down again. */
+/* Sizes here are tuned to the room this page actually has. It carries no kick line,
+   no caption and no .pnl wrapper - all dropped so six cards could breathe - leaving
+   the grid ~46cqw tall and each card row ~15cqw against ~13.6cqw of content. Put a
+   caption or a panel back and the type has to come down again.
+   The cards sit straight on the slide, so the gaps between them are the slide
+   colour: there is deliberately no surface behind the grid. */
 .vrc{background:#FFFFFF;border-radius:.45cqw;padding:.55cqw .85cqw;display:flex;
  flex-direction:column;min-height:0;box-shadow:0 .05cqw .25cqw rgba(23,27,36,.07)}
 .vrc.off{opacity:.32}
@@ -501,7 +503,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>Vacancy rate projection</h2>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="vrgrid" id="c-vrp-cards"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="vrgrid" id="c-vrp-cards"></div></div>
   </div>
   <div class="pnum">16 / 30</div>
  </div>
