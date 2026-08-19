@@ -482,7 +482,7 @@ body.presenting .exitfs{display:grid}
    <div class="kick">SYDNEY DIVISIONS &middot; HOUSES AND UNITS</div>
    <h2>Vacancy rate projection</h2>
    <p class="cap">The projection for every district, and the chain that produces it.</p>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="vrgrid" id="c-vrp-cards"></div><div class="vrax" id="c-vrp-ax"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="vrends"><span>Tighter (undersupplied)</span><span class="bal">balanced ~3%</span><span>Looser (oversupplied)</span></div><div class="vrgrid" id="c-vrp-cards"></div></div></div>
   </div>
   <div class="pnum">16 / 30</div>
  </div>
@@ -1298,16 +1298,6 @@ function vrCard(d){
 }
 function pVRProj(){
  put('c-vrp-cards',ORDER.map(vrCard).join(''));
- /* the axis the six cards share: ticks and numbers on the first line, the
-    balanced marker and the two end labels on the second so nothing collides at 3% */
- let ax='';
- for(let n=0;n<=6;n++){const L=(n/SP_MAX*100).toFixed(1);
-  ax+='<span class="t" style="left:'+L+'%"></span>'
-   +'<span class="l" style="left:'+L+'%">'+n+'%</span>';}
- ax+='<span class="l bal" style="left:'+(SP_BAL/SP_MAX*100).toFixed(1)+'%">balanced ~3%</span>'
-  +'<span class="ends" style="left:0">Tighter (undersupplied)</span>'
-  +'<span class="ends" style="right:0">Looser (oversupplied)</span>';
- put('c-vrp-ax',ax);
 }
 function pDemand(){
  bars('c-dem',ORDER,[
