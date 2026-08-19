@@ -1290,9 +1290,9 @@ function pVR(){
     reclaims the 150 units of right padding those labels needed.
     No ytitle: the rotated "Vacancy Rate" repeated the slide heading and cost another
     40 units. H is the viewBox aspect, not a pixel height - the svg is width-driven,
-    and 525 against W=1000 fills the panel now the page has no kick line or caption
-    and the years are rotated (the default 390 left a third of the panel empty). */
- multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',H:525,
+    and 505 against W=1000 fills the panel without the rotated years running past its
+    bottom edge (the default 390 left a third of the panel empty; 525 overflowed). */
+ multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',H:505,
   nice:1,noEnds:1,solid:1,xrot:1,ref:{v:3,label:'balanced 3%',col:'#8A4B00'}});
  dotLegend('c-vr-lg');   /* dot + name, no note */
 }
