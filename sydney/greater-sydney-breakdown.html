@@ -158,9 +158,10 @@ body.railshut .stage{margin-left:56px}
  flex-direction:column;min-height:0;box-shadow:0 .05cqw .25cqw rgba(23,27,36,.07)}
 .vrc.off{opacity:.32}
 .vrc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5cqw}
+/* no colour dot beside the name: the three row bullets already carry the district
+   colour, so a fourth swatch in the title was redundant */
 .vrc-nm{display:flex;align-items:baseline;gap:.45cqw;font-size:1.28cqw;font-weight:700;
  color:var(--ink);letter-spacing:-.01em;line-height:1.1}
-.vrc-nm i{width:.72cqw;height:.72cqw;border-radius:50%;flex:none;align-self:center}
 /* inline beside the name rather than on its own line - population already appears
    as the Current row's People figure, so a second copy cost a line for nothing */
 .vrc-sub{font-size:.66cqw;font-weight:400;color:var(--ink-faint);white-space:nowrap}
@@ -1306,7 +1307,7 @@ function vrCard(d){
   +'</div>';
  return '<div class="vrc'+(hidden.has(d)?' off':'')+'">'
   +'<div class="vrc-top">'
-   +'<div class="vrc-nm"><i style="background:'+col+'"></i>'+d
+   +'<div class="vrc-nm">'+d
    +(MEMBERS[d]?'<span class="vrc-sub">'+MEMBERS[d].length+' LGA'
      +(MEMBERS[d].length===1?'':'s')+'</span>':'')+'</div>'
    +'<div class="vrc-bdg '+cls+'"><div class="b1">'+txt+'</div>'
