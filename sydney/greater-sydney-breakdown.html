@@ -149,7 +149,8 @@ body.railshut .stage{margin-left:56px}
    versions of any of these fail the same way: two cards to a row means a
    panel-width strip aligns with neither band, and the lower rows end up read
    against a key several cards away. */
-.vrgrid{display:grid;grid-template-columns:1fr 1fr;gap:.55cqw 1.1cqw;flex:1;min-height:0}
+/* one gap value, so the gutter down the middle matches the gutters between rows */
+.vrgrid{display:grid;grid-template-columns:1fr 1fr;gap:.55cqw;flex:1;min-height:0}
 /* Sizes here are tuned to the room this page actually has. It carries no kick line,
    no caption and no .pnl wrapper - all dropped so six cards could breathe - leaving
    the grid ~46cqw tall and each card row ~15cqw against ~13.6cqw of content. Put a
