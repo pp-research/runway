@@ -507,7 +507,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>Vacancy rate</h2>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: SQM Research / Cotality</span></div><div class="pnl"><div class="chbox" id="c-vr"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: SQM Research / Cotality</span></div><div class="pnl"><div class="lgd" id="c-vr-lg"></div><div class="chbox" id="c-vr"></div></div></div>
   </div>
   <div class="pnum">14 / 30</div>
  </div>
@@ -1262,15 +1262,15 @@ function pIncRent(){
  divLegend('c-incrent-lg','dark = rent share of wage, teal = affordability index');
 }
 function pVR(){
- /* no legend row: multiLine() labels each series at the end of its own line, so the
-    district pills were naming them a second time */
- /* no ytitle: the rotated "Vacancy Rate" label repeated the slide heading and cost
-    40 units of plot width. nice+ref give round ticks and the shared 3% threshold. */
- /* H is the viewBox aspect, not a pixel height - the svg is width-driven. 466 against
-    W=1000 matches the panel now that the page carries no kick line and no caption;
-    the default 390 left a third of the panel empty below the chart. */
+ /* Series are named by the legend pills, not at the end of each line, so noEnds
+    reclaims the 150 units of right padding those labels needed.
+    No ytitle: the rotated "Vacancy Rate" repeated the slide heading and cost another
+    40 units. H is the viewBox aspect, not a pixel height - the svg is width-driven,
+    and 466 against W=1000 matches the panel now the page has no kick line or caption
+    (the default 390 left a third of the panel empty below the chart). */
  multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',H:466,
-  nice:1,ref:{v:3,label:'balanced 3%',col:'#8A4B00'}});
+  nice:1,noEnds:1,ref:{v:3,label:'balanced 3%',col:'#8A4B00'}});
+ divLegend('c-vr-lg');   /* pills only - the explanatory note is deliberately gone */
 }
 /* ---------- vacancy rate v rent: six separate charts, one per district ----------
    Six independent SVGs in six cards, each carrying its own key, rather than one
