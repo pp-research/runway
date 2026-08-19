@@ -150,20 +150,24 @@ body.railshut .stage{margin-left:56px}
    panel-width strip aligns with neither band, and the lower rows end up read
    against a key several cards away. */
 .vrgrid{display:grid;grid-template-columns:1fr 1fr;gap:.55cqw 1.1cqw;flex:1;min-height:0}
-.vrc{background:#FFFFFF;border-radius:.4cqw;padding:.45cqw .7cqw;display:flex;
+/* Sizes here are tuned to the room this page actually has. It carries no kick line
+   and no caption - both were dropped so six cards could breathe - which leaves the
+   panel ~44cqw tall and each card row ~14.4cqw. Card content totals ~13.6cqw. Put
+   a caption back and the type must come down again. */
+.vrc{background:#FFFFFF;border-radius:.45cqw;padding:.55cqw .85cqw;display:flex;
  flex-direction:column;min-height:0;box-shadow:0 .05cqw .25cqw rgba(23,27,36,.07)}
 .vrc.off{opacity:.32}
 .vrc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5cqw}
-.vrc-nm{display:flex;align-items:baseline;gap:.4cqw;font-size:1.1cqw;font-weight:700;
+.vrc-nm{display:flex;align-items:baseline;gap:.45cqw;font-size:1.28cqw;font-weight:700;
  color:var(--ink);letter-spacing:-.01em;line-height:1.1}
-.vrc-nm i{width:.62cqw;height:.62cqw;border-radius:50%;flex:none;align-self:center}
+.vrc-nm i{width:.72cqw;height:.72cqw;border-radius:50%;flex:none;align-self:center}
 /* inline beside the name rather than on its own line - population already appears
    as the Current row's People figure, so a second copy cost a line for nothing */
-.vrc-sub{font-size:.58cqw;font-weight:400;color:var(--ink-faint);white-space:nowrap}
+.vrc-sub{font-size:.66cqw;font-weight:400;color:var(--ink-faint);white-space:nowrap}
 .vrc-bdg{flex:none;text-align:right;border:.08cqw solid;border-radius:.3cqw;
- padding:.16cqw .36cqw;line-height:1.15}
-.vrc-bdg .b1{font-size:.62cqw;font-weight:700;white-space:nowrap}
-.vrc-bdg .b2{font-size:.46cqw;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+ padding:.2cqw .42cqw;line-height:1.15}
+.vrc-bdg .b1{font-size:.7cqw;font-weight:700;white-space:nowrap}
+.vrc-bdg .b2{font-size:.52cqw;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
 .vrc-bdg.tight{color:#8A4B00;border-color:rgba(138,75,0,.4);background:rgba(255,169,31,.10)}
 .vrc-bdg.loose{color:#1F6B4F;border-color:rgba(31,107,79,.4);background:rgba(31,107,79,.08)}
 .vrc-bdg.flat{color:var(--ink-dim);border-color:rgba(74,85,102,.35);background:rgba(74,85,102,.06)}
