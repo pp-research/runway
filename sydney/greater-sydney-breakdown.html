@@ -152,6 +152,9 @@ body.railshut .stage{margin-left:56px}
 .pnl{background:linear-gradient(180deg,#D9EDF4 0%,#EAF6F9 42%,#FAFDFE 100%);
  color:var(--ink);border-radius:.55cqw;padding:1.15cqw 1.35cqw 1cqw;flex:1;
  display:flex;flex-direction:column;min-height:0}
+/* bare: no panel shell, so the slide colour shows between the cards - matches the
+   vacancy-rate-v-rent page, whose grid sits directly on the slide */
+.pnl.bare{background:none;padding:0;border-radius:0}
 .pnl h3{font-size:1cqw;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.06em;
  margin:0 0 .7cqw;font-weight:700}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:1.2cqw;flex:1;min-height:0}
@@ -490,7 +493,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>Price level</h2>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-price-lg"></div><div class="chbox" id="c-price"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl bare"><div class="lgd" id="c-price-lg"></div><div class="chbox" id="c-price"></div></div></div>
   </div>
   <div class="pnum">4 / 29</div>
  </div>
@@ -501,7 +504,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>Year on year price movement</h2>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-yoy-lg"></div><div class="chbox" id="c-yoy"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl bare"><div class="lgd" id="c-yoy-lg"></div><div class="chbox" id="c-yoy"></div></div></div>
   </div>
   <div class="pnum">5 / 29</div>
  </div>
@@ -622,7 +625,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>Affordability index</h2>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics &amp; CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-ai-lg"></div><div class="chbox" id="c-ai"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics &amp; CoreLogic</span></div><div class="pnl bare"><div class="lgd" id="c-ai-lg"></div><div class="chbox" id="c-ai"></div></div></div>
   </div>
   <div class="pnum">16 / 29</div>
  </div>
@@ -633,7 +636,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>Price to income ratio</h2>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics &amp; CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-pti-lg"></div><div class="chbox" id="c-pti"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics &amp; CoreLogic</span></div><div class="pnl bare"><div class="lgd" id="c-pti-lg"></div><div class="chbox" id="c-pti"></div></div></div>
   </div>
   <div class="pnum">17 / 29</div>
  </div>
@@ -666,7 +669,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>Dwelling sales</h2>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-sales-lg"></div><div class="chbox" id="c-sales"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl bare"><div class="lgd" id="c-sales-lg"></div><div class="chbox" id="c-sales"></div></div></div>
   </div>
   <div class="pnum">20 / 29</div>
  </div>
@@ -677,7 +680,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>Approvals v population change</h2>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics</span></div><div class="pnl"><div class="lgd" id="c-appr-lg"></div><div class="chbox" id="c-appr"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics</span></div><div class="pnl bare"><div class="lgd" id="c-appr-lg"></div><div class="chbox" id="c-appr"></div></div></div>
   </div>
   <div class="pnum">21 / 29</div>
  </div>
@@ -688,7 +691,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>New households v housing</h2>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics</span></div><div class="pnl"><div class="lgd" id="c-hholds-lg"></div><div class="chbox" id="c-hholds"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: Australian Bureau of Statistics</span></div><div class="pnl bare"><div class="lgd" id="c-hholds-lg"></div><div class="chbox" id="c-hholds"></div></div></div>
   </div>
   <div class="pnum">22 / 29</div>
  </div>
@@ -743,7 +746,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>Yield v cash rate</h2>
-   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl"><div class="lgd" id="c-ycr-lg"></div><div class="chbox" id="c-ycr"></div></div></div>
+   <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic</span></div><div class="pnl bare"><div class="lgd" id="c-ycr-lg"></div><div class="chbox" id="c-ycr"></div></div></div>
   </div>
   <div class="pnum">27 / 29</div>
  </div>
