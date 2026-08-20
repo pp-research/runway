@@ -1717,14 +1717,20 @@ function render(){
  pRunway();pPTI();pIncRent();pVR();pVRRent();pVRProj();pDemand();pSomDom();pSales();
  pAppr();pHholds();pPopch();pConf();pJA();pUnemp();pYieldCmp();pYCR();pMarkets();
 }
+/* rail tooltip wording for each data kind, matching the on-slide banner labels */
+const KINDWORD={real:'Measured data',mixed:'Mixed',sample:'Sample data',ref:'Reference'};
 function initRail(){
  gid('rail').innerHTML='<button class="chev" id="chev" aria-expanded="true"'
   +' aria-controls="railwrap" title="Collapse page list">'
   +'<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">'
   +'<path d="M3 8.5L7 4.5L11 8.5" fill="none" stroke="currentColor" stroke-width="1.8"'
   +' stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
+  +'<div class="rkey"><span class="k k-real"></span>Measured'
+  +'<span class="k k-mixed"></span>Mixed'
+  +'<span class="k k-sample"></span>Sample</div>'
   +'<div class="railwrap" id="railwrap">'
-  +PAGES.map((p,i)=>'<button class="pg" data-go="'+p[0]+'" title="'+(i+1)+'. '+p[1]+'">'
+  +PAGES.map((p,i)=>'<button class="pg k-'+p[3]+'" data-go="'+p[0]+'"'
+   +' title="'+(i+1)+'. '+p[1]+' — '+(KINDWORD[p[3]]||p[3])+'">'
    +'<span class="n">'+(i+1)+'</span><span class="lbl">'+p[1]+'</span></button>').join('')
   +'</div>';
  $$('#rail button.pg').forEach(b=>b.onclick=()=>{
