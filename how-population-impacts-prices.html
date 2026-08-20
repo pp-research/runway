@@ -186,42 +186,13 @@ Brisbane &mdash; and those levels predict nothing. What is tested throughout is 
 norm: whether a market is unusually cheap, or unusually dear, by its own standards.</p>
 <p class="scope" style="background:#F7F7F6"><b>Scope.</b> All twelve Commuter/Lifestyle markets from the
 research framework, houses and units, 2002&ndash;2025 for prices and 2016&ndash;17 to 2024&ndash;25 for
-migration. Sections 02&ndash;04 set out where each market sits and which capital its gap tracks; 05 and 06
-test the gap against prices and against people; 07 shows how long the effect persists; 08 lists what is
+migration. Section 02 tests which capital&rsquo;s gap best tracks each market, 03 and 04 show where each market sits
+and how its gap has moved; 05 and 06 test the gap against prices and against people; 07 shows how long the effect persists; 08 lists what is
 still outstanding; 09 is the full table and 10 the method.</p>
 </section>
 
 <section>
-<h2><span class="num">02</span>Where each market sits today</h2>
-<p class="lede">Each satellite&rsquo;s current discount to its capital, against its own long-run average.
-Positive means cheaper than normal &mdash; the condition that has historically preceded catch-up.</p>
-<div class="ctl"><span class="seg" id="segA"><button data-s="H" class="on">Houses</button><button data-s="U">Units</button></span></div>
-<div class="chart tall" style="height:420px"><canvas id="cGap"></canvas></div>
-<p class="cap">Gap to the capital at December 2025 minus that market&rsquo;s 2002&ndash;2025 average gap, in
-percentage points. Premium markets (Gold Coast, Sunshine Coast) are marked &mdash; for them the sign
-reverses.</p>
-<div class="scroll"><table id="tGap"><thead><tr><th>Market</th><th>Capital</th><th>Type</th>
-<th class="n">Gap now</th><th class="n">Long-run avg</th><th class="n">Difference</th>
-<th>Reading</th></tr></thead><tbody></tbody></table></div>
-<p class="cap">Gap = how much cheaper the satellite is than its capital. Negative means it is dearer.</p>
-</section>
-
-<section>
-<h2><span class="num">03</span>How the gap moves over time</h2>
-<p class="lede">Pick a market. The line is its price gap to the capital each year; the band is that
-market&rsquo;s long-run average. Watch how the line returns to the band.</p>
-<div class="ctl"><select id="mSel"></select>
-<span class="seg" id="segB"><button data-s="H" class="on">Houses</button><button data-s="U">Units</button></span>
-<span class="cap" id="mHint"></span></div>
-<div class="chart"><canvas id="cTrend"></canvas></div>
-<p class="cap">Gap to the capital, per cent. Above the dashed line the satellite is cheaper than its own
-norm; below it, dearer.</p>
-<div class="chart"><canvas id="cGrow"></canvas></div>
-<p class="cap">Annual price growth, satellite against its capital.</p>
-</section>
-
-<section>
-<h2><span class="num">04</span>Value gap against each capital</h2>
+<h2><span class="num">02</span>Value gap against each capital</h2>
 <p class="lede">Each market measured three ways &mdash; its value gap against Sydney, against Melbourne and
 against Brisbane &mdash; and how well each predicts that market&rsquo;s own median price growth. A ring
 marks the market&rsquo;s own state capital.</p>
@@ -248,6 +219,35 @@ Sydney and Melbourne are the two largest and earliest-moving markets in the coun
 against either partly reflects where the national cycle sits rather than a buyer relationship.
 <br><br><b>Hobart</b> is Tasmania&rsquo;s own capital and has no state donor, so all three of its readings
 are comparisons rather than mechanisms.</div>
+</section>
+
+<section>
+<h2><span class="num">03</span>Where each market sits today</h2>
+<p class="lede">Each satellite&rsquo;s current discount to its capital, against its own long-run average.
+Positive means cheaper than normal &mdash; the condition that has historically preceded catch-up.</p>
+<div class="ctl"><span class="seg" id="segA"><button data-s="H" class="on">Houses</button><button data-s="U">Units</button></span></div>
+<div class="chart tall" style="height:420px"><canvas id="cGap"></canvas></div>
+<p class="cap">Gap to the capital at December 2025 minus that market&rsquo;s 2002&ndash;2025 average gap, in
+percentage points. Premium markets (Gold Coast, Sunshine Coast) are marked &mdash; for them the sign
+reverses.</p>
+<div class="scroll"><table id="tGap"><thead><tr><th>Market</th><th>Capital</th><th>Type</th>
+<th class="n">Gap now</th><th class="n">Long-run avg</th><th class="n">Difference</th>
+<th>Reading</th></tr></thead><tbody></tbody></table></div>
+<p class="cap">Gap = how much cheaper the satellite is than its capital. Negative means it is dearer.</p>
+</section>
+
+<section>
+<h2><span class="num">04</span>How the gap moves over time</h2>
+<p class="lede">Pick a market. The line is its price gap to the capital each year; the band is that
+market&rsquo;s long-run average. Watch how the line returns to the band.</p>
+<div class="ctl"><select id="mSel"></select>
+<span class="seg" id="segB"><button data-s="H" class="on">Houses</button><button data-s="U">Units</button></span>
+<span class="cap" id="mHint"></span></div>
+<div class="chart"><canvas id="cTrend"></canvas></div>
+<p class="cap">Gap to the capital, per cent. Above the dashed line the satellite is cheaper than its own
+norm; below it, dearer.</p>
+<div class="chart"><canvas id="cGrow"></canvas></div>
+<p class="cap">Annual price growth, satellite against its capital.</p>
 </section>
 
 <section>
