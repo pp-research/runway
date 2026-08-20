@@ -107,6 +107,28 @@ border:1px solid rgba(217,217,214,.25);transition:.15s}
 .pill a:hover{border-color:var(--teal);color:#fff}
 .pill a.on{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:500}
 @media print{.pill{display:none}}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.panel h3{margin:0 0 2px;font-size:14px;font-weight:600}
+.panel .ph{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--t700);font-weight:600;margin:0 0 10px}
+.panel .cap{margin-top:10px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:0 0 18px}
+.kpi .k{background:var(--dteal);border-radius:10px;padding:16px 18px;color:#fff}
+.kpi .k .l{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#9BE3EC;font-weight:600}
+.kpi .k .v{font-size:30px;font-weight:600;line-height:1.15;margin:4px 0 2px}
+.kpi .k .s{font-size:11px;color:var(--lgray)}
+.go{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:4px}
+.go a{display:block;text-decoration:none;background:var(--t50);border:1px solid var(--line);
+border-radius:10px;padding:16px 18px;transition:.15s}
+.go a:hover{border-color:var(--teal);background:#DCF1F4}
+.go .t{font-size:15px;font-weight:600;color:var(--dteal);margin-bottom:4px}
+.go .d{font-size:12px;color:var(--dgray);line-height:1.5}
+.go .n{font-size:11px;color:var(--t700);font-weight:600;margin-top:8px}
+section.tight{padding:20px 22px}
+h2.sm{font-size:16px}
+@media(max-width:980px){.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}}
 .scroll{overflow-x:auto}
 .printonly{display:none}
 footer{color:var(--dgray);font-size:12px;padding:0 0 40px}
@@ -151,123 +173,88 @@ footer .wrap{border-top:1px solid var(--line);padding-top:18px}
 <img src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-inverted.png" alt="Performance Property">
 <p class="kick">Rents &amp; Prices</p>
 <h1>Where people come from and go to</h1>
-<p class="sub" style="color:#fff;font-size:17px;font-weight:400;margin:0 0 10px">Confirming the donor city
-for each market from Census migration flows</p>
-<p class="sub">Every person in the 2021 Census was asked where they lived five years earlier. That gives
-the actual origin&ndash;destination flows, so the donor city for each commuter and lifestyle market can be
-read off the data rather than assumed.</p>
-<p class="meta">Research Division &middot; prepared August 2026 &middot; ABS Census 2021, place of usual
-residence five years ago (PUR5P), LGA level</p>
+<p class="sub">Migration flows, rent and price timing, and value against the capital &mdash; 36 markets,
+2002 to 2025.</p>
+<p class="meta">Research Division &middot; August 2026 &middot; ABS Census 2021 &middot; Cotality
+(CoreLogic) medians</p>
 </div></header>
 <nav class="pill"><div class="wrap">
-<a href="index.html" class="on">Where people come from and go to</a>
-<a href="which-leads-rents-or-prices.html">Which leads: rents or prices</a>
+<a href="where-people-come-from-and-go-to.html" class="on">Where people come from and go to</a>
+<a href="which-leads.html">Which leads: rents or prices</a>
 <a href="how-population-impacts-prices.html">How population impacts prices</a>
 </div></nav>
+
 <main class="wrap">
 
-<section>
-<h2><span class="num">01</span>Finding</h2>
-<div class="headline">
-<p><b>The donor city is the capital of the state the market is in &mdash; in all eleven cases.</b> Not one
-commuter or lifestyle market draws most of its arrivals from another state&rsquo;s capital. Sydney is a
-meaningful secondary source for the two Queensland lifestyle markets, but Brisbane still sends more.</p>
+<div class="kpi" id="kpi"></div>
+
+<section class="tight">
+<h2 class="sm"><span class="num">01</span>Migration &mdash; who sends people where</h2>
+<div class="grid g2">
+<div class="panel"><div class="ph">Arrivals from each capital</div>
+<h3>The donor is the state capital, 11 of 11</h3>
+<div class="chart" style="height:400px"><canvas id="cFlow"></canvas></div>
+<p class="cap">People living in each market in 2021 who lived in that capital in 2016. Log scale.</p></div>
+<div class="panel"><div class="ph">Net flow with the donor</div>
+<h3>Eight of nine drain their capital</h3>
+<div class="chart" style="height:400px"><canvas id="cNet"></canvas></div>
+<p class="cap">Arrivals minus departures. Central Coast and Ipswich excluded &mdash; both sit inside
+their capital&rsquo;s boundary.</p></div>
 </div>
-<p class="lede">Four things worth knowing about it.</p>
-<ul class="key">
-<li><b>The state-capital rule is confirmed 11 out of 11.</b> Every market&rsquo;s largest single capital-city
-source is its own state capital. The assumption the value-gap study rested on turns out to be right.</li>
-<li><b>The dominance varies enormously.</b> Ipswich draws <b>62 times</b> more from Brisbane than from any
-other capital, and the Central Coast <b>32 times</b> more from Sydney. At the other end, Brisbane sends the
-Gold Coast only <b>1.5 times</b> what Sydney does, and the Sunshine Coast <b>2.8 times</b>.</li>
-<li><b>Saskia&rsquo;s hunch about the Sunshine Coast is half right.</b> Sydney does send people there
-&mdash; <b>6,863</b> over five years, far more than to any Victorian or NSW regional market. But Brisbane
-sends <b>19,428</b>. Sydney is a real secondary source, not the donor.</li>
-<li><b>The flow runs from capital to satellite, not the reverse.</b> Across the nine markets where the
-boundaries allow a clean comparison, arrivals from the capital outnumber departures to it by
-<b>1.54 to 1</b> &mdash; a net gain of <b>38,431</b> people over five years.</li>
-</ul>
-<div class="cards" id="kc"></div>
-<div class="note"><b>Why this matters.</b> The value-gap study forecasts price growth from how cheap a
-market is relative to its donor city. That only means anything if the donor is the place the buyers
-actually come from. It is &mdash; so the pairings used there stand, and the forecasting rule rests on a
-real population flow rather than a geographic guess.</div>
 </section>
 
-<section>
-<h2><span class="num">02</span>Where each market&rsquo;s arrivals come from</h2>
-<p class="lede">Share of all arrivals in the five years to 2021 that came from each of the three eastern
-capitals. Bars are the actual counts.</p>
-<div class="ctl"><span class="seg" id="segM">
-<button data-t="All" class="on">All 11</button><button data-t="Commuter">Commuter</button><button data-t="Commuter + Lifestyle">Commuter + Lifestyle</button><button data-t="Lifestyle">Lifestyle</button></span></div>
-<div class="leg"><span><i style="background:#00A0B4"></i>From Sydney</span>
-<span><i style="background:#3E7967"></i>From Melbourne</span>
-<span><i style="background:#FFA91F"></i>From Brisbane</span></div>
-<div class="chart tall"><canvas id="cFlow"></canvas></div>
-<p class="cap">People living in each market in 2021 who lived in that capital in 2016. Ipswich is drawn on
-its own scale note &mdash; at 168,504 from Brisbane it is an order of magnitude above the rest.</p>
-<div class="scroll"><table id="tFlow"><thead><tr><th>Market</th><th>Type</th>
-<th class="n">From Sydney</th><th class="n">From Melbourne</th><th class="n">From Brisbane</th>
-<th class="n">Donor</th><th class="n">Lead over 2nd</th></tr></thead><tbody></tbody></table></div>
-<p class="cap">Donor = the capital sending the most people. &ldquo;Lead over 2nd&rdquo; is how many times
-larger that flow is than the next capital&rsquo;s.</p>
+<section class="tight">
+<h2 class="sm"><span class="num">02</span>Which leads &mdash; rents or prices</h2>
+<div class="grid g3">
+<div class="panel"><div class="ph">Direction</div>
+<h3>Rents lead 2.4&times; more than prices</h3>
+<div class="chart" style="height:300px"><canvas id="cDir"></canvas></div>
+<p class="cap">Effect on the following year, all 36 markets pooled.</p></div>
+<div class="panel"><div class="ph">Lead-lag curve</div>
+<h3>The trail is longer on the rent side</h3>
+<div class="chart" style="height:300px"><canvas id="cCg"></canvas></div>
+<p class="cap">Correlation with price growth at each lag.</p></div>
+<div class="panel"><div class="ph">What separates them</div>
+<h3>Yield sorts the strong from the weak</h3>
+<div class="chart" style="height:300px"><canvas id="cYld"></canvas></div>
+<p class="cap">Rents-lead strength by yield group, 72 segments.</p></div>
+</div>
 </section>
 
-<section>
-<h2><span class="num">03</span>Net flow with the donor city</h2>
-<p class="lede">Arrivals from the capital minus departures back to it. Positive means the market is
-draining people out of its capital.</p>
-<div class="chart"><canvas id="cNet"></canvas></div>
-<p class="cap">Nine markets. Central Coast and Ipswich are excluded &mdash; see the note below.</p>
-<div class="scroll"><table id="tNet"><thead><tr><th>Market</th><th>Donor</th>
-<th class="n">In</th><th class="n">Out</th><th class="n">Net</th><th class="n">In per 1 out</th>
-</tr></thead><tbody></tbody></table></div>
-<div class="note"><b>Two markets cannot be measured this way.</b> Under the ABS geography, the
-<b>Central Coast LGA sits inside the Greater Sydney</b> capital-city area, and <b>Ipswich sits inside
-Greater Brisbane</b>. Their &ldquo;departures to the capital&rdquo; figure therefore counts everyone who
-simply stayed put &mdash; 267,365 for the Central Coast against a population of 346,000. Both are excluded
-from the net-flow table; their inflow figures in section 02 are unaffected.
-<br><br><b>Gold Coast is the one genuine negative.</b> It sends slightly more people back to Brisbane
-than it receives (0.96 to 1). That fits what the price work found: the Gold Coast trades at a
-<i>premium</i> to Brisbane and behaves as a destination in its own right rather than a value-driven
-satellite.</div>
+<section class="tight">
+<h2 class="sm"><span class="num">03</span>Value against the capital</h2>
+<div class="grid g2">
+<div class="panel"><div class="ph">Where each market sits now</div>
+<h3>Gap to the capital versus its own norm</h3>
+<div class="chart" style="height:360px"><canvas id="cGap"></canvas></div>
+<p class="cap">Positive = cheaper than normal, the condition that has preceded catch-up. Houses.</p></div>
+<div class="panel"><div class="ph">Does the gap forecast growth?</div>
+<h3>In commuter markets, yes. In lifestyle, no.</h3>
+<div class="chart" style="height:360px"><canvas id="cSub"></canvas></div>
+<p class="cap">Gap today against the next three years of price growth, by market type.</p></div>
+</div>
 </section>
 
-<section>
-<h2><span class="num">04</span>Where else they come from</h2>
-<p class="lede">The capitals are only part of it. Pick a market to see its six largest non-capital
-sources.</p>
-<div class="ctl"><select id="mSel"></select></div>
-<div class="chart"><canvas id="cTop"></canvas></div>
-<p class="cap">Largest origin LGAs, excluding the three eastern capitals, people who did not move, and
-the overseas and not-stated categories. Neighbouring councils dominate almost everywhere.</p>
+<section class="tight">
+<h2 class="sm"><span class="num">04</span>The full studies</h2>
+<div class="go">
+<a href="which-leads.html"><div class="t">Which leads: rents or prices</div>
+<div class="d">36 markets, houses and units, 2002&ndash;2025. Direction tests, lag curves, yield and
+workforce drivers, and the national picture.</div>
+<div class="n">72 segments &middot; 1,382 observations &rarr;</div></a>
+<a href="how-population-impacts-prices.html"><div class="t">How population impacts prices</div>
+<div class="d">Twelve commuter and lifestyle markets against their donor city. Value gap, mean
+reversion, and the prices-lead-rents check.</div>
+<div class="n">12 markets &middot; 24 segments &rarr;</div></a>
+</div>
 </section>
 
-<section>
-<h2><span class="num">05</span>Method and limitations</h2>
-<p class="lede">What was measured and what it does not settle.</p>
-<h3>Source</h3>
-<p>ABS Census 2021, TableBuilder, <b>2021 Census &mdash; internal migration</b> dataset. Rows are Local
-Government Area of usual residence in 2021; columns are Local Government Area of usual residence in 2016
-(the <b>PUR5P</b> variable at LGA level). Greater Sydney, Greater Melbourne and Greater Brisbane are built
-by summing their constituent LGAs.</p>
-<h3>What it cannot tell you</h3>
-<p><b>The window is 2016 to 2021, and it ends mid-pandemic.</b> The Census was taken on 10 August 2021
-with Sydney and Melbourne in lockdown. The city-to-regions flow was running at an exceptional rate at that
-moment. The five-year window dilutes this but does not remove it &mdash; a 2016 Census comparison would
-separate the structural pattern from the COVID surge, and the 2026 Census will give the first clean
-post-pandemic reading.</p>
-<p><b>It shows where people came from, not why.</b> A flow from Sydney to Port Macquarie is consistent
-with the value-gap explanation, but equally with retirement, family, or remote work. Nothing here
-distinguishes them.</p>
-<p><b>Counts are perturbed.</b> The ABS applies small random adjustments to every cell to protect
-confidentiality, so rows and columns need not sum exactly. This matters proportionally more for small
-flows than large ones.</p>
-<p><b>Age and income are not in this extract.</b> The framework also asks whether the movers are older
-and wealthier than average. That needs the same table with age and income added, which is a second
-TableBuilder run.</p>
-<p class="cap" style="margin-top:18px">Prepared by the Research Division in response to &ldquo;How
-Population Impacts Prices&rdquo;. Pending review.</p>
+<section class="tight">
+<h2 class="sm"><span class="num">05</span>Sources</h2>
+<p class="cap" style="margin:0">Price and rent medians: Cotality (CoreLogic) via LIVE | 36 Regions &mdash;
+Historic Data, December snapshots, 2026 excluded (different basis). Migration: ABS Census 2021
+TableBuilder, place of usual residence five years ago at LGA level. Market classification supplied by the
+research framework. Prepared by the Research Division, pending review.</p>
 </section>
 
 </main>
@@ -291,94 +278,117 @@ Internal working document, not for client distribution</div></footer>
 
 </script>
 <script>
-const D={"rows":[{"m":"Geelong","syd":1014.0,"mel":22866.0,"bri":578.0,"arrivals":354247.0,"assumed":"Melbourne","actual":"Melbourne","match":true,"sydPct":0.3,"melPct":6.5,"briPct":0.2,"capPct":6.9,"ratio2nd":22.6,"sub":"Commuter","donorIn":22866.0,"donorOut":8219.0,"net":14647.0,"ratio":2.78,"overlap":false,"overlapWith":""},{"m":"Wollongong","syd":12638.0,"mel":643.0,"bri":426.0,"arrivals":271504.0,"assumed":"Sydney","actual":"Sydney","match":true,"sydPct":4.7,"melPct":0.2,"briPct":0.2,"capPct":5.0,"ratio2nd":19.7,"sub":"Commuter + Lifestyle","donorIn":12638.0,"donorOut":7644.0,"net":4994.0,"ratio":1.65,"overlap":false,"overlapWith":""},{"m":"Sunshine Coast","syd":6863.0,"mel":5659.0,"bri":19428.0,"arrivals":459856.0,"assumed":"Brisbane","actual":"Brisbane","match":true,"sydPct":1.5,"melPct":1.2,"briPct":4.2,"capPct":6.9,"ratio2nd":2.8,"sub":"Lifestyle","donorIn":19428.0,"donorOut":14630.0,"net":4798.0,"ratio":1.33,"overlap":false,"overlapWith":""},{"m":"Ballarat","syd":351.0,"mel":8239.0,"bri":289.0,"arrivals":148466.0,"assumed":"Melbourne","actual":"Melbourne","match":true,"sydPct":0.2,"melPct":5.5,"briPct":0.2,"capPct":6.0,"ratio2nd":23.5,"sub":"Commuter","donorIn":8239.0,"donorOut":3624.0,"net":4615.0,"ratio":2.27,"overlap":false,"overlapWith":""},{"m":"Port Macquarie","syd":5279.0,"mel":585.0,"bri":572.0,"arrivals":113101.0,"assumed":"Sydney","actual":"Sydney","match":true,"sydPct":4.7,"melPct":0.5,"briPct":0.5,"capPct":5.7,"ratio2nd":9.0,"sub":"Lifestyle","donorIn":5279.0,"donorOut":1564.0,"net":3715.0,"ratio":3.38,"overlap":false,"overlapWith":""},{"m":"Bendigo","syd":298.0,"mel":6844.0,"bri":290.0,"arrivals":155339.0,"assumed":"Melbourne","actual":"Melbourne","match":true,"sydPct":0.2,"melPct":4.4,"briPct":0.2,"capPct":4.8,"ratio2nd":23.0,"sub":"Commuter","donorIn":6844.0,"donorOut":3739.0,"net":3105.0,"ratio":1.83,"overlap":false,"overlapWith":""},{"m":"Newcastle","syd":6413.0,"mel":886.0,"bri":740.0,"arrivals":228057.0,"assumed":"Sydney","actual":"Sydney","match":true,"sydPct":2.8,"melPct":0.4,"briPct":0.3,"capPct":3.5,"ratio2nd":7.2,"sub":"Commuter + Lifestyle","donorIn":6413.0,"donorOut":4254.0,"net":2159.0,"ratio":1.51,"overlap":false,"overlapWith":""},{"m":"Coffs Harbour","syd":2770.0,"mel":557.0,"bri":717.0,"arrivals":103182.0,"assumed":"Sydney","actual":"Sydney","match":true,"sydPct":2.7,"melPct":0.5,"briPct":0.7,"capPct":3.9,"ratio2nd":3.9,"sub":"Lifestyle","donorIn":2770.0,"donorOut":1306.0,"net":1464.0,"ratio":2.12,"overlap":false,"overlapWith":""},{"m":"Gold Coast","syd":16196.0,"mel":9449.0,"bri":24703.0,"arrivals":828916.0,"assumed":"Brisbane","actual":"Brisbane","match":true,"sydPct":2.0,"melPct":1.1,"briPct":3.0,"capPct":6.1,"ratio2nd":1.5,"sub":"Lifestyle","donorIn":24703.0,"donorOut":25769.0,"net":-1066.0,"ratio":0.96,"overlap":false,"overlapWith":""},{"m":"Ipswich","syd":2728.0,"mel":1472.0,"bri":168504.0,"arrivals":315913.0,"assumed":"Brisbane","actual":"Brisbane","match":true,"sydPct":0.9,"melPct":0.5,"briPct":53.3,"capPct":54.7,"ratio2nd":61.8,"sub":"Commuter","donorIn":168504.0,"donorOut":160379.0,"net":8125.0,"ratio":1.05,"overlap":true,"overlapWith":"Greater Brisbane"},{"m":"Central Coast","syd":27101.0,"mel":857.0,"bri":709.0,"arrivals":435439.0,"assumed":"Sydney","actual":"Sydney","match":true,"sydPct":6.2,"melPct":0.2,"briPct":0.2,"capPct":6.6,"ratio2nd":31.6,"sub":"Commuter + Lifestyle","donorIn":27101.0,"donorOut":267365.0,"net":-240264.0,"ratio":0.1,"overlap":true,"overlapWith":"Greater Sydney"}],"total":{"in":109180.0,"out":70749.0,"net":38431.0,"ratio":1.54,"n":9},"top":{"Geelong":[{"o":"Wyndham","n":3555},{"o":"Surf Coast","n":2457},{"o":"Golden Plains","n":1494},{"o":"Ballarat","n":1181},{"o":"Hobsons Bay","n":1173},{"o":"Moreland","n":1171}],"Bendigo":[{"o":"Mount Alexander","n":804},{"o":"Campaspe","n":684},{"o":"Macedon Ranges","n":597},{"o":"Loddon","n":401},{"o":"Greater Geelong","n":398},{"o":"Wyndham","n":371}],"Ballarat":[{"o":"Golden Plains","n":1299},{"o":"Moorabool","n":1083},{"o":"Hepburn","n":970},{"o":"Greater Geelong","n":833},{"o":"Wyndham","n":630},{"o":"Melton","n":571}],"Ipswich":[{"o":"Brisbane","n":15435},{"o":"Logan","n":4466},{"o":"Moreton Bay","n":1708},{"o":"Gold Coast","n":1394},{"o":"Lockyer Valley","n":1381},{"o":"Somerset","n":1303}],"Central Coast":[{"o":"Northern Beaches","n":3494},{"o":"Hornsby","n":2615},{"o":"Blacktown","n":2148},{"o":"Lake Macquarie","n":2042},{"o":"Parramatta","n":1601},{"o":"Penrith","n":1425}],"Newcastle":[{"o":"Lake Macquarie","n":8196},{"o":"Maitland","n":2176},{"o":"Port Stephens","n":1952},{"o":"Central Coast (NSW)","n":1345},{"o":"Mid-Coast","n":1067},{"o":"Cessnock","n":901}],"Wollongong":[{"o":"Shellharbour","n":3402},{"o":"Sutherland Shire","n":2633},{"o":"Shoalhaven","n":1183},{"o":"Inner West","n":951},{"o":"Sydney","n":846},{"o":"Campbelltown (NSW)","n":720}],"Sunshine Coast":[{"o":"Brisbane","n":10520},{"o":"Moreton Bay","n":5396},{"o":"Noosa","n":4110},{"o":"Gold Coast","n":2034},{"o":"Toowoomba","n":1604},{"o":"Townsville","n":1316}],"Gold Coast":[{"o":"Brisbane","n":11738},{"o":"Logan","n":5748},{"o":"Tweed","n":4873},{"o":"Northern Beaches","n":1958},{"o":"Moreton Bay","n":1931},{"o":"Redland","n":1745}],"Port Macquarie":[{"o":"Mid-Coast","n":838},{"o":"Central Coast (NSW)","n":693},{"o":"Northern Beaches","n":682},{"o":"Kempsey","n":541},{"o":"Penrith","n":459},{"o":"Blacktown","n":432}],"Coffs Harbour":[{"o":"Bellingen","n":690},{"o":"Clarence Valley","n":599},{"o":"Gold Coast","n":458},{"o":"Brisbane","n":394},{"o":"Central Coast (NSW)","n":373},{"o":"Nambucca Valley","n":373}]}};
+const D={"mig":{"rows":[{"m":"Geelong","syd":1014.0,"mel":22866.0,"bri":578.0,"arrivals":354247.0,"assumed":"Melbourne","actual":"Melbourne","match":true,"sydPct":0.3,"melPct":6.5,"briPct":0.2,"capPct":6.9,"ratio2nd":22.6,"sub":"Commuter","donorIn":22866.0,"donorOut":8219.0,"net":14647.0,"ratio":2.78,"overlap":false,"overlapWith":""},{"m":"Wollongong","syd":12638.0,"mel":643.0,"bri":426.0,"arrivals":271504.0,"assumed":"Sydney","actual":"Sydney","match":true,"sydPct":4.7,"melPct":0.2,"briPct":0.2,"capPct":5.0,"ratio2nd":19.7,"sub":"Commuter + Lifestyle","donorIn":12638.0,"donorOut":7644.0,"net":4994.0,"ratio":1.65,"overlap":false,"overlapWith":""},{"m":"Sunshine Coast","syd":6863.0,"mel":5659.0,"bri":19428.0,"arrivals":459856.0,"assumed":"Brisbane","actual":"Brisbane","match":true,"sydPct":1.5,"melPct":1.2,"briPct":4.2,"capPct":6.9,"ratio2nd":2.8,"sub":"Lifestyle","donorIn":19428.0,"donorOut":14630.0,"net":4798.0,"ratio":1.33,"overlap":false,"overlapWith":""},{"m":"Ballarat","syd":351.0,"mel":8239.0,"bri":289.0,"arrivals":148466.0,"assumed":"Melbourne","actual":"Melbourne","match":true,"sydPct":0.2,"melPct":5.5,"briPct":0.2,"capPct":6.0,"ratio2nd":23.5,"sub":"Commuter","donorIn":8239.0,"donorOut":3624.0,"net":4615.0,"ratio":2.27,"overlap":false,"overlapWith":""},{"m":"Port Macquarie","syd":5279.0,"mel":585.0,"bri":572.0,"arrivals":113101.0,"assumed":"Sydney","actual":"Sydney","match":true,"sydPct":4.7,"melPct":0.5,"briPct":0.5,"capPct":5.7,"ratio2nd":9.0,"sub":"Lifestyle","donorIn":5279.0,"donorOut":1564.0,"net":3715.0,"ratio":3.38,"overlap":false,"overlapWith":""},{"m":"Bendigo","syd":298.0,"mel":6844.0,"bri":290.0,"arrivals":155339.0,"assumed":"Melbourne","actual":"Melbourne","match":true,"sydPct":0.2,"melPct":4.4,"briPct":0.2,"capPct":4.8,"ratio2nd":23.0,"sub":"Commuter","donorIn":6844.0,"donorOut":3739.0,"net":3105.0,"ratio":1.83,"overlap":false,"overlapWith":""},{"m":"Newcastle","syd":6413.0,"mel":886.0,"bri":740.0,"arrivals":228057.0,"assumed":"Sydney","actual":"Sydney","match":true,"sydPct":2.8,"melPct":0.4,"briPct":0.3,"capPct":3.5,"ratio2nd":7.2,"sub":"Commuter + Lifestyle","donorIn":6413.0,"donorOut":4254.0,"net":2159.0,"ratio":1.51,"overlap":false,"overlapWith":""},{"m":"Coffs Harbour","syd":2770.0,"mel":557.0,"bri":717.0,"arrivals":103182.0,"assumed":"Sydney","actual":"Sydney","match":true,"sydPct":2.7,"melPct":0.5,"briPct":0.7,"capPct":3.9,"ratio2nd":3.9,"sub":"Lifestyle","donorIn":2770.0,"donorOut":1306.0,"net":1464.0,"ratio":2.12,"overlap":false,"overlapWith":""},{"m":"Gold Coast","syd":16196.0,"mel":9449.0,"bri":24703.0,"arrivals":828916.0,"assumed":"Brisbane","actual":"Brisbane","match":true,"sydPct":2.0,"melPct":1.1,"briPct":3.0,"capPct":6.1,"ratio2nd":1.5,"sub":"Lifestyle","donorIn":24703.0,"donorOut":25769.0,"net":-1066.0,"ratio":0.96,"overlap":false,"overlapWith":""},{"m":"Ipswich","syd":2728.0,"mel":1472.0,"bri":168504.0,"arrivals":315913.0,"assumed":"Brisbane","actual":"Brisbane","match":true,"sydPct":0.9,"melPct":0.5,"briPct":53.3,"capPct":54.7,"ratio2nd":61.8,"sub":"Commuter","donorIn":168504.0,"donorOut":160379.0,"net":8125.0,"ratio":1.05,"overlap":true,"overlapWith":"Greater Brisbane"},{"m":"Central Coast","syd":27101.0,"mel":857.0,"bri":709.0,"arrivals":435439.0,"assumed":"Sydney","actual":"Sydney","match":true,"sydPct":6.2,"melPct":0.2,"briPct":0.2,"capPct":6.6,"ratio2nd":31.6,"sub":"Commuter + Lifestyle","donorIn":27101.0,"donorOut":267365.0,"net":-240264.0,"ratio":0.1,"overlap":true,"overlapWith":"Greater Sydney"}],"total":{"in":109180.0,"out":70749.0,"net":38431.0,"ratio":1.54,"n":9},"top":{"Geelong":[{"o":"Wyndham","n":3555},{"o":"Surf Coast","n":2457},{"o":"Golden Plains","n":1494},{"o":"Ballarat","n":1181},{"o":"Hobsons Bay","n":1173},{"o":"Moreland","n":1171}],"Bendigo":[{"o":"Mount Alexander","n":804},{"o":"Campaspe","n":684},{"o":"Macedon Ranges","n":597},{"o":"Loddon","n":401},{"o":"Greater Geelong","n":398},{"o":"Wyndham","n":371}],"Ballarat":[{"o":"Golden Plains","n":1299},{"o":"Moorabool","n":1083},{"o":"Hepburn","n":970},{"o":"Greater Geelong","n":833},{"o":"Wyndham","n":630},{"o":"Melton","n":571}],"Ipswich":[{"o":"Brisbane","n":15435},{"o":"Logan","n":4466},{"o":"Moreton Bay","n":1708},{"o":"Gold Coast","n":1394},{"o":"Lockyer Valley","n":1381},{"o":"Somerset","n":1303}],"Central Coast":[{"o":"Northern Beaches","n":3494},{"o":"Hornsby","n":2615},{"o":"Blacktown","n":2148},{"o":"Lake Macquarie","n":2042},{"o":"Parramatta","n":1601},{"o":"Penrith","n":1425}],"Newcastle":[{"o":"Lake Macquarie","n":8196},{"o":"Maitland","n":2176},{"o":"Port Stephens","n":1952},{"o":"Central Coast (NSW)","n":1345},{"o":"Mid-Coast","n":1067},{"o":"Cessnock","n":901}],"Wollongong":[{"o":"Shellharbour","n":3402},{"o":"Sutherland Shire","n":2633},{"o":"Shoalhaven","n":1183},{"o":"Inner West","n":951},{"o":"Sydney","n":846},{"o":"Campbelltown (NSW)","n":720}],"Sunshine Coast":[{"o":"Brisbane","n":10520},{"o":"Moreton Bay","n":5396},{"o":"Noosa","n":4110},{"o":"Gold Coast","n":2034},{"o":"Toowoomba","n":1604},{"o":"Townsville","n":1316}],"Gold Coast":[{"o":"Brisbane","n":11738},{"o":"Logan","n":5748},{"o":"Tweed","n":4873},{"o":"Northern Beaches","n":1958},{"o":"Moreton Bay","n":1931},{"o":"Redland","n":1745}],"Port Macquarie":[{"o":"Mid-Coast","n":838},{"o":"Central Coast (NSW)","n":693},{"o":"Northern Beaches","n":682},{"o":"Kempsey","n":541},{"o":"Penrith","n":459},{"o":"Blacktown","n":432}],"Coffs Harbour":[{"o":"Bellingen","n":690},{"o":"Clarence Valley","n":599},{"o":"Gold Coast","n":458},{"o":"Brisbane","n":394},{"o":"Central Coast (NSW)","n":373},{"o":"Nambucca Valley","n":373}]}},"rents":{"A":{"b":0.442,"p":0.0,"lo":0.369,"hi":0.515,"r":0.36,"n":1382},"B":{"b":0.187,"p":0.0,"lo":0.147,"hi":0.228,"r":0.252,"n":1442},"diff":{"d":0.255,"p":0.0,"lo":0.191,"hi":0.318,"ratio":2.4},"sub":{"Capital":{"b":0.428,"n":320},"Regional":{"b":0.438,"n":1062}},"cg":[{"k":-5,"r":-0.126,"n":1360,"lo":-0.179,"hi":-0.073},{"k":-4,"r":-0.125,"n":1427,"lo":-0.176,"hi":-0.073},{"k":-3,"r":-0.088,"n":1436,"lo":-0.14,"hi":-0.037},{"k":-2,"r":0.029,"n":1439,"lo":-0.023,"hi":0.081},{"k":-1,"r":0.252,"n":1442,"lo":0.202,"hi":0.302},{"k":0,"r":0.45,"n":1454,"lo":0.404,"hi":0.496},{"k":1,"r":0.36,"n":1382,"lo":0.311,"hi":0.41},{"k":2,"r":0.143,"n":1310,"lo":0.089,"hi":0.196},{"k":3,"r":0.062,"n":1238,"lo":0.006,"hi":0.118},{"k":4,"r":-0.001,"n":1166,"lo":-0.059,"hi":0.056},{"k":5,"r":-0.004,"n":1094,"lo":-0.063,"hi":0.056}],"yldQuint":[{"q":1,"yld":4.04,"rl":-0.055,"n":15},{"q":2,"yld":4.55,"rl":0.129,"n":14},{"q":3,"yld":4.9,"rl":0.411,"n":14},{"q":4,"yld":5.13,"rl":0.323,"n":15},{"q":5,"yld":5.61,"rl":0.377,"n":14}],"top":[{"m":"Brisbane U","kind":"Capital","n":21,"rl":0.736,"pl":0.622,"sy":0.682,"gap":0.114,"b":0.962,"p":0.0002,"yld":4.45,"yldavg":4.85,"ok":true},{"m":"Bunbury H","kind":"Regional","n":20,"rl":0.725,"pl":0.307,"sy":0.515,"gap":0.418,"b":0.961,"p":0.0004,"yld":4.88,"yldavg":5.06,"ok":true},{"m":"Mackay U","kind":"Regional","n":20,"rl":0.714,"pl":0.447,"sy":0.694,"gap":0.267,"b":0.717,"p":0.0006,"yld":6.57,"yldavg":5.68,"ok":true},{"m":"Cairns U","kind":"Regional","n":20,"rl":0.674,"pl":0.476,"sy":0.678,"gap":0.198,"b":1.199,"p":0.0016,"yld":5.94,"yldavg":6.03,"ok":true},{"m":"Mackay H","kind":"Regional","n":20,"rl":0.665,"pl":0.519,"sy":0.745,"gap":0.146,"b":0.416,"p":0.0019,"yld":5.19,"yldavg":5.3,"ok":true},{"m":"Darwin U","kind":"Capital","n":21,"rl":0.626,"pl":0.459,"sy":0.736,"gap":0.167,"b":0.767,"p":0.0032,"yld":7.54,"yldavg":6.11,"ok":true}],"worst":[{"m":"Central Coast H","kind":"Regional","n":20,"rl":-0.467,"pl":0.338,"sy":0.279,"gap":-0.805,"b":-0.749,"p":0.0439,"yld":3.31,"yldavg":3.93,"ok":false},{"m":"Geelong H","kind":"Regional","n":21,"rl":-0.411,"pl":0.528,"sy":0.289,"gap":-0.939,"b":-0.786,"p":0.0721,"yld":3.86,"yldavg":4.12,"ok":false},{"m":"Newcastle H","kind":"Regional","n":20,"rl":-0.364,"pl":0.201,"sy":0.361,"gap":-0.565,"b":-0.529,"p":0.1259,"yld":3.48,"yldavg":4.13,"ok":false},{"m":"Wollongong H","kind":"Regional","n":20,"rl":-0.34,"pl":0.56,"sy":0.43,"gap":-0.9,"b":-0.58,"p":0.1544,"yld":3.18,"yldavg":3.79,"ok":false},{"m":"Newcastle U","kind":"Regional","n":20,"rl":-0.272,"pl":0.147,"sy":-0.171,"gap":-0.419,"b":-0.305,"p":0.2607,"yld":4.45,"yldavg":4.45,"ok":false},{"m":"Melbourne H","kind":"Capital","n":23,"rl":-0.27,"pl":0.069,"sy":-0.073,"gap":-0.339,"b":-0.318,"p":0.2239,"yld":3.43,"yldavg":3.56,"ok":false}]},"gap":{"withH":{"markets":12,"r":0.321,"b":0.0063,"p":0.08,"n":504,"mr_b":-0.607,"mr_p":0.0,"hl":2.2,"sub":{"Commuter":{"r":0.601,"segs":8},"Commuter + lifestyle":{"r":0.503,"segs":6},"Lifestyle":{"r":0.142,"segs":10}}},"noH":{"markets":11,"r":0.266,"b":0.0052,"p":0.1705,"n":462,"mr_b":-0.579,"mr_p":0.0,"hl":2.4,"sub":{"Commuter":{"r":0.601,"segs":8},"Commuter + lifestyle":{"r":0.503,"segs":6},"Lifestyle":{"r":-0.032,"segs":8}}},"byclass":{"Commuter":{"n":8,"don0":0.671,"don1":0.381,"disc3":0.601},"Commuter + lifestyle":{"n":6,"don0":0.734,"don1":0.284,"disc3":0.503},"Lifestyle":{"n":10,"don0":0.607,"don1":0.265,"disc3":0.142}},"prof":[{"m":"Ipswich","seg":"H","dev":-10.8,"now":20.1,"avg":30.9,"premium":false,"sub":"Commuter","g3c":0.718},{"m":"Coffs Harbour","seg":"H","dev":2.3,"now":41.4,"avg":39.1,"premium":false,"sub":"Lifestyle","g3c":0.623},{"m":"Port Macquarie","seg":"H","dev":5.9,"now":42.1,"avg":36.2,"premium":false,"sub":"Lifestyle","g3c":0.516},{"m":"Hobart","seg":"H","dev":-12.6,"now":17.0,"avg":29.6,"premium":false,"sub":"Lifestyle","g3c":0.774},{"m":"Ballarat","seg":"H","dev":-6.1,"now":35.6,"avg":41.7,"premium":false,"sub":"Commuter","g3c":0.637},{"m":"Wollongong","seg":"H","dev":-0.2,"now":24.2,"avg":24.4,"premium":false,"sub":"Commuter + Lifestyle","g3c":0.554},{"m":"Geelong","seg":"H","dev":-4.6,"now":20.4,"avg":25.0,"premium":false,"sub":"Commuter","g3c":0.75},{"m":"Central Coast","seg":"H","dev":0.8,"now":32.5,"avg":31.7,"premium":false,"sub":"Commuter + Lifestyle","g3c":0.617},{"m":"Gold Coast","seg":"H","dev":-5.3,"now":-26.0,"avg":-20.7,"premium":true,"sub":"Lifestyle","g3c":-0.398},{"m":"Sunshine Coast","seg":"H","dev":-4.0,"now":-17.0,"avg":-13.0,"premium":true,"sub":"Lifestyle","g3c":-0.305},{"m":"Newcastle","seg":"H","dev":-3.5,"now":31.8,"avg":35.3,"premium":false,"sub":"Commuter + Lifestyle","g3c":0.094},{"m":"Bendigo","seg":"H","dev":-9.4,"now":32.3,"avg":41.7,"premium":false,"sub":"Commuter","g3c":0.675}],"curve":{"donor":[{"L":0,"r":0.652,"lo":0.588,"hi":0.715,"n":552},{"L":1,"r":0.305,"lo":0.223,"hi":0.386,"n":528},{"L":2,"r":-0.089,"lo":-0.176,"hi":-0.002,"n":504},{"L":3,"r":-0.009,"lo":-0.099,"hi":0.08,"n":480},{"L":4,"r":0.04,"lo":-0.052,"hi":0.132,"n":456},{"L":5,"r":-0.133,"lo":-0.227,"hi":-0.04,"n":432}],"disc":[{"L":1,"r":0.195,"lo":0.113,"hi":0.277,"n":552},{"L":2,"r":0.24,"lo":0.157,"hi":0.323,"n":528},{"L":3,"r":0.178,"lo":0.092,"hi":0.265,"n":504},{"L":4,"r":0.17,"lo":0.081,"hi":0.258,"n":480},{"L":5,"r":0.182,"lo":0.092,"hi":0.273,"n":456}]}}};
 
 const TEAL='#00A0B4',EUC='#3E7967',GRAY='#63666A',AMBER='#FFA91F',RED='#E72347',LINE='rgba(99,102,106,.16)';
-const F={grid:{color:LINE},ticks:{color:GRAY,font:{family:'Montserrat',size:11}},border:{display:false}};
+const F={grid:{color:LINE},ticks:{color:GRAY,font:{family:'Montserrat',size:10}},border:{display:false}};
 Chart.defaults.font.family='Montserrat';
-const R=D.rows, T=D.total;
+const MIG=D.mig, RP=D.rents, GAP=D.gap;
 
-document.getElementById('kc').innerHTML=[
- ['State-capital rule','11 / 11','markets confirmed'],
- ['Net gain from capitals','+'+T.net.toLocaleString('en-AU'),'people, 2016\u20132021'],
- ['In per 1 out',T.ratio.toFixed(2),'across nine clean markets'],
- ['Strongest pull','Port Macquarie','3.4 in for every 1 out']
-].map(a=>'<div class="card"><div class="lab">'+a[0]+'</div><div class="val" style="font-size:'+
- (a[1].length>9?'19px':'26px')+'">'+a[1]+'</div><div class="sm">'+a[2]+'</div></div>').join('');
+/* KPI strip */
+document.getElementById('kpi').innerHTML=[
+ ['Donor confirmed','11 / 11','markets draw most from their state capital'],
+ ['Net drain from capitals','+'+MIG.total.net.toLocaleString('en-AU'),'people over five years'],
+ ['Rents lead prices','+'+RP.A.b.toFixed(2),'vs +'+RP.B.b.toFixed(2)+' the other way'],
+ ['Capital vs regional','+0.43 / +0.44','same answer, separate markets'],
+ ['Value gap half-life','2.2 yrs','for an unusual gap to half close']
+].map(a=>'<div class="k"><div class="l">'+a[0]+'</div><div class="v">'+a[1]+
+ '</div><div class="s">'+a[2]+'</div></div>').join('');
 
-/* 02 flows */
-let sub='All';
-const rowsFor=()=>R.filter(r=>sub==='All'||r.sub===sub).slice().sort((a,b)=>(b.syd+b.mel+b.bri)-(a.syd+a.mel+a.bri));
-let FR=rowsFor();
-const cFlow=new Chart(document.getElementById('cFlow'),{type:'bar',
+/* 01a flows */
+const FR=MIG.rows.slice().sort((a,b)=>(b.syd+b.mel+b.bri)-(a.syd+a.mel+a.bri));
+new Chart(document.getElementById('cFlow'),{type:'bar',
 data:{labels:FR.map(r=>r.m),datasets:[
- {label:'Sydney',data:FR.map(r=>r.syd),backgroundColor:TEAL,borderRadius:3},
- {label:'Melbourne',data:FR.map(r=>r.mel),backgroundColor:EUC,borderRadius:3},
- {label:'Brisbane',data:FR.map(r=>r.bri),backgroundColor:AMBER,borderRadius:3}]},
+ {label:'Sydney',data:FR.map(r=>r.syd),backgroundColor:TEAL,borderRadius:2},
+ {label:'Melbourne',data:FR.map(r=>r.mel),backgroundColor:EUC,borderRadius:2},
+ {label:'Brisbane',data:FR.map(r=>r.bri),backgroundColor:AMBER,borderRadius:2}]},
 options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.raw.toLocaleString('en-AU')+' people'}}},
-scales:{x:{...F,type:'logarithmic',title:{display:true,text:'People who moved here, 2016\u20132021 (log scale)',color:GRAY,font:{size:12}},
- ticks:{...F.ticks,callback:v=>[100,1000,10000,100000].includes(v)?v.toLocaleString('en-AU'):''}},
- y:{...F,grid:{display:false},ticks:{...F.ticks,autoSkip:false}}}}});
-function flowDraw(){FR=rowsFor();
- cFlow.data.labels=FR.map(r=>r.m);
- cFlow.data.datasets[0].data=FR.map(r=>r.syd);
- cFlow.data.datasets[1].data=FR.map(r=>r.mel);
- cFlow.data.datasets[2].data=FR.map(r=>r.bri);
- cFlow.canvas.parentNode.style.height=Math.max(220,60+FR.length*46)+'px';
- cFlow.resize();cFlow.update();
- const dcol={'Sydney':TEAL,'Melbourne':EUC,'Brisbane':AMBER};
- document.querySelector('#tFlow tbody').innerHTML=FR.map(r=>
-  '<tr><td>'+r.m+(r.overlap?' <span class="mute">(inside '+r.overlapWith+')</span>':'')+'</td>'+
-  '<td class="mute">'+r.sub+'</td>'+
-  ['syd','mel','bri'].map(function(k){
-   const nm={syd:'Sydney',mel:'Melbourne',bri:'Brisbane'}[k];
-   const on=r.actual===nm;
-   return '<td class="n'+(on?' hi':'')+'">'+(on?'<b>':'')+Math.round(r[k]).toLocaleString('en-AU')+
-    (on?'</b>':'')+' <span class="mute">'+r[k==='syd'?'sydPct':k==='mel'?'melPct':'briPct']+'%</span></td>'}).join('')+
-  '<td class="n"><span class="pos">'+r.actual+'</span></td>'+
-  '<td class="n">'+r.ratio2nd.toFixed(1)+'\u00d7</td></tr>').join('');}
-document.querySelectorAll('#segM button').forEach(function(b){b.onclick=function(){
- sub=b.dataset.t;document.querySelectorAll('#segM button').forEach(function(x){x.className=x===b?'on':''});flowDraw()}});
-flowDraw();
+plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,boxHeight:10,font:{size:10},color:GRAY}},
+ tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.raw.toLocaleString('en-AU')}}},
+scales:{x:{...F,type:'logarithmic',ticks:{...F.ticks,callback:v=>[100,1000,10000,100000].includes(v)?(v/1000>=1?(v/1000)+'k':v):''}},
+ y:{...F,grid:{display:false},ticks:{...F.ticks,autoSkip:false,font:{size:9}}}}}});
 
-/* 03 net */
-const NR=R.filter(r=>!r.overlap).sort((a,b)=>b.net-a.net);
+/* 01b net */
+const NR=MIG.rows.filter(r=>!r.overlap).sort((a,b)=>b.net-a.net);
 new Chart(document.getElementById('cNet'),{type:'bar',
 data:{labels:NR.map(r=>r.m),datasets:[{data:NR.map(r=>r.net),
- backgroundColor:NR.map(r=>r.net>=0?TEAL:AMBER),borderRadius:4,maxBarThickness:34}]},
+ backgroundColor:NR.map(r=>r.net>=0?TEAL:AMBER),borderRadius:3,maxBarThickness:26}]},
 options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
 plugins:{legend:{display:false},tooltip:{callbacks:{
- label:c=>(c.raw>0?'+':'')+Math.round(c.raw).toLocaleString('en-AU')+' net',
- afterLabel:c=>{const r=NR[c.dataIndex];return 'in '+Math.round(r.donorIn).toLocaleString('en-AU')+
-  ' \u00b7 out '+Math.round(r.donorOut).toLocaleString('en-AU')+' \u00b7 vs '+r.actual}}}},
-scales:{x:{...F,title:{display:true,text:'Net people gained from the donor city, 2016\u20132021',color:GRAY,font:{size:12}},
- ticks:{...F.ticks,callback:v=>(v>0?'+':'')+v.toLocaleString('en-AU')},
+ label:c=>(c.raw>0?'+':'')+Math.round(c.raw).toLocaleString('en-AU')+' net vs '+NR[c.dataIndex].actual}}},
+scales:{x:{...F,ticks:{...F.ticks,callback:v=>(v>0?'+':'')+(Math.abs(v)>=1000?(v/1000)+'k':v)},
  grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
- y:{...F,grid:{display:false},ticks:{...F.ticks,autoSkip:false}}}}});
-document.querySelector('#tNet tbody').innerHTML=NR.map(r=>
- '<tr><td>'+r.m+'</td><td class="mute">'+r.actual+'</td>'+
- '<td class="n">'+Math.round(r.donorIn).toLocaleString('en-AU')+'</td>'+
- '<td class="n mute">'+Math.round(r.donorOut).toLocaleString('en-AU')+'</td>'+
- '<td class="n"><span class="'+(r.net>0?'pos':'neg')+'">'+(r.net>0?'+':'')+
-  Math.round(r.net).toLocaleString('en-AU')+'</span></td>'+
- '<td class="n">'+r.ratio.toFixed(2)+'</td></tr>').join('');
+ y:{...F,grid:{display:false},ticks:{...F.ticks,autoSkip:false,font:{size:9}}}}}});
 
-/* 04 top origins */
-const sel=document.getElementById('mSel');
-R.slice().sort((a,b)=>a.m.localeCompare(b.m)).forEach(function(r){
- const o=document.createElement('option');o.value=r.m;o.textContent=r.m;sel.appendChild(o)});
-sel.value='Sunshine Coast';
-const cTop=new Chart(document.getElementById('cTop'),{type:'bar',
-data:{labels:D.top['Sunshine Coast'].map(x=>x.o),
- datasets:[{data:D.top['Sunshine Coast'].map(x=>x.n),backgroundColor:TEAL,borderRadius:4,maxBarThickness:34}]},
+/* 02a direction */
+new Chart(document.getElementById('cDir'),{type:'bar',
+data:{labels:['Rents \u2192 price','Prices \u2192 rent'],
+datasets:[{data:[RP.A.b,RP.B.b],backgroundColor:[TEAL,AMBER],borderRadius:4,maxBarThickness:70}]},
+options:{responsive:true,maintainAspectRatio:false,
+plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'+'+c.raw.toFixed(3)}}},
+scales:{y:{...F,min:0,max:0.55,ticks:{...F.ticks,callback:v=>'+'+v.toFixed(1)}},
+ x:{...F,grid:{display:false},ticks:{...F.ticks,font:{size:11}}}}}});
+
+/* 02b correlogram */
+const CG=RP.cg;
+new Chart(document.getElementById('cCg'),{type:'line',
+data:{labels:CG.map(c=>c.k===0?'same':(c.k>0?'+'+c.k:''+c.k)),
+datasets:[
+ {data:CG.map(c=>c.hi),borderColor:'transparent',backgroundColor:'rgba(0,160,180,.13)',pointRadius:0,fill:'+1',tension:.25,order:3},
+ {data:CG.map(c=>c.lo),borderColor:'transparent',pointRadius:0,fill:false,tension:.25,order:3},
+ {data:CG.map(c=>c.r),borderColor:TEAL,borderWidth:2,tension:.25,order:1,
+  pointRadius:CG.map(c=>c.k===0?5:3),
+  pointBackgroundColor:CG.map(c=>c.k>0?TEAL:(c.k<0?AMBER:GRAY)),fill:false}]},
+options:{responsive:true,maintainAspectRatio:false,
+plugins:{legend:{display:false},tooltip:{filter:i=>i.datasetIndex===2,
+ callbacks:{title:c=>{const k=CG[c[0].dataIndex].k;return k===0?'same year':(k>0?'rent '+k+'yr earlier':'price '+(-k)+'yr earlier')},
+ label:c=>'r = '+(c.raw>0?'+':'')+c.raw.toFixed(2)}}},
+scales:{y:{...F,ticks:{...F.ticks,callback:v=>(v>0?'+':'')+v.toFixed(1)},
+ grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
+ x:{...F,grid:{display:false}}}}});
+
+/* 02c yield quintiles */
+const Q=RP.yldQuint;
+new Chart(document.getElementById('cYld'),{type:'bar',
+data:{labels:Q.map(q=>q.q===1?'Lowest':q.q===5?'Highest':'Q'+q.q),
+datasets:[{data:Q.map(q=>q.rl),backgroundColor:Q.map(q=>q.rl>0.25?TEAL:q.rl<0?AMBER:'#9BD4DD'),
+ borderRadius:4,maxBarThickness:44}]},
+options:{responsive:true,maintainAspectRatio:false,
+plugins:{legend:{display:false},tooltip:{callbacks:{
+ label:c=>(c.raw>0?'+':'')+c.raw.toFixed(2),
+ afterLabel:c=>'avg yield '+Q[c.dataIndex].yld.toFixed(2)+'% \u00b7 '+Q[c.dataIndex].n+' segments'}}},
+scales:{y:{...F,ticks:{...F.ticks,callback:v=>(v>0?'+':'')+v.toFixed(1)},
+ grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
+ x:{...F,grid:{display:false},title:{display:true,text:'Gross yield group',color:GRAY,font:{size:11}}}}}});
+
+/* 03a gap now */
+const GR=GAP.prof.filter(p=>p.dev!==null).sort((a,b)=>b.dev-a.dev);
+new Chart(document.getElementById('cGap'),{type:'bar',
+data:{labels:GR.map(r=>r.m),datasets:[{data:GR.map(r=>r.dev),
+ backgroundColor:GR.map(r=>r.dev>=0?TEAL:AMBER),borderRadius:3,maxBarThickness:24}]},
 options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw.toLocaleString('en-AU')+' people'}}},
-scales:{x:{...F,title:{display:true,text:'People who moved here, 2016\u20132021',color:GRAY,font:{size:12}},
- ticks:{...F.ticks,callback:v=>v.toLocaleString('en-AU')}},
- y:{...F,grid:{display:false},ticks:{...F.ticks,autoSkip:false}}}}});
-sel.onchange=function(){const t=D.top[sel.value];
- cTop.data.labels=t.map(x=>x.o);cTop.data.datasets[0].data=t.map(x=>x.n);cTop.update()};
+plugins:{legend:{display:false},tooltip:{callbacks:{
+ label:c=>(c.raw>0?'+':'')+c.raw.toFixed(1)+'pp vs its own average',
+ afterLabel:c=>'now '+GR[c.dataIndex].now.toFixed(1)+'% \u00b7 avg '+GR[c.dataIndex].avg.toFixed(1)+'%'+
+  (GR[c.dataIndex].premium?' \u00b7 trades at a premium':'')}}},
+scales:{x:{...F,ticks:{...F.ticks,callback:v=>(v>0?'+':'')+v},
+ grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
+ y:{...F,grid:{display:false},ticks:{...F.ticks,autoSkip:false,font:{size:9},
+  callback:function(v){const r=GR[v];return r?r.m+(r.premium?'  \u25b2':''):''}}}}}});
+
+/* 03b by sub-group */
+const BC=GAP.byclass, keys=['Commuter','Commuter + lifestyle','Lifestyle'];
+new Chart(document.getElementById('cSub'),{type:'bar',
+data:{labels:['Commuter','Commuter +\nlifestyle','Lifestyle'],
+datasets:[{data:keys.map(k=>BC[k].disc3),
+ backgroundColor:keys.map(k=>BC[k].disc3>0.3?TEAL:'#F0C27A'),borderRadius:4,maxBarThickness:70}]},
+options:{responsive:true,maintainAspectRatio:false,
+plugins:{legend:{display:false},tooltip:{callbacks:{
+ label:c=>(c.raw>0?'+':'')+c.raw.toFixed(2),
+ afterLabel:c=>BC[keys[c.dataIndex]].n+' segments'}}},
+scales:{y:{...F,min:0,max:0.7,ticks:{...F.ticks,callback:v=>'+'+v.toFixed(1)},
+ title:{display:true,text:'Gap \u2192 next 3 years of growth',color:GRAY,font:{size:11}}},
+ x:{...F,grid:{display:false},ticks:{...F.ticks,font:{size:10}}}}}});
 
 </script>
 </body></html>
