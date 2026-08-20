@@ -340,11 +340,15 @@ body.railshut .stage{margin-left:56px}
 .cover .sub2{font-size:2.3cqw;font-weight:400;color:#BAC5CF;margin:.35cqw 0 0;letter-spacing:-.01em}
 .cover .lede{font-size:1.16cqw;color:#A9B4BF;max-width:56ch;margin:1.3cqw 0 0;line-height:1.55}
 /* the six named units, listed vertically, colour-keyed to the palette used later */
-.cover .dlist{display:flex;flex-direction:column;gap:.42cqw;margin-top:1.8cqw}
-.cover .dlist div{display:flex;align-items:center;gap:.6cqw;font-size:1.32cqw;font-weight:600;
+.cover .dlist{display:flex;flex-direction:column;gap:.62cqw;margin-top:1.5cqw}
+.cover .dlist .drow{display:flex;flex-direction:column;gap:.1cqw}
+.cover .dlist .dhead{display:flex;align-items:center;gap:.6cqw;font-size:1.46cqw;font-weight:600;
  color:var(--pg-ink)}
-.cover .dlist i{width:.85cqw;height:.85cqw;border-radius:.16cqw;flex:none}
+.cover .dlist i{width:.95cqw;height:.95cqw;border-radius:.18cqw;flex:none}
 .cover .dlist em{font-style:normal;font-weight:400;font-size:.95cqw;color:#B9C0C7}
+/* member LGAs, indented to clear the swatch and set in finer print than the district */
+.cover .dlist .dlgas{padding-left:1.55cqw;font-size:.78cqw;font-weight:400;line-height:1.45;
+ color:#93A0AB;max-width:52ch}
 /* At a glance: metrics down, one column per district across. The stacked
    label-above-value card needs ~30px a row; a 16:9 page only affords ~22, so the
    grid is transposed — which also suits the wider page. */
@@ -1127,8 +1131,11 @@ function pCover(){
   const n=R.divisions[d].house.lgas;
   /* Central Coast is not one of the five Region Plan units, so it carries no suffix */
   const label=d==='Central Coast'?d:d+' '+UNITWORD;
-  return '<div><i style="background:'+C(d)+'"></i>'+label
-   +'<em>'+n+(n>1?' LGAs':' LGA')+'</em></div>'}).join('');
+  /* member LGAs listed under each district, in MEMBERS order */
+  const mem=(MEMBERS[d]||[]).join(' · ');
+  return '<div class="drow"><div class="dhead"><i style="background:'+C(d)+'"></i>'+label
+   +'<em>'+n+(n>1?' LGAs':' LGA')+'</em></div>'
+   +'<div class="dlgas">'+mem+'</div></div>'}).join('');
  put('p-cover','<h1>Greater Sydney breakdown</h1>'
   +'<p class="sub2">Research Report</p>'
   +'<div class="dlist">'+named+'</div>'
