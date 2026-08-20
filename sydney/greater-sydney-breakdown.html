@@ -88,6 +88,26 @@ button{font-family:inherit;cursor:pointer}
  border-color:var(--pill-line-active)}
 .rail button.pg[aria-current=true] .n{background:var(--rail-active-badge);color:var(--rail-active-txt)}
 .rail button.pg .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Page-list data key: same hues as the on-slide .dban banner, so the rail shows at a
+   glance which pages carry measured figures and which are still sample. */
+.rail button.pg{border-left-width:3px;padding-left:4px}
+.rail button.pg.k-real{border-left-color:#3FA9BC}
+.rail button.pg.k-real .n{background:#0D4B55;color:#C7EDF3}
+.rail button.pg.k-mixed{border-left-color:#7A8F9C}
+.rail button.pg.k-mixed .n{background:#2C3D47;color:#D3DFE6}
+.rail button.pg.k-sample{border-left-color:#D9962B}
+.rail button.pg.k-sample .n{background:#6B4306;color:#FFDCA8}
+/* re-assert the active pill so the key colours never beat the current-page highlight */
+.rail button.pg[aria-current=true] .n{background:var(--rail-active-badge);color:var(--rail-active-txt)}
+.rkey{flex:none;display:flex;align-items:center;gap:4px;flex-wrap:wrap;
+ margin:0 10px 6px;padding-bottom:5px;font-size:9.5px;font-weight:600;letter-spacing:.02em;
+ color:var(--chrome-dim);border-bottom:1px solid var(--hair)}
+.rkey .k{width:7px;height:7px;border-radius:2px;flex:none;margin-left:3px}
+.rkey .k:first-child{margin-left:0}
+.rkey .k-real{background:#3FA9BC}
+.rkey .k-mixed{background:#7A8F9C}
+.rkey .k-sample{background:#D9962B}
+body.railshut .rkey{display:none}
 /* collapsed: numbers only */
 body.railshut .rail{width:56px}
 body.railshut .railwrap{padding-left:8px;padding-right:8px}
