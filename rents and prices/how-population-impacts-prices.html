@@ -187,9 +187,8 @@ norm: whether a market is unusually cheap, or unusually dear, by its own standar
 <p class="scope" style="background:#F7F7F6"><b>Scope.</b> All twelve Commuter/Lifestyle markets from the
 research framework, houses and units, 2002&ndash;2025 for prices and 2016&ndash;17 to 2024&ndash;25 for
 migration. Sections 02 and 03 test which capital&rsquo;s gap best tracks each market, against prices and against
-people; 04 and 05 show where each market sits and how its gap has moved; 06 and 07 test the gap market by
-market; 07 shows how long the effect persists; 08 lists what is
-still outstanding; 09 is the full table and 10 the method.</p>
+people; 04 and 05 show where each market sits and how its gap has moved; 07 shows how long the effect persists; 06 lists what is
+still outstanding; 07 is the full table and 08 the method.</p>
 </section>
 
 <section>
@@ -210,16 +209,12 @@ marks the market&rsquo;s own state capital.</p>
 <div class="pane"><div class="paneh" id="gcHB">Units</div><div class="chart" style="height:340px"><canvas id="cGCu"></canvas></div></div>
 </div>
 <p class="cap">Circle = Sydney, diamond = Melbourne, square = Brisbane. The black ring marks each
-market&rsquo;s own state capital. Hobart has no state donor and is shown against all three. Rows use a
-shared order across both panels. Value gap measured against each market&rsquo;s own long-run average,
+market&rsquo;s own state capital. Hobart has no state donor and is shown against all three. Rows are
+ranked by the own-capital reading and held in the same order in section 03. Value gap measured against each market&rsquo;s own long-run average,
 2002&ndash;2025.</p>
 <p class="cap printonly"><b>Printed view:</b> all twelve markets, one year ahead.</p>
-<div class="note"><b>Context for this chart.</b> The own-capital reading is the only one with a migration
-mechanism behind it &mdash; Census data confirms the state capital is the largest source of arrivals.
-Sydney and Melbourne are the two largest and earliest-moving markets in the country, so a gap measured
-against either partly reflects where the national cycle sits rather than a buyer relationship.
-<br><br><b>Hobart</b> is Tasmania&rsquo;s own capital and has no state donor, so all three of its readings
-are comparisons rather than mechanisms.</div>
+<div class="note"><b>Reading this chart.</b> Hobart is Tasmania&rsquo;s own capital and has no state
+donor, so it carries no ring and all three of its readings are comparisons.</div>
 </section>
 
 <section>
@@ -246,13 +241,11 @@ market&rsquo;s own state capital; Hobart has none and is shown against all three
 2016&ndash;17 to 2024&ndash;25, so eight lagged pairs per segment.</p>
 <p class="cap printonly"><b>Printed view:</b> all twelve markets, net internal migration, one year
 ahead.</p>
-<div class="note"><b>Reading this chart.</b> Eight lagged pairs per segment is thin, so individual markers
-are noisy and should not be read as precise. The window also contains the pandemic surge out of the
-capitals.
-<br><br><b>The two population measures behave very differently.</b> Against net internal migration the
-means at one year are Sydney <b>+0.38</b>, Melbourne <b>+0.45</b>, Brisbane <b>+0.24</b>. Switch to total
-population growth and they fall to <b>+0.08</b>, <b>&minus;0.10</b> and <b>+0.03</b> &mdash; total growth
-adds births, deaths and overseas arrivals, none of which respond to a domestic value gap.</div>
+<div class="note"><b>Reading this chart.</b> Hobart is Tasmania&rsquo;s own capital and has no state
+donor, so it carries no ring. Migration data runs 2016&ndash;17 to 2024&ndash;25, giving eight lagged pairs
+per segment; the window includes the pandemic years.
+<br><br><b>The two measures count different things.</b> Net internal migration counts people moving
+between Australian markets. Total population growth adds births, deaths and overseas arrivals.</div>
 </section>
 
 <section>
@@ -285,59 +278,7 @@ norm; below it, dearer.</p>
 </section>
 
 <section>
-<h2><span class="num">06</span>Does the gap move prices?</h2>
-<p class="lede">How well a market&rsquo;s value gap against its capital predicts its own median price growth
-in the following years.</p>
-<div class="ctl"><span class="seg" id="tcLag">
-<button data-l="1" class="on">1yr</button><button data-l="2">2yr</button><button data-l="3">3yr</button></span>
-<span class="seg" id="tcSub">
-<button data-t="All" class="on">All 12</button><button data-t="Commuter">Commuter</button><button data-t="Commuter + Lifestyle">Commuter + Lifestyle</button><button data-t="Lifestyle">Lifestyle</button></span></div>
-<div class="leg"><span class="mute" id="tcNoteP"></span><span class="mute" id="tcMeanP" style="margin-left:auto"></span></div>
-<div class="chart" style="height:560px"><canvas id="cTCp"></canvas></div>
-<p class="cap">Each bar is one market segment. Teal positive, amber negative. Price data 2002&ndash;2025,
-so 22 lagged pairs per segment. Rows ranked by this reading and held in the same order in section 06.</p>
-<div class="note"><b>Reading this chart.</b> Price data runs 2002&ndash;2025, giving 22 lagged pairs per
-segment. Gold Coast and Sunshine Coast trade at a <i>premium</i> to Brisbane, so a positive value gap means
-something different for them than for the other ten.</div>
-</section>
-
-<section>
-<h2><span class="num">07</span>Does the gap move people?</h2>
-<p class="lede">The same value gap, now tested against the people actually arriving. If the thesis holds,
-the gap should show up here at least as strongly as it does in prices.</p>
-<div class="ctl"><span class="seg" id="tmLag">
-<button data-l="1" class="on">1yr</button><button data-l="2">2yr</button><button data-l="3">3yr</button></span>
-<span class="seg" id="tmPop">
-<button data-p="mig" class="on">Net internal migration</button><button data-p="pop">Total population growth</button></span>
-<span class="seg" id="tmSub">
-<button data-t="All" class="on">All 12</button><button data-t="Commuter">Commuter</button><button data-t="Commuter + Lifestyle">Commuter + Lifestyle</button><button data-t="Lifestyle">Lifestyle</button></span></div>
-<div class="leg"><span class="mute" id="tcNoteM"></span><span class="mute" id="tcMeanM" style="margin-left:auto"></span></div>
-<div class="chart" style="height:560px"><canvas id="cTCm"></canvas></div>
-<p class="cap">Same markets, same row order as section 05, so the two can be read against each other.
-Migration data 2016&ndash;17 to 2024&ndash;25, so eight lagged pairs per segment.</p>
-<div class="note"><b>Reading this chart.</b> Migration data runs 2016&ndash;17 to 2024&ndash;25, giving
-eight lagged pairs per segment &mdash; thin, so individual readings are noisy and should not be treated as
-precise. The window also contains the pandemic surge out of the capitals.
-<br><br><b>The two population measures are not interchangeable.</b> Net internal migration counts people
-moving between Australian markets. Total population growth adds births, deaths and overseas arrivals.
-Pooled across all markets with market effects removed, the net internal migration relationship is
-<b>+0.41</b> (p = 0.026); total population growth is <b>+0.02</b>.</div>
-</section>
-
-<section>
-<h2><span class="num">08</span>How long the gap takes to feed through</h2>
-<p class="lede">All twelve markets pooled. How strongly an unusually wide value gap this year predicts
-price growth one to five years later.</p>
-<div class="chart" style="height:320px"><canvas id="cL2"></canvas></div>
-<p class="cap">Value gap measured against each market&rsquo;s own long-run average. Shaded band is the
-confidence range.</p>
-<div class="note"><b>Cumulative figures.</b> Over three years combined the relationship reaches
-<b>+0.32</b> across all twelve markets and <b>+0.58</b> among the ten that trade at a discount to their
-capital.</div>
-</section>
-
-<section>
-<h2><span class="num">09</span>What is still needed</h2>
+<h2><span class="num">06</span>What is still needed</h2>
 <p class="lede">Two of the three strands are not yet testable with the data in hand. Both are close.</p>
 <div class="grid2">
 <div class="mb"><div class="mbh">Strand 2 &mdash; who is moving</div>
@@ -363,7 +304,7 @@ enough to see a relationship of the size found here.</div>
 </section>
 
 <section>
-<h2><span class="num">10</span>Every market, side by side</h2>
+<h2><span class="num">07</span>Every market, side by side</h2>
 <p class="lede">All 24 segments. Sorted by how strongly the capital&rsquo;s growth carries into the
 satellite a year later.</p>
 <div class="scroll"><table id="tAll"><thead><tr><th>Market</th><th>Seg</th><th>Capital</th><th>Type</th>
@@ -375,7 +316,7 @@ measure against the following three years of growth combined.</p>
 </section>
 
 <section>
-<h2><span class="num">11</span>Method and limitations</h2>
+<h2><span class="num">08</span>Method and limitations</h2>
 <p class="lede">What was measured and what it does not prove.</p>
 <h3>Scope and classification</h3>
 <p>The twelve markets tested are the full <b>Commuter/Lifestyle</b> group from the framework&rsquo;s
@@ -488,11 +429,12 @@ const SHP={Sydney:'circle',Melbourne:'rectRot',Brisbane:'rect'};
 let lag=1, sub='All';
 const val=(r,cap)=>{const c=r.caps[cap]; return c?c['L'+lag]:null};
 function order(){
+ /* ranked by the own-capital price reading, and section 03 uses the same rule
+    so the two charts line up row for row */
  const byReg={};
  ROWS.forEach(function(r){
-  const vs=CAPS.map(c=>val(r,c)).filter(v=>v!==null&&v!==undefined);
-  if(!vs.length) return;
-  (byReg[r.m]=byReg[r.m]||[]).push(Math.max.apply(null,vs))});
+  const c=r.caps[r.donor]; const v=c?c.L1:null; if(v===null||v===undefined)return;
+  (byReg[r.m]=byReg[r.m]||[]).push(v)});
  const avg={}; Object.keys(byReg).forEach(k=>avg[k]=byReg[k].reduce((a,b)=>a+b,0)/byReg[k].length);
  const regs=[]; ROWS.forEach(function(r){if((sub==='All'||r.sub===sub)&&regs.indexOf(r.m)<0)regs.push(r.m)});
  return regs.sort((x,y)=>(avg[y]===undefined?-9:avg[y])-(avg[x]===undefined?-9:avg[x]));}
@@ -584,11 +526,11 @@ const SHP={Sydney:'circle',Melbourne:'rectRot',Brisbane:'rect'};
 let lag=1, sub='All', pop='N';
 const val=(r,cap)=>{const c=r.caps[cap]; return c?c[pop+lag]:null};
 function order(){
+ /* uses the section 02 order so prices and people line up row for row */
  const byReg={};
- ROWS.forEach(function(r){
-  const vs=CAPS.map(c=>val(r,c)).filter(v=>v!==null&&v!==undefined);
-  if(!vs.length) return;
-  (byReg[r.m]=byReg[r.m]||[]).push(Math.max.apply(null,vs))});
+ (D.gapall.rows||[]).forEach(function(r){
+  const c=r.caps[r.donor]; const v=c?c.L1:null; if(v===null||v===undefined)return;
+  (byReg[r.m]=byReg[r.m]||[]).push(v)});
  const avg={}; Object.keys(byReg).forEach(k=>avg[k]=byReg[k].reduce((a,b)=>a+b,0)/byReg[k].length);
  const regs=[]; ROWS.forEach(function(r){if((sub==='All'||r.sub===sub)&&regs.indexOf(r.m)<0)regs.push(r.m)});
  return regs.sort((x,y)=>(avg[y]===undefined?-9:avg[y])-(avg[x]===undefined?-9:avg[x]));}
@@ -670,85 +612,6 @@ wire7('gnLag','l',v=>lag=+v);
 wire7('gnPop','p',v=>pop=v);
 wire7('gnSub','t',v=>sub=v);
 draw();
-})();
-
-/* 05 + 06 gap -> prices, gap -> people (two independent sections) */
-(function(){
-const TC=D.twochart, ROWS=TC.rows;
-const lbl=r=>r.m+(r.seg==='U'?' \u00b7 U':' \u00b7 H');
-/* shared row order, fixed by the 1-year price reading so both sections align */
-function baseOrder(sub){
- const byReg={};
- ROWS.forEach(function(r){const v=r.price1; if(v===null||v===undefined)return;
-  (byReg[r.m]=byReg[r.m]||[]).push(v)});
- const avg={}; Object.keys(byReg).forEach(k=>avg[k]=byReg[k].reduce((a,b)=>a+b,0)/byReg[k].length);
- const regs=[]; ROWS.forEach(function(r){if((sub==='All'||r.sub===sub)&&regs.indexOf(r.m)<0)regs.push(r.m)});
- return regs.sort((x,y)=>(avg[y]===undefined?-9:avg[y])-(avg[x]===undefined?-9:avg[x]));}
-function rowsFor(sub){
- const o=baseOrder(sub), pos={}; o.forEach((g,i)=>pos[g]=i);
- return ROWS.filter(r=>(sub==='All'||r.sub===sub))
-   .slice().sort((a,b)=>(pos[a.m]-pos[b.m])||(a.seg<b.seg?-1:1));}
-function mkBar(id,rows,getter){
- return new Chart(document.getElementById(id),{type:'bar',
- data:{labels:rows.map(lbl),datasets:[{data:rows.map(getter),
-  backgroundColor:rows.map(r=>{const v=getter(r);return (v===null||v===undefined)?'#DDD':(v>=0?TEAL:AMBER)}),
-  borderRadius:3,maxBarThickness:14}]},
- options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
- plugins:{legend:{display:false},tooltip:{callbacks:{
-  title:c=>rows[c[0].dataIndex].m+' '+(rows[c[0].dataIndex].seg==='H'?'houses':'units'),
-  label:c=>(c.raw===null||c.raw===undefined)?'no data':((c.raw>0?'+':'')+Number(c.raw).toFixed(2)),
-  afterLabel:c=>'vs '+rows[c.dataIndex].donor}}},
- scales:{
-  x:{...F,min:-1,max:1,ticks:{...F.ticks,font:{size:10},callback:v=>(v>0?'+':'')+v.toFixed(1)},
-     grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
-  y:{...F,grid:{display:false},ticks:{...F.ticks,autoSkip:false,font:{size:9}}}}}});}
-function apply(ch,rows,getter){
- ch.data.labels=rows.map(lbl);
- ch.data.datasets[0].data=rows.map(getter);
- ch.data.datasets[0].backgroundColor=rows.map(r=>{const v=getter(r);
-  return (v===null||v===undefined)?'#DDD':(v>=0?TEAL:AMBER)});
- ch.options.plugins.tooltip.callbacks.title=c=>rows[c[0].dataIndex].m+' '+
-  (rows[c[0].dataIndex].seg==='H'?'houses':'units');
- ch.options.plugins.tooltip.callbacks.afterLabel=c=>'vs '+rows[c.dataIndex].donor;
- ch.canvas.parentNode.style.height=Math.max(200,40+rows.length*22)+'px';
- ch.resize(); ch.update();}
-const mean=(rows,f)=>{const v=rows.map(f).filter(x=>x!==null&&x!==undefined);
- return v.length?v.reduce((a,b)=>a+b,0)/v.length:0};
-const sgn=v=>(v>0?'+':'')+v.toFixed(2);
-function wire(id,attr,set,redraw){document.querySelectorAll('#'+id+' button').forEach(function(b){
- b.onclick=function(){set(b.dataset[attr]);
-  document.querySelectorAll('#'+id+' button').forEach(function(x){x.className=x===b?'on':''});
-  redraw()}});}
-
-/* ---- section 05: prices ---- */
-let pLag=1, pSub='All';
-const pv=r=>r['price'+pLag];
-let RP=rowsFor(pSub);
-const cP=mkBar('cTCp',RP,pv);
-function drawP(){
- RP=rowsFor(pSub); apply(cP,RP,pv);
- document.getElementById('tcNoteP').textContent=
-  'Correlation with the market\u2019s own price growth '+pLag+(pLag===1?' year':' years')+' later';
- document.getElementById('tcMeanP').textContent=RP.length+' segments \u00b7 average '+sgn(mean(RP,pv));}
-wire('tcLag','l',v=>pLag=+v,drawP);
-wire('tcSub','t',v=>pSub=v,drawP);
-drawP();
-
-/* ---- section 06: people ---- */
-let mLag=1, mSub='All', pop='mig';
-const mv=r=>r[pop+mLag];
-let RM=rowsFor(mSub);
-const cM=mkBar('cTCm',RM,mv);
-function drawM(){
- RM=rowsFor(mSub); apply(cM,RM,mv);
- const nm=pop==='mig'?'net internal migration':'total population growth';
- document.getElementById('tcNoteM').textContent=
-  'Correlation with '+nm+' '+mLag+(mLag===1?' year':' years')+' later';
- document.getElementById('tcMeanM').textContent=RM.length+' segments \u00b7 average '+sgn(mean(RM,mv));}
-wire('tmLag','l',v=>mLag=+v,drawM);
-wire('tmPop','p',v=>pop=v,drawM);
-wire('tmSub','t',v=>mSub=v,drawM);
-drawM();
 })();
 
 /* 02 gap bars */
@@ -844,7 +707,6 @@ function curve(id,rows,lbl,col){
   ticks:{...F.ticks,callback:v=>(v>0?'+':'')+v.toFixed(1)},
   grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
   x:{...F,grid:{display:false}}}}});}
-curve('cL2',D.curve.disc,'gap',EUC);
 
 /* 05 table */
 const f2=v=>v===null?'<span class="mute">&mdash;</span>':
