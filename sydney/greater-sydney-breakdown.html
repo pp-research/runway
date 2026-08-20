@@ -1006,7 +1006,7 @@ function panels(hostId,items,spec,opt){
  /* Card mode mirrors the vacancy-rate-v-rent slide: each panel sits on its own white
     card with a bold district header and its own key. TOP grows if the key needs to
     drop below the name rather than sitting beside it. */
- const card=!!opt.cards, CPAD=9;
+ const CPAD=9;
  const cw=(W-gx*(cols-1))/cols;
  const keyItems=card?spec(list[0]).filter(s=>s.name):[];
  const KF=8.6, GLW=15, KGAP=11;
@@ -1080,7 +1080,7 @@ function panels(hostId,items,spec,opt){
    g+='<line x1="'+x(e.y).toFixed(1)+'" x2="'+x(e.y).toFixed(1)+'" y1="'+(oy+P[0]).toFixed(1)
     +'" y2="'+(oy+chh-P[2]).toFixed(1)+'" stroke="#E4595B" stroke-width="1"'
     +' stroke-dasharray="4 3"/>'});
-  for(const v of [hi,lo]) g+='<text x="'+(ox+P[3]-4).toFixed(1)+'" y="'+(f(v)+3.4).toFixed(1)
+  for(const v of (card?[hi,(hi+lo)/2,lo]:[hi,lo])) g+='<text x="'+(ox+P[3]-4).toFixed(1)+'" y="'+(f(v)+3.4).toFixed(1)
    +'" text-anchor="end" font-size="9.2" fill="'+AXT+'">'+(opt.fmt?opt.fmt(v):v.toFixed(0))+'</text>';
   if(lo<0&&hi>0) g+='<line x1="'+x(y0).toFixed(1)+'" x2="'+x(y1).toFixed(1)+'" y1="'+f(0).toFixed(1)
    +'" y2="'+f(0).toFixed(1)+'" stroke="'+AX+'" stroke-width="1.1"/>';
