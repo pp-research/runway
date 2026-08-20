@@ -1006,7 +1006,7 @@ function panels(hostId,items,spec,opt){
  /* Card mode mirrors the vacancy-rate-v-rent slide: each panel sits on its own white
     card with a bold district header and its own key. TOP grows if the key needs to
     drop below the name rather than sitting beside it. */
- const CPAD=9;
+ const card=!!opt.cards, CPAD=9;
  const cw=(W-gx*(cols-1))/cols;
  const keyItems=card?spec(list[0]).filter(s=>s.name):[];
  const KF=8.6, GLW=15, KGAP=11;
@@ -1356,7 +1356,7 @@ function pPrice(){
   {d:GR(it.d,'unit').ps,type:'line',col:C(it.d),dash:'4 3',name:'Unit'}],
   {refbands:1,events:MOCK.events,
    fmt:v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'m':'$'+Math.round(v/1e3)+'k',
-   bandsFor:()=>[],cards:1,title:'Average of LGA medians',
+   bandsFor:()=>[],cards:1,H:460,title:'Average of LGA medians',
    ytitle:'Avg. of LGA medians \u2014 house / unit'});
  divLegend('c-price-lg','hover a panel to read values');
 }
@@ -1365,7 +1365,7 @@ function pYoY(){
   {d:GR(it.d,'house').pg,type:'line',col:C(it.d),name:'House'},
   {d:GR(it.d,'unit').pg,type:'line',col:C(it.d),dash:'4 3',name:'Unit'}],
   {zeroL:1,refbands:1,events:MOCK.events,fmt:v=>v.toFixed(0)+'%',
-   cards:1,title:'Year on year price movement',ytitle:'% Change Year on Year'});
+   cards:1,H:460,title:'Year on year price movement',ytitle:'% Change Year on Year'});
  divLegend('c-yoy-lg');
 }
 function HVU_LTA(){const v=[];
@@ -1403,7 +1403,7 @@ function pAI(){
  panels('c-ai',DIV6(),it=>[
   {d:H[it.d].ai.house,type:'line',col:C(it.d),name:'House AI'},
   {d:H[it.d].ai.unit,type:'line',col:C(it.d),dash:'4 3',name:'Unit AI'}],
-  {fmt:v=>v.toFixed(0)+'%',cards:1,title:'Affordability index',ytitle:'Affordability Index'});
+  {fmt:v=>v.toFixed(0)+'%',cards:1,H:460,title:'Affordability index',ytitle:'Affordability Index'});
  divLegend('c-ai-lg','income is '+dm('district-specific'));
 }
 function pRunway(){
@@ -1426,7 +1426,7 @@ function pPTI(){
  panels('c-pti',DIV6(),it=>[
   {d:H[it.d].pti.house,type:'line',col:C(it.d),name:'House PTI'},
   {d:H[it.d].pti.unit,type:'line',col:C(it.d),dash:'4 3',name:'Unit PTI'}],
-  {fmt:v=>v.toFixed(0),cards:1,title:'Price to income ratio',ytitle:'Price to Income Ratio'});
+  {fmt:v=>v.toFixed(0),cards:1,H:460,title:'Price to income ratio',ytitle:'Price to Income Ratio'});
  divLegend('c-pti-lg','years of gross income at the median price');
 }
 function pIncRent(){
@@ -1680,21 +1680,21 @@ function pSales(){
  panels('c-sales',DIV6(),it=>[
   {d:H[it.d].sales.house,type:'line',col:C(it.d),name:'House sales'},
   {d:H[it.d].sales.unit,type:'line',col:C(it.d),dash:'4 3',name:'Unit sales'}],
-  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,title:'Dwelling sales',ytitle:'House / Unit Sales'});
+  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,title:'Dwelling sales',ytitle:'House / Unit Sales'});
  divLegend('c-sales-lg','2026 anchored to the real 12-month count; earlier years '+dm('synthetic'));
 }
 function pAppr(){
  panels('c-appr',DIV6(),it=>[
   {d:H[it.d].appr,type:'bar',col:C(it.d),op:.75,name:'Approvals'},
   {d:H[it.d].popch,type:'line',col:'#171B24',ax:'r',name:'Population change'}],
-  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,title:'Approvals v population change',ytitle:'Dwelling Approvals'});
+  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,title:'Approvals v population change',ytitle:'Dwelling Approvals'});
  divLegend('c-appr-lg','bars = dwelling approvals (left), line = population change (right)');
 }
 function pHholds(){
  panels('c-hholds',DIV6(),it=>[
   {d:H[it.d].hhnew,type:'bar',col:C(it.d),op:.8,name:'New households'},
   {d:H[it.d].appr,type:'bar',col:'#B9C4CC',op:.75,name:'Approvals'}],
-  {zeroL:1,fmt:v=>(v/1000).toFixed(1)+'k',cards:1,title:'New households v housing',ytitle:'New Households / Approvals'});
+  {zeroL:1,fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,title:'New households v housing',ytitle:'New Households / Approvals'});
  divLegend('c-hholds-lg','2021 is negative everywhere \u2014 the COVID household-formation reversal');
 }
 function pPopch(){
@@ -1748,7 +1748,7 @@ function pYCR(){
   {d:H[it.d].yld.unit,type:'line',col:C(it.d),dash:'4 3',name:'Unit yield'},
   {d:MOCK.nat.cash,type:'line',col:'#996513',name:'Cash rate'},
   {d:MOCK.nat.var,type:'line',col:'#63666A',dash:'2 2',name:'Variable rate'}],
-  {fmt:v=>v.toFixed(0)+'%',cards:1,title:'Yield v cash rate',ytitle:'Yield / Cash / Variable Rate'});
+  {fmt:v=>v.toFixed(0)+'%',cards:1,H:460,title:'Yield v cash rate',ytitle:'Yield / Cash / Variable Rate'});
  divLegend('c-ycr-lg','brown = cash rate, grey = variable rate');
 }
 const BK=[['Best time to invest','var(--green)'],['Past its peak','var(--orange)'],
