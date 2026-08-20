@@ -171,45 +171,58 @@ Cotality (CoreLogic) medians</p>
 <main class="wrap">
 
 <section>
-<h2><span class="num">01</span>Finding</h2>
-<p class="scope"><b>What this page is trying to prove.</b> That people move to commuter and lifestyle
-markets when the capital becomes unaffordable, and that this shows up in prices. Three strands are
-needed: the <b>value gap</b> against the capital feeding into price growth; the <b>age and income</b> of
-the people moving; and whether <b>strong employment</b> frees people to leave the city. This page covers
-the first. The other two are set out in section 06.</p>
-<p class="scope" style="background:#EAF6F8"><b>Donor city</b> means the capital a market draws its buyers
-from. Census migration data confirms it is the market&rsquo;s own state capital in all eleven cases
-&mdash; see <a href="where-people-come-from-and-go-to.html" style="color:var(--t700)">Where people come
-from and go to</a>. The <b>value gap</b> is how much cheaper a market is than that capital, measured
-against its own long-run norm rather than in absolute terms.</p>
-<div class="headline">
-<p><b>The value gap does feed into price growth &mdash; in the commuter markets.</b> When a market is
-cheaper than its own norm relative to its capital, that gap closes over the next two to three years, with
-a half-life near <b>2.2 years</b>. The effect is strong in the commuter markets (<b>+0.60</b>), weak in
-the pure lifestyle markets (<b>+0.14</b>), and reverses in the two that trade at a premium.</p>
-</div>
-<p class="lede">Four things worth knowing about it.</p>
-<ul class="key">
-<li><b>The gap is genuinely mean-reverting.</b> A gap 10 percentage points wider than a market&rsquo;s
-norm closes by about <b>6pp over three years</b>. This is the strongest result on the page.</li>
-<li><b>It closes because the market rises, not because the capital falls.</b> The gap predicts the
-market&rsquo;s own growth far better than its capital&rsquo;s &mdash; so a wide gap says the satellite has
-ground to make up, not that the capital is about to correct.</li>
-<li><b>Only the commuter markets follow the rule.</b> <b>+0.60</b> for the four pure commuter markets and
-<b>+0.50</b> for the three commuter-lifestyle, against <b>+0.14</b> across the five lifestyle markets
-&mdash; and <b>&minus;0.03</b> once Hobart is set aside.</li>
-<li><b>It inverts where the market is dearer than its capital.</b> Gold Coast and Sunshine Coast sit
-above Brisbane on price, so &ldquo;value against the capital&rdquo; does not describe them and the sign
-flips (<b>&minus;0.38</b>). The rule needs a sign check before it is applied.</li>
-</ul>
-<div class="cards" id="kc2"></div>
-<div class="note"><b>What this does not yet prove.</b> Everything here is a price-to-price relationship.
-It shows that cheap markets catch up; it does not show that <i>people moving</i> is what does it. The
-population link needs annual migration measured against the gap &mdash; see section 06.</div>
+<h2><span class="num">01</span>Definitions and scope</h2>
+<p class="scope"><b>Donor city</b> means the capital a market draws its buyers from. The rule applied here
+is <b>the capital of the state the market sits in</b>: Sydney for the five New South Wales centres,
+Melbourne for Geelong, Ballarat and Bendigo, Brisbane for Ipswich, the Sunshine Coast and the Gold Coast.
+<b>Hobart is the one exception</b> &mdash; it is Tasmania&rsquo;s capital, so it has no state donor; it is
+tested against Melbourne. Census migration data confirms the state capital is the largest single source of
+arrivals in all eleven cases &mdash; see <a href="where-people-come-from-and-go-to.html"
+style="color:var(--t700)">Where people come from and go to</a>.</p>
+<p class="scope" style="background:#EAF6F8"><b>Value gap</b> is how much cheaper a market is than its donor
+city, measured against <b>its own long-run average</b> rather than in absolute terms. Every market has a
+permanent normal gap &mdash; Coffs Harbour sits about 39% below Sydney, the Gold Coast about 21% above
+Brisbane &mdash; and those levels predict nothing. What is tested throughout is the deviation from that
+norm: whether a market is unusually cheap, or unusually dear, by its own standards.</p>
+<p class="scope" style="background:#F7F7F6"><b>Scope.</b> All twelve Commuter/Lifestyle markets from the
+research framework, houses and units, 2002&ndash;2025 for prices and 2016&ndash;17 to 2024&ndash;25 for
+migration. Section 02 tests which capital&rsquo;s gap best tracks each market, 03 and 04 show where each market sits
+and how its gap has moved; 05 and 06 test the gap against prices and against people; 07 shows how long the effect persists; 08 lists what is
+still outstanding; 09 is the full table and 10 the method.</p>
 </section>
 
 <section>
-<h2><span class="num">02</span>Where each market sits today</h2>
+<h2><span class="num">02</span>Value gap against each capital</h2>
+<p class="lede">Each market measured three ways &mdash; its value gap against Sydney, against Melbourne and
+against Brisbane &mdash; and how well each predicts that market&rsquo;s own median price growth. A ring
+marks the market&rsquo;s own state capital.</p>
+<div class="ctl"><span class="seg" id="gcLag">
+<button data-l="1" class="on">1yr</button><button data-l="2">2yr</button><button data-l="3">3yr</button><button data-l="4">4yr</button><button data-l="5">5yr</button></span>
+<span class="seg" id="gcSub">
+<button data-t="All" class="on">All 12</button><button data-t="Commuter">Commuter</button><button data-t="Commuter + Lifestyle">Commuter + Lifestyle</button><button data-t="Lifestyle">Lifestyle</button></span></div>
+<div class="leg"><span><i style="background:var(--teal);border-radius:50%"></i>Gap vs Sydney</span>
+<span><i style="background:var(--euc);transform:rotate(45deg)"></i>Gap vs Melbourne</span>
+<span><i style="background:var(--amber)"></i>Gap vs Brisbane</span>
+<span class="mute" id="gcMean" style="margin-left:auto"></span></div>
+<div class="dual" id="gcDual">
+<div class="pane"><div class="paneh" id="gcHA">Houses</div><div class="chart" style="height:340px"><canvas id="cGCh"></canvas></div></div>
+<div class="pane"><div class="paneh" id="gcHB">Units</div><div class="chart" style="height:340px"><canvas id="cGCu"></canvas></div></div>
+</div>
+<p class="cap">Circle = Sydney, diamond = Melbourne, square = Brisbane. The black ring marks each
+market&rsquo;s own state capital. Hobart has no state donor and is shown against all three. Rows use a
+shared order across both panels. Value gap measured against each market&rsquo;s own long-run average,
+2002&ndash;2025.</p>
+<p class="cap printonly"><b>Printed view:</b> all twelve markets, one year ahead.</p>
+<div class="note"><b>Context for this chart.</b> The own-capital reading is the only one with a migration
+mechanism behind it &mdash; Census data confirms the state capital is the largest source of arrivals.
+Sydney and Melbourne are the two largest and earliest-moving markets in the country, so a gap measured
+against either partly reflects where the national cycle sits rather than a buyer relationship.
+<br><br><b>Hobart</b> is Tasmania&rsquo;s own capital and has no state donor, so all three of its readings
+are comparisons rather than mechanisms.</div>
+</section>
+
+<section>
+<h2><span class="num">03</span>Where each market sits today</h2>
 <p class="lede">Each satellite&rsquo;s current discount to its capital, against its own long-run average.
 Positive means cheaper than normal &mdash; the condition that has historically preceded catch-up.</p>
 <div class="ctl"><span class="seg" id="segA"><button data-s="H" class="on">Houses</button><button data-s="U">Units</button></span></div>
@@ -224,7 +237,7 @@ reverses.</p>
 </section>
 
 <section>
-<h2><span class="num">03</span>How the gap moves over time</h2>
+<h2><span class="num">04</span>How the gap moves over time</h2>
 <p class="lede">Pick a market. The line is its price gap to the capital each year; the band is that
 market&rsquo;s long-run average. Watch how the line returns to the band.</p>
 <div class="ctl"><select id="mSel"></select>
@@ -235,38 +248,6 @@ market&rsquo;s long-run average. Watch how the line returns to the band.</p>
 norm; below it, dearer.</p>
 <div class="chart"><canvas id="cGrow"></canvas></div>
 <p class="cap">Annual price growth, satellite against its capital.</p>
-</section>
-
-<section>
-<h2><span class="num">04</span>Value gap against each capital</h2>
-<p class="lede">How well a market&rsquo;s value gap &mdash; how cheap it is relative to the chosen capital,
-against its own long-run norm &mdash; predicts that market&rsquo;s own median price growth a year later.
-Switch the capital to compare.</p>
-<div class="ctl"><span class="seg" id="gcCap">
-<button data-c="OWN" class="on">Own state capital</button><button data-c="Sydney">Sydney</button><button data-c="Melbourne">Melbourne</button><button data-c="Brisbane">Brisbane</button><button data-c="Adelaide">Adelaide</button><button data-c="Perth">Perth</button><button data-c="Hobart">Hobart</button><button data-c="Canberra">Canberra</button><button data-c="Darwin">Darwin</button></span></div>
-<div class="ctl"><span class="seg" id="gcLag">
-<button data-l="1" class="on">1yr</button><button data-l="2">2yr</button><button data-l="3">3yr</button><button data-l="4">4yr</button><button data-l="5">5yr</button></span>
-<span class="seg" id="gcSub">
-<button data-t="All" class="on">All 12</button><button data-t="Commuter">Commuter</button><button data-t="Commuter + Lifestyle">Commuter + Lifestyle</button><button data-t="Lifestyle">Lifestyle</button></span></div>
-<div class="leg"><span class="mute" id="gcNote"></span><span class="mute" id="gcMean" style="margin-left:auto"></span></div>
-<div class="dual" id="gcDual">
-<div class="pane"><div class="paneh" id="gcHA">Houses</div><div class="chart" style="height:330px"><canvas id="cGCh"></canvas></div></div>
-<div class="pane"><div class="paneh" id="gcHB">Units</div><div class="chart" style="height:330px"><canvas id="cGCu"></canvas></div></div>
-</div>
-<p class="cap">Bars are the correlation for each market. Teal is positive &mdash; cheaper than normal
-precedes stronger growth. Amber is negative. Value gap measured against each market&rsquo;s own long-run
-average, 2002&ndash;2025. Rows share an order across both panels.</p>
-<p class="cap printonly"><b>Printed view:</b> each market against its own state capital, one year
-ahead.</p>
-<div class="note"><b>Read the own-capital view first.</b> It is the only one with a mechanism behind it
-&mdash; Census migration confirms the state capital is where each market&rsquo;s buyers come from.
-<br><br><b>Sydney scores highest almost everywhere</b>, averaging <b>+0.35</b> across all 24 segments
-against <b>+0.26</b> for Melbourne and <b>&minus;0.11</b> for Brisbane &mdash; including Victorian and
-Queensland markets it has no plausible connection to. That is Sydney being the largest and
-earliest-moving market in the country, so a gap measured against it partly captures where the national
-cycle sits. It is picking up timing, not a buyer relationship.
-<br><br>The remaining capitals are there for completeness and mostly read negative. If Adelaide or
-Darwin scores well for some market, treat it as noise rather than a finding.</div>
 </section>
 
 <section>
@@ -281,9 +262,9 @@ in the following years.</p>
 <div class="chart" style="height:560px"><canvas id="cTCp"></canvas></div>
 <p class="cap">Each bar is one market segment. Teal positive, amber negative. Price data 2002&ndash;2025,
 so 22 lagged pairs per segment. Rows ranked by this reading and held in the same order in section 06.</p>
-<div class="note"><b>A modest but consistent effect.</b> Averaged across the 24 segments a wide value gap
-predicts price growth the following year at <b>+0.26</b>. It is strongest in the commuter markets and
-negative in the two that trade at a premium to their capital.</div>
+<div class="note"><b>Reading this chart.</b> Price data runs 2002&ndash;2025, giving 22 lagged pairs per
+segment. Gold Coast and Sunshine Coast trade at a <i>premium</i> to Brisbane, so a positive value gap means
+something different for them than for the other ten.</div>
 </section>
 
 <section>
@@ -300,19 +281,13 @@ the gap should show up here at least as strongly as it does in prices.</p>
 <div class="chart" style="height:560px"><canvas id="cTCm"></canvas></div>
 <p class="cap">Same markets, same row order as section 05, so the two can be read against each other.
 Migration data 2016&ndash;17 to 2024&ndash;25, so eight lagged pairs per segment.</p>
-<div class="note"><b>The gap moves people more reliably than it moves prices.</b> Averaged across the 24
-segments a wide value gap predicts <b>net internal migration</b> the following year at <b>+0.43</b>,
-against <b>+0.26</b> for price growth. Pooled across all markets with market effects removed the
-migration relationship is <b>+0.41</b>, worth about <b>66 extra people per percentage point</b> of gap,
-at <b>p = 0.026</b>.
-<br><br>That is the link the price work on its own could not establish. A market that is unusually cheap
-against its capital goes on to <i>receive more people</i>, not merely to reprice.
-<br><br><b>Use net internal migration, not total population growth.</b> Switch the toggle and the
-relationship vanishes (<b>+0.02</b>). Total growth folds in births, deaths and overseas arrivals, none of
-which respond to a domestic value gap.
-<br><br><b>Two caveats.</b> Eight lagged pairs per segment is thin, so individual readings are noisy
-&mdash; Hobart at +0.92 should not be read as precise. And the window is 2016&ndash;2025, which contains
-the pandemic surge out of the capitals.</div>
+<div class="note"><b>Reading this chart.</b> Migration data runs 2016&ndash;17 to 2024&ndash;25, giving
+eight lagged pairs per segment &mdash; thin, so individual readings are noisy and should not be treated as
+precise. The window also contains the pandemic surge out of the capitals.
+<br><br><b>The two population measures are not interchangeable.</b> Net internal migration counts people
+moving between Australian markets. Total population growth adds births, deaths and overseas arrivals.
+Pooled across all markets with market effects removed, the net internal migration relationship is
+<b>+0.41</b> (p = 0.026); total population growth is <b>+0.02</b>.</div>
 </section>
 
 <section>
@@ -322,11 +297,9 @@ price growth one to five years later.</p>
 <div class="chart" style="height:320px"><canvas id="cL2"></canvas></div>
 <p class="cap">Value gap measured against each market&rsquo;s own long-run average. Shaded band is the
 confidence range.</p>
-<div class="note"><b>The effect is weak year by year but persistent, and it accumulates.</b> No single
-year is dramatic, but the sign stays positive across all five. Over three years combined the
-relationship reaches <b>+0.32</b> across all markets and <b>+0.58</b> among those that trade at a
-discount to their capital. That is the version worth acting on &mdash; the gap tells you a market has
-ground to make up, not when it will make it up.</div>
+<div class="note"><b>Cumulative figures.</b> Over three years combined the relationship reaches
+<b>+0.32</b> across all twelve markets and <b>+0.58</b> among the ten that trade at a discount to their
+capital.</div>
 </section>
 
 <section>
@@ -471,87 +444,98 @@ Chart.defaults.font.family='Montserrat';
 const P=D.prof, S=D.series, Y=D.years;
 const MK=[...new Set(P.map(p=>p.sat))];
 
-
-
-/* 01 cards */
-(function(){
-const W=D.withHobart;
-document.getElementById('kc2').innerHTML=[
- ['Gap half-life','2.2 yrs','for an unusual gap to half close'],
- ['Commuter markets','+0.60','gap \u2192 next 3 years of growth'],
- ['Lifestyle markets','+0.14','and \u22120.03 without Hobart'],
- ['Markets tested','12','24 segments, 2002\u20132025']
-].map(a=>'<div class="card"><div class="lab">'+a[0]+'</div><div class="val">'+a[1]+
- '</div><div class="sm">'+a[2]+'</div></div>').join('');
-})();
-
-/* 04 value gap vs a chosen capital */
+/* 04 value gap vs Sydney / Melbourne / Brisbane */
 (function(){
 const GA=D.gapall, ROWS=GA.rows;
-let lag=1, sub='All', cap='OWN';
-const pick=(r)=>cap==='OWN'?r.donor:cap;
-const val=(r,L)=>{const c=r.caps[pick(r)]; return c?c['L'+L]:null};
+const CAPS=['Sydney','Melbourne','Brisbane'];
+const K={Sydney:'syd',Melbourne:'mel',Brisbane:'bri'};
+const COL={Sydney:TEAL,Melbourne:EUC,Brisbane:AMBER};
+const SHP={Sydney:'circle',Melbourne:'rectRot',Brisbane:'rect'};
+let lag=1, sub='All';
+const val=(r,cap)=>{const c=r.caps[cap]; return c?c['L'+lag]:null};
 function order(){
  const byReg={};
- ROWS.forEach(function(r){const v=val(r,lag); if(v===null||v===undefined)return;
-  (byReg[r.m]=byReg[r.m]||[]).push(v)});
+ ROWS.forEach(function(r){
+  const vs=CAPS.map(c=>val(r,c)).filter(v=>v!==null&&v!==undefined);
+  if(!vs.length) return;
+  (byReg[r.m]=byReg[r.m]||[]).push(Math.max.apply(null,vs))});
  const avg={}; Object.keys(byReg).forEach(k=>avg[k]=byReg[k].reduce((a,b)=>a+b,0)/byReg[k].length);
  const regs=[]; ROWS.forEach(function(r){if((sub==='All'||r.sub===sub)&&regs.indexOf(r.m)<0)regs.push(r.m)});
  return regs.sort((x,y)=>(avg[y]===undefined?-9:avg[y])-(avg[x]===undefined?-9:avg[x]));}
 function rowsFor(seg){
  const o=order(), pos={}; o.forEach((g,i)=>pos[g]=i);
- return ROWS.filter(r=>r.seg===seg&&(sub==='All'||r.sub===sub)&&val(r,lag)!==null&&val(r,lag)!==undefined)
+ return ROWS.filter(r=>r.seg===seg&&(sub==='All'||r.sub===sub))
    .slice().sort((a,b)=>pos[a.m]-pos[b.m]);}
+const link={id:'gcl',beforeDatasetsDraw(ch){const x=ch.ctx;x.save();
+ x.strokeStyle='rgba(99,102,106,.28)';x.lineWidth=1.3;
+ const ms=[0,1,2].map(i=>ch.getDatasetMeta(i).data);
+ (ms[0]||[]).forEach(function(_,i){
+  const pts=ms.map(m=>m[i]).filter(Boolean); if(pts.length<2)return;
+  const xs=pts.map(q=>q.x);
+  x.beginPath();x.moveTo(Math.min.apply(null,xs),pts[0].y);x.lineTo(Math.max.apply(null,xs),pts[0].y);x.stroke()});
+ x.restore()}};
+const ring={id:'gcr',afterDatasetsDraw(ch){const x=ch.ctx;x.save();
+ (ch.$rows||[]).forEach(function(r,i){
+  const di=CAPS.indexOf(r.donor); if(di<0)return;
+  const pt=ch.getDatasetMeta(di).data[i]; if(!pt)return;
+  x.strokeStyle='#171B24';x.lineWidth=1.6;
+  x.beginPath();x.arc(pt.x,pt.y,9,0,6.284);x.stroke()});
+ x.restore()}};
 function mk(id,rows){
- return new Chart(document.getElementById(id),{type:'bar',
- data:{labels:rows.map(r=>r.m),datasets:[{data:rows.map(r=>val(r,lag)),
-  backgroundColor:rows.map(r=>val(r,lag)>=0?TEAL:AMBER),borderRadius:3,maxBarThickness:22}]},
- options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+ const c=new Chart(document.getElementById(id),{type:'scatter',
+ data:{datasets:CAPS.map(function(nm){
+  return {label:nm,backgroundColor:COL[nm],pointRadius:6,pointStyle:SHP[nm],
+   data:rows.map((r,i)=>({x:val(r,nm),y:i}))}})},
+ options:{responsive:true,maintainAspectRatio:false,layout:{padding:{right:14}},
  plugins:{legend:{display:false},tooltip:{callbacks:{
-  title:c=>rows[c[0].dataIndex].m+' '+(rows[c[0].dataIndex].seg==='H'?'houses':'units'),
-  label:c=>'gap vs '+pick(rows[c.dataIndex])+': '+(c.raw>0?'+':'')+Number(c.raw).toFixed(2),
-  afterLabel:function(c){const r=rows[c.dataIndex],e=r.caps[pick(r)];
-   return e? 'normal gap '+e.avg.toFixed(1)+'%'+(e.now!==null?' \u00b7 now '+e.now.toFixed(1)+'%':'') : ''}}}},
+  title:c2=>rows[c2[0].raw.y].m+' '+(rows[c2[0].raw.y].seg==='H'?'houses':'units'),
+  label:c2=>'gap vs '+c2.dataset.label+': '+(c2.raw.x>0?'+':'')+Number(c2.raw.x).toFixed(2)+
+   (c2.dataset.label===rows[c2.dataIndex].donor?'  (own capital)':'')}}},
  scales:{
-  x:{...F,min:-0.9,max:0.8,title:{display:true,text:'Correlation with own price growth '+lag+(lag===1?' year':' years')+' later',color:GRAY,font:{size:11}},
+  x:{...F,min:-0.85,max:0.8,title:{display:true,text:'Correlation with own price growth '+lag+(lag===1?' year':' years')+' later',color:GRAY,font:{size:11}},
      ticks:{...F.ticks,font:{size:10},callback:v=>(v>0?'+':'')+v.toFixed(1)},
-     grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
-  y:{...F,grid:{display:false},ticks:{...F.ticks,autoSkip:false,font:{size:10}}}}}});}
+     grid:{color:c2=>c2.tick.value===0?'rgba(99,102,106,.5)':LINE}},
+  y:{...F,min:-0.6,max:Math.max(rows.length-0.4,0.6),reverse:true,
+     afterBuildTicks:ax=>{ax.ticks=rows.map((_,i)=>({value:i}))},
+     ticks:{...F.ticks,autoSkip:false,font:{size:10},
+       callback:v=>rows[v]?rows[v].m+(rows[v].donor?'':'  \u25cb'):''},
+     grid:{display:false}}}},
+ plugins:[link,ring]});
+ c.$rows=rows; return c;}
 let RH=rowsFor('H'), RU=rowsFor('U');
 const cH=mk('cGCh',RH), cU=mk('cGCu',RU);
 function apply(ch,rows){
- ch.data.labels=rows.map(r=>r.m);
- ch.data.datasets[0].data=rows.map(r=>val(r,lag));
- ch.data.datasets[0].backgroundColor=rows.map(r=>val(r,lag)>=0?TEAL:AMBER);
+ CAPS.forEach(function(nm,i){ch.data.datasets[i].data=rows.map((r,j)=>({x:val(r,nm),y:j}))});
+ ch.$rows=rows;
+ ch.options.scales.y.max=Math.max(rows.length-0.4,0.6);
+ ch.options.scales.y.afterBuildTicks=ax=>{ax.ticks=rows.map((_,i)=>({value:i}))};
+ ch.options.scales.y.ticks.callback=v=>rows[v]?rows[v].m:'';
  ch.options.scales.x.title.text='Correlation with own price growth '+lag+(lag===1?' year':' years')+' later';
- ch.options.plugins.tooltip.callbacks.title=c=>rows[c[0].dataIndex].m+' '+
-   (rows[c[0].dataIndex].seg==='H'?'houses':'units');
- ch.options.plugins.tooltip.callbacks.label=c=>'gap vs '+pick(rows[c.dataIndex])+': '+
-   (c.raw>0?'+':'')+Number(c.raw).toFixed(2);
- ch.options.plugins.tooltip.callbacks.afterLabel=function(c){const r=rows[c.dataIndex],e=r.caps[pick(r)];
-   return e? 'normal gap '+e.avg.toFixed(1)+'%'+(e.now!==null?' \u00b7 now '+e.now.toFixed(1)+'%':'') : ''};
+ ch.options.plugins.tooltip.callbacks.title=c2=>rows[c2[0].raw.y].m+' '+
+   (rows[c2[0].raw.y].seg==='H'?'houses':'units');
  ch.canvas.parentNode.style.height=Math.max(190,40+rows.length*23)+'px';
  ch.resize(); ch.update();}
-const mean=rows=>{const v=rows.map(r=>val(r,lag)).filter(x=>x!==null&&x!==undefined);
+const mean=(rows,cap)=>{const v=rows.map(r=>val(r,cap)).filter(x=>x!==null&&x!==undefined);
  return v.length?v.reduce((a,b)=>a+b,0)/v.length:0};
 const sgn=v=>(v>0?'+':'')+v.toFixed(2);
 function draw(){
  RH=rowsFor('H'); RU=rowsFor('U');
  apply(cH,RH); apply(cU,RU);
- document.getElementById('gcHA').innerHTML='Houses <span>average '+sgn(mean(RH))+'</span>';
- document.getElementById('gcHB').innerHTML='Units <span>average '+sgn(mean(RU))+'</span>';
- document.getElementById('gcNote').textContent = cap==='OWN'
-  ? 'Each market against its own state capital'
-  : 'Every market against '+cap;
+ document.getElementById('gcHA').innerHTML='Houses <span>Syd '+sgn(mean(RH,'Sydney'))+
+  ' \u00b7 Mel '+sgn(mean(RH,'Melbourne'))+' \u00b7 Bri '+sgn(mean(RH,'Brisbane'))+'</span>';
+ document.getElementById('gcHB').innerHTML='Units <span>Syd '+sgn(mean(RU,'Sydney'))+
+  ' \u00b7 Mel '+sgn(mean(RU,'Melbourne'))+' \u00b7 Bri '+sgn(mean(RU,'Brisbane'))+'</span>';
  const all=RH.concat(RU);
- const pos=all.filter(r=>val(r,lag)>0).length;
- document.getElementById('gcMean').textContent=pos+' of '+all.length+' segments positive';
+ const own=all.filter(function(r){
+  const v={}; CAPS.forEach(c=>{const x=val(r,c); if(x!==null&&x!==undefined)v[c]=x});
+  const ks=Object.keys(v); if(!ks.length)return false;
+  return ks.sort((a,b)=>v[b]-v[a])[0]===r.donor}).length;
+ document.getElementById('gcMean').textContent='own state capital ranks first in '+own+' of '+all.length+' segments';
  requestAnimationFrame(function(){cH.resize();cU.resize()});}
 function wire4(id,attr,set){document.querySelectorAll('#'+id+' button').forEach(function(b){
  b.onclick=function(){set(b.dataset[attr]);
   document.querySelectorAll('#'+id+' button').forEach(function(x){x.className=x===b?'on':''});
   draw()}});}
-wire4('gcCap','c',v=>cap=v);
 wire4('gcLag','l',v=>lag=+v);
 wire4('gcSub','t',v=>sub=v);
 draw();
