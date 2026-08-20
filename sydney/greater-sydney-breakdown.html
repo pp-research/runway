@@ -1002,9 +1002,23 @@ function panels(hostId,items,spec,opt){
  if(!list.length){host.innerHTML='<svg class="ch" viewBox="0 0 10 10"></svg>';
   CH[hostId]={W:10,Ht:10,hit:()=>null};return}
  const cols=opt.cols||(list.length>6?4:3), rows=Math.ceil(list.length/cols);
- const gx=16, gy=30, TOP=17;
- const cw=(W-gx*(cols-1))/cols, chh=(Ht-gy*(rows-1)-rows*TOP)/rows;
- const P=[6,6,17,opt.padL||46];
+ const gx=16, gy=30;
+ /* Card mode mirrors the vacancy-rate-v-rent slide: each panel sits on its own white
+    card with a bold district header and its own key. TOP grows if the key needs to
+    drop below the name rather than sitting beside it. */
+ const card=!!opt.cards, CPAD=9;
+ const cw=(W-gx*(cols-1))/cols;
+ const keyItems=card?spec(list[0]).filter(s=>s.name):[];
+ const KF=8.6, GLW=15, KGAP=11;
+ const kwOf=s=>GLW+3+String(s.name).length*KF*0.55+KGAP;
+ const keyW=keyItems.reduce((a,s)=>a+kwOf(s),0);
+ const nameW=13+Math.max.apply(null,list.map(it=>String(it.label).length))*12.4*0.58;
+ const inner=cw-CPAD*2;
+ let keyRows=0;
+ if(card&&keyW>inner-nameW-8) keyRows=Math.max(1,Math.ceil(keyW/inner));
+ const TOP=card?(21+keyRows*11):17;
+ const chh=(Ht-gy*(rows-1)-rows*TOP)/rows;
+ const P=[6,card?10:6,17,opt.padL||46];
  let gLo=[],gHi=[];
  list.forEach(it=>spec(it).forEach(s=>{const v=Object.values(s.d).filter(x=>x!=null&&isFinite(x));
   if(s.ax==='r')gHi.push(...v); else gLo.push(...v)}));
@@ -1013,6 +1027,28 @@ function panels(hostId,items,spec,opt){
  let g='<svg class="ch" viewBox="0 0 '+W+' '+Ht+'" xmlns="http://www.w3.org/2000/svg"'
   +' role="img"><title>'+(opt.title||'')+'</title>';
  const geom=[];
+ /* white card + header (swatch, district name) + per-card key, drawn in the same SVG
+    so hit-testing, tooltips and the hidden-district filter all keep working */
+ const cardHdr=(ox,oy,it)=>{
+  let s='<rect x="'+ox.toFixed(1)+'" y="'+(oy-TOP).toFixed(1)+'" width="'+cw.toFixed(1)
+   +'" height="'+(TOP+chh).toFixed(1)+'" rx="6" fill="#FFFFFF" stroke="rgba(23,27,36,.09)"/>';
+  const hy=oy-TOP+13;
+  s+='<rect x="'+(ox+CPAD).toFixed(1)+'" y="'+(hy-7.4).toFixed(1)+'" width="8" height="8" rx="1.6"'
+   +' fill="'+C(it.d)+'"/><text x="'+(ox+CPAD+12).toFixed(1)+'" y="'+hy.toFixed(1)
+   +'" font-size="12.4" font-weight="700" fill="var(--ink)">'+it.label+'</text>';
+  let kx=(keyRows===0)?(ox+cw-CPAD-keyW):(ox+CPAD), ky=(keyRows===0)?hy:(oy-TOP+25), used=0;
+  keyItems.forEach(q=>{const w=kwOf(q);
+   if(keyRows>0&&used>0&&used+w>inner){ky+=11;used=0}
+   const g0=kx+used;
+   if(q.type==='bar') s+='<rect x="'+g0.toFixed(1)+'" y="'+(ky-5.2).toFixed(1)+'" width="'+GLW
+    +'" height="6.4" rx="1" fill="'+q.col+'" fill-opacity="'+(q.op||.85)+'"/>';
+   else s+='<line x1="'+g0.toFixed(1)+'" x2="'+(g0+GLW).toFixed(1)+'" y1="'+(ky-2.6).toFixed(1)
+    +'" y2="'+(ky-2.6).toFixed(1)+'" stroke="'+q.col+'" stroke-width="1.9" stroke-linecap="round"'
+    +(q.dash&&q.dash!=='none'?' stroke-dasharray="'+q.dash+'"':'')+'/>';
+   s+='<text x="'+(g0+GLW+3).toFixed(1)+'" y="'+ky.toFixed(1)+'" font-size="'+KF
+    +'" font-weight="700" fill="var(--ink-dim)">'+q.name+'</text>';
+   used+=w});
+  return s};
  list.forEach((it,i)=>{
   const ox=(i%cols)*(cw+gx), oy=Math.floor(i/cols)*(TOP+chh+gy)+TOP;
   const ss=spec(it), ys=yl(ss[0].d), y0=ys[0], y1=ys[ys.length-1];
@@ -1020,12 +1056,12 @@ function panels(hostId,items,spec,opt){
   const f=v=>oy+P[0]+(hi-v)/((hi-lo)||1)*(chh-P[0]-P[2]);
   const f2=v=>oy+P[0]+(hi2-v)/((hi2-lo2)||1)*(chh-P[0]-P[2]);
   geom.push({it:it,ox:ox,oy:oy,x:x,f:f,y0:y0,y1:y1,ys:ys,ss:ss,cw:cw,chh:chh});
-  g+='<rect x="'+(ox+P[3]).toFixed(1)+'" y="'+(oy-13).toFixed(1)+'" width="7.5" height="7.5"'
+  if(card){g+=cardHdr(ox,oy,it)}else{g+='<rect x="'+(ox+P[3]).toFixed(1)+'" y="'+(oy-13).toFixed(1)+'" width="7.5" height="7.5"'
    +' rx="1.5" fill="'+C(it.d)+'"/><text x="'+(ox+P[3]+11.5).toFixed(1)+'" y="'+(oy-6).toFixed(1)
-   +'" font-size="10.8" font-weight="700" fill="var(--ink)">'+it.label+'</text>';
+   +'" font-size="10.8" font-weight="700" fill="var(--ink)">'+it.label+'</text>';}
   g+='<rect x="'+(ox+P[3]).toFixed(1)+'" y="'+(oy+P[0]).toFixed(1)+'" width="'+(cw-P[1]-P[3]).toFixed(1)
-   +'" height="'+(chh-P[0]-P[2]).toFixed(1)+'" class="pbox" fill="#FFFFFF" fill-opacity=".55"'
-   +' stroke="rgba(23,27,36,.10)"/>';
+   +'" height="'+(chh-P[0]-P[2]).toFixed(1)+'" class="pbox" fill="#FFFFFF" fill-opacity="'+(card?0:.55)+'"'
+   +' stroke="rgba(23,27,36,'+(card?'.06':'.10')+')"/>';
   for(let k=1;k<=2;k++){const gy2=oy+P[0]+(chh-P[0]-P[2])*k/3;
    g+='<line x1="'+(ox+P[3]).toFixed(1)+'" x2="'+(ox+cw-P[1]).toFixed(1)+'" y1="'+gy2.toFixed(1)
     +'" y2="'+gy2.toFixed(1)+'" stroke="'+GRID+'"/>'}
@@ -1076,7 +1112,7 @@ function panels(hostId,items,spec,opt){
  host.innerHTML=g+'</svg>';
  const fmt=opt.fmt||(v=>v.toFixed(1));
  CH[hostId]={W:W,Ht:Ht,hit(vx,vy){
-  const p=geom.find(q=>vx>=q.ox&&vx<=q.ox+q.cw&&vy>=q.oy-14&&vy<=q.oy+q.chh);
+  const p=geom.find(q=>vx>=q.ox&&vx<=q.ox+q.cw&&vy>=q.oy-TOP+2&&vy<=q.oy+q.chh);
   if(!p) {const c=gid(hostId+'-cross'); if(c)c.innerHTML=''; return null}
   const yr=Math.max(p.y0,Math.min(p.y1,Math.round(p.y0+(vx-p.ox-P[3])/(p.cw-P[1]-P[3])*(p.y1-p.y0))));
   const cx=p.x(yr);
@@ -1320,17 +1356,17 @@ function pPrice(){
   {d:GR(it.d,'unit').ps,type:'line',col:C(it.d),dash:'4 3',name:'Unit'}],
   {refbands:1,events:MOCK.events,
    fmt:v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'m':'$'+Math.round(v/1e3)+'k',
-   bandsFor:()=>[],title:'Average of LGA medians',
+   bandsFor:()=>[],cards:1,title:'Average of LGA medians',
    ytitle:'Avg. of LGA medians \u2014 house / unit'});
- divLegend('c-price-lg','solid = houses, dashed = units \u00b7 hover a panel to read values');
+ divLegend('c-price-lg','hover a panel to read values');
 }
 function pYoY(){
  panels('c-yoy',DIV6(),it=>[
   {d:GR(it.d,'house').pg,type:'line',col:C(it.d),name:'House'},
   {d:GR(it.d,'unit').pg,type:'line',col:C(it.d),dash:'4 3',name:'Unit'}],
   {zeroL:1,refbands:1,events:MOCK.events,fmt:v=>v.toFixed(0)+'%',
-   title:'Year on year price movement',ytitle:'% Change Year on Year'});
- divLegend('c-yoy-lg','solid = houses, dashed = units');
+   cards:1,title:'Year on year price movement',ytitle:'% Change Year on Year'});
+ divLegend('c-yoy-lg');
 }
 function HVU_LTA(){const v=[];
  ORDER.forEach(d=>{const gh=GR(d,'house'), gu=GR(d,'unit');
@@ -1367,8 +1403,8 @@ function pAI(){
  panels('c-ai',DIV6(),it=>[
   {d:H[it.d].ai.house,type:'line',col:C(it.d),name:'House AI'},
   {d:H[it.d].ai.unit,type:'line',col:C(it.d),dash:'4 3',name:'Unit AI'}],
-  {fmt:v=>v.toFixed(0)+'%',title:'Affordability index',ytitle:'Affordability Index'});
- divLegend('c-ai-lg','income is '+dm('district-specific')+' \u00b7 solid = houses, dashed = units');
+  {fmt:v=>v.toFixed(0)+'%',cards:1,title:'Affordability index',ytitle:'Affordability Index'});
+ divLegend('c-ai-lg','income is '+dm('district-specific'));
 }
 function pRunway(){
  bars('c-rw',ORDER,[
@@ -1390,7 +1426,7 @@ function pPTI(){
  panels('c-pti',DIV6(),it=>[
   {d:H[it.d].pti.house,type:'line',col:C(it.d),name:'House PTI'},
   {d:H[it.d].pti.unit,type:'line',col:C(it.d),dash:'4 3',name:'Unit PTI'}],
-  {fmt:v=>v.toFixed(0),title:'Price to income ratio',ytitle:'Price to Income Ratio'});
+  {fmt:v=>v.toFixed(0),cards:1,title:'Price to income ratio',ytitle:'Price to Income Ratio'});
  divLegend('c-pti-lg','years of gross income at the median price');
 }
 function pIncRent(){
@@ -1644,21 +1680,21 @@ function pSales(){
  panels('c-sales',DIV6(),it=>[
   {d:H[it.d].sales.house,type:'line',col:C(it.d),name:'House sales'},
   {d:H[it.d].sales.unit,type:'line',col:C(it.d),dash:'4 3',name:'Unit sales'}],
-  {fmt:v=>(v/1000).toFixed(1)+'k',title:'Dwelling sales',ytitle:'House / Unit Sales'});
+  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,title:'Dwelling sales',ytitle:'House / Unit Sales'});
  divLegend('c-sales-lg','2026 anchored to the real 12-month count; earlier years '+dm('synthetic'));
 }
 function pAppr(){
  panels('c-appr',DIV6(),it=>[
   {d:H[it.d].appr,type:'bar',col:C(it.d),op:.75,name:'Approvals'},
   {d:H[it.d].popch,type:'line',col:'#171B24',ax:'r',name:'Population change'}],
-  {fmt:v=>(v/1000).toFixed(1)+'k',title:'Approvals v population change',ytitle:'Dwelling Approvals'});
+  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,title:'Approvals v population change',ytitle:'Dwelling Approvals'});
  divLegend('c-appr-lg','bars = dwelling approvals (left), line = population change (right)');
 }
 function pHholds(){
  panels('c-hholds',DIV6(),it=>[
   {d:H[it.d].hhnew,type:'bar',col:C(it.d),op:.8,name:'New households'},
   {d:H[it.d].appr,type:'bar',col:'#B9C4CC',op:.75,name:'Approvals'}],
-  {zeroL:1,fmt:v=>(v/1000).toFixed(1)+'k',title:'New households v housing',ytitle:'New Households / Approvals'});
+  {zeroL:1,fmt:v=>(v/1000).toFixed(1)+'k',cards:1,title:'New households v housing',ytitle:'New Households / Approvals'});
  divLegend('c-hholds-lg','2021 is negative everywhere \u2014 the COVID household-formation reversal');
 }
 function pPopch(){
@@ -1712,8 +1748,8 @@ function pYCR(){
   {d:H[it.d].yld.unit,type:'line',col:C(it.d),dash:'4 3',name:'Unit yield'},
   {d:MOCK.nat.cash,type:'line',col:'#996513',name:'Cash rate'},
   {d:MOCK.nat.var,type:'line',col:'#63666A',dash:'2 2',name:'Variable rate'}],
-  {fmt:v=>v.toFixed(0)+'%',title:'Yield v cash rate',ytitle:'Yield / Cash / Variable Rate'});
- divLegend('c-ycr-lg','district colour = yield (solid house, dashed unit); brown = cash, grey = variable');
+  {fmt:v=>v.toFixed(0)+'%',cards:1,title:'Yield v cash rate',ytitle:'Yield / Cash / Variable Rate'});
+ divLegend('c-ycr-lg','brown = cash rate, grey = variable rate');
 }
 const BK=[['Best time to invest','var(--green)'],['Past its peak','var(--orange)'],
  ['Worth watching','var(--blue)'],['Not the best time','var(--red)']];
