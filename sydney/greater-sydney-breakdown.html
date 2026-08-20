@@ -122,6 +122,8 @@ body.railshut .stage{margin-left:56px}
 @media(max-width:900px){.stage{margin-left:0;padding:16px 10px 40px}}
 .page{width:100%;max-width:1180px;aspect-ratio:16/9;background:var(--pg);color:var(--pg-ink);
  border-radius:6px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+/* parked pages: kept in the document but out of the deck (see the PAGES array) */
+.page[hidden]{display:none}
 /* .slide is the 16:9 content box and the container-query container. It is a separate
    element from .page so that in presentation mode the page background can cover a
    non-16:9 screen edge to edge while the content keeps its proportions — and so cqw
