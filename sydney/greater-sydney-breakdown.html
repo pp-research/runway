@@ -1100,8 +1100,9 @@ function panels(hostId,items,spec,opt){
     g+='<path d="'+dd.trim()+'" fill="none" stroke="'+s.col+'" stroke-width="1.75"'
      +' stroke-linejoin="round" stroke-linecap="round"'
      +(s.op?' stroke-opacity="'+s.op+'"':'')+(s.dash&&s.dash!=='none'?' stroke-dasharray="'+s.dash+'"':'')+'/>';
-    /* point markers only on the 6-panel grids; 12 panels are too dense for them */
-    if(list.length<=6) ys.forEach(y=>{const v=at(s.d,y);
+    /* No point markers in card mode: with a year every ~8 units they bead the line and
+       read as dashed. The vacancy-rate-v-rent cards draw clean strokes too. */
+    if(list.length<=6&&!card) ys.forEach(y=>{const v=at(s.d,y);
      if(v!=null&&isFinite(v))
       g+='<circle cx="'+x(y).toFixed(1)+'" cy="'+ff(v).toFixed(1)+'" r="2.1"'+(s.op?' fill-opacity="'+s.op+'"':'')+' fill="'+s.col
        +'" stroke="#FBFDFE" stroke-width=".85"/>'})}});
