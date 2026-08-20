@@ -174,8 +174,8 @@ footer .wrap{border-top:1px solid var(--line);padding-top:18px}
 <img src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-inverted.png" alt="Performance Property">
 <p class="kick">Rents &amp; Prices</p>
 <h1>Where people come from and go to</h1>
-<p class="sub">Migration flows, rent and price timing, and value against the capital &mdash; 36 markets,
-2002 to 2025.</p>
+<p class="sub">Where each market&rsquo;s buyers come from, and whether value against the capital
+forecasts what prices do next &mdash; 12 commuter and lifestyle markets, 2002 to 2025.</p>
 <p class="meta">Research Division &middot; August 2026 &middot; ABS Census 2021 &middot; Cotality
 (CoreLogic) medians</p>
 </div></header>
@@ -219,29 +219,11 @@ their capital&rsquo;s boundary.</p></div>
 </section>
 
 <section class="tight">
-<h2 class="sm"><span class="num">03</span>Which leads &mdash; rents or prices</h2>
-<div class="grid g3">
-<div class="panel"><div class="ph">Direction</div>
-<h3>Rents lead 2.4&times; more than prices</h3>
-<div class="chart" style="height:300px"><canvas id="cDir"></canvas></div>
-<p class="cap">Effect on the following year, all 36 markets pooled.</p></div>
-<div class="panel"><div class="ph">Lead-lag curve</div>
-<h3>The trail is longer on the rent side</h3>
-<div class="chart" style="height:300px"><canvas id="cCg"></canvas></div>
-<p class="cap">Correlation with price growth at each lag.</p></div>
-<div class="panel"><div class="ph">What separates them</div>
-<h3>Yield sorts the strong from the weak</h3>
-<div class="chart" style="height:300px"><canvas id="cYld"></canvas></div>
-<p class="cap">Rents-lead strength by yield group, 72 segments.</p></div>
-</div>
-</section>
-
-<section class="tight">
-<h2 class="sm"><span class="num">04</span>The full studies</h2>
+<h2 class="sm"><span class="num">03</span>The full studies</h2>
 <div class="go">
 <a href="how-population-impacts-prices.html"><div class="t">How population impacts prices</div>
 <div class="d">Twelve commuter and lifestyle markets against their donor city. Value gap, mean
-reversion, and the prices-lead-rents check.</div>
+reversion, and which capital&rsquo;s gap forecasts best.</div>
 <div class="n">12 markets &middot; 24 segments &rarr;</div></a>
 <a href="which-leads.html"><div class="t">Which leads: rents or prices</div>
 <div class="d">36 markets, houses and units, 2002&ndash;2025. Direction tests, lag curves, yield and
@@ -251,8 +233,8 @@ workforce drivers, and the national picture.</div>
 </section>
 
 <section class="tight">
-<h2 class="sm"><span class="num">05</span>Sources</h2>
-<p class="cap" style="margin:0">Price and rent medians: Cotality (CoreLogic) via LIVE | 36 Regions &mdash;
+<h2 class="sm"><span class="num">04</span>Sources</h2>
+<p class="cap" style="margin:0">Median prices: Cotality (CoreLogic) via LIVE | 36 Regions &mdash;
 Historic Data, December snapshots, 2026 excluded (different basis). Migration: ABS Census 2021
 TableBuilder, place of usual residence five years ago at LGA level. Market classification supplied by the
 research framework. Prepared by the Research Division, pending review.</p>
@@ -290,9 +272,9 @@ const MIG=D.mig, RP=D.rents, GAP=D.gap;
 document.getElementById('kpi').innerHTML=[
  ['Donor confirmed','11 / 11','markets draw most from their state capital'],
  ['Net drain from capitals','+'+MIG.total.net.toLocaleString('en-AU'),'people over five years'],
- ['Rents lead prices','+'+RP.A.b.toFixed(2),'vs +'+RP.B.b.toFixed(2)+' the other way'],
- ['Capital vs regional','+0.43 / +0.44','same answer, separate markets'],
- ['Value gap half-life','2.2 yrs','for an unusual gap to half close']
+ ['Strongest pull','3.4 \u00d7','Port Macquarie, arrivals per departure'],
+ ['Value gap half-life','2.2 yrs','for an unusual gap to half close'],
+ ['Commuter markets','+0.60','gap \u2192 next 3 years of price growth']
 ].map(a=>'<div class="k"><div class="l">'+a[0]+'</div><div class="v">'+a[1]+
  '</div><div class="s">'+a[2]+'</div></div>').join('');
 
@@ -320,47 +302,6 @@ plugins:{legend:{display:false},tooltip:{callbacks:{
 scales:{x:{...F,ticks:{...F.ticks,callback:v=>(v>0?'+':'')+(Math.abs(v)>=1000?(v/1000)+'k':v)},
  grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
  y:{...F,grid:{display:false},ticks:{...F.ticks,autoSkip:false,font:{size:9}}}}}});
-
-/* 02a direction */
-new Chart(document.getElementById('cDir'),{type:'bar',
-data:{labels:['Rents \u2192 price','Prices \u2192 rent'],
-datasets:[{data:[RP.A.b,RP.B.b],backgroundColor:[TEAL,AMBER],borderRadius:4,maxBarThickness:70}]},
-options:{responsive:true,maintainAspectRatio:false,
-plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'+'+c.raw.toFixed(3)}}},
-scales:{y:{...F,min:0,max:0.55,ticks:{...F.ticks,callback:v=>'+'+v.toFixed(1)}},
- x:{...F,grid:{display:false},ticks:{...F.ticks,font:{size:11}}}}}});
-
-/* 02b correlogram */
-const CG=RP.cg;
-new Chart(document.getElementById('cCg'),{type:'line',
-data:{labels:CG.map(c=>c.k===0?'same':(c.k>0?'+'+c.k:''+c.k)),
-datasets:[
- {data:CG.map(c=>c.hi),borderColor:'transparent',backgroundColor:'rgba(0,160,180,.13)',pointRadius:0,fill:'+1',tension:.25,order:3},
- {data:CG.map(c=>c.lo),borderColor:'transparent',pointRadius:0,fill:false,tension:.25,order:3},
- {data:CG.map(c=>c.r),borderColor:TEAL,borderWidth:2,tension:.25,order:1,
-  pointRadius:CG.map(c=>c.k===0?5:3),
-  pointBackgroundColor:CG.map(c=>c.k>0?TEAL:(c.k<0?AMBER:GRAY)),fill:false}]},
-options:{responsive:true,maintainAspectRatio:false,
-plugins:{legend:{display:false},tooltip:{filter:i=>i.datasetIndex===2,
- callbacks:{title:c=>{const k=CG[c[0].dataIndex].k;return k===0?'same year':(k>0?'rent '+k+'yr earlier':'price '+(-k)+'yr earlier')},
- label:c=>'r = '+(c.raw>0?'+':'')+c.raw.toFixed(2)}}},
-scales:{y:{...F,ticks:{...F.ticks,callback:v=>(v>0?'+':'')+v.toFixed(1)},
- grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
- x:{...F,grid:{display:false}}}}});
-
-/* 02c yield quintiles */
-const Q=RP.yldQuint;
-new Chart(document.getElementById('cYld'),{type:'bar',
-data:{labels:Q.map(q=>q.q===1?'Lowest':q.q===5?'Highest':'Q'+q.q),
-datasets:[{data:Q.map(q=>q.rl),backgroundColor:Q.map(q=>q.rl>0.25?TEAL:q.rl<0?AMBER:'#9BD4DD'),
- borderRadius:4,maxBarThickness:44}]},
-options:{responsive:true,maintainAspectRatio:false,
-plugins:{legend:{display:false},tooltip:{callbacks:{
- label:c=>(c.raw>0?'+':'')+c.raw.toFixed(2),
- afterLabel:c=>'avg yield '+Q[c.dataIndex].yld.toFixed(2)+'% \u00b7 '+Q[c.dataIndex].n+' segments'}}},
-scales:{y:{...F,ticks:{...F.ticks,callback:v=>(v>0?'+':'')+v.toFixed(1)},
- grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
- x:{...F,grid:{display:false},title:{display:true,text:'Gross yield group',color:GRAY,font:{size:11}}}}}});
 
 /* 03a gap now */
 const GR=GAP.prof.filter(p=>p.dev!==null).sort((a,b)=>b.dev-a.dev);
