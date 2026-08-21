@@ -305,8 +305,27 @@ in section 04, which cover everyone living in the market.</div>
 
 <section id="employment">
 <h2><span class="num">06</span>How is the labour market in each?</h2>
-<p class="lede">Each market against its donor capital. Unemployment counts only people actively looking;
-the employment-to-population ratio and participation rate also capture people who have stopped looking.</p>
+<p class="lede">Each market against its donor capital. The three measures count different groups, so
+they can point in different directions.</p>
+<details class="mdet" open><summary>What the three measures mean</summary>
+<p>Take 100 working-age people. Say <b>65</b> have a job, <b>3</b> are without one and looking, and
+<b>32</b> are not in the labour force at all &mdash; retired, studying, caring, or no longer looking.</p>
+<div class="scroll"><table class="calc"><thead><tr><th>Measure</th><th>Who is counted</th>
+<th class="n">Worked through</th></tr></thead><tbody>
+<tr><td><b>Employment to population</b></td><td>People in work, out of everyone of working age</td>
+<td class="n">65 &divide; 100 = <b>65%</b></td></tr>
+<tr><td><b>Participation rate</b></td><td>People working or looking, out of everyone of working age</td>
+<td class="n">68 &divide; 100 = <b>68%</b></td></tr>
+<tr><td><b>Unemployment rate</b></td><td>People looking, out of those working or looking</td>
+<td class="n">3 &divide; 68 = <b>4.4%</b></td></tr>
+</tbody></table></div>
+<p style="margin-top:10px"><b>The denominator is what separates them.</b> Unemployment divides by the labour
+force alone, so the 32 people outside it are invisible to it. The other two divide by the whole working-age
+population.</p>
+<p><b>That has a consequence.</b> When someone stops looking for work they leave the labour force, so the
+unemployment rate <i>falls</i> while employment to population does not move &mdash; they still have no job.
+A market can therefore post a low unemployment rate simply because people gave up looking.</p>
+</details>
 <div class="ctl"><span class="seg" id="lfMeas">
 <button data-k="epr" class="on">Employment to population</button><button data-k="pr">Participation rate</button><button data-k="ur">Unemployment rate</button></span>
 <span class="seg" id="lfPer">
@@ -321,7 +340,12 @@ constituent SA4s.</p>
 <div class="ctl"><select id="lfSel"></select></div>
 <div class="chart" style="height:280px"><canvas id="cLfH"></canvas></div>
 <p class="cap">Annual averages of the monthly series. Dashed line is the donor capital. 2026 marked * is three months only. The 2012&ndash;2026 average excludes it.</p>
-<div class="note"><b>Reading these charts.</b> This is the labour market of everyone living in each market,
+<div class="note"><b>Which measure to use.</b> <b>Employment to population</b> answers &ldquo;how much of
+this population is actually working&rdquo; and is the best single read on labour market strength.
+<b>Participation</b> answers &ldquo;how many are engaged with the labour market at all&rdquo;, which flags
+retiree-heavy markets. <b>Unemployment</b> answers &ldquo;of those who want work, how many cannot find
+it&rdquo; &mdash; the headline figure, and the one most affected by people leaving the labour force.
+<br><br><b>Reading these charts.</b> This is the labour market of everyone living in each market,
 not of the people who moved there.
 <br><br><b>Source.</b> ABS <i>Modelled estimates of labour force status by SA4</i> (table MRM1), January
 2012 to March 2026. These are <b>modelled</b> estimates, not direct survey counts &mdash; the Labour Force
