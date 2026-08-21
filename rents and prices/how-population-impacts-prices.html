@@ -572,6 +572,7 @@ const link={id:'gcl',beforeDatasetsDraw(ch){const x=ch.ctx;x.save();
  x.restore()}};
 const ring={id:'gcr',afterDatasetsDraw(ch){const x=ch.ctx;x.save();
  (ch.$rows||[]).forEach(function(r,i){
+  if(r.m==='Hobart')return;
   const di=CAPS.indexOf(r.donor); if(di<0)return;
   const pt=ch.getDatasetMeta(di).data[i]; if(!pt)return;
   x.strokeStyle='#171B24';x.lineWidth=1.6;
@@ -586,7 +587,7 @@ function mk(id,rows){
  plugins:{legend:{display:false},tooltip:{callbacks:{
   title:c2=>rows[c2[0].raw.y].m+' '+(rows[c2[0].raw.y].seg==='H'?'houses':'units'),
   label:c2=>'gap vs '+c2.dataset.label+': '+(c2.raw.x>0?'+':'')+Number(c2.raw.x).toFixed(2)+
-   (c2.dataset.label===rows[c2.dataIndex].donor?'  (own capital)':'')}}},
+   (rows[c2.dataIndex].m!=='Hobart'&&c2.dataset.label===rows[c2.dataIndex].donor?'  (own capital)':'')}}},
  scales:{
   x:{...F,min:-0.85,max:0.8,title:{display:true,text:'Correlation with own price growth '+lag+(lag===1?' year':' years')+' later',color:GRAY,font:{size:11}},
      ticks:{...F.ticks,font:{size:10},callback:v=>(v>0?'+':'')+v.toFixed(1)},
@@ -668,6 +669,7 @@ const link={id:'gnl',beforeDatasetsDraw(ch){const x=ch.ctx;x.save();
  x.restore()}};
 const ring={id:'gnr',afterDatasetsDraw(ch){const x=ch.ctx;x.save();
  (ch.$rows||[]).forEach(function(r,i){
+  if(r.m==='Hobart')return;
   const di=CAPS.indexOf(r.donor); if(di<0)return;
   const pt=ch.getDatasetMeta(di).data[i]; if(!pt)return;
   x.strokeStyle='#171B24';x.lineWidth=1.6;
@@ -682,7 +684,7 @@ function mk(id,rows){
  plugins:{legend:{display:false},tooltip:{callbacks:{
   title:c2=>rows[c2[0].raw.y].m+' '+(rows[c2[0].raw.y].seg==='H'?'houses':'units'),
   label:c2=>'gap vs '+c2.dataset.label+': '+(c2.raw.x>0?'+':'')+Number(c2.raw.x).toFixed(2)+
-   (c2.dataset.label===rows[c2.dataIndex].donor?'  (own capital)':'')}}},
+   (rows[c2.dataIndex].m!=='Hobart'&&c2.dataset.label===rows[c2.dataIndex].donor?'  (own capital)':'')}}},
  scales:{
   x:{...F,min:-1,max:1,title:{display:true,text:'Correlation with '+(pop==='N'?'net internal migration':'population growth')+' '+lag+(lag===1?' year':' years')+' later',color:GRAY,font:{size:11}},
      ticks:{...F.ticks,font:{size:10},callback:v=>(v>0?'+':'')+v.toFixed(1)},
@@ -842,6 +844,7 @@ const CAPS=[['syd','Sydney','#54A6DE'],['mel','Melbourne','#3E7967'],['bri','Bri
 const DKEY={Sydney:'syd',Melbourne:'mel',Brisbane:'bri'};
 const ownRing={id:'ownring',afterDatasetsDraw(ch){const x=ch.ctx;x.save();
  (ch.$rows||[]).forEach(function(r,i){
+  if(r.m==='Hobart')return;
   const di=CAPS.findIndex(c=>c[0]===DKEY[r.donor]);
   if(di<0)return;
   const b=ch.getDatasetMeta(di+1).data[i]; if(!b)return;
