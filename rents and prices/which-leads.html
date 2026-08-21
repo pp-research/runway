@@ -108,6 +108,14 @@ color:var(--teal);margin:0 0 6px}
 .wm2{color:var(--teal)}
 .wm3{display:block;font-size:10px;font-weight:400;letter-spacing:4.6px;color:var(--lgray);
 text-align:right;margin-top:3px}
+h2{position:relative}
+h2 .anch{opacity:0;margin-left:8px;font-size:13px;font-weight:400;color:var(--dgray);
+text-decoration:none;cursor:pointer;transition:.15s;vertical-align:middle}
+h2:hover .anch{opacity:1}
+h2 .anch:hover{color:var(--teal)}
+h2 .anch.done{opacity:1;color:var(--teal)}
+:target{scroll-margin-top:16px}
+@media print{h2 .anch{display:none}}
 .pill{background:#0F1219;padding:0}
 .pill .wrap{display:flex;gap:6px;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}
 .pill a{color:var(--lgray);font-size:13px;text-decoration:none;padding:7px 14px;border-radius:20px;
@@ -178,7 +186,7 @@ Historic Data &middot; Cotality (CoreLogic) medians</p>
 
 <main class="wrap">
 
-<section>
+<section id="finding">
 <h2><span class="num">01</span>Finding</h2>
 <div class="headline">
 <p><b>Rents move first.</b> When a market&rsquo;s rents rise faster than the national average, its prices
@@ -226,7 +234,7 @@ explains why the split falls where it does, 05 formally tests the direction, 06 
 national view shows nothing, and 09 sets out the limits.</div>
 </section>
 
-<section>
+<section id="clearest">
 <h2><span class="num">02</span>Which markets are the clearest examples</h2>
 <p class="lede">Where the pattern is strongest, and where it is absent. A market only counts as a clear
 case if two things are true: rent growth has to track next year&rsquo;s price growth reasonably closely,
@@ -292,7 +300,7 @@ Wollongong houses (&minus;0.34) and Newcastle units (&minus;0.27), with Melbourn
 Melbourne, and they behave the way those two capitals do.</div>
 </section>
 
-<section>
+<section id="over-time">
 <h2><span class="num">03</span>Rent growth and price growth over time</h2>
 <p class="lede">What the two series actually look like. Opens on the 36-market average; switch to a
 single market, then shift the rent line forward. If rents lead by roughly that many years, the two lines
@@ -319,7 +327,7 @@ lead is a <i>local</i> phenomenon &mdash; pick a single market above to see it, 
 it across all of them.</div>
 </section>
 
-<section>
+<section id="why">
 <h2><span class="num">04</span>Why those markets and not the others</h2>
 <p class="lede">Two things separate the markets where rents lead from those where they do not: rental
 yield, and whether the local economy is workforce-driven. Both matter, and they are not the same thing.</p>
@@ -368,7 +376,7 @@ that rents tell is much larger. Use the classification to decide <b>where to tru
 to expect a bigger price move for the same rent move.</div>
 </section>
 
-<section>
+<section id="direction">
 <h2><span class="num">05</span>Which direction? The lead-lag curve, all markets pooled</h2>
 <p class="lede">Every market combined. We ask the same question eleven times, each time comparing price
 growth against rent growth from a different number of years away. Whichever moves first leaves a longer
@@ -411,7 +419,7 @@ is now a strong result rather than a small-sample quirk, which makes the structu
 likely. Either way, describe this as a pattern measured over roughly the last decade.</div>
 </section>
 
-<section>
+<section id="national">
 <h2><span class="num">06</span>The national picture &mdash; and why it looks like nothing</h2>
 <p class="lede">Combine all 36 markets into one national series and the relationship disappears entirely.
 That is not a contradiction; it is the most important thing to understand about this finding.</p>
@@ -444,7 +452,7 @@ confirmation that the national aggregate is the wrong place to look.
 cannot tell you where the national market is heading.</div>
 </section>
 
-<section>
+<section id="table">
 <h2><span class="num">07</span>Every market, side by side</h2>
 <p class="lede">All 72 segments in one table, sorted by the rents-lead column. Read this as background
 rather than proof &mdash; roughly twenty years per market is not many, and unlike section 05 these
@@ -459,7 +467,7 @@ A market is a <b>clear case</b> when rents-lead is at least +0.30 <i>and</i> the
 &mdash; the two tests from section 02. Shaded rows pass both.</p>
 </section>
 
-<section>
+<section id="data">
 <h2><span class="num">08</span>Underlying data</h2>
 <p class="lede">Straight from the source workbook, so any figure in this report can be traced back:
 median price, median weekly asking rent, the year-on-year changes in each, and the resulting gross yield.</p>
@@ -475,7 +483,7 @@ version selects any of the 36 markets and switches segment.</p>
 forward.</p>
 </section>
 
-<section>
+<section id="method">
 <h2><span class="num">09</span>Method and limitations</h2>
 <p class="lede">What was measured, how, and what it does and does not prove.</p>
 <h3>The five terms used in this report</h3>
@@ -908,6 +916,18 @@ document.querySelectorAll('#seg2 button').forEach(function(b){b.onclick=function
  segB=b.dataset.s;document.querySelectorAll('#seg2 button').forEach(function(x){x.className=x===b?'on':''});tbl()}});
 tbl();
 })();
+
+document.querySelectorAll('section[id] h2').forEach(function(h){
+ var a=document.createElement('a');
+ a.className='anch'; a.href='#'+h.closest('section').id; a.textContent='#';
+ a.title='Copy a link to this section';
+ a.onclick=function(e){e.preventDefault();
+  var u=location.href.split('#')[0]+'#'+h.closest('section').id;
+  (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){
+    a.textContent='copied'; a.classList.add('done');
+    setTimeout(function(){a.textContent='#'; a.classList.remove('done')},1400);
+  }).catch(function(){location.hash=h.closest('section').id});};
+ h.appendChild(a);});
 
 </script>
 </body></html>
