@@ -105,6 +105,14 @@ color:var(--teal);margin:0 0 6px}
 .wm2{color:var(--teal)}
 .wm3{display:block;font-size:10px;font-weight:400;letter-spacing:4.6px;color:var(--lgray);
 text-align:right;margin-top:3px}
+h2{position:relative}
+h2 .anch{opacity:0;margin-left:8px;font-size:13px;font-weight:400;color:var(--dgray);
+text-decoration:none;cursor:pointer;transition:.15s;vertical-align:middle}
+h2:hover .anch{opacity:1}
+h2 .anch:hover{color:var(--teal)}
+h2 .anch.done{opacity:1;color:var(--teal)}
+:target{scroll-margin-top:16px}
+@media print{h2 .anch{display:none}}
 .pill{background:#0F1219;padding:0}
 .pill .wrap{display:flex;gap:6px;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}
 .pill a{color:var(--lgray);font-size:13px;text-decoration:none;padding:7px 14px;border-radius:20px;
@@ -196,7 +204,7 @@ forecasts what prices do next &mdash; 12 commuter and lifestyle markets, 2002 to
 
 <div class="kpi" id="kpi"></div>
 
-<section class="tight">
+<section id="explorer" class="tight">
 <h2 class="sm"><span class="num">01</span>Where are people coming from and going to?</h2>
 <p class="cap" style="margin:-4px 0 12px">Pick any of the 36 markets — eight capital cities or 28 regional centres. Left is where its
 residents lived five years earlier; right is where its former residents live now.</p>
@@ -217,7 +225,7 @@ capital city areas, so the two sides are not directly comparable in scale. Count
 adjustments for confidentiality.</div>
 </section>
 
-<section class="tight">
+<section id="donors" class="tight">
 <h2 class="sm"><span class="num">02</span>Migration &mdash; who sends people where</h2>
 <div class="grid g2">
 <div class="panel"><div class="ph">Arrivals from each capital</div>
@@ -232,7 +240,7 @@ their capital&rsquo;s boundary.</p></div>
 </div>
 </section>
 
-<section class="tight">
+<section id="value-gap" class="tight">
 <h2 class="sm"><span class="num">03</span>Value against the capital</h2>
 <div class="grid g2">
 <div class="panel"><div class="ph">Where each market sits now</div>
@@ -246,7 +254,7 @@ their capital&rsquo;s boundary.</p></div>
 </div>
 </section>
 
-<section class="tight">
+<section id="absorb" class="tight">
 <h2 class="sm"><span class="num">04</span>Do the satellites absorb what the capitals lose?</h2>
 <div class="grid g2">
 <div class="panel"><div class="ph">Net internal migration by year</div>
@@ -271,7 +279,7 @@ Melbourne. Brisbane markets are excluded because Greater Brisbane has too few co
 meaningfully.</div>
 </section>
 
-<section class="tight">
+<section id="studies" class="tight">
 <h2 class="sm"><span class="num">05</span>The full studies</h2>
 <div class="go">
 <a href="how-population-impacts-prices.html"><div class="t">How population impacts prices</div>
@@ -285,7 +293,7 @@ workforce drivers, and the national picture.</div>
 </div>
 </section>
 
-<section class="tight">
+<section id="sources" class="tight">
 <h2 class="sm"><span class="num">06</span>Sources</h2>
 <p class="cap" style="margin:0">Median prices: Cotality (CoreLogic) via LIVE | 36 Regions &mdash;
 Historic Data, December snapshots, 2026 excluded (different basis). Migration: ABS Census 2021
@@ -471,6 +479,18 @@ plugins:{legend:{display:false},tooltip:{callbacks:{
 scales:{y:{...F,min:0,max:0.7,ticks:{...F.ticks,callback:v=>'+'+v.toFixed(1)},
  title:{display:true,text:'Gap \u2192 next 3 years of growth',color:GRAY,font:{size:11}}},
  x:{...F,grid:{display:false},ticks:{...F.ticks,font:{size:10}}}}}});
+
+document.querySelectorAll('section[id] h2').forEach(function(h){
+ var a=document.createElement('a');
+ a.className='anch'; a.href='#'+h.closest('section').id; a.textContent='#';
+ a.title='Copy a link to this section';
+ a.onclick=function(e){e.preventDefault();
+  var u=location.href.split('#')[0]+'#'+h.closest('section').id;
+  (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){
+    a.textContent='copied'; a.classList.add('done');
+    setTimeout(function(){a.textContent='#'; a.classList.remove('done')},1400);
+  }).catch(function(){location.hash=h.closest('section').id});};
+ h.appendChild(a);});
 
 </script>
 </body></html>

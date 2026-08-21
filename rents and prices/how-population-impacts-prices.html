@@ -105,6 +105,14 @@ color:var(--teal);margin:0 0 6px}
 .wm2{color:var(--teal)}
 .wm3{display:block;font-size:10px;font-weight:400;letter-spacing:4.6px;color:var(--lgray);
 text-align:right;margin-top:3px}
+h2{position:relative}
+h2 .anch{opacity:0;margin-left:8px;font-size:13px;font-weight:400;color:var(--dgray);
+text-decoration:none;cursor:pointer;transition:.15s;vertical-align:middle}
+h2:hover .anch{opacity:1}
+h2 .anch:hover{color:var(--teal)}
+h2 .anch.done{opacity:1;color:var(--teal)}
+:target{scroll-margin-top:16px}
+@media print{h2 .anch{display:none}}
 .pill{background:#0F1219;padding:0}
 .pill .wrap{display:flex;gap:6px;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}
 .pill a{color:var(--lgray);font-size:13px;text-decoration:none;padding:7px 14px;border-radius:20px;
@@ -177,7 +185,7 @@ Cotality (CoreLogic) medians</p>
 
 <main class="wrap">
 
-<section>
+<section id="scope">
 <h2><span class="num">01</span>Definitions and scope</h2>
 <p class="scope"><b>Donor city</b> means the capital a market draws its buyers from. The rule applied here
 is <b>the capital of the state the market sits in</b>: Sydney for the five New South Wales centres,
@@ -199,7 +207,7 @@ its gap has moved; 07 shows how long the effect persists; 06 lists what is
 still outstanding; 07 is the full table and 08 the method.</p>
 </section>
 
-<section>
+<section id="gap-prices">
 <h2><span class="num">02</span>Value gap against each capital &mdash; prices</h2>
 <p class="lede">Each market measured three ways &mdash; its value gap against Sydney, against Melbourne and
 against Brisbane &mdash; and how well each predicts that market&rsquo;s own median price growth. A ring
@@ -225,7 +233,7 @@ ranked by the own-capital reading and held in the same order in section 03. Valu
 donor, so it carries no ring and all three of its readings are comparisons.</div>
 </section>
 
-<section>
+<section id="gap-people">
 <h2><span class="num">03</span>Value gap against each capital &mdash; people</h2>
 <p class="lede">The same three-way comparison as section 02, now tested against the people arriving
 rather than prices. Each market&rsquo;s value gap against Sydney, against Melbourne and against Brisbane, and how
@@ -256,15 +264,15 @@ per segment; the window includes the pandemic years.
 between Australian markets. Total population growth adds births, deaths and overseas arrivals.</div>
 </section>
 
-<section>
+<section id="wages">
 <h2><span class="num">04</span>Are people arriving from wealthier areas?</h2>
 <p class="lede">The median <b>annual</b> income of each market against the median annual income of
 everywhere its arrivals came from, weighted by how many people made each move. Switch between arrivals from the donor capital and
 arrivals from everywhere else.</p>
 <div class="ctl"><span class="seg" id="wgSrc">
 <button data-s="cap" class="on">From the donor capital</button><button data-s="oth">From everywhere else</button><button data-s="all">All arrivals</button></span></div>
-<div class="leg"><span><i style="background:#2a78d6"></i>Median wage where they came from</span>
-<span><i style="background:var(--amber)"></i>Median wage of the market</span>
+<div class="leg"><span><i style="background:var(--teal)"></i>Median income where they came from</span>
+<span><i style="background:var(--euc)"></i>Median income of the market</span>
 <span class="mute" id="wgMean" style="margin-left:auto"></span></div>
 <div class="chart" style="height:560px"><canvas id="cWage"></canvas></div>
 <p class="cap">ABS Personal Income in Australia, median total income per year, 2022&ndash;23, weighted by
@@ -276,7 +284,7 @@ who moved. A market drawing from a high-wage council does not mean its arrivals 
 Hobart is measured as Greater Hobart, since the Hobart council alone is a small inner-city area.</div>
 </section>
 
-<section>
+<section id="today">
 <h2><span class="num">05</span>Where each market sits today</h2>
 <p class="lede">Each satellite&rsquo;s current discount to its capital, against its own long-run average.
 Positive means cheaper than normal &mdash; the condition that has historically preceded catch-up.</p>
@@ -291,7 +299,7 @@ reverses.</p>
 <p class="cap">Gap = how much cheaper the satellite is than its capital. Negative means it is dearer.</p>
 </section>
 
-<section>
+<section id="over-time">
 <h2><span class="num">06</span>How the gap moves over time</h2>
 <p class="lede">Pick a market. The line is its price gap to the capital each year; the band is that
 market&rsquo;s long-run average. Watch how the line returns to the band.</p>
@@ -305,7 +313,7 @@ norm; below it, dearer.</p>
 <p class="cap">Annual price growth, satellite against its capital.</p>
 </section>
 
-<section>
+<section id="outstanding">
 <h2><span class="num">07</span>What is still needed</h2>
 <p class="lede">Two of the three strands are not yet testable with the data in hand. Both are close.</p>
 <div class="grid2">
@@ -331,7 +339,7 @@ something other than migration is doing the work. Either answer is worth having.
 enough to see a relationship of the size found here.</div>
 </section>
 
-<section>
+<section id="table">
 <h2><span class="num">08</span>Every market, side by side</h2>
 <p class="lede">All 24 segments. Sorted by how strongly the capital&rsquo;s growth carries into the
 satellite a year later.</p>
@@ -343,7 +351,7 @@ satellite a year later.</p>
 measure against the following three years of growth combined.</p>
 </section>
 
-<section>
+<section id="method">
 <h2><span class="num">09</span>Method and limitations</h2>
 <p class="lede">What was measured and what it does not prove.</p>
 <h3>Scope and classification</h3>
@@ -653,8 +661,8 @@ function rows(){
 let R=rows();
 const ch=new Chart(document.getElementById('cWage'),{type:'bar',
 data:{labels:R.map(r=>r.m),datasets:[
- {label:'Origin areas',data:R.map(r=>r[key[src][0]]),backgroundColor:'#2a78d6',borderRadius:3,maxBarThickness:14},
- {label:'The market',data:R.map(r=>r.own),backgroundColor:AMBER,borderRadius:3,maxBarThickness:14}]},
+ {label:'Origin areas',data:R.map(r=>r[key[src][0]]),backgroundColor:TEAL,borderRadius:3,maxBarThickness:14},
+ {label:'The market',data:R.map(r=>r.own),backgroundColor:EUC,borderRadius:3,maxBarThickness:14}]},
 options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
 plugins:{legend:{display:false},tooltip:{callbacks:{
  label:c=>c.dataset.label+': $'+Math.round(c.raw).toLocaleString('en-AU')+' a year',
@@ -662,9 +670,11 @@ plugins:{legend:{display:false},tooltip:{callbacks:{
   return (g>=0?'origins pay $'+Math.round(g).toLocaleString('en-AU')+' more a year':
    'origins pay $'+Math.round(-g).toLocaleString('en-AU')+' less a year')+
    '  \u00b7 '+Number(n).toLocaleString('en-AU')+' people'}}}},
+layout:{padding:{right:10}},
 scales:{x:{...F,min:40000,ticks:{...F.ticks,callback:v=>'$'+(v/1000)+'k'},
   title:{display:true,text:'Median total income per year, 2022\u201323',color:GRAY,font:{size:11}}},
- y:{...F,grid:{display:false},ticks:{...F.ticks,autoSkip:false,font:{size:11}}}}}});
+ y:{...F,grid:{display:false},afterFit:function(s){s.width=118},
+  ticks:{...F.ticks,autoSkip:false,padding:6,font:{size:11},crossAlign:'far'}}}}});
 function draw(){
  R=rows();
  ch.data.labels=R.map(r=>r.m);
@@ -789,6 +799,18 @@ document.querySelector('#tAll tbody').innerHTML=P.map(r=>
  '<td class="n">'+f2(r.g3c)+'</td>'+
  '<td class="n mute">'+(r.now===null?'&mdash;':r.now.toFixed(1)+'%')+'</td>'+
  '<td class="n">'+(r.dev===null?'&mdash;':'<span class="'+(r.dev>0?'pos':'neg')+'">'+(r.dev>0?'+':'')+r.dev.toFixed(1)+'</span>')+'</td></tr>').join('');
+
+document.querySelectorAll('section[id] h2').forEach(function(h){
+ var a=document.createElement('a');
+ a.className='anch'; a.href='#'+h.closest('section').id; a.textContent='#';
+ a.title='Copy a link to this section';
+ a.onclick=function(e){e.preventDefault();
+  var u=location.href.split('#')[0]+'#'+h.closest('section').id;
+  (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){
+    a.textContent='copied'; a.classList.add('done');
+    setTimeout(function(){a.textContent='#'; a.classList.remove('done')},1400);
+  }).catch(function(){location.hash=h.closest('section').id});};
+ h.appendChild(a);});
 
 </script>
 </body></html>
