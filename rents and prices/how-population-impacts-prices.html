@@ -384,10 +384,6 @@ one outlined in dark is that market&rsquo;s own donor capital.
 <b>LT avg</b> is the long-term average,
 2012&ndash;2025; the partial 2026 year is excluded from it. Each capital is the employment-weighted
 average of its SA4s &mdash; 14 for Sydney, 8 for Melbourne, 9 for Brisbane.</p>
-<h3>History, 2012 to 2026</h3>
-<div class="ctl"><select id="lfSel"></select></div>
-<div class="chart" style="height:280px"><canvas id="cLfH"></canvas></div>
-<p class="cap">Annual averages of the monthly series. Dashed lines are the three capitals. 2026 marked * is three months only. The 2012&ndash;2026 average excludes it.</p>
 <div class="note"><b>Which measure to use.</b> <b>Employment to population</b> answers &ldquo;how much of
 this population is actually working&rdquo; and is the best single read on labour market strength &mdash;
 this is what is usually meant by the employment rate. <b>Unemployment</b> answers &ldquo;of those who want
@@ -405,146 +401,77 @@ Harbour as Coffs Harbour&ndash;Grafton, and Newcastle as Newcastle and Lake Macq
 <i>Labour Force, Australia</i>.</div>
 </section>
 
-<section id="today">
-<h2><span class="num">08</span>Where each market sits today</h2>
-<p class="lede">Each satellite&rsquo;s current discount to its capital, against its own long-run average.
-Positive means cheaper than normal &mdash; the condition that has historically preceded catch-up.</p>
-<div class="ctl"><span class="seg" id="segA"><button data-s="H" class="on">Houses</button><button data-s="U">Units</button></span></div>
-<div class="chart tall" style="height:420px"><canvas id="cGap"></canvas></div>
-<p class="cap">Gap to the capital at December 2025 minus that market&rsquo;s 2002&ndash;2025 average gap, in
-percentage points. Premium markets (Gold Coast, Sunshine Coast) are marked &mdash; for them the sign
-reverses.</p>
-<div class="scroll"><table id="tGap"><thead><tr><th>Market</th><th>Capital</th><th>Type</th>
-<th class="n">Gap now</th><th class="n">Long-run avg</th><th class="n">Difference</th>
-<th>Reading</th></tr></thead><tbody></tbody></table></div>
-<p class="cap">Gap = how much cheaper the satellite is than its capital. Negative means it is dearer.</p>
-</section>
-
-<section id="over-time">
-<h2><span class="num">09</span>How the gap moves over time</h2>
-<p class="lede">Pick a market. The line is its price gap to the capital each year; the band is that
-market&rsquo;s long-run average. Watch how the line returns to the band.</p>
-<div class="ctl"><select id="mSel"></select>
-<span class="seg" id="segB"><button data-s="H" class="on">Houses</button><button data-s="U">Units</button></span>
-<span class="cap" id="mHint"></span></div>
-<div class="chart"><canvas id="cTrend"></canvas></div>
-<p class="cap">Gap to the capital, per cent. Above the dashed line the satellite is cheaper than its own
-norm; below it, dearer.</p>
-<div class="chart"><canvas id="cGrow"></canvas></div>
-<p class="cap">Annual price growth, satellite against its capital.</p>
-</section>
-
-<section id="outstanding">
-<h2><span class="num">10</span>What is still needed</h2>
-<p class="lede">Two of the three strands are not yet testable with the data in hand. Both are close.</p>
-<div class="grid2">
-<div class="mb"><div class="mbh">Strand 2 &mdash; who is moving</div>
-<p><b>The theory:</b> the people leaving the capital are established working households, so they should
-be <b>older and wealthier</b> than movers into other regional markets.</p>
-<p style="margin-top:8px"><b>The data:</b> ABS Census TableBuilder, same origin&ndash;destination table
-already used for the donor work, with <b>age (AGE5P)</b> and <b>personal income (INCP)</b> added as a
-third dimension. One additional extract.</p></div>
-<div class="mb alt"><div class="mbh">Strand 3 &mdash; does employment let people leave</div>
-<p><b>The theory:</b> people leave the city when they feel secure about work, so <b>strong employment</b>
-should precede outward migration rather than follow it.</p>
-<p style="margin-top:8px"><b>The data:</b> ABS Regional Population, <i>Population components by LGA</i>
-&mdash; annual net internal migration per market. National unemployment from 6202.0, regional from the
-JSA SALM file already used in Traffic Lights.</p></div>
-</div>
-<div class="note"><b>The test that would close the argument.</b> With annual migration by market, one
-question settles it: <b>in years when a market&rsquo;s value gap was unusually wide, did it receive more
-migrants the following year?</b> If yes, the chain is complete &mdash; capital gets expensive, people
-move, prices follow. If no, price catch-up is happening without a measurable population surge, and
-something other than migration is doing the work. Either answer is worth having.
-<br><br>The migration series runs from 2016&ndash;17, so about nine years for twelve markets. Thin, but
-enough to see a relationship of the size found here.</div>
-</section>
-
-<section id="table">
-<h2><span class="num">11</span>Every market, side by side</h2>
-<p class="lede">All 24 segments. Sorted by how strongly the capital&rsquo;s growth carries into the
-satellite a year later.</p>
-<div class="scroll"><table id="tAll"><thead><tr><th>Market</th><th>Seg</th><th>Capital</th><th>Type</th>
-<th class="n">Same year</th><th class="n">+1yr</th><th class="n">+2yr</th>
-<th class="n">Gap &rarr; 3yr growth</th><th class="n">Gap now</th><th class="n">vs avg</th>
-</tr></thead><tbody></tbody></table></div>
-<p class="cap">Correlations of annual price growth. &ldquo;Gap &rarr; 3yr growth&rdquo; is the discount
-measure against the following three years of growth combined.</p>
-</section>
-
 <section id="method">
-<h2><span class="num">12</span>Method and limitations</h2>
-<p class="lede">What was measured and what it does not prove.</p>
+<h2><span class="num">08</span>Method and limitations</h2>
+<p class="lede">What was measured, and what it does not prove.</p>
+
 <h3>Scope and classification</h3>
-<p>The twelve markets tested are the full <b>Commuter/Lifestyle</b> group from the framework&rsquo;s
-classification table, and the three-way split used throughout &mdash; Commuter, Commuter + Lifestyle,
-Lifestyle &mdash; is the framework&rsquo;s own. Nothing here reclassifies any market.</p>
+<p>The twelve markets are the full <b>Commuter/Lifestyle</b> group from the framework&rsquo;s classification
+table, and the three-way split used throughout &mdash; Commuter, Commuter + Lifestyle, Lifestyle &mdash; is
+the framework&rsquo;s own. Nothing here reclassifies any market.</p>
+
 <h3>The donor pairings</h3>
-<p>The framework names the donor city as the forecasting input but does not list the pairings. The rule
-applied is <b>the capital of the state the market is in</b>, which fixes eleven of the twelve without
-judgement.</p>
-<p><b>Hobart is the exception and it matters.</b> Hobart is Tasmania&rsquo;s own capital, so the rule gives
-it no donor. It is tested against Melbourne, as the nearest mainland capital and a plausible source of
-interstate buyers, but that is an assumption rather than a rule.</p>
-<div class="scroll"><table id="tHob"><thead><tr><th>Basis</th><th class="n">Markets</th>
-<th class="n">Gap &rarr; 3yr growth</th><th class="n">Half-life</th>
-<th class="n">Lifestyle sub-group</th></tr></thead><tbody></tbody></table></div>
-<p class="cap">Hobart on its own returns +0.70, the strongest of the twelve. Excluding it leaves the
-lifestyle group at &minus;0.03 and weakens the pooled result to p = 0.17.</p>
-<p>The commuter and commuter-lifestyle findings are unaffected either way &mdash; both hold at +0.60 and
-+0.50 with or without Hobart. The decision only changes what can be claimed about the lifestyle group,
-where the honest reading is that the value gap does not work.</p>
-<h3>Testing the pairings against the data</h3>
-<p>Price co-movement was used as a rough check on the state-capital rule. On raw growth rates it is
-useless &mdash; Canberra came out as the closest match for seven of the twelve, which reflects the shared
-national interest-rate cycle rather than any buyer flow. With the national cycle removed, seven of the
-twelve match their state capital, including every commuter market: Wollongong +0.77, Geelong +0.75,
-Central Coast +0.75, Newcastle +0.66, Port Macquarie +0.55, Ipswich +0.52, Gold Coast +0.45.</p>
-<p>The five that do not match &mdash; Bendigo, Ballarat, Sunshine Coast, Coffs Harbour and Hobart &mdash;
-are the more distant markets, where the link to any capital is weak and the winner is close to arbitrary.
-<b>This is a weak check, not a validation.</b> Price co-movement cannot distinguish buyers moving from A
-to B from A and B simply sharing a state economy. Only origin&ndash;destination migration data can
-identify a donor, and that is the same dataset needed for the population half of the framework.</p>
+<p>The rule applied is <b>the capital of the state the market is in</b>, which fixes eleven of the twelve
+without judgement. <b>Hobart is the exception</b>: it is Tasmania&rsquo;s own capital, so the rule gives it
+no donor. It is tested against Melbourne as the nearest mainland capital, but that is an assumption, and
+Hobart carries no donor marker in the charts.</p>
+<p>Census migration data confirms the rule. In all eleven measurable markets the largest single
+capital-city source of arrivals is the market&rsquo;s own state capital &mdash; see
+<a href="where-people-come-from-and-go-to.html" style="color:var(--t700)">Where people come from and go
+to</a>.</p>
+
+<h3>Sources</h3>
+<p><b>Prices.</b> Cotality (CoreLogic) medians via LIVE | 36 Regions, annual December snapshots,
+2002&ndash;2025. The 2026 row is excluded &mdash; the source marks it as a May snapshot on a three-month
+window, a different basis from every prior year.</p>
+<p><b>Migration, income, age and tenure.</b> ABS Census 2021 via TableBuilder, place of usual residence
+five years ago. Income and age count persons; tenure counts dwellings, so the tenure section is not
+directly comparable with the other two.</p>
+<p><b>Area income.</b> ABS Personal Income in Australia, median total income per year, 2022&ndash;23 &mdash;
+the latest available, and about three years behind the migration flows it is weighted by.</p>
+<p><b>Labour market.</b> ABS <i>Modelled estimates of labour force status by SA4</i> (MRM1), January 2012 to
+March 2026. These are modelled estimates, not direct survey counts, and the finest geography is SA4, so
+several markets carry a wider area&rsquo;s rate &mdash; Wollongong is measured as Illawarra, Port Macquarie
+as Mid North Coast, Newcastle as Newcastle and Lake Macquarie.</p>
+
 <h3>How the gap is measured</h3>
-<p>The gap is how much cheaper the satellite is than its capital, as a percentage of the capital&rsquo;s
-median. Because every market has its own normal gap &mdash; Coffs Harbour is always about 39% cheaper
-than Sydney, Gold Coast is always about 21% dearer than Brisbane &mdash; what matters is the gap
-<i>relative to that market&rsquo;s own long-run average</i>. All the tests use that deviation, not the raw
-gap.</p>
-<p class="tech"><b>Technical note.</b> Annual December medians, log growth. Gap = (1 &minus;
-P_sat / P_donor) &times; 100; deviation = gap minus the segment&rsquo;s 2002&ndash;2025 mean. Standard errors
-clustered by satellite market (12 clusters). Capital-to-satellite growth: same year r = +0.652
-(b = +0.848, p &lt; 0.0001, n = 552); one year later r = +0.305 (b = +0.327, p &lt; 0.0001, n = 528); two
-years later r = &minus;0.089 (n.s.). Reverse direction, satellite one year earlier to capital: r = +0.153
-(p = 0.097). Mean reversion of the gap: change over the next three years regressed on the gap today gives
-b = &minus;0.607 (p &lt; 0.0001), implying a half-life of about 2.2 years. Deviation to cumulative
-three-year satellite growth: pooled r = +0.321 (b = +0.0063, p = 0.080); discount markets r = +0.576
-(b = +0.0127, p &lt; 0.0001, 20 segments); premium markets r = &minus;0.382 (b = &minus;0.0053, p = 0.002,
-4 segments).</p>
+<p>Every market has its own permanent gap &mdash; Coffs Harbour sits about 39% below Sydney, the Gold Coast
+about 21% above Brisbane &mdash; and those levels predict nothing. All tests use the <b>deviation from that
+market&rsquo;s own long-run average</b>, not the raw gap.</p>
+<p class="cap"><b>Technical note.</b> Gap = (1 &minus; P<sub>market</sub> / P<sub>capital</sub>) &times; 100;
+deviation = gap minus the segment&rsquo;s 2002&ndash;2025 mean. Log growth, standard errors clustered by
+market (12 clusters). Mean reversion of the gap: change over three years on gap today, b = &minus;0.607
+(p &lt; 0.0001), half-life about 2.2 years. Deviation to three-year growth: pooled r = +0.321 (p = 0.080);
+discount markets r = +0.576 (p &lt; 0.0001, 20 segments); premium markets r = &minus;0.382 (p = 0.002,
+4 segments). Gap to net internal migration, pooled with market effects removed: r = +0.41 (p = 0.026,
+n = 96).</p>
+
 <h3>What this cannot tell you</h3>
-<p><b>It does not prove buyers are moving.</b> A closing gap is consistent with displaced demand, but also
-with both markets responding to the same interest-rate cycle at slightly different speeds. Nothing here
-separates the two.</p>
-<p><b>The premium markets are only four segments.</b> Gold Coast and Sunshine Coast, houses and units.
-The reversal is statistically clear but rests on two markets, so treat it as a caution against applying
-the discount logic universally rather than as an established finding in its own right.</p>
-<p><b>Twelve markets is few, and they are not independent.</b> Five share Sydney as their donor, so a
-single unusual Sydney cycle influences much of the result. The clustered standard errors allow for this
-but cannot remove it.</p>
-<p><b>The 2026 row is excluded</b>, as in the rents-and-prices study &mdash; the source marks it as a May
-snapshot on a three-month price window, a different basis from every prior year.</p>
-<h3>Open questions back to the framework</h3>
-<p><b>1. Are the donor pairings right?</b> Hobart in particular. And whether Ipswich should sit against
-Brisbane or against the wider south-east.</p>
-<p><b>2. How should the premium markets be handled?</b> Gold Coast and Sunshine Coast are classified as
-Lifestyle but sit above Brisbane on price, so &ldquo;value compared to the capital&rdquo; does not
-describe them and the relationship reverses. They may need their own rule.</p>
-<p><b>3. The framework&rsquo;s remaining tests are not addressed here.</b> Population inflows against
-national and regional unemployment, and inflows against relative value, both need employment and
-migration data that this study does not use. This covers only the value-gap half of the thesis.</p>
-<p class="cap" style="margin-top:18px">Prepared by the Research Division in response to
-&ldquo;How Population Impacts Prices&rdquo;. Companion to &ldquo;Rents and prices &mdash; which one
-leads&rdquo;. Pending review.</p>
+<p><b>It does not show that migration causes the price move.</b> The gap predicts both arrivals and prices,
+but migration on its own does not predict price growth (r = +0.04, p = 0.67). The two look like parallel
+responses to the same trigger rather than a chain.</p>
+<p><b>The migration series is short.</b> Eight lagged pairs per segment, 2016&ndash;17 to 2024&ndash;25, and
+the window contains the pandemic surge out of the capitals. Individual market readings are noisy.</p>
+<p><b>The premium markets are four segments.</b> Gold Coast and Sunshine Coast, houses and units. The
+reversal is clear but rests on two markets &mdash; treat it as a caution against applying the discount
+logic universally, not as a finding in its own right.</p>
+<p><b>Twelve markets, and not independent.</b> Five share Sydney as their donor, so one unusual Sydney cycle
+influences much of the result. Clustered standard errors allow for this but cannot remove it.</p>
+<p><b>Tenure has no origin split.</b> That dataset records whether a household moved, not where from, so
+capital arrivals cannot be separated from local movers.</p>
+
+<h3>Open questions</h3>
+<p><b>1. Hobart.</b> It has no state donor, is the strongest single result in the value-gap test (+0.70),
+and carries the entire lifestyle sub-group &mdash; without it that group falls from +0.14 to
+&minus;0.03. What it should be measured against is a decision, not a data question.</p>
+<p><b>2. The premium markets.</b> Gold Coast and Sunshine Coast are classified Lifestyle but sit above
+Brisbane on price, so &ldquo;value compared to the capital&rdquo; does not describe them and the
+relationship reverses. They may need their own rule.</p>
+<p><b>3. Two findings contradict the framework.</b> Arrivals are <b>younger</b> than existing residents, not
+older, by nine years. And people leave the capitals when the capital&rsquo;s labour market is <b>worse</b>,
+not better &mdash; the opposite of the security hypothesis.</p>
+<p class="cap" style="margin-top:18px">Prepared by the Research Division in response to &ldquo;How
+Population Impacts Prices&rdquo;. Pending review.</p>
 </section>
 
 </main>
@@ -980,29 +907,11 @@ function draw(){
 function wire6(id,attr,set){document.querySelectorAll('#'+id+' button').forEach(function(b){
  b.onclick=function(){set(b.dataset[attr]);
   document.querySelectorAll('#'+id+' button').forEach(function(x){x.className=x===b?'on':''});
-  draw(); hdraw()}});}
+  draw()}});}
 wire6('lfMeas','k',v=>meas=v);
 wire6('lfPer','p',v=>per=v);
 draw();
-const sel=document.getElementById('lfSel');
-R0.slice().sort((a,b)=>a.m.localeCompare(b.m)).forEach(function(r){
- const o=document.createElement('option');o.value=r.m;o.textContent=r.m;sel.appendChild(o)});
-sel.value='Geelong';
-const pick=()=>R0.filter(r=>r.m===sel.value)[0];
-const hc=new Chart(document.getElementById('cLfH'),{type:'line',
-data:{labels:L.years,datasets:[
- {label:'Market',data:pick()[meas+'Hist'],borderColor:TEAL,borderWidth:2.4,tension:.25,pointRadius:0,spanGaps:true,fill:false}].concat(
- CAPS.map(function(c){return {label:c[1],data:pick()[meas+'_'+c[0]+'Hist'],borderColor:c[2],
-   borderWidth:1.4,borderDash:[5,3],tension:.25,pointRadius:0,spanGaps:true,fill:false}}))},
-options:{responsive:true,maintainAspectRatio:false,
-plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{
- label:c=>c.dataset.label+': '+Number(c.raw).toFixed(1)+'%'}}},
-scales:{y:{...F,ticks:{...F.ticks,callback:v=>v+'%'}},x:{...F,grid:{display:false}}}}});
-function hdraw(){const r=pick();
- hc.data.datasets[0].data=r[meas+'Hist'];
- CAPS.forEach(function(c,i){hc.data.datasets[i+1].data=r[meas+'_'+c[0]+'Hist']});
- hc.update();}
-sel.onchange=hdraw;
+
 })();
 
 /* 06 tenure */
@@ -1055,123 +964,5 @@ document.querySelectorAll('#tnMode button').forEach(function(b){
   draw()}});
 draw();
 })();
-/* 02 gap bars */
-let segA='H';
-function gapRows(){return P.filter(p=>p.seg===segA&&p.dev!==null).sort((a,b)=>b.dev-a.dev)}
-let GR=gapRows();
-const cGap=new Chart(document.getElementById('cGap'),{type:'bar',
-data:{labels:GR.map(r=>r.sat),datasets:[{data:GR.map(r=>r.dev),
- backgroundColor:GR.map(r=>r.dev>=0?TEAL:AMBER),borderRadius:4,maxBarThickness:34}]},
-options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-plugins:{legend:{display:false},tooltip:{callbacks:{
- label:c=>{const r=GR[c.dataIndex];return (c.raw>0?'+':'')+c.raw.toFixed(1)+'pp vs its own average'},
- afterLabel:c=>{const r=GR[c.dataIndex];return 'now '+r.now.toFixed(1)+'% \u00b7 avg '+r.avg.toFixed(1)+'% \u00b7 vs '+r.donor}}}},
-scales:{x:{...F,title:{display:true,text:'Gap vs its own long-run average (percentage points)',color:GRAY,font:{size:12}},
- ticks:{...F.ticks,callback:v=>(v>0?'+':'')+v},
- grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
- y:{...F,grid:{display:false},ticks:{...F.ticks,autoSkip:false,font:{size:11},
-  callback:function(v){const r=GR[v];return r?r.sat+(r.premium?'  \u25b2':''):''}}}}}});
-function gapDraw(){GR=gapRows();
- cGap.data.labels=GR.map(r=>r.sat);
- cGap.data.datasets[0].data=GR.map(r=>r.dev);
- cGap.data.datasets[0].backgroundColor=GR.map(r=>r.dev>=0?TEAL:AMBER);
- cGap.options.scales.y.ticks.callback=function(v){const r=GR[v];return r?r.sat+(r.premium?'  \u25b2':''):''};
- cGap.update();
- document.querySelector('#tGap tbody').innerHTML=GR.map(r=>{
-  const read=r.premium
-   ? (r.dev<0?'premium wider than normal':'premium narrower than normal')
-   : (r.dev>0?'<span class="pos">cheaper than normal</span>':'<span class="neg">dearer than normal</span>');
-  return '<tr><td>'+r.sat+(r.premium?' <span class="mute">(premium)</span>':'')+'</td>'+
-   '<td class="mute">'+r.donor+'</td><td class="mute">'+(D.sub[r.sat]||r.cls)+'</td>'+
-   '<td class="n">'+r.now.toFixed(1)+'%</td><td class="n mute">'+r.avg.toFixed(1)+'%</td>'+
-   '<td class="n"><span class="'+(r.dev>0?'pos':'neg')+'">'+(r.dev>0?'+':'')+r.dev.toFixed(1)+'pp</span></td>'+
-   '<td>'+read+'</td></tr>'}).join('');}
-document.querySelectorAll('#segA button').forEach(function(b){b.onclick=function(){
- segA=b.dataset.s;document.querySelectorAll('#segA button').forEach(function(x){x.className=x===b?'on':''});gapDraw()}});
-gapDraw();
-
-/* 03 per-market trend */
-let segB='H';
-const mSel=document.getElementById('mSel');
-MK.forEach(function(m){const o=document.createElement('option');o.value=m;o.textContent=m;mSel.appendChild(o)});
-mSel.value='Ipswich';
-const key=()=>mSel.value+' '+segB;
-function avgOf(k){const p=P.find(x=>x.m===k);return p?p.avg:0}
-const cTrend=new Chart(document.getElementById('cTrend'),{type:'line',
-data:{labels:Y,datasets:[
- {data:S[key()].disc,borderColor:TEAL,borderWidth:2,tension:.25,pointRadius:0,fill:false},
- {data:Y.map(()=>avgOf(key())),borderColor:GRAY,borderWidth:1.5,borderDash:[6,4],pointRadius:0,fill:false}]},
-options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-plugins:{legend:{display:false},tooltip:{callbacks:{
- label:c=>(c.datasetIndex?'long-run average ':'gap ')+Number(c.raw).toFixed(1)+'%'}}},
-scales:{y:{...F,title:{display:true,text:'Cheaper than its capital by (%)',color:GRAY,font:{size:12}},
- ticks:{...F.ticks,callback:v=>v+'%'}},
- x:{...F,ticks:{...F.ticks,maxTicksLimit:12,font:{size:10}},grid:{display:false}}}}});
-const cGrow=new Chart(document.getElementById('cGrow'),{type:'line',
-data:{labels:Y,datasets:[
- {data:S[key()].gs,borderColor:TEAL,borderWidth:2,tension:.25,pointRadius:0,fill:false},
- {data:S[key()].gd,borderColor:EUC,borderWidth:2,borderDash:[6,4],tension:.25,pointRadius:0,fill:false}]},
-options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-plugins:{legend:{display:false},tooltip:{callbacks:{
- label:c=>(c.datasetIndex?'capital ':'satellite ')+(c.raw>0?'+':'')+Number(c.raw).toFixed(1)+'%'}}},
-scales:{y:{...F,title:{display:true,text:'Annual price growth (%)',color:GRAY,font:{size:12}},
- ticks:{...F.ticks,callback:v=>(v>0?'+':'')+v},
- grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
- x:{...F,ticks:{...F.ticks,maxTicksLimit:12,font:{size:10}},grid:{display:false}}}}});
-function mDraw(){const k=key(); if(!S[k])return;
- const p=P.find(x=>x.m===k);
- cTrend.data.datasets[0].data=S[k].disc;
- cTrend.data.datasets[1].data=Y.map(()=>p.avg);
- cTrend.update();
- cGrow.data.datasets[0].data=S[k].gs;cGrow.data.datasets[1].data=S[k].gd;cGrow.update();
- document.getElementById('mHint').innerHTML='vs <b>'+p.donor+'</b> \u00b7 '+p.cls.toLowerCase()+
-  ' \u00b7 now '+p.now.toFixed(1)+'% (avg '+p.avg.toFixed(1)+'%)'+
-  (p.premium?' \u00b7 trades at a premium':'');}
-mSel.onchange=mDraw;
-document.querySelectorAll('#segB button').forEach(function(b){b.onclick=function(){
- segB=b.dataset.s;document.querySelectorAll('#segB button').forEach(function(x){x.className=x===b?'on':''});mDraw()}});
-mDraw();
-
-/* 04 lag curves */
-function curve(id,rows,lbl,col){
- new Chart(document.getElementById(id),{type:'line',
- data:{labels:rows.map(r=>r.L===0?'same year':'+'+r.L+'yr'),
- datasets:[
-  {data:rows.map(r=>r.hi),borderColor:'transparent',backgroundColor:'rgba(0,160,180,0.13)',pointRadius:0,fill:'+1',tension:.25,order:3},
-  {data:rows.map(r=>r.lo),borderColor:'transparent',pointRadius:0,fill:false,tension:.25,order:3},
-  {data:rows.map(r=>r.r),borderColor:col,borderWidth:2,tension:.25,order:1,
-   pointRadius:5,pointBackgroundColor:col,pointBorderColor:'#fff',pointBorderWidth:2,fill:false}]},
- options:{responsive:true,maintainAspectRatio:false,layout:{padding:6},
- plugins:{legend:{display:false},tooltip:{filter:i=>i.datasetIndex===2,callbacks:{
-  label:c=>'r = '+(c.raw>0?'+':'')+c.raw.toFixed(2)+'  n='+rows[c.dataIndex].n}}},
- scales:{y:{...F,min:-0.15,max:0.8,title:{display:true,text:'Correlation',color:GRAY,font:{size:12}},
-  ticks:{...F.ticks,callback:v=>(v>0?'+':'')+v.toFixed(1)},
-  grid:{color:c=>c.tick.value===0?'rgba(99,102,106,.5)':LINE}},
-  x:{...F,grid:{display:false}}}}});}
-
-/* 05 table */
-const f2=v=>v===null?'<span class="mute">&mdash;</span>':
- '<span class="'+(v>0.25?'pos':v<0?'neg':'mute')+'">'+(v>0?'+':'')+v.toFixed(2)+'</span>';
-document.querySelector('#tAll tbody').innerHTML=P.map(r=>
- '<tr><td>'+r.sat+'</td><td class="mute">'+(r.seg==='H'?'House':'Unit')+'</td>'+
- '<td class="mute">'+r.donor+'</td><td class="mute">'+(D.sub[r.sat]||r.cls)+'</td>'+
- '<td class="n">'+f2(r.d0)+'</td><td class="n">'+f2(r.d1)+'</td>'+
- '<td class="n mute">'+(r.d2===null?'&mdash;':(r.d2>0?'+':'')+r.d2.toFixed(2))+'</td>'+
- '<td class="n">'+f2(r.g3c)+'</td>'+
- '<td class="n mute">'+(r.now===null?'&mdash;':r.now.toFixed(1)+'%')+'</td>'+
- '<td class="n">'+(r.dev===null?'&mdash;':'<span class="'+(r.dev>0?'pos':'neg')+'">'+(r.dev>0?'+':'')+r.dev.toFixed(1)+'</span>')+'</td></tr>').join('');
-
-document.querySelectorAll('section[id] h2').forEach(function(h){
- var a=document.createElement('a');
- a.className='anch'; a.href='#'+h.closest('section').id; a.textContent='#';
- a.title='Copy a link to this section';
- a.onclick=function(e){e.preventDefault();
-  var u=location.href.split('#')[0]+'#'+h.closest('section').id;
-  (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){
-    a.textContent='copied'; a.classList.add('done');
-    setTimeout(function(){a.textContent='#'; a.classList.remove('done')},1400);
-  }).catch(function(){location.hash=h.closest('section').id});};
- h.appendChild(a);});
-
 </script>
 </body></html>
