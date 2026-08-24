@@ -1440,13 +1440,19 @@ function pPTI(){
   {d:H[it.d].pti.unit,type:'line',col:C(it.d),op:.45,name:'Unit PTI'}],
   {fmt:v=>v.toFixed(0),cards:1,H:460,title:'Price to income ratio',ytitle:'Price to Income Ratio'});
 }
-function pIncRent(){
- panels('c-incrent',DIVSEG(),it=>[
-  {d:H[it.d].incrent[it.s],type:'line',col:'#171B24',name:'Rent share of wage'},
-  {d:H[it.d].ai[it.s],type:'line',col:'#007685',name:'Affordability index'}],
-  {cols:4,fmt:v=>v.toFixed(0)+'%',title:'Income to rent v affordability index',ytitle:'% of Average Wage'});
- divLegend('c-incrent-lg','dark = rent share of wage, teal = affordability index');
+/* Houses and units used to share one slide as twelve panels on the 4-wide grid, which
+   left each chart too small to read. One segment per slide: six panels, 3-wide, and
+   panels() gives each one nearly double the height out of the same viewBox. */
+function incRentPage(id,s){
+ panels(id,DIVSEG1(s),it=>[
+  {d:H[it.d].incrent[s],type:'line',col:'#171B24',name:'Rent share of wage'},
+  {d:H[it.d].ai[s],type:'line',col:'#007685',name:'Affordability index'}],
+  {fmt:v=>v.toFixed(0)+'%',title:'Income to rent v affordability index, '+s+'s',
+   ytitle:'% of Average Wage'});
+ divLegend(id+'-lg','dark = rent share of wage, teal = affordability index');
 }
+function pIncRentH(){ incRentPage('c-increnth','house') }
+function pIncRentU(){ incRentPage('c-increntu','unit') }
 function pVR(){
  /* Series are named by the legend pills, not at the end of each line, so noEnds
     reclaims the 150 units of right padding those labels needed.
@@ -1789,7 +1795,7 @@ function render(){
  gid('hid').textContent=n?n+' district'+(n>1?'s':'')+' hidden':'';
  gid('showall').hidden=!n;
  pCover();pGlance();pLights();pDistricts();pPrice();pYoY();pHvU();pPxR();pCAGR();pAI();
- pRunway();pPTI();pIncRent();pVR();pVRRent();pVRProj();pDemand();pSomDom();pSales();
+ pRunway();pPTI();pIncRentH();pIncRentU();pVR();pVRRent();pVRProj();pDemand();pSomDom();pSales();
  pAppr();pHholds();pPopch();pConf();pJA();pUnemp();pYieldCmp();pYCR();pMarkets();
 }
 /* rail tooltip wording for each data kind, matching the on-slide banner labels */
