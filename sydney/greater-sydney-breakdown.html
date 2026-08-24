@@ -1509,7 +1509,7 @@ function pVR(){
     40 units. H is the viewBox aspect, not a pixel height - the svg is width-driven,
     and 505 against W=1000 fills the panel without the rotated years running past its
     bottom edge (the default 390 left a third of the panel empty; 525 overflowed). */
- multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',H:470,
+ multiLine('c-vr',d=>H[d].vr,{fmt:v=>v.toFixed(1)+'%',title:'Vacancy rate',H:452,
   nice:1,noEnds:1,solid:1,xrot:1,ref:{v:3,label:'balanced 3%',col:'#8A4B00'}});
  dotLegend('c-vr-lg');   /* dot + name, no note */
 }
