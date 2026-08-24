@@ -1019,7 +1019,10 @@ function panels(hostId,items,spec,opt){
  if(!list.length){host.innerHTML='<svg class="ch" viewBox="0 0 10 10"></svg>';
   CH[hostId]={W:10,Ht:10,hit:()=>null};return}
  const cols=opt.cols||(list.length>6?4:3), rows=Math.ceil(list.length/cols);
- const gx=16, gy=30;
+ /* One gap value in both directions, so the grid reads evenly - it used to be 16 across
+    and 30 down, which left an obvious extra band between the rows. Tighter as well, so
+    the cards take as much of the panel as they can. */
+ const G=12, gx=G, gy=G;
  /* Card mode mirrors the vacancy-rate-v-rent slide: each panel sits on its own white
     card with a bold district header and its own key. TOP grows if the key needs to
     drop below the name rather than sitting beside it. */
