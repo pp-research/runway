@@ -206,6 +206,11 @@ body.railshut .stage{margin-left:56px}
    also drops the browser's default button chrome, which was the "pill". */
 .lgd .skey{display:inline-flex;align-items:center;gap:.32cqw;font-size:.86cqw;
  font-weight:700;color:var(--ink);letter-spacing:-.01em}
+/* seriesLegend writes its swatch as a hardcoded 11px svg, which does not scale with the
+   deck's cqw type. That fixed height set the key's box height, so centring the note against
+   it left the two texts a pixel apart. Sizing the swatch in cqw puts both boxes on the same
+   footing - matching .tog i, which is .6cqw for the same reason. */
+.lgd .skey svg{width:.6cqw;height:.6cqw;flex:none}
 /* ---------- panel tables ----------
    There was no table, th, td or .dv rule anywhere in the file, so every sortable
    table in the deck rendered with browser defaults: columns butted together, no
