@@ -214,6 +214,18 @@ body.railshut .stage{margin-left:56px}
    it left the two texts a pixel apart. Sizing the swatch in cqw puts both boxes on the same
    footing - matching .tog i, which is .6cqw for the same reason. */
 .lgd .skey svg{width:.6cqw;height:.6cqw;flex:none}
+/* A heading with a control beside it. Sits on the dark slide, not the light panel, so it
+   uses the page-ink tokens rather than --ink. Unlike the legend keys these are real
+   controls, so they keep a visible affordance. */
+.h2row{display:flex;align-items:baseline;gap:1.1cqw;flex-wrap:wrap}
+.pk{display:inline-flex;gap:.3cqw}
+.pk button{font-size:.78cqw;font-weight:700;letter-spacing:-.01em;padding:.24cqw .66cqw;
+ border:.08cqw solid var(--hair);border-radius:.32cqw;background:none;color:var(--chrome-dim);
+ cursor:pointer;transition:.12s;font-family:inherit}
+.pk button:hover{color:var(--pg-ink);border-color:var(--pill-line)}
+.pk button[aria-pressed=true]{background:var(--rail-active-bg);border-color:var(--rail-active-bg);
+ color:var(--rail-active-txt)}
+.pk button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
 /* ---------- panel tables ----------
    There was no table, th, td or .dv rule anywhere in the file, so every sortable
    table in the deck rendered with browser defaults: columns butted together, no
