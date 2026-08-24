@@ -347,15 +347,20 @@ period.</div>
 
 <section id="employment">
 <h2><span class="num">07</span>Does strong employment send people to these markets?</h2>
-<p class="lede">The framework proposes that people leave the city when work feels secure. This tests it:
-the correlation between unemployment and net internal migration into each market a year later, measured
-three ways.</p>
-<details class="mdet"><summary>How to read the direction</summary>
-<p>If people moved when employment was <b>strong</b>, low unemployment would coincide with high migration
-and the markers would sit <b>left of zero</b>.</p>
-<p>A marker to the <b>right of zero</b> means the opposite: higher unemployment precedes more people
-arriving. That is a push out of weak labour markets, not a pull from secure ones.</p>
-</details>
+<p class="lede">The framework proposes that people leave the city when work feels secure. This tests it
+against unemployment in three places &mdash; the market&rsquo;s own <b>donor capital</b>, <b>all regional
+areas</b>, and the <b>national</b> rate &mdash; each against the market&rsquo;s net internal migration a
+year later.</p>
+<p class="lede" style="margin-top:-4px">A marker <b>left of zero</b> would support the framework: low
+unemployment coinciding with more people arriving. A marker <b>right of zero</b> means the reverse &mdash;
+higher unemployment precedes more arrivals, a push out of weak labour markets rather than a pull from
+strong ones. Comparing the three shows whether any of it is specific to the market&rsquo;s own capital, or
+whether the national cycle is moving everything together.</p>
+<p class="scope"><b>What is being counted.</b> Net internal migration is everyone who moved into the market
+from anywhere in Australia, minus everyone who left. The annual series gives net totals only, so these
+arrivals cannot be traced to a particular city &mdash; where people come from is measured separately, from
+the Census, in <a href="where-people-come-from-and-go-to.html" style="color:var(--t700)">Where people come
+from and go to</a>.</p>
 <div class="leg"><span><i style="background:var(--teal);border-radius:50%"></i>Its donor capital</span>
 <span><i style="background:var(--euc);transform:rotate(45deg)"></i>All regional areas</span>
 <span><i style="background:var(--amber)"></i>National</span>
@@ -916,5 +921,17 @@ document.querySelectorAll('#tnMode button').forEach(function(b){
   draw()}});
 draw();
 })();
+document.querySelectorAll('section[id] h2').forEach(function(h){
+ var a=document.createElement('a');
+ a.className='anch'; a.href='#'+h.closest('section').id; a.textContent='#';
+ a.title='Copy a link to this section';
+ a.onclick=function(e){e.preventDefault();
+  var u=location.href.split('#')[0]+'#'+h.closest('section').id;
+  (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){
+    a.textContent='copied'; a.classList.add('done');
+    setTimeout(function(){a.textContent='#'; a.classList.remove('done')},1400);
+  }).catch(function(){location.hash=h.closest('section').id});};
+ h.appendChild(a);});
+
 </script>
 </body></html>
