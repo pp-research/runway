@@ -1360,6 +1360,10 @@ function pDistricts(){
 }
 const DIVSEG=()=>ORDER.flatMap(d=>SEGS.map(s=>({d:d,s:s,label:d+' \u00b7 '+(s==='house'?'H':'U')})));
 const DIV6=()=>ORDER.map(d=>({d:d,label:d}));
+/* One segment across the six districts. For pages split into a house and a unit slide:
+   six panels land on the 3-wide grid instead of twelve on the 4-wide one, and the label
+   drops the H/U suffix because the slide heading already carries it. */
+const DIVSEG1=s=>ORDER.map(d=>({d:d,s:s,label:d}));
 
 function pPrice(){
  panels('c-price',DIV6(),it=>[
