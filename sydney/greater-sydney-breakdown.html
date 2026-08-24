@@ -1384,10 +1384,10 @@ function HVU_LTA(){const v=[];
 function pHvU(){
  multiLine('c-hvu',d=>{const gh=GR(d,'house'), gu=GR(d,'unit'), o={};
   yl(gh.ps).forEach(y=>o[y]=at(gu.ps,y)/at(gh.ps,y)*100); return o},
-  {fmt:v=>v.toFixed(0)+'%',lta:HVU_LTA(),
+  {fmt:v=>v.toFixed(0)+'%',H:505,nice:1,noEnds:1,solid:1,xrot:1,lta:HVU_LTA(),
    ltaL:'Long-Term Average '+HVU_LTA().toFixed(0)+'%',
-   title:'Unit price as a share of house price',ytitle:'Unit as % of House Price'});
- divLegend('c-hvu-lg','this exhibit is the relationship between the two segments');
+   title:'Unit price as a share of house price'});
+ dotLegend('c-hvu-lg');   /* dot + name, no note - as on the vacancy rate page */
 }
 function pPxR(){
  panels('c-pxr',DIVSEG(),it=>[
