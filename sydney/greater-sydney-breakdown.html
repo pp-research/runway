@@ -1449,17 +1449,14 @@ function pxrPage(id,s){
 function pPxRH(){ pxrPage('c-pxrh','house') }
 function pPxRU(){ pxrPage('c-pxru','unit') }
 function pCAGR(){
- /* Official bar palette: houses take the two blues, units the two greys, and within each
-    segment the headline horizon gets the stronger tone. Districts are the x-axis here, so
-    colour carries the series, not the district. */
  bars('c-cagr',ORDER,[
-  {d:ORDER.map(d=>R.divisions[d].house.g36/3),col:'#7DBFC8',name:'House 3-yr'},
-  {d:ORDER.map(d=>R.divisions[d].house.cagr10),col:'#5CC8E0',name:'House 10-yr'},
-  {d:ORDER.map(d=>R.divisions[d].unit.g36/3),col:'#BCC3C8',name:'Unit 3-yr'},
-  {d:ORDER.map(d=>R.divisions[d].unit.cagr10),col:'#7895A3',name:'Unit 10-yr'}],
+  {d:ORDER.map(d=>R.divisions[d].house.g36/3),col:BAR[0],name:'House 3-yr'},
+  {d:ORDER.map(d=>R.divisions[d].house.cagr10),col:BAR[1],name:'House 10-yr'},
+  {d:ORDER.map(d=>R.divisions[d].unit.g36/3),col:BAR[2],name:'Unit 3-yr'},
+  {d:ORDER.map(d=>R.divisions[d].unit.cagr10),col:BAR[3],name:'Unit 10-yr'}],
   {fmt:v=>v.toFixed(1)+'%',labels:1,title:'Compound growth by horizon',ytitle:'Compound Annual Growth'});
- seriesLegend('c-cagr-lg',[['#7DBFC8','House 3-yr'],['#5CC8E0','House 10-yr'],
-  ['#BCC3C8','Unit 3-yr'],['#7895A3','Unit 10-yr']],'hover a group for all four');
+ seriesLegend('c-cagr-lg',[[BAR[0],'House 3-yr'],[BAR[1],'House 10-yr'],
+  [BAR[2],'Unit 3-yr'],[BAR[3],'Unit 10-yr']],'hover a group for all four');
 }
 function pAI(){
  panels('c-ai',DIV6(),it=>[
