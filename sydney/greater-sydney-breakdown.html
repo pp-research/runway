@@ -1749,8 +1749,8 @@ function pSales(){
 }
 function pAppr(){
  panels('c-appr',DIV6(),it=>[
-  {d:H[it.d].appr,type:'bar',col:C(it.d),op:.75,name:'Approvals'},
-  {d:H[it.d].popch,type:'line',col:'#171B24',ax:'r',name:'Population change'}],
+  {d:H[it.d].appr,type:'bar',col:C(it.d),op:.45,name:'Approvals'},
+  {d:H[it.d].popch,type:'line',col:C(it.d),ax:'r',name:'Population change'}],
   {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,title:'Approvals v population change',ytitle:'Dwelling Approvals'});
 }
 function pHholds(){
