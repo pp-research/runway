@@ -193,6 +193,11 @@ body.railshut .stage{margin-left:56px}
 .lgd .tog[aria-pressed=false]{opacity:.34}
 .lgd .tog:hover{color:var(--teal-text)}
 .lgd .tog:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
+/* Series keys carry the same flat look, but they are spans rather than buttons: nothing
+   about them is clickable, so they should neither look nor announce as controls. That
+   also drops the browser's default button chrome, which was the "pill". */
+.lgd .skey{display:inline-flex;align-items:center;gap:.32cqw;font-size:.86cqw;
+ font-weight:700;color:var(--ink);letter-spacing:-.01em}
 /* ---------- panel tables ----------
    There was no table, th, td or .dv rule anywhere in the file, so every sortable
    table in the deck rendered with browser defaults: columns butted together, no
