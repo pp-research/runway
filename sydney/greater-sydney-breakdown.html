@@ -1399,7 +1399,7 @@ function pYoY(){
  panels('c-yoy',DIV6(),it=>[
   {d:GR(it.d,'house').pg,type:'line',col:C(it.d),name:'House'},
   {d:GR(it.d,'unit').pg,type:'line',col:C(it.d),op:.45,name:'Unit'}],
-  {zeroL:1,events:MOCK.events,fmt:v=>v.toFixed(0)+'%',
+  {zeroL:1,fmt:v=>v.toFixed(0)+'%',            /* no events - see the note on pPrice */
    cards:1,H:460,title:'Year on year price movement',ytitle:'% Change Year on Year'});
 }
 function HVU_LTA(){const v=[];
