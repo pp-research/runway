@@ -927,7 +927,11 @@ function multiLine(hostId,pick,opt){
     legend names the series instead, so the plot reclaims that 150 units. */
  /* The bottom deepens for opt.xrot: a four-digit year on its side needs the room, plus
     ~20 units of clearance so the labels do not sit against the panel's bottom edge. */
- const P=[26,opt.noEnds?26:150,opt.xrot?108:52,74];
+ /* Bottom padding for opt.xrot was 108, but a rotated four-digit year at font-size 10 only
+    runs about 25 units below its anchor, which itself sits 9 below the axis - 34 in all.
+    The other 74 were dead space that pushed the whole svg past the panel, so the years
+    ended up flush against its bottom edge. 44 leaves ~10 units of clearance. */
+ const P=[26,opt.noEnds?26:150,opt.xrot?44:52,74];
  const ser=vis().map(d=>({d:d,o:pick(d)})).filter(s=>s.o);
  if(!ser.length){host.innerHTML='<svg class="ch" viewBox="0 0 10 10"></svg>';
   CH[hostId]={W:10,Ht:10,hit:()=>null};return}
