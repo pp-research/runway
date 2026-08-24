@@ -1523,11 +1523,28 @@ function pCAGR(){
  seriesLegend('c-cagr-lg',[['#3E4C55','House 10-yr',1],['#3E4C55','Unit 10-yr',1,.45]],
   'each district in its own colour');
 }
+/* Which peak measure the affordability page draws a rule for. The ultimate peak is one
+   year's reading; the two- and three-peak averages are the mean of the highest two or
+   three readings anywhere in the series - not consecutive years - so they are less
+   hostage to a single year. Definitions come from the workbook's District summary. */
+let aiPeak='ceiling';
+const AI_PEAKS=[['ceiling','Ultimate peak'],['ceiling2','2-peak average'],['ceiling3','3-peak average']];
+function peakToggle(id){
+ put(id,AI_PEAKS.map(p=>'<button data-pk="'+p[0]+'" aria-pressed="'+(aiPeak===p[0])+'"'
+  +' title="show the '+p[1].toLowerCase()+' as a dashed rule on every card">'+p[1]+'</button>').join(''));
+ $$('#'+id+' button[data-pk]').forEach(b=>b.onclick=()=>{aiPeak=b.dataset.pk;render()});
+}
 function pAI(){
+ peakToggle('ai-pk');
  panels('c-ai',DIV6(),it=>[
   {d:H[it.d].ai.house,type:'line',col:C(it.d),name:'House AI'},
   {d:H[it.d].ai.unit,type:'line',col:C(it.d),op:.45,name:'Unit AI'}],
-  {fmt:v=>v.toFixed(0)+'%',cards:1,H:460,title:'Affordability index',ytitle:'Affordability Index'});
+  {fmt:v=>v.toFixed(0)+'%',cards:1,H:460,title:'Affordability index',ytitle:'Affordability Index',
+   /* one rule per segment, matching that series' colour and opacity */
+   refFor:it=>[{v:MOCK.divisions[it.d].seg.house[aiPeak],col:C(it.d)},
+               {v:MOCK.divisions[it.d].seg.unit[aiPeak],col:C(it.d),op:.45}]});
+ divLegend('c-ai-lg','dashed rule = '+AI_PEAKS.find(p=>p[0]===aiPeak)[1].toLowerCase()
+  +' · solid = house, pale = unit');
 }
 function pRunway(){
  bars('c-rw',ORDER,[
