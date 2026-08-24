@@ -1807,10 +1807,10 @@ function pUnemp(){
 }
 function pYieldCmp(){
  bars('c-yield',ORDER,[
-  {d:ORDER.map(d=>R.divisions[d].house.yield),col:'#00A0B4',name:'House yield'},
-  {d:ORDER.map(d=>R.divisions[d].unit.yield),col:'#9FB3BC',name:'Unit yield'}],
+  {d:ORDER.map(d=>R.divisions[d].house.yield),col:'#5CC8E0',name:'House yield'},
+  {d:ORDER.map(d=>R.divisions[d].unit.yield),col:'#BCC3C8',name:'Unit yield'}],
   {fmt:v=>v.toFixed(2)+'%',labels:1,title:'Gross yield by district',ytitle:'Gross Yield'});
- seriesLegend('c-yield-lg',[['#00A0B4','Houses'],['#9FB3BC','Units']],'these figures are real');
+ seriesLegend('c-yield-lg',[['#5CC8E0','Houses'],['#BCC3C8','Units']],'these figures are real');
 }
 function pYCR(){
  panels('c-ycr',DIV6(),it=>[
