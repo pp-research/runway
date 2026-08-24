@@ -1745,8 +1745,8 @@ function pDemand(){
   {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.dscore),col:BAR.uLt,name:'Unit now'},
   {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.fdscore),col:BAR.uDk,name:'Unit forecast'}],
   {fmt:v=>v.toFixed(0),W:520,H:424,ytitle:'Demand Score',title:'Demand score'});
- seriesLegend('c-dem-lg',[[BAR.hLt,'House now'],[BAR.hDk,'House forecast'],
-  [BAR.uLt,'Unit now'],[BAR.uDk,'Unit forecast']],'green at 30 or above');
+ seriesLegend('c-dem-lg',[[BAR.hLt,'House now',1],[BAR.hDk,'House forecast',1],
+  [BAR.uLt,'Unit now',1],[BAR.uDk,'Unit forecast',1]],'green at 30 or above');
  const cols=['Market','List/1,000','adjVR','SS','DOM','Rent 36-mo','DS','SS\u00d7DS','Grade','Score'];
  const rows=ORDER.flatMap(d=>SEGS.map(s=>{const x=MOCK.divisions[d].seg[s], r=R.divisions[d][s];
   return {d:d,s:s,k:[d+' '+s,r.lp1000,x.adjvr,x.ss,r.dom,x.rg36,x.ds,x.ssds,x.grade,x.dscore],x:x,r:r}}));
