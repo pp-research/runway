@@ -1493,8 +1493,11 @@ function pCAGR(){
   {d:ORDER.map(d=>R.divisions[d].house.cagr10),byDiv:1,name:'House 10-yr'},
   {d:ORDER.map(d=>R.divisions[d].unit.cagr10),byDiv:1,op:.45,name:'Unit 10-yr'}],
   /* No ytitle: the slide heading and the value labels on every bar already say what the
-     axis is, and dropping it hands 30 units back to the plot. */
-  {fmt:v=>v.toFixed(1)+'%',labels:1,title:'Ten-year compound annual growth'});
+     axis is, and dropping it hands 30 units back to the plot.
+     H 443 rather than the 390 default: the svg is width-driven, so the viewBox aspect sets
+     the rendered height. At 390 it left 72px of the panel empty below the axis; 443 fills
+     it down to a ~14px margin. */
+  {fmt:v=>v.toFixed(1)+'%',labels:1,H:443,title:'Ten-year compound annual growth'});
  /* The swatches carry solid v pale, so the labels do not have to name it. */
  seriesLegend('c-cagr-lg',[['#3E4C55','House 10-yr',1],['#3E4C55','Unit 10-yr',1,.45]],
   'each district in its own colour');
