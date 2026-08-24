@@ -1273,7 +1273,7 @@ function seriesLegend(hostId,items,note){
    :'<svg width="24" height="9" viewBox="0 0 24 9" aria-hidden="true">'
    +'<line x1="1" x2="23" y1="4.5" y2="4.5" stroke="'+x[0]+'" stroke-width="2.1"/>'
    +'<circle cx="12" cy="4.5" r="3.1" fill="'+x[0]+'" stroke="#FBFDFE" stroke-width="1"/></svg>';
-  return '<button aria-pressed="true" style="cursor:default">'+m+x[1]+'</button>'}).join('')
+  return '<span class="skey">'+m+x[1]+'</span>'}).join('')
   +(note?'<span class="st">'+note+'</span>':''));
 }
 function toggle(d){
