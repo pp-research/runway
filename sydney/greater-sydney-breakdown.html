@@ -1457,12 +1457,17 @@ function pPTI(){
    left each chart too small to read. One segment per slide: six panels, 3-wide, and
    panels() gives each one nearly double the height out of the same viewBox. */
 function incRentPage(id,s){
+ /* Card mode, as on the year-on-year and vacancy-rate-v-rent slides: each district sits
+    on its own white card with a bold header and its own key, so the page needs no legend
+    strip of its own. The two series keep distinct colours rather than the house/unit
+    opacity pair those slides use - here they are two different measures, not one
+    measure split by segment. */
  panels(id,DIVSEG1(s),it=>[
   {d:H[it.d].incrent[s],type:'line',col:'#171B24',name:'Rent share of wage'},
   {d:H[it.d].ai[s],type:'line',col:'#007685',name:'Affordability index'}],
-  {fmt:v=>v.toFixed(0)+'%',title:'Income to rent v affordability index, '+s+'s',
+  {fmt:v=>v.toFixed(0)+'%',cards:1,H:460,
+   title:'Income to rent v affordability index, '+s+'s',
    ytitle:'% of Average Wage'});
- divLegend(id+'-lg','dark = rent share of wage, teal = affordability index');
 }
 function pIncRentH(){ incRentPage('c-increnth','house') }
 function pIncRentU(){ incRentPage('c-increntu','unit') }
