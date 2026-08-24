@@ -832,11 +832,19 @@ const at=(o,y)=>o[y]!==undefined?o[y]:o[String(y)];
 const mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
 const dm=(v,t)=>'<span class="dm" title="'+(t||'Synthetic — awaiting NSW source data')+'">'+v+'</span>';
 const C=d=>PAL[d].c, DASH=d=>PAL[d].dash;
-/* Official bar palette, in bar order: first series takes BAR[0], second BAR[1], and so on.
-   Used by the cross-district bar charts, where the districts are the x-axis and colour has
-   to carry the series instead. BAR[4] is reserved for a five-bar chart - nothing needs it
-   yet, so it is here to be found rather than re-invented. */
-const BAR=['#5CC8E0','#BCC3C8','#363635','#C05746','#E98A15'];
+/* Bar palette for the cross-district charts, where districts are the x-axis so colour has
+   to carry the series. Two channels do the work: hue is the segment - brand cyan for houses,
+   brand grey for units - and lightness is the second dimension, whether that is horizon or
+   now-v-forecast. A two-series chart uses the two light tones; a four-series chart adds each
+   one's dark sibling.
+     hLt #5CC8E0  brand sky            uLt #BCC3C8  brand grey
+     hDk #1C7C92  the same hue and     uDk #7895A3  brand slate
+                  saturation as hLt,
+                  lightness 62% -> 34%
+   #7DBFC8 is deliberately not here: it sits at the same hue as hLt and within 2% of its
+   lightness, so the two read as one colour. hDk separates by lightness instead.
+   `x5` is reserved for a five-series chart; nothing needs it yet. */
+const BAR={hLt:'#5CC8E0',hDk:'#1C7C92',uLt:'#BCC3C8',uDk:'#7895A3',x5:'#E98A15'};
 const put=(id,h)=>{const e=gid(id); if(e) e.innerHTML=h};
 const vis=()=>ORDER.filter(d=>!hidden.has(d));
 const GR=(d,s)=>MOCK.growth[d+'|'+s];
