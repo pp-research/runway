@@ -1755,8 +1755,10 @@ function pAppr(){
 }
 function pHholds(){
  panels('c-hholds',DIV6(),it=>[
-  {d:H[it.d].hhnew,type:'bar',col:C(it.d),op:.8,name:'New households'},
-  {d:H[it.d].appr,type:'bar',col:'#B9C4CC',op:.75,name:'Approvals'}],
+  /* two bars, so the same shape - a wider opacity split than the .45 pair used elsewhere,
+     otherwise adjacent bars in one district colour are hard to tell apart */
+  {d:H[it.d].hhnew,type:'bar',col:C(it.d),op:.85,name:'New households'},
+  {d:H[it.d].appr,type:'bar',col:C(it.d),op:.3,name:'Approvals'}],
   {zeroL:1,fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,title:'New households v housing',ytitle:'New Households / Approvals'});
 }
 function pPopch(){
