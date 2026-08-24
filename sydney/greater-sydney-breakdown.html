@@ -832,6 +832,11 @@ const at=(o,y)=>o[y]!==undefined?o[y]:o[String(y)];
 const mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
 const dm=(v,t)=>'<span class="dm" title="'+(t||'Synthetic — awaiting NSW source data')+'">'+v+'</span>';
 const C=d=>PAL[d].c, DASH=d=>PAL[d].dash;
+/* Official bar palette, in bar order: first series takes BAR[0], second BAR[1], and so on.
+   Used by the cross-district bar charts, where the districts are the x-axis and colour has
+   to carry the series instead. BAR[4] is reserved for a five-bar chart - nothing needs it
+   yet, so it is here to be found rather than re-invented. */
+const BAR=['#5CC8E0','#BCC3C8','#363635','#C05746','#E98A15'];
 const put=(id,h)=>{const e=gid(id); if(e) e.innerHTML=h};
 const vis=()=>ORDER.filter(d=>!hidden.has(d));
 const GR=(d,s)=>MOCK.growth[d+'|'+s];
