@@ -1414,15 +1414,19 @@ function pHvU(){
    title:'Unit price as a share of house price'});
  dotLegend('c-hvu-lg');   /* dot + name, no note - as on the vacancy rate page */
 }
-function pPxR(){
- panels('c-pxr',DIVSEG(),it=>[
-  {d:GR(it.d,it.s).pg,type:'line',col:'#A53AA5',name:'Price growth'},
-  {d:GR(it.d,it.s).rg,type:'line',col:'#007685',name:'Rent growth'}],
-  {zeroL:1,cols:4,fmt:v=>v.toFixed(0)+'%',bandsFor:it=>MOCK.epis[it.d+'|'+it.s],
-   title:'Price v rent growth',ytitle:'% Change Year on Year'});
- divLegend('c-pxr-lg','purple = price (measured), teal = rent (measured)'
-  +' \u00b7 shading = underwater 3+ years');
+/* Split by segment and formatted like the income-to-rent pages: six cards on the 3-wide
+   grid, H 440 to pay for the subtitle line, and no legend strip because each card carries
+   its own key. The subtitle explains the shading, which the old page legend used to. */
+function pxrPage(id,s){
+ panels(id,DIVSEG1(s),it=>[
+  {d:GR(it.d,s).pg,type:'line',col:'#A53AA5',name:'Price growth'},
+  {d:GR(it.d,s).rg,type:'line',col:'#007685',name:'Rent growth'}],
+  {zeroL:1,fmt:v=>v.toFixed(0)+'%',cards:1,H:440,
+   bandsFor:it=>MOCK.epis[it.d+'|'+it.s],
+   title:'Price v rent growth, '+s+'s',ytitle:'% Change Year on Year'});
 }
+function pPxRH(){ pxrPage('c-pxrh','house') }
+function pPxRU(){ pxrPage('c-pxru','unit') }
 function pCAGR(){
  bars('c-cagr',ORDER,[
   {d:ORDER.map(d=>R.divisions[d].house.g36/3),col:'#9FB3BC',name:'House 3-yr'},
