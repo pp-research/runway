@@ -1103,8 +1103,9 @@ function panels(hostId,items,spec,opt){
  const chh=(Ht-gy*(rows-1)-rows*TOP)/rows;
  /* Card bottom padding has to clear the rotated years: each starts 7 below the axis line
     and a four-digit year at font size fs runs about 2.4*fs further down, which is ~20 at
-    the 8.2 cap. 26 clipped the last digit; 32 leaves the same margin the axis has. */
- const P=[6,card?10:6,card?32:17,opt.padL||46];
+    the 8.2 cap. 26 clipped the last digit and 32 left only ~5 units under it, which still
+    read as crowded against the card edge; 38 gives the years about 11. */
+ const P=[6,card?10:6,card?38:17,opt.padL||46];
  let gLo=[],gHi=[];
  list.forEach(it=>spec(it).forEach(s=>{const v=Object.values(s.d).filter(x=>x!=null&&isFinite(x));
   if(s.ax==='r')gHi.push(...v); else gLo.push(...v)}));
