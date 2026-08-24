@@ -1261,8 +1261,10 @@ function dotLegend(hostId){
 }
 function seriesLegend(hostId,items,note){
  put(hostId,items.map(x=>{
+  /* x[3] is an optional opacity, for keys whose series differ by opacity rather than hue */
+  const o=x[3]?' fill-opacity="'+x[3]+'"':'';
   const m=x[2]?'<svg width="11" height="11" viewBox="0 0 11 11" aria-hidden="true">'
-   +'<rect width="11" height="11" rx="1.5" fill="'+x[0]+'"/></svg>'
+   +'<rect width="11" height="11" rx="1.5" fill="'+x[0]+'"'+o+'/></svg>'
    :'<svg width="24" height="9" viewBox="0 0 24 9" aria-hidden="true">'
    +'<line x1="1" x2="23" y1="4.5" y2="4.5" stroke="'+x[0]+'" stroke-width="2.1"/>'
    +'<circle cx="12" cy="4.5" r="3.1" fill="'+x[0]+'" stroke="#FBFDFE" stroke-width="1"/></svg>';
