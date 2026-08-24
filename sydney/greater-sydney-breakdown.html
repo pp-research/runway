@@ -1471,8 +1471,10 @@ function pCAGR(){
   {d:ORDER.map(d=>R.divisions[d].unit.cagr10),byDiv:1,op:.45,name:'Unit 10-yr'}],
   {fmt:v=>v.toFixed(1)+'%',labels:1,title:'Ten-year compound annual growth',
    ytitle:'10-yr Compound Annual Growth'});
- seriesLegend('c-cagr-lg',[['#3E4C55','House 10-yr',1],['#3E4C55','Unit 10-yr',1,.45]],
-  'each district in its own colour · solid = house, pale = unit');
+ /* Square swatch then the detail. The labels carry the solid/pale distinction themselves,
+    so the note only has to explain what the colour means. */
+ seriesLegend('c-cagr-lg',[['#3E4C55','Solid - House 10-yr',1],['#3E4C55','Pale - Unit 10-yr',1,.45]],
+  'each district in its own colour');
 }
 function pAI(){
  panels('c-ai',DIV6(),it=>[
