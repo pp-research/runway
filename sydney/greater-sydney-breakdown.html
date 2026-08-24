@@ -180,7 +180,10 @@ body.railshut .stage{margin-left:56px}
    the swatch rather than the label, which pushed them further apart - 1.9px here and 14.8px
    on the demand legend, where it also forced the note onto its own row. Centring is closer. */
 .lgd{display:flex;flex-wrap:wrap;align-items:center;gap:.3cqw .55cqw;margin-bottom:.55cqw}
-.lgd .st{flex:1 1 20cqw;min-width:0;font-size:.78cqw;color:var(--ink-dim);line-height:1.35}
+/* font-size matches .skey/.tog deliberately. Two centred boxes only share a text baseline
+   if the text metrics match; at .78cqw the note's baseline rounded a pixel above the keys'.
+   It stays visibly secondary through colour and weight rather than size. */
+.lgd .st{flex:1 1 20cqw;min-width:0;font-size:.86cqw;color:var(--ink-dim);line-height:1.35}
 /* A rule before the note, so it reads as an aside rather than another key. The pipe is a
    pseudo-element, not part of the note text, so every legend gets one without each caller
    having to remember it - and a note that wraps keeps the pipe on the first line. */
