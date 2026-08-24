@@ -1153,6 +1153,15 @@ function panels(hostId,items,spec,opt){
    g+='<line x1="'+x(e.y).toFixed(1)+'" x2="'+x(e.y).toFixed(1)+'" y1="'+(oy+P[0]).toFixed(1)
     +'" y2="'+(oy+chh-P[2]).toFixed(1)+'" stroke="#E4595B" stroke-width="1"'
     +' stroke-dasharray="4 3"/>'});
+  /* Per-card reference rules - the affordability peaks. Each takes its series' colour and
+     opacity, so a dashed line reads as "that line's peak". A rule outside the scale is
+     skipped rather than clamped, which would wrongly imply the peak sits at the plot edge. */
+  (opt.refFor?opt.refFor(it):[]).forEach(rr=>{
+   if(rr.v==null||!isFinite(rr.v)||rr.v<lo||rr.v>hi) return;
+   const ry=f(rr.v).toFixed(1);
+   g+='<line x1="'+(ox+P[3]).toFixed(1)+'" x2="'+(ox+cw-P[1]).toFixed(1)+'" y1="'+ry+'" y2="'+ry
+    +'" stroke="'+(rr.col||AX)+'" stroke-width="1.6" stroke-dasharray="7 4"'
+    +(rr.op?' stroke-opacity="'+rr.op+'"':'')+'/>'});
   for(const v of (card?[hi,(hi+lo)/2,lo]:[hi,lo])) g+='<text x="'+(ox+P[3]-4).toFixed(1)+'" y="'+(f(v)+3.4).toFixed(1)
    +'" text-anchor="end" font-size="9.2" fill="'+AXT+'">'+(opt.fmt?opt.fmt(v):v.toFixed(0))+'</text>';
   if(lo<0&&hi>0) g+='<line x1="'+x(y0).toFixed(1)+'" x2="'+x(y1).toFixed(1)+'" y1="'+f(0).toFixed(1)
