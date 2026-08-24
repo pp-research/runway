@@ -1462,14 +1462,17 @@ function pxrPage(id,s){
 function pPxRH(){ pxrPage('c-pxrh','house') }
 function pPxRU(){ pxrPage('c-pxru','unit') }
 function pCAGR(){
+ /* Six groups, one per district, two bars each: ten-year compound growth for houses and
+    units. byDiv puts every bar in its own district colour, so the segments separate by
+    opacity instead - the district is read from the group label and the colour, and the
+    legend only has to say which of the pair is which. */
  bars('c-cagr',ORDER,[
-  {d:ORDER.map(d=>R.divisions[d].house.g36/3),col:BAR.hLt,name:'House 3-yr'},
-  {d:ORDER.map(d=>R.divisions[d].house.cagr10),col:BAR.hDk,name:'House 10-yr'},
-  {d:ORDER.map(d=>R.divisions[d].unit.g36/3),col:BAR.uLt,name:'Unit 3-yr'},
-  {d:ORDER.map(d=>R.divisions[d].unit.cagr10),col:BAR.uDk,name:'Unit 10-yr'}],
-  {fmt:v=>v.toFixed(1)+'%',labels:1,title:'Compound growth by horizon',ytitle:'Compound Annual Growth'});
- seriesLegend('c-cagr-lg',[[BAR.hLt,'House 3-yr'],[BAR.hDk,'House 10-yr'],
-  [BAR.uLt,'Unit 3-yr'],[BAR.uDk,'Unit 10-yr']],'hover a group for all four');
+  {d:ORDER.map(d=>R.divisions[d].house.cagr10),byDiv:1,name:'House 10-yr'},
+  {d:ORDER.map(d=>R.divisions[d].unit.cagr10),byDiv:1,op:.45,name:'Unit 10-yr'}],
+  {fmt:v=>v.toFixed(1)+'%',labels:1,title:'Ten-year compound annual growth',
+   ytitle:'10-yr Compound Annual Growth'});
+ seriesLegend('c-cagr-lg',[['#3E4C55','House 10-yr',1],['#3E4C55','Unit 10-yr',1,.45]],
+  'each district in its own colour · solid = house, pale = unit');
 }
 function pAI(){
  panels('c-ai',DIV6(),it=>[
