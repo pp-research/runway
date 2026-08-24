@@ -1199,7 +1199,9 @@ function panels(hostId,items,spec,opt){
 /* ================= grouped bars ================= */
 function bars(hostId,cats,series,opt){
  const host=gid(hostId); if(!host) return;
- opt=opt||{}; const W=opt.W||1000, Ht=opt.H||390, P=[26,24,50,74];
+ /* Left padding holds the axis values plus the rotated axis title. With no ytitle the title
+    is not drawn, so the plot reclaims that width - 44 still clears a label like "7.2%". */
+ opt=opt||{}; const W=opt.W||1000, Ht=opt.H||390, P=[26,24,50,opt.ytitle?74:44];
  const keep=cats.map((c,i)=>({c:c,i:i})).filter(o=>!hidden.has(o.c));
  if(!keep.length){host.innerHTML='<svg class="ch" viewBox="0 0 10 10"></svg>';
   CH[hostId]={W:10,Ht:10,hit:()=>null};return}
