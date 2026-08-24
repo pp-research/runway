@@ -1722,13 +1722,13 @@ function pVRProj(){
 }
 function pDemand(){
  bars('c-dem',ORDER,[
-  {d:ORDER.map(d=>MOCK.divisions[d].seg.house.dscore),col:'#5CC8E0',name:'House now'},
-  {d:ORDER.map(d=>MOCK.divisions[d].seg.house.fdscore),col:'#7DBFC8',name:'House forecast'},
-  {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.dscore),col:'#7895A3',name:'Unit now'},
-  {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.fdscore),col:'#BCC3C8',name:'Unit forecast'}],
+  {d:ORDER.map(d=>MOCK.divisions[d].seg.house.dscore),col:BAR[0],name:'House now'},
+  {d:ORDER.map(d=>MOCK.divisions[d].seg.house.fdscore),col:BAR[1],name:'House forecast'},
+  {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.dscore),col:BAR[2],name:'Unit now'},
+  {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.fdscore),col:BAR[3],name:'Unit forecast'}],
   {fmt:v=>v.toFixed(0),W:520,H:424,ytitle:'Demand Score',title:'Demand score'});
- seriesLegend('c-dem-lg',[['#5CC8E0','House now'],['#7DBFC8','House forecast'],
-  ['#7895A3','Unit now'],['#BCC3C8','Unit forecast']],'green at 30 or above');
+ seriesLegend('c-dem-lg',[[BAR[0],'House now'],[BAR[1],'House forecast'],
+  [BAR[2],'Unit now'],[BAR[3],'Unit forecast']],'green at 30 or above');
  const cols=['Market','List/1,000','adjVR','SS','DOM','Rent 36-mo','DS','SS\u00d7DS','Grade','Score'];
  const rows=ORDER.flatMap(d=>SEGS.map(s=>{const x=MOCK.divisions[d].seg[s], r=R.divisions[d][s];
   return {d:d,s:s,k:[d+' '+s,r.lp1000,x.adjvr,x.ss,r.dom,x.rg36,x.ds,x.ssds,x.grade,x.dscore],x:x,r:r}}));
