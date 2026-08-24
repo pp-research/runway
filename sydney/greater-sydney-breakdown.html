@@ -1487,7 +1487,7 @@ function pRunway(){
   {d:ORDER.map(d=>MOCK.divisions[d].seg.house.runway*100),col:BAR.hLt,name:'House runway'},
   {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.runway*100),col:BAR.uLt,name:'Unit runway'}],
   {fmt:v=>v.toFixed(0)+'%',labels:1,W:520,H:424,ytitle:'Runway',title:'Runway by district'});
- seriesLegend('c-rw-lg',[[BAR.hLt,'Houses'],[BAR.uLt,'Units']],
+ seriesLegend('c-rw-lg',[[BAR.hLt,'Houses',1],[BAR.uLt,'Units',1]],
   'negative = already above the affordability ceiling');
  const cols=['District','H avg of medians','H AI','H ceiling','H runway','U AI','U runway'];
  const rows=ORDER.map(d=>{const h=MOCK.divisions[d].seg.house, u=MOCK.divisions[d].seg.unit;
@@ -1830,7 +1830,7 @@ function pYieldCmp(){
   {d:ORDER.map(d=>R.divisions[d].house.yield),col:BAR.hLt,name:'House yield'},
   {d:ORDER.map(d=>R.divisions[d].unit.yield),col:BAR.uLt,name:'Unit yield'}],
   {fmt:v=>v.toFixed(2)+'%',labels:1,title:'Gross yield by district',ytitle:'Gross Yield'});
- seriesLegend('c-yield-lg',[[BAR.hLt,'Houses'],[BAR.uLt,'Units']],'these figures are real');
+ seriesLegend('c-yield-lg',[[BAR.hLt,'Houses',1],[BAR.uLt,'Units',1]],'these figures are real');
 }
 function pYCR(){
  panels('c-ycr',DIV6(),it=>[
