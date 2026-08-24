@@ -1488,8 +1488,8 @@ function incRentPage(id,s){
     opacity pair those slides use - here they are two different measures, not one
     measure split by segment. */
  panels(id,DIVSEG1(s),it=>[
-  {d:H[it.d].incrent[s],type:'line',col:'#171B24',name:'Rent share of wage'},
-  {d:H[it.d].ai[s],type:'line',col:'#007685',name:'Affordability index'}],
+  {d:H[it.d].incrent[s],type:'line',col:C(it.d),name:'Rent share of wage'},
+  {d:H[it.d].ai[s],type:'line',col:C(it.d),op:.45,name:'Affordability index'}],
   {fmt:v=>v.toFixed(0)+'%',cards:1,H:440,
    title:'Income to rent v affordability index, '+s+'s',
    ytitle:'% of Average Wage'});
@@ -1734,8 +1734,10 @@ function pDemand(){
 }
 function pSomDom(){
  panels('c-somdom',DIVSEG(),it=>[
-  {d:H[it.d].som,type:'bar',col:'#5E8A99',op:.8,name:'Stock on market'},
-  {d:H[it.d].dom,type:'line',col:'#171B24',ax:'r',name:'Days on market'}],
+  /* bar pale, line at full strength on top of it - shape already separates the two,
+     so the opacity pair only has to keep the line legible over the bars */
+  {d:H[it.d].som,type:'bar',col:C(it.d),op:.45,name:'Stock on market'},
+  {d:H[it.d].dom,type:'line',col:C(it.d),ax:'r',name:'Days on market'}],
   {cols:4,fmt:v=>v.toFixed(1)+'%',title:'Stock on market v days on market',ytitle:'Stock on Market'});
  divLegend('c-somdom-lg','bars = stock on market (left), line = days on market (right)');
 }
