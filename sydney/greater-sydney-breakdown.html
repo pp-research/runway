@@ -1539,12 +1539,15 @@ function pAI(){
  panels('c-ai',DIV6(),it=>[
   {d:H[it.d].ai.house,type:'line',col:C(it.d),name:'House AI'},
   {d:H[it.d].ai.unit,type:'line',col:C(it.d),op:.45,name:'Unit AI'}],
-  {fmt:v=>v.toFixed(0)+'%',cards:1,H:460,title:'Affordability index',ytitle:'Affordability Index',
+  /* H 440, not 460: the subtitle under the heading costs about 21px of panel height, the
+     same trade the income-to-rent pages make. */
+  {fmt:v=>v.toFixed(0)+'%',cards:1,H:440,title:'Affordability index',ytitle:'Affordability Index',
    /* one rule per segment, matching that series' colour and opacity */
    refFor:it=>[{v:MOCK.divisions[it.d].seg.house[aiPeak],col:C(it.d)},
                {v:MOCK.divisions[it.d].seg.unit[aiPeak],col:C(it.d),op:.45}]});
- divLegend('c-ai-lg','dashed rule = '+AI_PEAKS.find(p=>p[0]===aiPeak)[1].toLowerCase()
-  +' · solid = house, pale = unit');
+ /* the cards already carry a House/Unit key, so the only thing left to explain is the rule */
+ put('ai-cap','Dashed rule marks the '+AI_PEAKS.find(p=>p[0]===aiPeak)[1].toLowerCase()
+  +' for each series — solid for houses, pale for units');
 }
 function pRunway(){
  bars('c-rw',ORDER,[
