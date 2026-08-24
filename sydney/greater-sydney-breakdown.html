@@ -1458,10 +1458,10 @@ function pPxRH(){ pxrPage('c-pxrh','house') }
 function pPxRU(){ pxrPage('c-pxru','unit') }
 function pCAGR(){
  bars('c-cagr',ORDER,[
-  {d:ORDER.map(d=>R.divisions[d].house.g36/3),col:BAR[0],name:'House 3-yr'},
-  {d:ORDER.map(d=>R.divisions[d].house.cagr10),col:BAR[1],name:'House 10-yr'},
-  {d:ORDER.map(d=>R.divisions[d].unit.g36/3),col:BAR[2],name:'Unit 3-yr'},
-  {d:ORDER.map(d=>R.divisions[d].unit.cagr10),col:BAR[3],name:'Unit 10-yr'}],
+  {d:ORDER.map(d=>R.divisions[d].house.g36/3),col:BAR.hLt,name:'House 3-yr'},
+  {d:ORDER.map(d=>R.divisions[d].house.cagr10),col:BAR.hDk,name:'House 10-yr'},
+  {d:ORDER.map(d=>R.divisions[d].unit.g36/3),col:BAR.uLt,name:'Unit 3-yr'},
+  {d:ORDER.map(d=>R.divisions[d].unit.cagr10),col:BAR.uDk,name:'Unit 10-yr'}],
   {fmt:v=>v.toFixed(1)+'%',labels:1,title:'Compound growth by horizon',ytitle:'Compound Annual Growth'});
  seriesLegend('c-cagr-lg',[[BAR[0],'House 3-yr'],[BAR[1],'House 10-yr'],
   [BAR[2],'Unit 3-yr'],[BAR[3],'Unit 10-yr']],'hover a group for all four');
@@ -1474,10 +1474,10 @@ function pAI(){
 }
 function pRunway(){
  bars('c-rw',ORDER,[
-  {d:ORDER.map(d=>MOCK.divisions[d].seg.house.runway*100),col:BAR[0],name:'House runway'},
-  {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.runway*100),col:BAR[1],name:'Unit runway'}],
+  {d:ORDER.map(d=>MOCK.divisions[d].seg.house.runway*100),col:BAR.hLt,name:'House runway'},
+  {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.runway*100),col:BAR.uLt,name:'Unit runway'}],
   {fmt:v=>v.toFixed(0)+'%',labels:1,W:520,H:424,ytitle:'Runway',title:'Runway by district'});
- seriesLegend('c-rw-lg',[[BAR[0],'Houses'],[BAR[1],'Units']],
+ seriesLegend('c-rw-lg',[[BAR.hLt,'Houses'],[BAR.uLt,'Units']],
   'negative = already above the affordability ceiling');
  const cols=['District','H avg of medians','H AI','H ceiling','H runway','U AI','U runway'];
  const rows=ORDER.map(d=>{const h=MOCK.divisions[d].seg.house, u=MOCK.divisions[d].seg.unit;
@@ -1730,10 +1730,10 @@ function pVRProj(){
 }
 function pDemand(){
  bars('c-dem',ORDER,[
-  {d:ORDER.map(d=>MOCK.divisions[d].seg.house.dscore),col:BAR[0],name:'House now'},
-  {d:ORDER.map(d=>MOCK.divisions[d].seg.house.fdscore),col:BAR[1],name:'House forecast'},
-  {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.dscore),col:BAR[2],name:'Unit now'},
-  {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.fdscore),col:BAR[3],name:'Unit forecast'}],
+  {d:ORDER.map(d=>MOCK.divisions[d].seg.house.dscore),col:BAR.hLt,name:'House now'},
+  {d:ORDER.map(d=>MOCK.divisions[d].seg.house.fdscore),col:BAR.hDk,name:'House forecast'},
+  {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.dscore),col:BAR.uLt,name:'Unit now'},
+  {d:ORDER.map(d=>MOCK.divisions[d].seg.unit.fdscore),col:BAR.uDk,name:'Unit forecast'}],
   {fmt:v=>v.toFixed(0),W:520,H:424,ytitle:'Demand Score',title:'Demand score'});
  seriesLegend('c-dem-lg',[[BAR[0],'House now'],[BAR[1],'House forecast'],
   [BAR[2],'Unit now'],[BAR[3],'Unit forecast']],'green at 30 or above');
@@ -1817,10 +1817,10 @@ function pUnemp(){
 }
 function pYieldCmp(){
  bars('c-yield',ORDER,[
-  {d:ORDER.map(d=>R.divisions[d].house.yield),col:BAR[0],name:'House yield'},
-  {d:ORDER.map(d=>R.divisions[d].unit.yield),col:BAR[1],name:'Unit yield'}],
+  {d:ORDER.map(d=>R.divisions[d].house.yield),col:BAR.hLt,name:'House yield'},
+  {d:ORDER.map(d=>R.divisions[d].unit.yield),col:BAR.uLt,name:'Unit yield'}],
   {fmt:v=>v.toFixed(2)+'%',labels:1,title:'Gross yield by district',ytitle:'Gross Yield'});
- seriesLegend('c-yield-lg',[[BAR[0],'Houses'],[BAR[1],'Units']],'these figures are real');
+ seriesLegend('c-yield-lg',[[BAR.hLt,'Houses'],[BAR.uLt,'Units']],'these figures are real');
 }
 function pYCR(){
  panels('c-ycr',DIV6(),it=>[
