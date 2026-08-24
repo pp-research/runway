@@ -1463,8 +1463,8 @@ function pCAGR(){
   {d:ORDER.map(d=>R.divisions[d].unit.g36/3),col:BAR.uLt,name:'Unit 3-yr'},
   {d:ORDER.map(d=>R.divisions[d].unit.cagr10),col:BAR.uDk,name:'Unit 10-yr'}],
   {fmt:v=>v.toFixed(1)+'%',labels:1,title:'Compound growth by horizon',ytitle:'Compound Annual Growth'});
- seriesLegend('c-cagr-lg',[[BAR[0],'House 3-yr'],[BAR[1],'House 10-yr'],
-  [BAR[2],'Unit 3-yr'],[BAR[3],'Unit 10-yr']],'hover a group for all four');
+ seriesLegend('c-cagr-lg',[[BAR.hLt,'House 3-yr'],[BAR.hDk,'House 10-yr'],
+  [BAR.uLt,'Unit 3-yr'],[BAR.uDk,'Unit 10-yr']],'hover a group for all four');
 }
 function pAI(){
  panels('c-ai',DIV6(),it=>[
