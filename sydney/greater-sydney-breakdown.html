@@ -175,10 +175,11 @@ body.railshut .stage{margin-left:56px}
 /* The legend row: mark buttons, then a note. Neither .lgd nor .st had a rule at
    all, so the note butted straight against the last button with no separation and
    the whole row read as one crowded run-on line. */
-/* baseline, not center: the note is a smaller font than the keys, so centring left their
-   text baselines a pixel apart. Every child is inline-flex, so each contributes its own
-   label's baseline and the whole row sits on one line. */
-.lgd{display:flex;flex-wrap:wrap;align-items:baseline;gap:.3cqw .55cqw;margin-bottom:.55cqw}
+/* align-items:center, deliberately. `baseline` looks like the right answer for putting the
+   note on the keys' text line, but every child is inline-flex and takes its baseline from
+   the swatch rather than the label, which pushed them further apart - 1.9px here and 14.8px
+   on the demand legend, where it also forced the note onto its own row. Centring is closer. */
+.lgd{display:flex;flex-wrap:wrap;align-items:center;gap:.3cqw .55cqw;margin-bottom:.55cqw}
 .lgd .st{flex:1 1 20cqw;min-width:0;font-size:.78cqw;color:var(--ink-dim);line-height:1.35}
 /* A rule before the note, so it reads as an aside rather than another key. The pipe is a
    pseudo-element, not part of the note text, so every legend gets one without each caller
