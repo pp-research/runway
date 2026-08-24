@@ -1388,8 +1388,10 @@ function pPrice(){
  panels('c-price',DIV6(),it=>[
   {d:GR(it.d,'house').ps,type:'line',col:C(it.d),name:'House'},
   {d:GR(it.d,'unit').ps,type:'line',col:C(it.d),op:.45,name:'Unit'}],
-  {events:MOCK.events,
-   fmt:v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'m':'$'+Math.round(v/1e3)+'k',
+  /* No events here: panels() draws them as a bare dashed rule with no room for the pill
+     label, so the 2008 and 2020 lines read as unexplained marks. They stay on the
+     full-width charts, where eventMark can label them. */
+  {fmt:v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'m':'$'+Math.round(v/1e3)+'k',
    bandsFor:()=>[],cards:1,H:460,title:'Average of LGA medians',
    ytitle:'Avg. of LGA medians \u2014 house / unit'});
 }
