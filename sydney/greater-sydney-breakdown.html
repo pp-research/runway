@@ -1432,8 +1432,8 @@ function pHvU(){
    its own key. The subtitle explains the shading, which the old page legend used to. */
 function pxrPage(id,s){
  panels(id,DIVSEG1(s),it=>[
-  {d:GR(it.d,s).pg,type:'line',col:'#A53AA5',name:'Price growth'},
-  {d:GR(it.d,s).rg,type:'line',col:'#007685',name:'Rent growth'}],
+  {d:GR(it.d,s).pg,type:'line',col:C(it.d),name:'Price growth'},
+  {d:GR(it.d,s).rg,type:'line',col:C(it.d),op:.45,name:'Rent growth'}],
   {zeroL:1,fmt:v=>v.toFixed(0)+'%',cards:1,H:440,
    bandsFor:it=>MOCK.epis[it.d+'|'+it.s],
    title:'Price v rent growth, '+s+'s',ytitle:'% Change Year on Year'});
