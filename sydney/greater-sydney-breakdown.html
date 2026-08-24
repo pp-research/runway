@@ -888,12 +888,16 @@ function eventMark(e,x,top,bot){
   +' font-size="8.6" font-weight="700" fill="#fff">'+e.l+'</text>';
 }
 /* long-term average rule with an italic bold caption */
+/* The average rule used to be a 1px hairline and disappeared among the series. Heavier
+   stroke, longer dashes, and the same paint-order halo the vacancy-rate threshold uses,
+   so the label stays readable where a line crosses it. */
 function ltaMark(v,f,x0,x1,label){
  const y=f(v);
  return '<line x1="'+x0+'" x2="'+x1+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)
-  +'" stroke="#3E4C55" stroke-width="1" stroke-dasharray="6 4"/>'
-  +'<text x="'+(x0+7)+'" y="'+(y-5).toFixed(1)+'" font-size="9.2" font-weight="700"'
-  +' font-style="italic" fill="#3E4C55">'+label+'</text>';
+  +'" stroke="#3E4C55" stroke-width="2.2" stroke-dasharray="9 5" stroke-linecap="round"/>'
+  +'<text x="'+(x0+7)+'" y="'+(y-7).toFixed(1)+'" font-size="10" font-weight="700"'
+  +' font-style="italic" paint-order="stroke" stroke="var(--pnl)" stroke-width="3.2"'
+  +' stroke-linejoin="round" fill="#3E4C55">'+label+'</text>';
 }
 const MARK=(cx,cy,col)=>'<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="3.1" fill="'
  +col+'" stroke="#FBFDFE" stroke-width="1.1"/>';
