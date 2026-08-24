@@ -1214,10 +1214,13 @@ function bars(hostId,cats,series,opt){
  keep.forEach((o,ci)=>{const cx=P[3]+slot*(ci+.5);
   series.forEach((s,si)=>{const v=s.d[o.i]; if(!isFinite(v))return;
    const bx=cx-bw*series.length/2+si*bw;
+   /* s.byDiv colours each bar by its district instead of by series, so a series can only
+      be told apart by opacity - the same pairing the card charts use for house v unit. */
    const col=s.byDiv?C(o.c):s.col;
    g+='<rect x="'+bx.toFixed(1)+'" y="'+Math.min(f(v),f(0)).toFixed(1)+'" width="'+bw.toFixed(1)
-    +'" height="'+Math.max(1,Math.abs(f(0)-f(v))).toFixed(1)+'" fill="'+col+'"/>';
-   hits.push({x0:bx,x1:bx+bw,c:o.c,n:s.name||'',v:v,col:col});
+    +'" height="'+Math.max(1,Math.abs(f(0)-f(v))).toFixed(1)+'" fill="'+col+'"'
+    +(s.op?' fill-opacity="'+s.op+'"':'')+'/>';
+   hits.push({x0:bx,x1:bx+bw,c:o.c,n:s.name||'',v:v,col:col,op:s.op});
    if(opt.labels) g+='<text x="'+(bx+bw/2).toFixed(1)+'" y="'+(Math.min(f(v),f(0))-6).toFixed(1)
     +'" text-anchor="middle" font-size="10.2" font-weight="700" fill="#3E4C55">'
     +(opt.fmt?opt.fmt(v):v.toFixed(1))+'</text>'});
