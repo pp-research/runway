@@ -106,9 +106,11 @@ color:var(--teal);margin:0 0 6px}
 .wm3{display:block;font-size:10px;font-weight:400;letter-spacing:4.6px;color:var(--lgray);
 text-align:right;margin-top:3px}
 h2{position:relative}
-h2 .anch{opacity:0;margin-left:8px;font-size:13px;font-weight:400;color:var(--dgray);
-text-decoration:none;cursor:pointer;transition:.15s;vertical-align:middle}
-h2:hover .anch{opacity:1}
+h2 .anch{opacity:.45;margin-left:10px;font-size:12px;font-weight:500;color:var(--dgray);
+text-decoration:none;cursor:pointer;transition:.15s;vertical-align:middle;
+border:1px solid var(--line);border-radius:5px;padding:2px 7px;background:#fff}
+h2:hover .anch{opacity:1;border-color:var(--teal);color:var(--t700)}
+h2 .anch:hover{background:var(--t50);border-color:var(--teal);color:var(--t700)}
 h2 .anch:hover{color:var(--teal)}
 h2 .anch.done{opacity:1;color:var(--teal)}
 :target{scroll-margin-top:16px}
@@ -324,25 +326,37 @@ in section 04, which cover everyone living in the market.</div>
 
 <section id="tenure">
 <h2><span class="num">06</span>Do the people arriving buy or rent?</h2>
-<p class="lede">Tenure of households that moved into each market in the five years to 2021. Switch to
-split buying into owned outright and owned with a mortgage.</p>
+<p class="lede">Of the households that moved into each market between 2016 and 2021, how many <b>bought</b>
+a home and how many <b>rented</b> one.</p>
+<p class="scope"><b>How to read this.</b> The two bars are two halves of the same group of people. Take
+every household that arrived in the Sunshine Coast: <b>56 in every 100 bought</b> and <b>41 rented</b>.
+<br><br><b>What it tells us.</b> Buying and renting are close to an even split &mdash; across the twelve
+markets, <b>50 in every 100 arriving households bought and 48 rented</b>. So the common assumption that
+people relocating to these markets are buyers is only half right.
+<br><br><b>The comparison that matters is the capitals.</b> Of households that moved <i>within</i> Sydney
+over the same period, only <b>39 in 100 bought</b>. Melbourne 46, Brisbane 44. Ten of the twelve markets
+beat all three. So people moving to these markets <b>are</b> more likely to buy than people moving house in
+a capital &mdash; just not more likely than not.
+<br><br><b>Newcastle, Ipswich and Wollongong are the exceptions</b>, where renters outnumber buyers.
+Sunshine Coast, Bendigo and Port Macquarie are the strongest buying markets.</p>
 <div class="ctl"><span class="seg" id="tnMode">
-<button data-m="total" class="on">Own total vs rent</button><button data-m="split">Outright, mortgage, rent</button></span></div>
+<button data-m="total" class="on">Bought vs rented</button><button data-m="split">Split the buyers</button></span></div>
 <div class="leg"><span id="tnLeg" style="display:contents"></span>
 <span class="mute" id="tnMean" style="margin-left:auto"></span></div>
 <div class="chart" style="height:480px"><canvas id="cTen"></canvas></div>
-<p class="cap">ABS Census 2021, tenure type by household five-year mobility indicator. &ldquo;Moved
-in&rdquo; means every resident aged five and over had a different address in 2016. Shares do not sum to
-100% &mdash; the remainder is rent-free, life tenure, other and not stated. Ranked by total buying.</p>
-<div class="note"><b>Counting dwellings, not people.</b> This table counts households, unlike the income
-and age sections which count persons. The two are not directly comparable.
-<br><br><b>Outright versus mortgage separates two different buyers.</b> A household owning outright shortly
-after arriving has bought with cash; one with a mortgage has borrowed. Port Macquarie and the Sunshine
-Coast sit at one end, Ipswich and Newcastle at the other.
+<p class="cap">Ranked by how many bought. ABS Census 2021, tenure type by household five-year mobility
+indicator &mdash; &ldquo;moved in&rdquo; means every resident aged five and over had a different address in
+2016.</p>
+<div class="note"><b>Why the two bars do not add to 100.</b> A small share of arriving households live
+rent-free, under a life tenure scheme, or did not state their arrangement. Those are left out of both bars.
+<br><br><b>Outright versus mortgage separates two different buyers.</b> A household owning outright
+shortly after arriving has paid cash; one with a mortgage has borrowed. Use the second toggle to see the
+split.
+<br><br><b>Counting households, not people.</b> Unlike the income and age sections, which count persons.
+The two are not directly comparable.
 <br><br><b>There is no origin split here.</b> This dataset records whether a household moved, not where
-it moved from, so arrivals from the donor capital cannot be separated from local movers. The dashed lines
-are the closest available comparison &mdash; households that moved into each capital over the same
-period.</div>
+it moved from, so arrivals from the donor capital cannot be separated from local movers. The capital
+figures quoted above are households that moved <i>within</i> each capital over the same period.</div>
 </section>
 
 <section id="employment">
@@ -351,16 +365,11 @@ period.</div>
 against unemployment in three places &mdash; the market&rsquo;s own <b>donor capital</b>, <b>all regional
 areas</b>, and the <b>national</b> rate &mdash; each against the market&rsquo;s net internal migration a
 year later.</p>
-<p class="lede" style="margin-top:-4px">A marker <b>left of zero</b> would support the framework: low
-unemployment coinciding with more people arriving. A marker <b>right of zero</b> means the reverse &mdash;
-higher unemployment precedes more arrivals, a push out of weak labour markets rather than a pull from
-strong ones. Comparing the three shows whether any of it is specific to the market&rsquo;s own capital, or
-whether the national cycle is moving everything together.</p>
-<p class="scope"><b>What is being counted.</b> Net internal migration is everyone who moved into the market
-from anywhere in Australia, minus everyone who left. The annual series gives net totals only, so these
-arrivals cannot be traced to a particular city &mdash; where people come from is measured separately, from
-the Census, in <a href="where-people-come-from-and-go-to.html" style="color:var(--t700)">Where people come
-from and go to</a>.</p>
+<p class="scope"><b>How to read the direction.</b> A marker <b>left of zero</b> would support the
+framework: low unemployment coinciding with more people arriving. A marker <b>right of zero</b> means the
+reverse &mdash; higher unemployment precedes more arrivals, a push out of weak labour markets rather than a
+pull from strong ones. Comparing the three shows whether any of it is specific to the market&rsquo;s own
+capital, or whether the national cycle is moving everything together.</p>
 <div class="leg"><span><i style="background:var(--teal);border-radius:50%"></i>Its donor capital</span>
 <span><i style="background:var(--euc);transform:rotate(45deg)"></i>All regional areas</span>
 <span><i style="background:var(--amber)"></i>National</span>
@@ -369,15 +378,18 @@ from and go to</a>.</p>
 <p class="cap">Net internal migration from ABS Regional Population, 2016&ndash;17 to 2024&ndash;25.
 Unemployment from ABS <i>Modelled estimates of labour force status by SA4</i> (MRM1), employment-weighted
 across each group&rsquo;s SA4s. Eight lagged pairs per market.</p>
-<div class="note"><b>Reading this chart.</b> The three measures land within 0.04 of each other pooled, so
-this is not specific to any market&rsquo;s own capital &mdash; unemployment moves together across the
-country, and regional migration rises when the labour market is weak everywhere.
+<div class="note"><b>What is being counted.</b> Net internal migration is everyone who moved into the
+market from anywhere in Australia, minus everyone who left. The annual series gives net totals only, so
+these arrivals cannot be traced to a particular city &mdash; where people come from is measured separately,
+from the Census, in <a href="where-people-come-from-and-go-to.html" style="color:var(--t700)">Where people
+come from and go to</a>. For the same reason the unemployment measures are aggregates: migration is
+recorded by council and labour force status by SA4, and the two cannot be joined without an ABS
+correspondence file.
+<br><br><b>The three measures land within 0.04 of each other pooled</b>, so none of this is specific to a
+market&rsquo;s own capital. Unemployment moves together across the country, and regional migration rises
+when the labour market is weak everywhere.
 <br><br><b>The window contains the pandemic.</b> 2020 had the worst unemployment of the period and the
-largest movement out of the capitals, so that single year carries weight in every market.
-<br><br><b>Origin-weighted versions are not possible here.</b> The migration data is by council and the
-labour data is by SA4, and the two cannot be joined without an ABS correspondence file. &ldquo;All
-regional&rdquo; and &ldquo;national&rdquo; are therefore aggregates, not the specific areas each
-market&rsquo;s arrivals came from.</div>
+largest movement out of the capitals, so that single year carries weight in every market.</div>
 </section>
 
 <section id="method">
@@ -875,11 +887,11 @@ document.getElementById('u3Mean').textContent=
 (function(){
 const T=D.ten.rows;
 let mode='total';
-const SPLIT=[['movOut','Own outright','#3E7967'],
-             ['movMort','Own with a mortgage','#00A0B4'],
-             ['movRent','Rent','#FFA91F']];
-const TOTAL=[['movOwn','Own, total','#00A0B4'],
-             ['movRent','Rent','#FFA91F']];
+const SPLIT=[['movOut','Bought outright','#3E7967'],
+             ['movMort','Bought with a mortgage','#00A0B4'],
+             ['movRent','Rented','#FFA91F']];
+const TOTAL=[['movOwn','Bought','#00A0B4'],
+             ['movRent','Rented','#FFA91F']];
 const sets=()=>mode==='split'?SPLIT:TOTAL;
 function rows(){return T.slice().sort((a,b)=>b.movOwn-a.movOwn)}
 let R=rows();
@@ -892,12 +904,12 @@ data:{labels:R.map(r=>r.m),datasets:build()},
 options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
 layout:{padding:{right:12}},
 plugins:{legend:{display:false},tooltip:{callbacks:{
- label:c=>c.dataset.label+': '+Number(c.raw).toFixed(1)+'%',
+ label:c=>c.dataset.label+': '+Math.round(c.raw)+' in 100',
  afterBody:function(it){const r=R[it[0].dataIndex];
-  return 'owns in total '+Number(r.movOwn).toFixed(1)+'%  \u00b7  rents '+
-   Number(r.movRent).toFixed(1)+'%'}}}},
-scales:{x:{...F,beginAtZero:true,max:65,ticks:{...F.ticks,callback:v=>v+'%'},
-  title:{display:true,text:'Share of households that moved in',color:GRAY,font:{size:11}}},
+  return 'of every 100 arriving households: '+Math.round(r.movOwn)+' bought, '+
+   Math.round(r.movRent)+' rented'}}}},
+scales:{x:{...F,beginAtZero:true,max:65,ticks:{...F.ticks,callback:v=>v},
+  title:{display:true,text:'Out of every 100 households that moved in',color:GRAY,font:{size:11}}},
  y:{...F,grid:{display:false},afterFit:function(s){s.width=118},
   ticks:{...F.ticks,autoSkip:false,padding:6,font:{size:11},crossAlign:'far'}}}}});
 function draw(){
@@ -906,14 +918,14 @@ function draw(){
  ch.data.datasets=build();
  ch.canvas.parentNode.style.height=(mode==='split'?620:480)+'px';
  document.getElementById('tnLeg').innerHTML= mode==='split'
-  ? '<span><i style="background:#3E7967"></i>Own outright</span>'+
-    '<span><i style="background:#00A0B4"></i>Own with a mortgage</span>'+
-    '<span><i style="background:#FFA91F"></i>Rent</span>'
-  : '<span><i style="background:#00A0B4"></i>Own, total</span>'+
-    '<span><i style="background:#FFA91F"></i>Rent</span>';
+  ? '<span><i style="background:#3E7967"></i>Bought outright</span>'+
+    '<span><i style="background:#00A0B4"></i>Bought with a mortgage</span>'+
+    '<span><i style="background:#FFA91F"></i>Rented</span>'
+  : '<span><i style="background:#00A0B4"></i>Bought</span>'+
+    '<span><i style="background:#FFA91F"></i>Rented</span>';
  document.getElementById('tnMean').textContent=
-  'buying averages '+(R.reduce((t,r)=>t+r.movOwn,0)/R.length).toFixed(1)+
-  '% \u00b7 renting '+(R.reduce((t,r)=>t+r.movRent,0)/R.length).toFixed(1)+'%';
+  'across the twelve markets: '+Math.round(R.reduce((t,r)=>t+r.movOwn,0)/R.length)+
+  ' in 100 bought, '+Math.round(R.reduce((t,r)=>t+r.movRent,0)/R.length)+' rented';
  ch.resize(); ch.update();}
 document.querySelectorAll('#tnMode button').forEach(function(b){
  b.onclick=function(){mode=b.dataset.m;
@@ -923,13 +935,13 @@ draw();
 })();
 document.querySelectorAll('section[id] h2').forEach(function(h){
  var a=document.createElement('a');
- a.className='anch'; a.href='#'+h.closest('section').id; a.textContent='#';
+ a.className='anch'; a.href='#'+h.closest('section').id; a.textContent='# link';
  a.title='Copy a link to this section';
  a.onclick=function(e){e.preventDefault();
   var u=location.href.split('#')[0]+'#'+h.closest('section').id;
   (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){
     a.textContent='copied'; a.classList.add('done');
-    setTimeout(function(){a.textContent='#'; a.classList.remove('done')},1400);
+    setTimeout(function(){a.textContent='# link'; a.classList.remove('done')},1400);
   }).catch(function(){location.hash=h.closest('section').id});};
  h.appendChild(a);});
 
