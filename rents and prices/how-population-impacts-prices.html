@@ -326,18 +326,19 @@ in section 04, which cover everyone living in the market.</div>
 
 <section id="tenure">
 <h2><span class="num">06</span>Do the people arriving buy or rent?</h2>
-<p class="lede">Of the households that moved into each market between 2016 and 2021, how many <b>bought</b>
-a home and how many <b>rented</b> one.</p>
+<p class="lede">Of the households living in each market that had moved house between 2016 and 2021, how
+many <b>bought</b> a home and how many <b>rented</b> one.</p>
 <p class="scope"><b>How to read this.</b> The two bars are two halves of the same group of people. Take
 every household that arrived in the Sunshine Coast: <b>56 in every 100 bought</b> and <b>41 rented</b>.
 <br><br><b>What it tells us.</b> Buying and renting are close to an even split &mdash; across the twelve
 markets, <b>50 in every 100 arriving households bought and 48 rented</b>. So the common assumption that
 people relocating to these markets are buyers is only half right.
 
-<br><br><b>The comparison that matters is the capitals.</b> Of households that moved within Sydney
-over the same period, only <b>39 in 100 bought</b>. Melbourne <b>46</b>, Brisbane <b>44</b>. Nine of the
-twelve markets beat all three. So people moving to these markets <b>are</b> more likely to buy than people
-moving house in a capital &mdash; just not more likely than not.<br><br><b>Newcastle, Ipswich and Wollongong are the exceptions</b>, where renters outnumber buyers.
+<br><br><b>The comparison that matters is the capitals.</b> Measured the same way &mdash; every
+household that moved house and now lives there, whether they moved within the city or came from elsewhere
+&mdash; only <b>39 in 100 bought</b> in Sydney. Melbourne <b>46</b>, Brisbane <b>44</b>. Nine of the twelve
+markets bought more than all three. So moving to one of these markets goes with buying more often than
+moving house in a capital does, just not more often than renting.<br><br><b>Newcastle, Ipswich and Wollongong are the exceptions</b>, where renters outnumber buyers.
 Sunshine Coast, Bendigo and Port Macquarie are the strongest buying markets.</p>
 <div class="ctl"><span class="seg" id="tnMode">
 <button data-m="total" class="on">Bought vs rented</button><button data-m="split">Split the buyers</button></span>
@@ -345,10 +346,11 @@ Sunshine Coast, Bendigo and Port Macquarie are the strongest buying markets.</p>
 <button data-r="on" class="on">Capital lines on</button><button data-r="off">Off</button></span></div>
 <div class="leg"><span id="tnLeg" style="display:contents"></span>
 <span class="mute" id="tnMean" style="margin-left:auto"></span></div>
-<div class="chart" style="height:566px"><canvas id="cTen"></canvas></div>
+<div class="chart" style="height:580px"><canvas id="cTen"></canvas></div>
 <p class="cap">Ranked by how many bought. ABS Census 2021, tenure type by household five-year mobility
-indicator &mdash; &ldquo;moved in&rdquo; means every resident aged five and over had a different address in
-2016.</p>
+indicator. A &ldquo;mover&rdquo; is a household where every resident aged five and over had a different
+address in 2016 &mdash; the data does not record <i>where</i> they moved from, so a move across town counts
+the same as a move from the capital.</p>
 <h3>The same test on the Workforce markets</h3>
 <p>The eleven Workforce markets from the framework, measured the same way. These draw people for a job
 rather than for a lifestyle, so a different pattern would be expected.</p>
@@ -852,6 +854,10 @@ const LB={med:['Arrivals','Already living there'],
  p55:['Arrivals aged 55+','Stayers aged 55+']};
 const SL={cap:'from the donor capital',oth:'from everywhere else',all:'all arrivals'};
 const REF=[['Sydney','#54A6DE'],['Melbourne','#3E7967'],['Brisbane','#FFA91F']];
+const REFPAD=(function(){
+ const c=document.createElement('canvas').getContext('2d');
+ c.font='500 10px Montserrat';
+ return Math.ceil(Math.max.apply(null,REF.map(r=>c.measureText(r[0]+' bought').width))*1.15)+18;})();
 const av=(r)=>r[src+KEY[mode]];
 const sv=(r)=>r['stay'+KEY[mode]];
 const refLines={id:'agref',afterDatasetsDraw(ch){if(!refs)return;
@@ -962,6 +968,10 @@ document.getElementById('u3Mean').textContent=
 const T=D.ten.rows, CP=D.ten.caps;
 let mode='total', refs=true;
 const REF=[['Sydney','#54A6DE'],['Melbourne','#3E7967'],['Brisbane','#FFA91F']];
+const REFPAD=(function(){
+ const c=document.createElement('canvas').getContext('2d');
+ c.font='500 10px Montserrat';
+ return Math.ceil(Math.max.apply(null,REF.map(r=>c.measureText(r[0]+' bought').width))*1.15)+18;})();
 const refLines={id:'tnref',afterDatasetsDraw(ch){if(!refs||mode!=='total')return;
  const x=ch.ctx,a=ch.scales.x,y=ch.chartArea; x.save();
  const marks=REF.map(r=>({n:r[0]+' bought',c:r[1],px:a.getPixelForValue(CP[r[0]].movOwn)}))
@@ -987,7 +997,7 @@ function build(){return sets().map(function(s){
   borderRadius:2,maxBarThickness:mode==='split'?9:13}})}
 const ch=new Chart(document.getElementById('cTen'),{type:'bar',
 data:{labels:R.map(r=>r.m),datasets:build()},
-options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,layout:{padding:{top:92,right:12}},
+options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,layout:{padding:{top:REFPAD,right:12}},
 plugins:{legend:{display:false},tooltip:{callbacks:{
  label:c=>c.dataset.label+': '+Math.round(c.raw)+' in 100',
  afterBody:function(it){const r=R[it[0].dataIndex];
@@ -1002,8 +1012,8 @@ scales:{x:{...F,beginAtZero:true,max:65,ticks:{...F.ticks,callback:v=>v},
 plugins:[refLines]});
 function draw(){
  ch.data.datasets=build();
- ch.options.layout.padding.top = (refs&&mode==='total')?92:6;
- ch.canvas.parentNode.style.height=(mode==='split'?620:566)+'px';
+ ch.options.layout.padding.top = (refs&&mode==='total')?REFPAD:6;
+ ch.canvas.parentNode.style.height=(mode==='split'?620:(474+REFPAD))+'px';
  document.getElementById('tnRef').style.display = mode==='total'?'':'none';
  document.getElementById('tnLeg').innerHTML= mode==='split'
   ? '<span><i style="background:#3E7967"></i>Bought outright</span>'+
