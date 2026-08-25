@@ -326,25 +326,37 @@ in section 04, which cover everyone living in the market.</div>
 
 <section id="tenure">
 <h2><span class="num">06</span>Do the people arriving buy or rent?</h2>
-<p class="lede">Tenure of households that moved into each market in the five years to 2021. Switch to
-split buying into owned outright and owned with a mortgage.</p>
+<p class="lede">Of the households that moved into each market between 2016 and 2021, how many <b>bought</b>
+a home and how many <b>rented</b> one.</p>
+<p class="scope"><b>How to read this.</b> The two bars are two halves of the same group of people. Take
+every household that arrived in the Sunshine Coast: <b>56 in every 100 bought</b> and <b>41 rented</b>.
+<br><br><b>What it tells us.</b> Buying and renting are close to an even split &mdash; across the twelve
+markets, <b>50 in every 100 arriving households bought and 48 rented</b>. So the common assumption that
+people relocating to these markets are buyers is only half right.
+<br><br><b>The comparison that matters is the capitals.</b> Of households that moved <i>within</i> Sydney
+over the same period, only <b>39 in 100 bought</b>. Melbourne 46, Brisbane 44. Ten of the twelve markets
+beat all three. So people moving to these markets <b>are</b> more likely to buy than people moving house in
+a capital &mdash; just not more likely than not.
+<br><br><b>Newcastle, Ipswich and Wollongong are the exceptions</b>, where renters outnumber buyers.
+Sunshine Coast, Bendigo and Port Macquarie are the strongest buying markets.</p>
 <div class="ctl"><span class="seg" id="tnMode">
-<button data-m="total" class="on">Own total vs rent</button><button data-m="split">Outright, mortgage, rent</button></span></div>
+<button data-m="total" class="on">Bought vs rented</button><button data-m="split">Split the buyers</button></span></div>
 <div class="leg"><span id="tnLeg" style="display:contents"></span>
 <span class="mute" id="tnMean" style="margin-left:auto"></span></div>
 <div class="chart" style="height:480px"><canvas id="cTen"></canvas></div>
-<p class="cap">ABS Census 2021, tenure type by household five-year mobility indicator. &ldquo;Moved
-in&rdquo; means every resident aged five and over had a different address in 2016. Shares do not sum to
-100% &mdash; the remainder is rent-free, life tenure, other and not stated. Ranked by total buying.</p>
-<div class="note"><b>Counting dwellings, not people.</b> This table counts households, unlike the income
-and age sections which count persons. The two are not directly comparable.
-<br><br><b>Outright versus mortgage separates two different buyers.</b> A household owning outright shortly
-after arriving has bought with cash; one with a mortgage has borrowed. Port Macquarie and the Sunshine
-Coast sit at one end, Ipswich and Newcastle at the other.
+<p class="cap">Ranked by how many bought. ABS Census 2021, tenure type by household five-year mobility
+indicator &mdash; &ldquo;moved in&rdquo; means every resident aged five and over had a different address in
+2016.</p>
+<div class="note"><b>Why the two bars do not add to 100.</b> A small share of arriving households live
+rent-free, under a life tenure scheme, or did not state their arrangement. Those are left out of both bars.
+<br><br><b>Outright versus mortgage separates two different buyers.</b> A household owning outright
+shortly after arriving has paid cash; one with a mortgage has borrowed. Use the second toggle to see the
+split.
+<br><br><b>Counting households, not people.</b> Unlike the income and age sections, which count persons.
+The two are not directly comparable.
 <br><br><b>There is no origin split here.</b> This dataset records whether a household moved, not where
-it moved from, so arrivals from the donor capital cannot be separated from local movers. The dashed lines
-are the closest available comparison &mdash; households that moved into each capital over the same
-period.</div>
+it moved from, so arrivals from the donor capital cannot be separated from local movers. The capital
+figures quoted above are households that moved <i>within</i> each capital over the same period.</div>
 </section>
 
 <section id="employment">
@@ -875,11 +887,11 @@ document.getElementById('u3Mean').textContent=
 (function(){
 const T=D.ten.rows;
 let mode='total';
-const SPLIT=[['movOut','Own outright','#3E7967'],
-             ['movMort','Own with a mortgage','#00A0B4'],
-             ['movRent','Rent','#FFA91F']];
-const TOTAL=[['movOwn','Own, total','#00A0B4'],
-             ['movRent','Rent','#FFA91F']];
+const SPLIT=[['movOut','Bought outright','#3E7967'],
+             ['movMort','Bought with a mortgage','#00A0B4'],
+             ['movRent','Rented','#FFA91F']];
+const TOTAL=[['movOwn','Bought','#00A0B4'],
+             ['movRent','Rented','#FFA91F']];
 const sets=()=>mode==='split'?SPLIT:TOTAL;
 function rows(){return T.slice().sort((a,b)=>b.movOwn-a.movOwn)}
 let R=rows();
@@ -892,12 +904,12 @@ data:{labels:R.map(r=>r.m),datasets:build()},
 options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
 layout:{padding:{right:12}},
 plugins:{legend:{display:false},tooltip:{callbacks:{
- label:c=>c.dataset.label+': '+Number(c.raw).toFixed(1)+'%',
+ label:c=>c.dataset.label+': '+Math.round(c.raw)+' in 100',
  afterBody:function(it){const r=R[it[0].dataIndex];
-  return 'owns in total '+Number(r.movOwn).toFixed(1)+'%  \u00b7  rents '+
-   Number(r.movRent).toFixed(1)+'%'}}}},
-scales:{x:{...F,beginAtZero:true,max:65,ticks:{...F.ticks,callback:v=>v+'%'},
-  title:{display:true,text:'Share of households that moved in',color:GRAY,font:{size:11}}},
+  return 'of every 100 arriving households: '+Math.round(r.movOwn)+' bought, '+
+   Math.round(r.movRent)+' rented'}}}},
+scales:{x:{...F,beginAtZero:true,max:65,ticks:{...F.ticks,callback:v=>v},
+  title:{display:true,text:'Out of every 100 households that moved in',color:GRAY,font:{size:11}}},
  y:{...F,grid:{display:false},afterFit:function(s){s.width=118},
   ticks:{...F.ticks,autoSkip:false,padding:6,font:{size:11},crossAlign:'far'}}}}});
 function draw(){
@@ -906,14 +918,14 @@ function draw(){
  ch.data.datasets=build();
  ch.canvas.parentNode.style.height=(mode==='split'?620:480)+'px';
  document.getElementById('tnLeg').innerHTML= mode==='split'
-  ? '<span><i style="background:#3E7967"></i>Own outright</span>'+
-    '<span><i style="background:#00A0B4"></i>Own with a mortgage</span>'+
-    '<span><i style="background:#FFA91F"></i>Rent</span>'
-  : '<span><i style="background:#00A0B4"></i>Own, total</span>'+
-    '<span><i style="background:#FFA91F"></i>Rent</span>';
+  ? '<span><i style="background:#3E7967"></i>Bought outright</span>'+
+    '<span><i style="background:#00A0B4"></i>Bought with a mortgage</span>'+
+    '<span><i style="background:#FFA91F"></i>Rented</span>'
+  : '<span><i style="background:#00A0B4"></i>Bought</span>'+
+    '<span><i style="background:#FFA91F"></i>Rented</span>';
  document.getElementById('tnMean').textContent=
-  'buying averages '+(R.reduce((t,r)=>t+r.movOwn,0)/R.length).toFixed(1)+
-  '% \u00b7 renting '+(R.reduce((t,r)=>t+r.movRent,0)/R.length).toFixed(1)+'%';
+  'across the twelve markets: '+Math.round(R.reduce((t,r)=>t+r.movOwn,0)/R.length)+
+  ' in 100 bought, '+Math.round(R.reduce((t,r)=>t+r.movRent,0)/R.length)+' rented';
  ch.resize(); ch.update();}
 document.querySelectorAll('#tnMode button').forEach(function(b){
  b.onclick=function(){mode=b.dataset.m;
