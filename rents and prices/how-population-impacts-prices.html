@@ -555,6 +555,19 @@ Chart.defaults.font.family='Montserrat';
 const P=D.prof, S=D.series, Y=D.years;
 const MK=[...new Set(P.map(p=>p.sat))];
 
+/* section anchor links -- keep this block first so later edits cannot clip it */
+document.querySelectorAll('section[id] h2').forEach(function(h){
+ var a=document.createElement('a');
+ a.className='anch'; a.href='#'+h.closest('section').id; a.textContent='# link';
+ a.title='Copy a link to this section';
+ a.onclick=function(e){e.preventDefault();
+  var u=location.href.split('#')[0]+'#'+h.closest('section').id;
+  (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){
+    a.textContent='copied'; a.classList.add('done');
+    setTimeout(function(){a.textContent='# link'; a.classList.remove('done')},1400);
+  }).catch(function(){location.hash=h.closest('section').id});};
+ h.appendChild(a);});
+
 /* 04 value gap vs Sydney / Melbourne / Brisbane */
 (function(){
 const GA=D.gapall, ROWS=GA.rows;
