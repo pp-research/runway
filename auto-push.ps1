@@ -4,13 +4,23 @@
 # Scoped two ways on purpose:
 #   - only *.html is ever staged, so nothing else in the folder can be
 #     published by accident
-#   - only commits while the 'autosave' branch is checked out, so deliberate
-#     work on main is never touched
+#   - only commits while the branch below is checked out, so work on any
+#     other branch is never touched
 #
-# Runs as a Scheduled Task at logon; writes to .auto-push.log.
+# The branch is 'main' because GitHub Pages builds this repo from main: a
+# save has to land there to reach https://pp-research.github.io/tools/.
+# It used to be 'autosave', which is why nothing saved between 19 and 24 Aug
+# ever went live. Changing this line without moving the Pages source in the
+# repo settings puts the site back to sleep.
+#
+# Every save is therefore public within about a minute. Work that is not
+# ready to be seen belongs on another branch, where this watcher stands down.
+#
+# Launched from a Startup shortcut, GitAutoPush-tools.lnk; logs to
+# .auto-push.log.
 
 $repo     = $PSScriptRoot   # the repo is wherever this script lives
-$branch   = 'autosave'
+$branch   = 'main'
 $log      = Join-Path $repo '.auto-push.log'
 $interval = 10   # seconds between checks
 $settle   = 2    # seconds to let an editor finish writing before committing
