@@ -107,27 +107,38 @@ details[open] summary svg{transform:rotate(90deg)}
 /* all-markets summary */
 .summary{margin:22px 26px 6px;border-top:1px solid var(--line);padding-top:18px}
 .summary h2{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-mute);margin-bottom:3px}
-.summary .sub{font-size:12px;color:var(--ink-mute);font-weight:500;margin-bottom:14px}
+.summary .sub{font-size:12px;color:var(--ink-mute);font-weight:500;margin-bottom:16px}
+.mblock{margin-bottom:20px}
+.mblock:last-child{margin-bottom:0}
+.mlabel{font-size:12.5px;font-weight:800;color:var(--pp-teal);margin-bottom:8px;letter-spacing:.01em}
+.mlabel.unit{color:var(--pp-dark-gray)}
+.mlabel span{font-weight:500;color:var(--ink-mute);font-size:10.5px;text-transform:none;letter-spacing:0}
 .mtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
-.mtable{width:100%;border-collapse:collapse;font-size:12px;min-width:640px}
+.mtable{width:100%;border-collapse:collapse;font-size:12px;min-width:440px}
 .mtable thead th{position:sticky;top:0;background:#fff;font-weight:800;font-size:10px;text-transform:uppercase;
   letter-spacing:.04em;color:var(--ink-mute);padding:9px 10px;border-bottom:1.5px solid var(--line);text-align:right;white-space:nowrap}
 .mtable thead th.grp{text-align:center;color:var(--pp-teal);border-bottom:1.5px solid var(--pp-teal-100);font-size:10px}
 .mtable thead th.grp.unit{color:var(--pp-dark-gray)}
 .mtable thead tr.g2 th{font-size:9.5px;padding-top:6px;padding-bottom:6px}
 .mtable th.mkt,.mtable td.mkt{text-align:left;padding-left:14px}
-.mtable th.mkt.sortable,.mtable thead th.sortable{cursor:pointer;user-select:none}
+.mtable thead th.sortable{cursor:pointer;user-select:none}
 .mtable thead th.sortable:hover{color:var(--ink)}
-.mtable thead th .arr{font-size:8px;opacity:.5;margin-left:2px}
-.mtable tbody td{padding:8px 10px;text-align:right;border-bottom:1px solid #EEF1F2;font-variant-numeric:tabular-nums;font-weight:600}
+.mtable thead th .arr{font-size:9px;margin-left:3px;color:var(--pp-light-gray)}
+.mtable thead th .arr.on{color:var(--pp-teal)}
+.mtable thead th.sortable:hover .arr{color:var(--ink-mute)}
+.mtable tbody td{padding:9px 10px;text-align:right;border-bottom:1px solid #EEF1F2;vertical-align:top}
 .mtable tbody tr:last-child td{border-bottom:none}
 .mtable tbody tr:hover td{background:#FAFBFB}
 .mtable tbody tr.active td{background:var(--pp-teal-50)}
-.mtable td.mkt{font-weight:700;color:var(--ink)}
+.mtable td.mkt{font-weight:700;color:var(--ink);vertical-align:top;padding-top:11px}
 .mtable td.mkt .st{color:var(--ink-mute);font-weight:500;font-size:10.5px}
-.mtable td.single{color:var(--ink-mute);font-weight:500;font-style:italic}
+.mtable td.single{color:var(--ink-mute);font-weight:500;font-style:italic;text-align:center;font-size:11px;line-height:1.3}
 .mtable .sep{border-left:1px solid var(--line)}
-.dchip{display:inline-block;min-width:46px;padding:2px 7px;border-radius:5px;font-weight:700;text-align:center}
+.cellstack{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.cellstack .cl{font-size:10px;color:var(--ink-mute);font-weight:600;font-variant-numeric:tabular-nums;
+  display:flex;gap:5px;align-items:baseline;white-space:nowrap}
+.cellstack .cl i{font-style:normal;color:var(--pp-light-gray);font-weight:500;font-size:9px;text-transform:uppercase;letter-spacing:.02em}
+.dchip{display:inline-block;min-width:52px;padding:3px 8px;border-radius:6px;font-weight:800;text-align:center;font-size:13px;margin-bottom:2px}
 .d0{background:#F0EFEA;color:var(--pp-dark-gray)}
 .d1{background:var(--pp-teal-50);color:#0A5561}
 .d2{background:#D4EFD0;color:#3C632C}
@@ -136,6 +147,7 @@ details[open] summary svg{transform:rotate(90deg)}
 @media(max-width:640px){
   .summary{margin-left:18px;margin-right:18px}
   .mtable td.mkt .st{display:none}
+  .cellstack .cl i{display:none}
 }
 @media(max-width:640px){
   body{padding:12px}
@@ -177,8 +189,15 @@ details[open] summary svg{transform:rotate(90deg)}
   </details>
   <div class="summary">
     <h2>All markets</h2>
-    <div class="sub">Discount of established median vs new-build replacement cost, by ring. Click a market to load it above; click a column to sort.</div>
-    <div class="mtable-wrap"><table class="mtable" id="mtable"></table></div>
+    <div class="sub">Discount of established median vs new-build replacement cost, per ring, with replacement $/m&sup2;, total replacement, and established median. Click a market to load it above; click a column to sort.</div>
+    <div class="mblock" id="mblock-house">
+      <div class="mlabel">House <span>&middot; MHP = median house price</span></div>
+      <div class="mtable-wrap"><table class="mtable" id="mtable-house"></table></div>
+    </div>
+    <div class="mblock" id="mblock-unit">
+      <div class="mlabel unit">Unit <span>&middot; MUP = median unit price</span></div>
+      <div class="mtable-wrap"><table class="mtable" id="mtable-unit"></table></div>
+    </div>
   </div>
 
   <details>
@@ -193,7 +212,7 @@ details[open] summary svg{transform:rotate(90deg)}
   <div class="foot">Land &amp; price medians: CoreLogic. Build cost: ABS Construction Index &times; Rawlinsons. Ring multipliers: realestate.com.au vacant-land sales. Indicative model for portfolio screening &mdash; not a formal valuation.</div>
 </div>
 <script>
-const REGIONS = [{"region":"Adelaide","state":"SA","landPrice":360019.0,"landSize":325.0,"raw":100.0,"idx":164.7,"houseEst":920000.0,"unitEst":665000.0,"rings":true,"mid":1.5,"inner":1.8},{"region":"Albury","state":"NSW","landPrice":305000.0,"landSize":906.0,"raw":101.0,"idx":164.6,"houseEst":700000.0,"unitEst":419000.0,"rings":false,"mid":null,"inner":null},{"region":"Ballarat","state":"VIC","landPrice":275000.0,"landSize":507.0,"raw":100.0,"idx":166.6,"houseEst":610000.0,"unitEst":435000.0,"rings":false,"mid":null,"inner":null},{"region":"Brisbane","state":"QLD","landPrice":489000.0,"landSize":450.0,"raw":100.0,"idx":170.1,"houseEst":1100000.0,"unitEst":790000.0,"rings":true,"mid":1.7,"inner":2.2},{"region":"Bunbury","state":"WA","landPrice":419000.0,"landSize":780.0,"raw":105.0,"idx":157.7,"houseEst":700000.0,"unitEst":576500.0,"rings":false,"mid":null,"inner":null},{"region":"Bundaberg","state":"QLD","landPrice":335000.0,"landSize":1044.0,"raw":107.0,"idx":170.1,"houseEst":717000.0,"unitEst":520000.0,"rings":false,"mid":null,"inner":null},{"region":"Cairns","state":"QLD","landPrice":415000.0,"landSize":810.0,"raw":110.0,"idx":170.1,"houseEst":781500.0,"unitEst":440000.0,"rings":false,"mid":null,"inner":null},{"region":"Canberra","state":"ACT","landPrice":717000.0,"landSize":595.0,"raw":102.0,"idx":172.6,"houseEst":1000000.0,"unitEst":606000.0,"rings":false,"mid":null,"inner":null},{"region":"Central Coast","state":"NSW","landPrice":660000.0,"landSize":602.0,"raw":102.0,"idx":164.6,"houseEst":1050000.0,"unitEst":712000.0,"rings":false,"mid":null,"inner":null},{"region":"Coffs Harbour","state":"NSW","landPrice":520000.0,"landSize":652.0,"raw":105.0,"idx":164.6,"houseEst":955000.0,"unitEst":630000.0,"rings":false,"mid":null,"inner":null},{"region":"Darwin","state":"NT","landPrice":400000.0,"landSize":836.0,"raw":100.0,"idx":141.7,"houseEst":677500.0,"unitEst":420000.0,"rings":false,"mid":null,"inner":null},{"region":"Gladstone","state":"QLD","landPrice":270000.0,"landSize":1012.0,"raw":117.0,"idx":170.1,"houseEst":630000.0,"unitEst":395000.0,"rings":false,"mid":null,"inner":null},{"region":"Gold Coast","state":"QLD","landPrice":880000.0,"landSize":744.0,"raw":102.0,"idx":170.1,"houseEst":1336800.0,"unitEst":915000.0,"rings":true,"mid":1.7,"inner":3.0},{"region":"Greater Bendigo","state":"VIC","landPrice":279500.0,"landSize":626.0,"raw":100.0,"idx":166.6,"houseEst":640000.0,"unitEst":481000.0,"rings":false,"mid":null,"inner":null},{"region":"Greater Geelong","state":"VIC","landPrice":378000.0,"landSize":399.0,"raw":100.0,"idx":166.6,"houseEst":730000.0,"unitEst":550000.0,"rings":true,"mid":1.2,"inner":1.6},{"region":"Hobart","state":"TAS","landPrice":320000.0,"landSize":752.0,"raw":100.0,"idx":161.9,"houseEst":750000.0,"unitEst":575500.0,"rings":true,"mid":1.4,"inner":2.0},{"region":"Ipswich","state":"QLD","landPrice":433500.0,"landSize":440.0,"raw":100.0,"idx":170.1,"houseEst":890000.0,"unitEst":700000.0,"rings":false,"mid":null,"inner":null},{"region":"Launceston","state":"TAS","landPrice":285000.0,"landSize":906.0,"raw":95.0,"idx":161.9,"houseEst":632600.0,"unitEst":480000.0,"rings":false,"mid":null,"inner":null},{"region":"Mackay","state":"QLD","landPrice":280800.0,"landSize":892.0,"raw":117.0,"idx":170.1,"houseEst":700000.0,"unitEst":415000.0,"rings":false,"mid":null,"inner":null},{"region":"Mandurah","state":"WA","landPrice":340000.0,"landSize":406.0,"raw":100.0,"idx":157.7,"houseEst":823000.0,"unitEst":640000.0,"rings":false,"mid":null,"inner":null},{"region":"Melbourne","state":"VIC","landPrice":416000.0,"landSize":378.0,"raw":100.0,"idx":166.6,"houseEst":895000.0,"unitEst":640000.0,"rings":true,"mid":1.6,"inner":4.4},{"region":"Mildura","state":"VIC","landPrice":182000.0,"landSize":635.0,"raw":105.0,"idx":166.6,"houseEst":555000.0,"unitEst":411000.0,"rings":false,"mid":null,"inner":null},{"region":"Newcastle","state":"NSW","landPrice":692500.0,"landSize":652.0,"raw":101.0,"idx":164.6,"houseEst":1090000.0,"unitEst":765000.0,"rings":true,"mid":1.4,"inner":3.1},{"region":"Orange","state":"NSW","landPrice":345000.0,"landSize":613.0,"raw":105.0,"idx":164.6,"houseEst":765000.0,"unitEst":505000.0,"rings":false,"mid":null,"inner":null},{"region":"Perth","state":"WA","landPrice":414000.0,"landSize":375.0,"raw":100.0,"idx":157.7,"houseEst":940000.0,"unitEst":675000.0,"rings":true,"mid":1.5,"inner":2.3},{"region":"Port Macquarie-Hastings","state":"NSW","landPrice":468500.0,"landSize":661.0,"raw":107.0,"idx":164.6,"houseEst":912000.0,"unitEst":647750.0,"rings":false,"mid":null,"inner":null},{"region":"Rockhampton","state":"QLD","landPrice":255000.0,"landSize":1200.0,"raw":117.0,"idx":170.1,"houseEst":636000.0,"unitEst":525250.0,"rings":false,"mid":null,"inner":null},{"region":"Rockingham","state":"WA","landPrice":355250.0,"landSize":429.0,"raw":100.0,"idx":157.7,"houseEst":854000.0,"unitEst":633000.0,"rings":false,"mid":null,"inner":null},{"region":"Sunshine Coast","state":"QLD","landPrice":680000.0,"landSize":715.0,"raw":102.0,"idx":170.1,"houseEst":1260000.0,"unitEst":875000.0,"rings":true,"mid":1.5,"inner":3.1},{"region":"Sydney","state":"NSW","landPrice":729000.0,"landSize":450.0,"raw":100.0,"idx":164.6,"houseEst":1550000.0,"unitEst":838000.0,"rings":true,"mid":1.4,"inner":1.9},{"region":"Tamworth Regional","state":"NSW","landPrice":250000.0,"landSize":835.0,"raw":105.0,"idx":164.6,"houseEst":630000.0,"unitEst":392500.0,"rings":false,"mid":null,"inner":null},{"region":"Toowoomba","state":"QLD","landPrice":369000.0,"landSize":913.0,"raw":102.0,"idx":170.1,"houseEst":800000.0,"unitEst":647500.0,"rings":false,"mid":null,"inner":null},{"region":"Townsville","state":"QLD","landPrice":274000.0,"landSize":682.0,"raw":116.0,"idx":170.1,"houseEst":686500.0,"unitEst":470000.0,"rings":false,"mid":null,"inner":null},{"region":"Wagga Wagga","state":"NSW","landPrice":305000.0,"landSize":725.0,"raw":103.0,"idx":164.6,"houseEst":704000.0,"unitEst":445000.0,"rings":false,"mid":null,"inner":null},{"region":"Wodonga","state":"VIC","landPrice":245000.0,"landSize":628.0,"raw":103.0,"idx":166.6,"houseEst":650000.0,"unitEst":445000.0,"rings":false,"mid":null,"inner":null},{"region":"Wollongong","state":"NSW","landPrice":611250.0,"landSize":478.0,"raw":101.0,"idx":164.6,"houseEst":1230000.0,"unitEst":796500.0,"rings":false,"mid":null,"inner":null}];
+const REGIONS = [{"region":"Adelaide","state":"SA","landPrice":360019,"landSize":325,"raw":100,"idx":164.7,"houseEst":920000,"unitEst":665000,"rings":true,"mid":1.5,"inner":1.8},{"region":"Albury","state":"NSW","landPrice":305000,"landSize":906,"raw":101,"idx":164.6,"houseEst":700000,"unitEst":419000,"rings":false,"mid":null,"inner":null},{"region":"Ballarat","state":"VIC","landPrice":275000,"landSize":507,"raw":100,"idx":166.6,"houseEst":610000,"unitEst":435000,"rings":false,"mid":null,"inner":null},{"region":"Brisbane","state":"QLD","landPrice":489000,"landSize":450,"raw":100,"idx":170.1,"houseEst":1100000,"unitEst":790000,"rings":true,"mid":1.7,"inner":2.2},{"region":"Bunbury","state":"WA","landPrice":419000,"landSize":780,"raw":105,"idx":157.7,"houseEst":700000,"unitEst":576500,"rings":false,"mid":null,"inner":null},{"region":"Bundaberg","state":"QLD","landPrice":335000,"landSize":1044,"raw":107,"idx":170.1,"houseEst":717000,"unitEst":520000,"rings":false,"mid":null,"inner":null},{"region":"Cairns","state":"QLD","landPrice":415000,"landSize":810,"raw":110,"idx":170.1,"houseEst":781500,"unitEst":440000,"rings":false,"mid":null,"inner":null},{"region":"Canberra","state":"ACT","landPrice":717000,"landSize":595,"raw":102,"idx":172.6,"houseEst":1000000,"unitEst":606000,"rings":false,"mid":null,"inner":null},{"region":"Central Coast","state":"NSW","landPrice":660000,"landSize":602,"raw":102,"idx":164.6,"houseEst":1050000,"unitEst":712000,"rings":false,"mid":null,"inner":null},{"region":"Coffs Harbour","state":"NSW","landPrice":520000,"landSize":652,"raw":105,"idx":164.6,"houseEst":955000,"unitEst":630000,"rings":false,"mid":null,"inner":null},{"region":"Darwin","state":"NT","landPrice":400000,"landSize":836,"raw":100,"idx":141.7,"houseEst":677500,"unitEst":420000,"rings":false,"mid":null,"inner":null},{"region":"Gladstone","state":"QLD","landPrice":270000,"landSize":1012,"raw":117,"idx":170.1,"houseEst":630000,"unitEst":395000,"rings":false,"mid":null,"inner":null},{"region":"Gold Coast","state":"QLD","landPrice":880000,"landSize":744,"raw":102,"idx":170.1,"houseEst":1336800,"unitEst":915000,"rings":true,"mid":1.7,"inner":3},{"region":"Greater Bendigo","state":"VIC","landPrice":279500,"landSize":626,"raw":100,"idx":166.6,"houseEst":640000,"unitEst":481000,"rings":false,"mid":null,"inner":null},{"region":"Greater Geelong","state":"VIC","landPrice":378000,"landSize":399,"raw":100,"idx":166.6,"houseEst":730000,"unitEst":550000,"rings":true,"mid":1.2,"inner":1.6},{"region":"Hobart","state":"TAS","landPrice":320000,"landSize":752,"raw":100,"idx":161.9,"houseEst":750000,"unitEst":575500,"rings":true,"mid":1.4,"inner":2},{"region":"Ipswich","state":"QLD","landPrice":433500,"landSize":440,"raw":100,"idx":170.1,"houseEst":890000,"unitEst":700000,"rings":false,"mid":null,"inner":null},{"region":"Launceston","state":"TAS","landPrice":285000,"landSize":906,"raw":95,"idx":161.9,"houseEst":632600,"unitEst":480000,"rings":false,"mid":null,"inner":null},{"region":"Mackay","state":"QLD","landPrice":280800,"landSize":892,"raw":117,"idx":170.1,"houseEst":700000,"unitEst":415000,"rings":false,"mid":null,"inner":null},{"region":"Mandurah","state":"WA","landPrice":340000,"landSize":406,"raw":100,"idx":157.7,"houseEst":823000,"unitEst":640000,"rings":false,"mid":null,"inner":null},{"region":"Melbourne","state":"VIC","landPrice":416000,"landSize":378,"raw":100,"idx":166.6,"houseEst":895000,"unitEst":640000,"rings":true,"mid":1.6,"inner":4},{"region":"Mildura","state":"VIC","landPrice":182000,"landSize":635,"raw":105,"idx":166.6,"houseEst":555000,"unitEst":411000,"rings":false,"mid":null,"inner":null},{"region":"Newcastle","state":"NSW","landPrice":692500,"landSize":652,"raw":101,"idx":164.6,"houseEst":1090000,"unitEst":765000,"rings":true,"mid":1.5,"inner":3.1},{"region":"Orange","state":"NSW","landPrice":345000,"landSize":613,"raw":105,"idx":164.6,"houseEst":765000,"unitEst":505000,"rings":false,"mid":null,"inner":null},{"region":"Perth","state":"WA","landPrice":414000,"landSize":375,"raw":100,"idx":157.7,"houseEst":940000,"unitEst":675000,"rings":true,"mid":1.5,"inner":2.3},{"region":"Port Macquarie-Hastings","state":"NSW","landPrice":468500,"landSize":661,"raw":107,"idx":164.6,"houseEst":912000,"unitEst":647750,"rings":false,"mid":null,"inner":null},{"region":"Rockhampton","state":"QLD","landPrice":255000,"landSize":1200,"raw":117,"idx":170.1,"houseEst":636000,"unitEst":525250,"rings":false,"mid":null,"inner":null},{"region":"Rockingham","state":"WA","landPrice":355250,"landSize":429,"raw":100,"idx":157.7,"houseEst":854000,"unitEst":633000,"rings":false,"mid":null,"inner":null},{"region":"Sunshine Coast","state":"QLD","landPrice":680000,"landSize":715,"raw":102,"idx":170.1,"houseEst":1260000,"unitEst":875000,"rings":true,"mid":1.5,"inner":3.1},{"region":"Sydney","state":"NSW","landPrice":729000,"landSize":450,"raw":100,"idx":164.6,"houseEst":1550000,"unitEst":838000,"rings":true,"mid":1.4,"inner":1.9},{"region":"Tamworth Regional","state":"NSW","landPrice":250000,"landSize":835,"raw":105,"idx":164.6,"houseEst":630000,"unitEst":392500,"rings":false,"mid":null,"inner":null},{"region":"Toowoomba","state":"QLD","landPrice":369000,"landSize":913,"raw":102,"idx":170.1,"houseEst":800000,"unitEst":647500,"rings":false,"mid":null,"inner":null},{"region":"Townsville","state":"QLD","landPrice":274000,"landSize":682,"raw":116,"idx":170.1,"houseEst":686500,"unitEst":470000,"rings":false,"mid":null,"inner":null},{"region":"Wagga Wagga","state":"NSW","landPrice":305000,"landSize":725,"raw":103,"idx":164.6,"houseEst":704000,"unitEst":445000,"rings":false,"mid":null,"inner":null},{"region":"Wodonga","state":"VIC","landPrice":245000,"landSize":628,"raw":103,"idx":166.6,"houseEst":650000,"unitEst":445000,"rings":false,"mid":null,"inner":null},{"region":"Wollongong","state":"NSW","landPrice":611250,"landSize":478,"raw":101,"idx":164.6,"houseEst":1230000,"unitEst":796500,"rings":false,"mid":null,"inner":null}];
 const A = {landShare:100,houseFloor:180,unitFloor:85,profit:0.25,landAcq:0.10,other:0.20,
   houseAnchor:2358.12,unitAnchor:4225.37,indexAnchor:163.3};
 let dwelling='house';
@@ -242,10 +261,15 @@ function render(){
       '</div></div>';
   }).join('');
   buildTable(r,ringsDef);
-  // sync active row in the all-markets matrix (if built), preserving sort
-  const mt=document.getElementById('mtable');
-  if(mt){ mt.querySelectorAll('tbody tr').forEach(function(tr){
-    tr.classList.toggle('active', tr.dataset.region===r.region); }); }
+  // summary follows the top toggle: show only the matching table
+  const bh=document.getElementById('mblock-house'), bu=document.getElementById('mblock-unit');
+  if(bh&&bu){ bh.style.display=(dwelling==='house')?'':'none'; bu.style.display=(dwelling==='unit')?'':'none'; }
+  // sync active row in both all-markets tables (if built), preserving sort
+  ['mtable-house','mtable-unit'].forEach(function(id){
+    const mt=document.getElementById(id);
+    if(mt){ mt.querySelectorAll('tbody tr').forEach(function(tr){
+      tr.classList.toggle('active', tr.dataset.region===r.region); }); }
+  });
 }
 
 function buildTable(r,ringsDef){
@@ -295,13 +319,19 @@ function buildTable(r,ringsDef){
   document.getElementById('ctable').innerHTML=html;
 }
 function discChipClass(d){ if(d<0)return'dn'; if(d>=0.30)return'd3'; if(d>=0.15)return'd2'; if(d>=0.05)return'd1'; return'd0'; }
-function discCell(d){
-  const pos=d>=0;
-  const txt=(pos?'':'\u2212')+Math.abs(d*100).toFixed(1);
-  return '<span class="dchip '+discChipClass(d)+'">'+txt+'</span>';
+function stackCell(f,isHouse){
+  const pos=f.disc>=0;
+  const pct=(pos?'':'\u2212')+Math.abs(f.disc*100).toFixed(1)+'%';
+  const estLbl=isHouse?'MHP':'MUP';
+  return '<div class="cellstack">'+
+    '<span class="dchip '+discChipClass(f.disc)+'">'+pct+'</span>'+
+    '<span class="cl"><i>Repl $/m\u00B2</i>'+fmt0(f.psm)+'</span>'+
+    '<span class="cl"><i>Total repl</i>'+fmt0(f.trc)+'</span>'+
+    '<span class="cl"><i>Est '+estLbl+'</i>'+fmt0(f.est)+'</span>'+
+    '</div>';
 }
-let sortKey='region', sortDir=1;
-function marketDisc(r,isHouse,mult){
+let sortState={house:{key:'region',dir:1}, unit:{key:'region',dir:1}};
+function marketFull(r,isHouse,mult){
   const floor=isHouse?A.houseFloor:A.unitFloor;
   const anchor=isHouse?A.houseAnchor:A.unitAnchor;
   const est=isHouse?r.houseEst:r.unitEst;
@@ -312,80 +342,65 @@ function marketDisc(r,isHouse,mult){
   const build=anchor*(r.raw/100)*(r.idx/A.indexAnchor)*floor;
   const totalBuild=build*(1+A.other);
   const trc=(totalAcq+totalBuild)*(1+A.profit);
-  return (trc-est)/trc;
+  return {disc:(trc-est)/trc, psm:trc/floor, trc:trc, est:est};
 }
-function rowVals(r){
-  const hm=r.rings?[1.0,r.mid,r.inner]:[1.0];
-  const h=hm.map(function(m){return marketDisc(r,true,m);});
-  const u=hm.map(function(m){return marketDisc(r,false,m);});
-  return {h:h,u:u};
+function ringVals(r,isHouse){
+  const ms=r.rings?[1.0,r.mid,r.inner]:[1.0];
+  return ms.map(function(m){return marketFull(r,isHouse,m);});
 }
-function buildMatrix(){
+function buildOne(type){
+  const isHouse=type==='house';
+  const st=sortState[type];
   const activeRegion=document.getElementById('region').value;
-  // sort
   const rows=REGIONS.slice().sort(function(a,b){
-    let av,bv;
-    if(sortKey==='region'){ av=a.region; bv=b.region; return av<bv?-sortDir:av>bv?sortDir:0; }
-    // numeric sort keys: hOuter,hMid,hInner,uOuter,uMid,uInner  -> use inner if single lacks
-    const ra=rowVals(a), rb=rowVals(b);
-    const pick=function(rv,k){
-      if(k==='hOuter')return rv.h[0]; if(k==='hMid')return rv.h[rv.h.length>1?1:0]; if(k==='hInner')return rv.h[rv.h.length>1?2:0];
-      if(k==='uOuter')return rv.u[0]; if(k==='uMid')return rv.u[rv.u.length>1?1:0]; if(k==='uInner')return rv.u[rv.u.length>1?2:0];
-      return 0;
-    };
-    av=pick(ra,sortKey); bv=pick(rb,sortKey);
-    return (av-bv)*sortDir;
+    if(st.key==='region'){ return a.region<b.region?-st.dir:a.region>b.region?st.dir:0; }
+    const va=ringVals(a,isHouse), vb=ringVals(b,isHouse);
+    const idx={outer:0,mid:1,inner:2}[st.key];
+    const pa=va[va.length>idx?idx:va.length-1].disc;
+    const pb=vb[vb.length>idx?idx:vb.length-1].disc;
+    return (pa-pb)*st.dir;
   });
-  const arr=function(k){ return sortKey===k?'<span class="arr">'+(sortDir>0?'\u25B2':'\u25BC')+'</span>':''; };
-  let html='<thead>'+
-    '<tr>'+
-      '<th class="mkt" rowspan="2"></th>'+
-      '<th class="grp sep" colspan="3">House</th>'+
-      '<th class="grp unit sep" colspan="3">Unit</th>'+
-    '</tr>'+
-    '<tr class="g2">'+
-      '<th class="sortable sep" data-k="hOuter">Outer'+arr('hOuter')+'</th>'+
-      '<th class="sortable" data-k="hMid">Middle'+arr('hMid')+'</th>'+
-      '<th class="sortable" data-k="hInner">Inner'+arr('hInner')+'</th>'+
-      '<th class="sortable sep" data-k="uOuter">Outer'+arr('uOuter')+'</th>'+
-      '<th class="sortable" data-k="uMid">Middle'+arr('uMid')+'</th>'+
-      '<th class="sortable" data-k="uInner">Inner'+arr('uInner')+'</th>'+
+  const arr=function(k){
+    if(st.key===k) return '<span class="arr on">'+(st.dir>0?'\u25B2':'\u25BC')+'</span>';
+    return '<span class="arr">\u2195</span>';
+  };
+  let html='<thead><tr>'+
+    '<th class="mkt sortable" data-k="region">Market'+arr('region')+'</th>'+
+    '<th class="sortable sep" data-k="outer">Outer'+arr('outer')+'</th>'+
+    '<th class="sortable" data-k="mid">Middle'+arr('mid')+'</th>'+
+    '<th class="sortable" data-k="inner">Inner'+arr('inner')+'</th>'+
     '</tr></thead><tbody>';
   rows.forEach(function(r){
-    const rv=rowVals(r);
+    const v=ringVals(r,isHouse);
     const active=r.region===activeRegion?' class="active"':'';
     html+='<tr data-region="'+r.region+'"'+active+'>';
-    html+='<td class="mkt"><span data-region="'+r.region+'" style="cursor:pointer">'+r.region+' <span class="st">'+r.state+'</span></span></td>';
+    html+='<td class="mkt">'+r.region+' <span class="st">'+r.state+'</span></td>';
     if(r.rings){
-      html+='<td class="sep">'+discCell(rv.h[0])+'</td><td>'+discCell(rv.h[1])+'</td><td>'+discCell(rv.h[2])+'</td>';
-      html+='<td class="sep">'+discCell(rv.u[0])+'</td><td>'+discCell(rv.u[1])+'</td><td>'+discCell(rv.u[2])+'</td>';
+      html+='<td class="sep">'+stackCell(v[0],isHouse)+'</td><td>'+stackCell(v[1],isHouse)+'</td><td>'+stackCell(v[2],isHouse)+'</td>';
     } else {
-      html+='<td class="sep">'+discCell(rv.h[0])+'</td><td class="single" colspan="2">single market</td>';
-      html+='<td class="sep">'+discCell(rv.u[0])+'</td><td class="single" colspan="2">single market</td>';
+      html+='<td class="sep">'+stackCell(v[0],isHouse)+'</td><td class="single" colspan="2">single<br>market</td>';
     }
     html+='</tr>';
   });
   html+='</tbody>';
-  const t=document.getElementById('mtable');
+  const t=document.getElementById('mtable-'+type);
   t.innerHTML=html;
-  // sort handlers
   t.querySelectorAll('th.sortable').forEach(function(th){
     th.addEventListener('click',function(){
       const k=th.dataset.k;
-      if(sortKey===k){ sortDir=-sortDir; } else { sortKey=k; sortDir=-1; } // numeric defaults high->low
-      buildMatrix();
+      if(st.key===k){ st.dir=-st.dir; } else { st.key=k; st.dir=(k==='region'?1:-1); }
+      buildOne(type);
     });
   });
-  // row-click to load market
   t.querySelectorAll('tbody tr').forEach(function(tr){
     tr.addEventListener('click',function(){
-      const rg=tr.dataset.region;
-      document.getElementById('region').value=rg;
+      document.getElementById('region').value=tr.dataset.region;
       render();
       window.scrollTo({top:0,behavior:'smooth'});
     });
   });
 }
+function buildMatrix(){ buildOne('house'); buildOne('unit'); }
 
 
 const sel=document.getElementById('region');
