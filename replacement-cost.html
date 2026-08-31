@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Replacement Cost Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pp-teal:#00A0B4; --pp-dark-teal:#171B24;
+  --pp-white:#fff; --pp-light-gray:#D9D9D6; --pp-dark-gray:#63666A;
+  --pp-green:#71B357; --pp-yellow:#FFA91F; --pp-red:#E72347;
+  --pp-teal-50:#E6F6F8; --pp-teal-100:#CCEEF1;
+  --surface:#F4F6F7; --card:#fff; --line:#E4E8EA;
+  --ink:#171B24; --ink-soft:#4A4F57; --ink-mute:#7C8288;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Montserrat',system-ui,sans-serif;background:var(--surface);color:var(--ink);
+  -webkit-font-smoothing:antialiased;line-height:1.45;padding:24px}
+.tool{max-width:960px;margin:0 auto;background:var(--card);border:1px solid var(--line);
+  border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(23,27,36,.04),0 8px 24px rgba(23,27,36,.06)}
+.head{display:flex;align-items:center;gap:14px;padding:20px 26px;border-bottom:1px solid var(--line)}
+.head .dot{width:34px;height:34px;border-radius:9px;background:var(--pp-teal);display:grid;place-items:center;flex:none}
+.head .dot svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.head h1{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.head p{font-size:12.5px;color:var(--ink-mute);font-weight:500;margin-top:1px}
+.controls{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;padding:22px 26px 20px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field.grow{flex:1;min-width:220px}
+label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-mute)}
+select{font-family:inherit;font-size:14.5px;font-weight:600;color:var(--ink);background:var(--card);
+  border:1.5px solid var(--line);border-radius:10px;padding:11px 38px 11px 14px;width:100%;cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237C8288' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;transition:border-color .15s}
+select:focus{outline:none;border-color:var(--pp-teal)}
+.toggle{display:inline-flex;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:3px}
+.toggle button{font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink-soft);background:none;border:none;
+  border-radius:7px;padding:8px 20px;cursor:pointer;transition:all .15s}
+.toggle button.on{background:var(--pp-teal);color:#fff;box-shadow:0 1px 2px rgba(0,160,180,.35)}
+.ctx{padding:2px 26px 20px}
+.ctx .r1{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctx .r1 .state{color:var(--ink-mute);font-weight:600}
+.ctx .r2{font-size:13px;color:var(--ink-soft);font-weight:500;margin-top:4px}
+.ctx .r2 b{color:var(--ink);font-weight:700}
+.ctx .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;
+  background:var(--pp-teal-50);color:var(--pp-teal);vertical-align:middle}
+.ctx .pill.single{background:#F0EFEA;color:var(--pp-dark-gray)}
+.rings{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0 26px 8px}
+.rings.single{grid-template-columns:1fr;max-width:340px}
+.ring{border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,#fff,#FCFDFD)}
+.ring .tag{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-mute);margin-bottom:12px}
+.ring .disc{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.ring .disc .u{font-size:17px;font-weight:700;margin-left:1px}
+.ring .disclbl{font-size:11.5px;font-weight:600;color:var(--ink-mute);margin-top:3px}
+.ring .rows{margin-top:15px;border-top:1px dashed var(--line);padding-top:12px;display:flex;flex-direction:column;gap:7px}
+.ring .row{display:flex;justify-content:space-between;font-size:12.5px}
+.ring .row span{color:var(--ink-mute);font-weight:500}
+.ring .row b{color:var(--ink);font-weight:700}
+.ring .bar{position:absolute;top:0;left:0;right:0;height:3px}
+.ring.d-strong .bar{background:var(--pp-green)}
+.ring.d-mid .bar{background:var(--pp-yellow)}
+.ring.d-weak .bar{background:var(--pp-light-gray)}
+.ring.d-neg .bar{background:var(--pp-red)}
+.ring .disc.pos{color:var(--pp-dark-teal)}
+.ring .disc.neg{color:var(--pp-red)}
+/* full computation */
+.calcwrap{margin:16px 26px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.calcwrap>summary{padding:13px 16px;background:var(--surface);font-size:12px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--ink-soft);cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
+.calcwrap>summary::-webkit-details-marker{display:none}
+.calcwrap>summary .chev{width:13px;height:13px;stroke:var(--ink-mute);fill:none;stroke-width:2.5;transition:transform .2s}
+.calcwrap[open]>summary .chev{transform:rotate(90deg)}
+.calcwrap>summary .hint{margin-left:auto;font-size:10.5px;font-weight:600;color:var(--ink-mute);text-transform:none;letter-spacing:0}
+.ctable{width:100%;border-collapse:collapse;font-size:12.5px}
+.ctable th,.ctable td{padding:8px 14px;text-align:right;white-space:nowrap}
+.ctable thead th{background:#fff;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--ink-mute);border-bottom:1.5px solid var(--line)}
+.ctable th.lbl,.ctable td.lbl{text-align:left;font-weight:600;color:var(--ink-soft);width:44%}
+.ctable tbody td{border-bottom:1px solid #EEF1F2;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.ctable tr.sub td{color:var(--ink-mute);font-weight:500}
+.ctable tr.sub td.lbl{padding-left:26px;font-weight:500;color:var(--ink-mute)}
+.ctable tr.total td{background:var(--pp-teal-50);font-weight:800;color:var(--pp-dark-teal);border-bottom:1px solid var(--pp-teal-100)}
+.ctable tr.grand td{background:var(--pp-dark-teal);color:#fff;font-weight:800}
+.ctable tr.grand td.lbl{color:#fff}
+.ctable tr.disc td{font-weight:800}
+.ctable tr.disc td.lbl{color:var(--ink)}
+.ctable .assum{font-size:10px;color:var(--ink-mute);font-weight:500}
+.ctable td.single-na{color:var(--pp-light-gray);font-weight:500}
+@media(max-width:640px){
+  .calcwrap{margin-left:18px;margin-right:18px;overflow-x:auto}
+  .ctable th,.ctable td{padding:7px 10px;font-size:11.5px}
+}
+details{margin:20px 26px 6px;border-top:1px solid var(--line);padding-top:16px}
+summary{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-mute);
+  cursor:pointer;list-style:none;display:flex;align-items:center;gap:7px}
+summary::-webkit-details-marker{display:none}
+summary svg{width:13px;height:13px;stroke:var(--ink-mute);fill:none;stroke-width:2.5;transition:transform .2s}
+details[open] summary svg{transform:rotate(90deg)}
+.method{font-size:12.5px;color:var(--ink-soft);line-height:1.6;margin-top:12px;display:grid;gap:9px}
+.method b{color:var(--ink);font-weight:700}
+.method code{background:var(--surface);padding:1px 6px;border-radius:5px;font-size:11.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--pp-dark-teal)}
+.foot{padding:16px 26px 22px;font-size:11px;color:var(--ink-mute);font-weight:500}
+/* all-markets summary */
+.summary{margin:22px 26px 6px;border-top:1px solid var(--line);padding-top:18px}
+.summary h2{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-mute);margin-bottom:3px}
+.summary .sub{font-size:12px;color:var(--ink-mute);font-weight:500;margin-bottom:14px}
+.mtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.mtable{width:100%;border-collapse:collapse;font-size:12px;min-width:640px}
+.mtable thead th{position:sticky;top:0;background:#fff;font-weight:800;font-size:10px;text-transform:uppercase;
+  letter-spacing:.04em;color:var(--ink-mute);padding:9px 10px;border-bottom:1.5px solid var(--line);text-align:right;white-space:nowrap}
+.mtable thead th.grp{text-align:center;color:var(--pp-teal);border-bottom:1.5px solid var(--pp-teal-100);font-size:10px}
+.mtable thead th.grp.unit{color:var(--pp-dark-gray)}
+.mtable thead tr.g2 th{font-size:9.5px;padding-top:6px;padding-bottom:6px}
+.mtable th.mkt,.mtable td.mkt{text-align:left;padding-left:14px}
+.mtable th.mkt.sortable,.mtable thead th.sortable{cursor:pointer;user-select:none}
+.mtable thead th.sortable:hover{color:var(--ink)}
+.mtable thead th .arr{font-size:8px;opacity:.5;margin-left:2px}
+.mtable tbody td{padding:8px 10px;text-align:right;border-bottom:1px solid #EEF1F2;font-variant-numeric:tabular-nums;font-weight:600}
+.mtable tbody tr:last-child td{border-bottom:none}
+.mtable tbody tr:hover td{background:#FAFBFB}
+.mtable tbody tr.active td{background:var(--pp-teal-50)}
+.mtable td.mkt{font-weight:700;color:var(--ink)}
+.mtable td.mkt .st{color:var(--ink-mute);font-weight:500;font-size:10.5px}
+.mtable td.single{color:var(--ink-mute);font-weight:500;font-style:italic}
+.mtable .sep{border-left:1px solid var(--line)}
+.dchip{display:inline-block;min-width:46px;padding:2px 7px;border-radius:5px;font-weight:700;text-align:center}
+.d0{background:#F0EFEA;color:var(--pp-dark-gray)}
+.d1{background:var(--pp-teal-50);color:#0A5561}
+.d2{background:#D4EFD0;color:#3C632C}
+.d3{background:#B8E4B0;color:#2B4620}
+.dn{background:#FBDBE1;color:#A5122D}
+@media(max-width:640px){
+  .summary{margin-left:18px;margin-right:18px}
+  .mtable td.mkt .st{display:none}
+}
+@media(max-width:640px){
+  body{padding:12px}
+  .rings{grid-template-columns:1fr}
+  .head,.controls,.ctx,.rings,.note,details,.foot{padding-left:18px;padding-right:18px}
+  .ring .disc{font-size:30px}
+}
+</style>
+</head>
+<body>
+<div class="tool">
+  <div class="head">
+    <div class="dot"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5"/></svg></div>
+    <div>
+      <h1>Replacement cost index</h1>
+      <p>New-build cost vs established price, by market ring</p>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="field grow">
+      <label for="region">Market</label>
+      <select id="region"></select>
+    </div>
+    <div class="field">
+      <label>Dwelling</label>
+      <div class="toggle" id="dwelling">
+        <button data-t="house" class="on">House</button>
+        <button data-t="unit">Unit</button>
+      </div>
+    </div>
+  </div>
+  <div class="ctx" id="ctx"></div>
+  <div class="rings" id="rings"></div>
+
+  <details class="calcwrap" id="calcwrap">
+    <summary><svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg> Full computation
+      <span class="hint">every line, per ring</span></summary>
+    <div style="overflow-x:auto"><table class="ctable" id="ctable"></table></div>
+  </details>
+  <div class="summary">
+    <h2>All markets</h2>
+    <div class="sub">Discount of established median vs new-build replacement cost, by ring. Click a market to load it above; click a column to sort.</div>
+    <div class="mtable-wrap"><table class="mtable" id="mtable"></table></div>
+  </div>
+
+  <details>
+    <summary><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg> Methodology</summary>
+    <div class="method">
+      <div><b>Replacement cost</b> = land acquisition + build cost + other costs + developer profit, expressed per m&sup2; of floor area, then compared against the established median to give a discount (a positive discount means it is cheaper to buy established than to build new).</div>
+      <div><b>Build cost/m&sup2;</b> = anchor cost &times; <code>(Rawlinsons regional multiplier / 100)</code> &times; <code>(ABS construction index / index anchor)</code>. The ABS index handles time and cross-capital cost level; the Rawlinsons multiplier handles sub-capital spatial premium. National weighted-average anchors: house <code>$2,358</code>, unit <code>$4,225</code>; index anchor <code>163.3</code>.</div>
+      <div><b>Ring multipliers</b> scale land value for inner and middle rings, calibrated from CoreLogic-style vacant-land median $/m&sup2; sales on realestate.com.au (simple median per ring; multiplier = ring median / outer median). Outer = 1.0 by definition. Houses scale the whole lot; units scale a 100m&sup2; land share.</div>
+      <div><b>Single-market regions</b> show one figure where vacant-land sampling did not support a defensible ring gradient (flat, thin, or inverted) &mdash; the calibration doubles as a test of whether a market is multi-centred enough for rings.</div>
+    </div>
+  </details>
+  <div class="foot">Land &amp; price medians: CoreLogic. Build cost: ABS Construction Index &times; Rawlinsons. Ring multipliers: realestate.com.au vacant-land sales. Indicative model for portfolio screening &mdash; not a formal valuation.</div>
+</div>
+<script>
+const REGIONS = [{"region":"Adelaide","state":"SA","landPrice":360019.0,"landSize":325.0,"raw":100.0,"idx":164.7,"houseEst":920000.0,"unitEst":665000.0,"rings":true,"mid":1.5,"inner":1.8},{"region":"Albury","state":"NSW","landPrice":305000.0,"landSize":906.0,"raw":101.0,"idx":164.6,"houseEst":700000.0,"unitEst":419000.0,"rings":false,"mid":null,"inner":null},{"region":"Ballarat","state":"VIC","landPrice":275000.0,"landSize":507.0,"raw":100.0,"idx":166.6,"houseEst":610000.0,"unitEst":435000.0,"rings":false,"mid":null,"inner":null},{"region":"Brisbane","state":"QLD","landPrice":489000.0,"landSize":450.0,"raw":100.0,"idx":170.1,"houseEst":1100000.0,"unitEst":790000.0,"rings":true,"mid":1.7,"inner":2.2},{"region":"Bunbury","state":"WA","landPrice":419000.0,"landSize":780.0,"raw":105.0,"idx":157.7,"houseEst":700000.0,"unitEst":576500.0,"rings":false,"mid":null,"inner":null},{"region":"Bundaberg","state":"QLD","landPrice":335000.0,"landSize":1044.0,"raw":107.0,"idx":170.1,"houseEst":717000.0,"unitEst":520000.0,"rings":false,"mid":null,"inner":null},{"region":"Cairns","state":"QLD","landPrice":415000.0,"landSize":810.0,"raw":110.0,"idx":170.1,"houseEst":781500.0,"unitEst":440000.0,"rings":false,"mid":null,"inner":null},{"region":"Canberra","state":"ACT","landPrice":717000.0,"landSize":595.0,"raw":102.0,"idx":172.6,"houseEst":1000000.0,"unitEst":606000.0,"rings":false,"mid":null,"inner":null},{"region":"Central Coast","state":"NSW","landPrice":660000.0,"landSize":602.0,"raw":102.0,"idx":164.6,"houseEst":1050000.0,"unitEst":712000.0,"rings":false,"mid":null,"inner":null},{"region":"Coffs Harbour","state":"NSW","landPrice":520000.0,"landSize":652.0,"raw":105.0,"idx":164.6,"houseEst":955000.0,"unitEst":630000.0,"rings":false,"mid":null,"inner":null},{"region":"Darwin","state":"NT","landPrice":400000.0,"landSize":836.0,"raw":100.0,"idx":141.7,"houseEst":677500.0,"unitEst":420000.0,"rings":false,"mid":null,"inner":null},{"region":"Gladstone","state":"QLD","landPrice":270000.0,"landSize":1012.0,"raw":117.0,"idx":170.1,"houseEst":630000.0,"unitEst":395000.0,"rings":false,"mid":null,"inner":null},{"region":"Gold Coast","state":"QLD","landPrice":880000.0,"landSize":744.0,"raw":102.0,"idx":170.1,"houseEst":1336800.0,"unitEst":915000.0,"rings":true,"mid":1.7,"inner":3.0},{"region":"Greater Bendigo","state":"VIC","landPrice":279500.0,"landSize":626.0,"raw":100.0,"idx":166.6,"houseEst":640000.0,"unitEst":481000.0,"rings":false,"mid":null,"inner":null},{"region":"Greater Geelong","state":"VIC","landPrice":378000.0,"landSize":399.0,"raw":100.0,"idx":166.6,"houseEst":730000.0,"unitEst":550000.0,"rings":true,"mid":1.2,"inner":1.6},{"region":"Hobart","state":"TAS","landPrice":320000.0,"landSize":752.0,"raw":100.0,"idx":161.9,"houseEst":750000.0,"unitEst":575500.0,"rings":true,"mid":1.4,"inner":2.0},{"region":"Ipswich","state":"QLD","landPrice":433500.0,"landSize":440.0,"raw":100.0,"idx":170.1,"houseEst":890000.0,"unitEst":700000.0,"rings":false,"mid":null,"inner":null},{"region":"Launceston","state":"TAS","landPrice":285000.0,"landSize":906.0,"raw":95.0,"idx":161.9,"houseEst":632600.0,"unitEst":480000.0,"rings":false,"mid":null,"inner":null},{"region":"Mackay","state":"QLD","landPrice":280800.0,"landSize":892.0,"raw":117.0,"idx":170.1,"houseEst":700000.0,"unitEst":415000.0,"rings":false,"mid":null,"inner":null},{"region":"Mandurah","state":"WA","landPrice":340000.0,"landSize":406.0,"raw":100.0,"idx":157.7,"houseEst":823000.0,"unitEst":640000.0,"rings":false,"mid":null,"inner":null},{"region":"Melbourne","state":"VIC","landPrice":416000.0,"landSize":378.0,"raw":100.0,"idx":166.6,"houseEst":895000.0,"unitEst":640000.0,"rings":true,"mid":1.6,"inner":4.4},{"region":"Mildura","state":"VIC","landPrice":182000.0,"landSize":635.0,"raw":105.0,"idx":166.6,"houseEst":555000.0,"unitEst":411000.0,"rings":false,"mid":null,"inner":null},{"region":"Newcastle","state":"NSW","landPrice":692500.0,"landSize":652.0,"raw":101.0,"idx":164.6,"houseEst":1090000.0,"unitEst":765000.0,"rings":true,"mid":1.4,"inner":3.1},{"region":"Orange","state":"NSW","landPrice":345000.0,"landSize":613.0,"raw":105.0,"idx":164.6,"houseEst":765000.0,"unitEst":505000.0,"rings":false,"mid":null,"inner":null},{"region":"Perth","state":"WA","landPrice":414000.0,"landSize":375.0,"raw":100.0,"idx":157.7,"houseEst":940000.0,"unitEst":675000.0,"rings":true,"mid":1.5,"inner":2.3},{"region":"Port Macquarie-Hastings","state":"NSW","landPrice":468500.0,"landSize":661.0,"raw":107.0,"idx":164.6,"houseEst":912000.0,"unitEst":647750.0,"rings":false,"mid":null,"inner":null},{"region":"Rockhampton","state":"QLD","landPrice":255000.0,"landSize":1200.0,"raw":117.0,"idx":170.1,"houseEst":636000.0,"unitEst":525250.0,"rings":false,"mid":null,"inner":null},{"region":"Rockingham","state":"WA","landPrice":355250.0,"landSize":429.0,"raw":100.0,"idx":157.7,"houseEst":854000.0,"unitEst":633000.0,"rings":false,"mid":null,"inner":null},{"region":"Sunshine Coast","state":"QLD","landPrice":680000.0,"landSize":715.0,"raw":102.0,"idx":170.1,"houseEst":1260000.0,"unitEst":875000.0,"rings":true,"mid":1.5,"inner":3.1},{"region":"Sydney","state":"NSW","landPrice":729000.0,"landSize":450.0,"raw":100.0,"idx":164.6,"houseEst":1550000.0,"unitEst":838000.0,"rings":true,"mid":1.4,"inner":1.9},{"region":"Tamworth Regional","state":"NSW","landPrice":250000.0,"landSize":835.0,"raw":105.0,"idx":164.6,"houseEst":630000.0,"unitEst":392500.0,"rings":false,"mid":null,"inner":null},{"region":"Toowoomba","state":"QLD","landPrice":369000.0,"landSize":913.0,"raw":102.0,"idx":170.1,"houseEst":800000.0,"unitEst":647500.0,"rings":false,"mid":null,"inner":null},{"region":"Townsville","state":"QLD","landPrice":274000.0,"landSize":682.0,"raw":116.0,"idx":170.1,"houseEst":686500.0,"unitEst":470000.0,"rings":false,"mid":null,"inner":null},{"region":"Wagga Wagga","state":"NSW","landPrice":305000.0,"landSize":725.0,"raw":103.0,"idx":164.6,"houseEst":704000.0,"unitEst":445000.0,"rings":false,"mid":null,"inner":null},{"region":"Wodonga","state":"VIC","landPrice":245000.0,"landSize":628.0,"raw":103.0,"idx":166.6,"houseEst":650000.0,"unitEst":445000.0,"rings":false,"mid":null,"inner":null},{"region":"Wollongong","state":"NSW","landPrice":611250.0,"landSize":478.0,"raw":101.0,"idx":164.6,"houseEst":1230000.0,"unitEst":796500.0,"rings":false,"mid":null,"inner":null}];
+const A = {landShare:100,houseFloor:180,unitFloor:85,profit:0.25,landAcq:0.10,other:0.20,
+  houseAnchor:2358.12,unitAnchor:4225.37,indexAnchor:163.3};
+let dwelling='house';
+const fmt0=v=>'$'+Math.round(v).toLocaleString('en-AU');
+function calc(r,type,mult){
+  const isHouse=type==='house';
+  const floor=isHouse?A.houseFloor:A.unitFloor;
+  const anchor=isHouse?A.houseAnchor:A.unitAnchor;
+  const est=isHouse?r.houseEst:r.unitEst;
+  const landPsm=r.landPrice/r.landSize;
+  let landBase, landVal;
+  if(isHouse){ landBase=r.landPrice; landVal=r.landPrice*mult; }
+  else { landBase=landPsm*A.landShare; landVal=landBase*mult; }
+  const acq=landVal*A.landAcq, totalAcq=landVal+acq;
+  const buildPsm=anchor*(r.raw/100)*(r.idx/A.indexAnchor);
+  const build=buildPsm*floor, other=build*A.other, totalBuild=build+other;
+  const profit=(totalAcq+totalBuild)*A.profit;
+  const trc=totalAcq+totalBuild+profit;
+  return {isHouse,floor,anchor,landPsm,landBase,landVal,acq,totalAcq,buildPsm,build,other,
+          totalBuild,profit,trc,psm:trc/floor,est,disc:(trc-est)/trc};
+}
+function discClass(d){ if(d<0)return'd-neg'; if(d>=0.30)return'd-strong'; if(d>=0.15)return'd-mid'; return'd-weak'; }
+function render(){
+  const r=REGIONS.find(x=>x.region===document.getElementById('region').value);
+  const est=dwelling==='house'?r.houseEst:r.unitEst;
+  const ctx=document.getElementById('ctx');
+  ctx.innerHTML='<div class="r1">'+r.region+'<span class="state">, '+r.state+'</span>'+
+    (r.rings?'<span class="pill">3-ring market</span>':'<span class="pill single">single market</span>')+'</div>'+
+    '<div class="r2">Established '+dwelling+' median <b>'+fmt0(est)+'</b></div>';
+  const wrap=document.getElementById('rings');
+  let ringsDef;
+  if(r.rings){ ringsDef=[['Outer',1.0],['Middle',r.mid],['Inner',r.inner]]; wrap.className='rings'; }
+  else { ringsDef=[['Whole market',1.0]]; wrap.className='rings single'; }
+  wrap.innerHTML=ringsDef.map(function(pair){
+    const name=pair[0], m=pair[1];
+    const c=calc(r,dwelling,m);
+    const dc=discClass(c.disc);
+    const pos=c.disc>=0;
+    return '<div class="ring '+dc+'"><div class="bar"></div>'+
+      '<div class="tag">'+name+(m!==1.0?' &middot; '+m+'x land':'')+'</div>'+
+      '<div class="disc '+(pos?'pos':'neg')+'">'+(pos?'':'&minus;')+Math.abs(c.disc*100).toFixed(1)+'<span class="u">%</span></div>'+
+      '<div class="disclbl">'+(pos?'cheaper to buy established':'cheaper to build new')+'</div>'+
+      '<div class="rows">'+
+        '<div class="row"><span>Replacement $/m&sup2;</span><b>'+fmt0(c.psm)+'</b></div>'+
+        '<div class="row"><span>Total replacement</span><b>'+fmt0(c.trc)+'</b></div>'+
+      '</div></div>';
+  }).join('');
+  buildTable(r,ringsDef);
+  // sync active row in the all-markets matrix (if built), preserving sort
+  const mt=document.getElementById('mtable');
+  if(mt){ mt.querySelectorAll('tbody tr').forEach(function(tr){
+    tr.classList.toggle('active', tr.dataset.region===r.region); }); }
+}
+
+function buildTable(r,ringsDef){
+  const cols=ringsDef.map(function(p){return {name:p[0],mult:p[1],c:calc(r,dwelling,p[1])};});
+  const money=function(v){return fmt0(v);};
+  const psmv=function(v){return '$'+Math.round(v).toLocaleString('en-AU')+'/m\u00B2';};
+  const pct=function(v){const pos=v>=0;return (pos?'':'\u2212')+Math.abs(v*100).toFixed(2)+'%';};
+  const floorLbl=cols[0].c.floor+' m\u00B2';
+  const landRowLbl=cols[0].c.isHouse?'Median land price (whole lot)':'Land value (100 m\u00B2 share)';
+  // row defs: [label, className, valueFn]
+  const rows=[
+    ['LAND','head',null],
+    [cols[0].c.isHouse?'Median land price':'Land $/m\u00B2 \u00D7 100 m\u00B2 share','sub',function(c){return cols[0].c.isHouse?money(r.landPrice):money(c.landBase);}],
+    ['\u00D7 Ring land multiplier','sub',function(c,col){return col.mult.toFixed(2)+'x';}],
+    ['Land value','',function(c){return money(c.landVal);}],
+    ['+ Acquisition cost (10%)','sub',function(c){return money(c.acq);}],
+    ['Total land acquisition','total',function(c){return money(c.totalAcq);}],
+    ['BUILD','head',null],
+    ['Build $/m\u00B2 (indexed)','sub',function(c){return psmv(c.buildPsm);}],
+    ['New build cost (\u00D7 '+floorLbl+' floor)','sub',function(c){return money(c.build);}],
+    ['+ Other costs (20%)','sub',function(c){return money(c.other);}],
+    ['Total build cost','total',function(c){return money(c.totalBuild);}],
+    ['PROFIT & TOTAL','head',null],
+    ['Developer profit (25% of land+build)','sub',function(c){return money(c.profit);}],
+    ['Total replacement cost','grand',function(c){return money(c.trc);}],
+    ['\u00F7 Floor area \u2192 replacement $/m\u00B2','',function(c){return psmv(c.psm);}],
+    ['Established median','sub',function(c){return money(c.est);}],
+    ['Discount (established vs new)','disc',function(c){return pct(c.disc);}]
+  ];
+  var html='<thead><tr><th class="lbl">Line item</th>';
+  cols.forEach(function(col){
+    var sub=col.mult!==1.0?' <span class="assum">'+col.mult+'x</span>':'';
+    html+='<th>'+col.name+sub+'</th>';
+  });
+  html+='</tr></thead><tbody>';
+  rows.forEach(function(row){
+    var lbl=row[0],cls=row[1],fn=row[2];
+    if(cls==='head'){
+      html+='<tr class="sub"><td class="lbl" colspan="'+(cols.length+1)+'" style="text-transform:uppercase;font-weight:800;color:var(--pp-teal);font-size:10.5px;letter-spacing:.07em;padding-top:12px">'+lbl+'</td></tr>';
+      return;
+    }
+    html+='<tr class="'+cls+'"><td class="lbl">'+lbl+'</td>';
+    cols.forEach(function(col){ html+='<td>'+fn(col.c,col)+'</td>'; });
+    html+='</tr>';
+  });
+  html+='</tbody>';
+  document.getElementById('ctable').innerHTML=html;
+}
+function discChipClass(d){ if(d<0)return'dn'; if(d>=0.30)return'd3'; if(d>=0.15)return'd2'; if(d>=0.05)return'd1'; return'd0'; }
+function discCell(d){
+  const pos=d>=0;
+  const txt=(pos?'':'\u2212')+Math.abs(d*100).toFixed(1);
+  return '<span class="dchip '+discChipClass(d)+'">'+txt+'</span>';
+}
+let sortKey='region', sortDir=1;
+function marketDisc(r,isHouse,mult){
+  const floor=isHouse?A.houseFloor:A.unitFloor;
+  const anchor=isHouse?A.houseAnchor:A.unitAnchor;
+  const est=isHouse?r.houseEst:r.unitEst;
+  let landVal;
+  if(isHouse){ landVal=r.landPrice*mult; }
+  else { landVal=(r.landPrice/r.landSize)*A.landShare*mult; }
+  const totalAcq=landVal*(1+A.landAcq);
+  const build=anchor*(r.raw/100)*(r.idx/A.indexAnchor)*floor;
+  const totalBuild=build*(1+A.other);
+  const trc=(totalAcq+totalBuild)*(1+A.profit);
+  return (trc-est)/trc;
+}
+function rowVals(r){
+  const hm=r.rings?[1.0,r.mid,r.inner]:[1.0];
+  const h=hm.map(function(m){return marketDisc(r,true,m);});
+  const u=hm.map(function(m){return marketDisc(r,false,m);});
+  return {h:h,u:u};
+}
+function buildMatrix(){
+  const activeRegion=document.getElementById('region').value;
+  // sort
+  const rows=REGIONS.slice().sort(function(a,b){
+    let av,bv;
+    if(sortKey==='region'){ av=a.region; bv=b.region; return av<bv?-sortDir:av>bv?sortDir:0; }
+    // numeric sort keys: hOuter,hMid,hInner,uOuter,uMid,uInner  -> use inner if single lacks
+    const ra=rowVals(a), rb=rowVals(b);
+    const pick=function(rv,k){
+      if(k==='hOuter')return rv.h[0]; if(k==='hMid')return rv.h[rv.h.length>1?1:0]; if(k==='hInner')return rv.h[rv.h.length>1?2:0];
+      if(k==='uOuter')return rv.u[0]; if(k==='uMid')return rv.u[rv.u.length>1?1:0]; if(k==='uInner')return rv.u[rv.u.length>1?2:0];
+      return 0;
+    };
+    av=pick(ra,sortKey); bv=pick(rb,sortKey);
+    return (av-bv)*sortDir;
+  });
+  const arr=function(k){ return sortKey===k?'<span class="arr">'+(sortDir>0?'\u25B2':'\u25BC')+'</span>':''; };
+  let html='<thead>'+
+    '<tr>'+
+      '<th class="mkt" rowspan="2"></th>'+
+      '<th class="grp sep" colspan="3">House</th>'+
+      '<th class="grp unit sep" colspan="3">Unit</th>'+
+    '</tr>'+
+    '<tr class="g2">'+
+      '<th class="sortable sep" data-k="hOuter">Outer'+arr('hOuter')+'</th>'+
+      '<th class="sortable" data-k="hMid">Middle'+arr('hMid')+'</th>'+
+      '<th class="sortable" data-k="hInner">Inner'+arr('hInner')+'</th>'+
+      '<th class="sortable sep" data-k="uOuter">Outer'+arr('uOuter')+'</th>'+
+      '<th class="sortable" data-k="uMid">Middle'+arr('uMid')+'</th>'+
+      '<th class="sortable" data-k="uInner">Inner'+arr('uInner')+'</th>'+
+    '</tr></thead><tbody>';
+  rows.forEach(function(r){
+    const rv=rowVals(r);
+    const active=r.region===activeRegion?' class="active"':'';
+    html+='<tr data-region="'+r.region+'"'+active+'>';
+    html+='<td class="mkt"><span data-region="'+r.region+'" style="cursor:pointer">'+r.region+' <span class="st">'+r.state+'</span></span></td>';
+    if(r.rings){
+      html+='<td class="sep">'+discCell(rv.h[0])+'</td><td>'+discCell(rv.h[1])+'</td><td>'+discCell(rv.h[2])+'</td>';
+      html+='<td class="sep">'+discCell(rv.u[0])+'</td><td>'+discCell(rv.u[1])+'</td><td>'+discCell(rv.u[2])+'</td>';
+    } else {
+      html+='<td class="sep">'+discCell(rv.h[0])+'</td><td class="single" colspan="2">single market</td>';
+      html+='<td class="sep">'+discCell(rv.u[0])+'</td><td class="single" colspan="2">single market</td>';
+    }
+    html+='</tr>';
+  });
+  html+='</tbody>';
+  const t=document.getElementById('mtable');
+  t.innerHTML=html;
+  // sort handlers
+  t.querySelectorAll('th.sortable').forEach(function(th){
+    th.addEventListener('click',function(){
+      const k=th.dataset.k;
+      if(sortKey===k){ sortDir=-sortDir; } else { sortKey=k; sortDir=-1; } // numeric defaults high->low
+      buildMatrix();
+    });
+  });
+  // row-click to load market
+  t.querySelectorAll('tbody tr').forEach(function(tr){
+    tr.addEventListener('click',function(){
+      const rg=tr.dataset.region;
+      document.getElementById('region').value=rg;
+      render();
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+}
+
+
+const sel=document.getElementById('region');
+REGIONS.forEach(function(r){ const o=document.createElement('option'); o.value=r.region;
+  o.textContent=r.region+', '+r.state; sel.appendChild(o); });
+sel.value='Sydney';
+sel.addEventListener('change',render);
+document.getElementById('dwelling').addEventListener('click',function(e){
+  const b=e.target.closest('button'); if(!b)return;
+  dwelling=b.dataset.t;
+  document.querySelectorAll('#dwelling button').forEach(function(x){x.classList.toggle('on',x===b);});
+  render();
+});
+render();
+buildMatrix();
+</script>
+</body>
+</html>
