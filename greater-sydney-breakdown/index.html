@@ -1920,14 +1920,16 @@ function pConf(){
    two series ride on North and Central Coast; hiding North therefore hides the metro
    line, and the other four metro districts' toggles do not touch this page. */
 function pJA(){
- const IVI={'North':'Sydney metro','Central Coast':'Central Coast'};
+ const IVI={'North':'Sydney metro (North, East, Central, South, West)','Central Coast':'Central Coast'};
+ /* noEnds: the legend names the two series, so end-of-line labels would repeat it and
+    the plot takes the reclaimed width instead. */
  multiLine('c-ja',d=>IVI[d]?H[d].ja:null,
-  {fmt:v=>v.toFixed(0),lbl:d=>IVI[d],colFor:d=>d==='North'?'#007685':C(d),
+  {fmt:v=>v.toFixed(0),noEnds:1,lbl:d=>IVI[d],colFor:d=>d==='North'?'#007685':C(d),
    title:'Job creation index',ytitle:'Job Creation Index'});
  /* Two series, so two keys - not the six district toggles, four of which would have
     nothing on this chart to toggle. Plain keys, since neither is one hideable district. */
- seriesLegend('c-ja-lg',[['#007685','Sydney metro'],[C('Central Coast'),'Central Coast']],
-  'the Sydney IVI region carries the five metro districts \u00b7 Gosford & Central Coast is the Central Coast district');
+ seriesLegend('c-ja-lg',[['#007685','Sydney metro (North, East, Central, South, West)'],[C('Central Coast'),'Central Coast']],
+  'Gosford & Central Coast is the Central Coast district \u00b7 JSA publishes nothing finer than these two regions \u00b7 the series begins May 2010');
 }
 function pUnemp(){
  multiLine('c-unemp',d=>H[d].unemp,{fmt:v=>v.toFixed(1)+'%',title:'Unemployment rate',ytitle:'Unemployment Rate'});
