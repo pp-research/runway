@@ -1924,7 +1924,10 @@ function pJA(){
  multiLine('c-ja',d=>IVI[d]?H[d].ja:null,
   {fmt:v=>v.toFixed(0),lbl:d=>IVI[d],colFor:d=>d==='North'?'#007685':C(d),
    title:'Job creation index',ytitle:'Job Creation Index'});
- divLegend('c-ja-lg','teal = Sydney IVI region, the five metro districts \u00b7 pink = Gosford & Central Coast');
+ /* Two series, so two keys - not the six district toggles, four of which would have
+    nothing on this chart to toggle. Plain keys, since neither is one hideable district. */
+ seriesLegend('c-ja-lg',[['#007685','Sydney metro'],[C('Central Coast'),'Central Coast']],
+  'the Sydney IVI region carries the five metro districts \u00b7 Gosford & Central Coast is the Central Coast district');
 }
 function pUnemp(){
  multiLine('c-unemp',d=>H[d].unemp,{fmt:v=>v.toFixed(1)+'%',title:'Unemployment rate',ytitle:'Unemployment Rate'});
