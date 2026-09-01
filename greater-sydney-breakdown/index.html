@@ -262,6 +262,24 @@ body.railshut .stage{margin-left:56px}
 .dot.GREEN{color:#2F8F52}
 .dot.ORANGE{color:#D9962B}
 .dot.RED{color:#C4203C}
+/* Traffic-lights page, restyled after traffic-lights-ranked.html: verdict-grouped rows
+   with rank-numbered signal circles. Group headers wear the verdict ink; their dot wears
+   the map fill, so the list and the choropleth agree at a glance. */
+.tlgrp{margin:0 0 .9cqw}
+.tlgrp:last-child{margin-bottom:0}
+.tlgrp .tlh{display:flex;align-items:center;gap:.4cqw;font-size:.88cqw;font-weight:800;margin:0 0 .3cqw}
+.tlgrp .tlh i{width:.5cqw;height:.5cqw;border-radius:50%}
+.tlrow{display:flex;align-items:center;justify-content:space-between;gap:.6cqw;
+ padding:.34cqw .5cqw;border-bottom:.06cqw solid var(--hair);cursor:pointer}
+.tlgrp .tlrow:last-child{border-bottom:none}
+.tlrow:hover{background:rgba(23,27,36,.04)}
+.tlrow.off{opacity:.35}
+.tlrow .nm{display:inline-flex;align-items:center;gap:.38cqw;font-size:.84cqw;font-weight:700;color:var(--ink)}
+.tlrow .nm i{width:.55cqw;height:.55cqw;border-radius:.14cqw;flex:none}
+.tlmini{display:inline-flex;gap:.3cqw}
+.tlmini .m{width:1.42cqw;height:1.42cqw;border-radius:50%;display:inline-flex;align-items:center;
+ justify-content:center;font-size:.6cqw;font-weight:800;color:#FFFFFF;
+ font-variant-numeric:tabular-nums;box-sizing:border-box}
 /* Hollow for "now", solid for the forecast - the same reading the projection bands
    use. The "now" case is marked with an explicit class, NOT by position: .dot is also
    used on its own (the confidence indicators), and there the value that follows is
