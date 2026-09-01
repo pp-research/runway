@@ -1051,7 +1051,7 @@ function multiLine(hostId,pick,opt){
   ys.forEach(y=>{const v=at(s.o,y);
    if(v==null||!isFinite(v)){open=false;return}
    d+=(open?'L':'M')+x(y).toFixed(1)+' '+f(v).toFixed(1)+' ';open=true});
-  const dsh=opt.solid?'none':(PAL[s.d]?DASH(s.d):'6 4');   // non-district extras draw dashed
+  const dsh=PAL[s.d]?(opt.solid?'none':DASH(s.d)):'6 4';   // extras stay dashed even under opt.solid - the dash is what marks them as reference
   g+='<path d="'+d.trim()+'" fill="none" stroke="'+LC(s.d)+'" stroke-width="2.1"'
    +' stroke-linejoin="round" stroke-linecap="round"'
    +(dsh!=='none'?' stroke-dasharray="'+dsh+'"':'')+'/>';
@@ -1939,7 +1939,7 @@ function pUnemp(){
  /* noEnds: the legend below names every series, as on the job-index page. lbl still
     feeds the crosshair readout. */
  multiLine('c-unemp',d=>H[d].unemp,
-  {fmt:v=>v.toFixed(1)+'%',noEnds:1,lbl:d=>d==='NSW'?'NSW trend':d,colFor:d=>d==='NSW'?'#3E4C55':C(d),
+  {fmt:v=>v.toFixed(1)+'%',noEnds:1,solid:1,lbl:d=>d==='NSW'?'NSW trend':d,colFor:d=>d==='NSW'?'#3E4C55':C(d),
    extra:[{name:'NSW',o:MOCK.nat.unemp}],
    title:'Unemployment rate',ytitle:'Unemployment Rate'});
  /* Plain keys rather than the hide-toggles: the NSW line needs a key too, and one
