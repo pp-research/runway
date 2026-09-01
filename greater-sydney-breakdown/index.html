@@ -1920,7 +1920,9 @@ function pConf(){
    two series ride on North and Central Coast; hiding North therefore hides the metro
    line, and the other four metro districts' toggles do not touch this page. */
 function pJA(){
- const IVI={'North':'Sydney metro (North, East, Central, South, West)','Central Coast':'Central Coast'};
+ /* Short names: with noEnds set, the only consumer left is the crosshair readout, where
+    the enumerated form overflows the box. The legend spells the districts out instead. */
+ const IVI={'North':'Sydney metro','Central Coast':'Central Coast'};
  /* noEnds: the legend names the two series, so end-of-line labels would repeat it and
     the plot takes the reclaimed width instead. */
  multiLine('c-ja',d=>IVI[d]?H[d].ja:null,
