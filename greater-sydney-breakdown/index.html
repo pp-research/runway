@@ -1429,24 +1429,35 @@ function pGlance(){
  $$('#g-wrap button[data-d]').forEach(b=>b.onclick=()=>toggle(b.dataset.d));
 }
 function pLights(){
- const cols=['Market','Value','','S&amp;D','','Confidence','','Verdict'];
+ /* Restyled after traffic-lights-ranked.html: markets grouped by verdict, and each
+    pillar shown as a rank-numbered signal circle instead of a score column - the
+    circle is the current signal, its ring the forecast where it differs, and the
+    number the market's rank of twelve on that pillar. Group inks are darker than
+    the map's 55%-opacity fills because text needs full contrast; the header dot
+    carries the map colour itself, so the list and the choropleth agree at a glance. */
+ const GRP=[['Best time to invest','#1F6B4F','var(--green)'],
+            ['Worth watching','#1D6A8C','var(--blue)'],
+            ['Past its peak','#8A4B00','var(--orange)'],
+            ['Not the best time','#A81028','var(--red)']];
+ const SIGC={GREEN:'#2F8F52',ORANGE:'#D9962B',RED:'#C4203C'};
  const rows=ORDER.flatMap(d=>SEGS.map(s=>{const x=MOCK.divisions[d].seg[s], c=MOCK.divisions[d].conf;
-  return {d:d,s:s,k:[d+' '+s,x.vscore,0,x.dscore,0,c.cscore,0,x.bucket],x:x,c:c}}));
- /* The verdict carries the map's colour so the table and the choropleth agree at a
-    glance. Darker than the map's own fills: those sit at 55% opacity on the panel,
-    but text needs full contrast against it. */
- const vdInk=b=>b==='Best time to invest'?'#1F6B4F':b==='Not the best time'?'#A81028'
-  :b==='Past its peak'?'#8A4B00':'#1D6A8C';
- /* the second argument marks the "now" dot, which draws hollow; the forecast is solid */
- sortable('l-tbl',rows,cols,r=>{const dot=(v,now)=>'<span class="dot '+v+(now?' now':'')
-   +'"></span>';
-  return '<tr class="'+(hidden.has(r.d)?'off':'')+'">'
-   +'<td class="dv" data-d="'+r.d+'"><i style="background:'+C(r.d)+'"></i>'+r.d+' \u00b7 '+r.s+'</td>'
-   +'<td>'+dm(r.x.vscore.toFixed(1))+'</td><td>'+dot(r.x.vsig,1)+dot(r.x.fvsig)+'</td>'
-   +'<td>'+dm(r.x.dscore.toFixed(0))+'</td><td>'+dot(r.x.dsig,1)+dot(r.x.fdsig)+'</td>'
-   +'<td>'+dm(r.c.cscore.toFixed(1))+'</td><td>'+dot(r.c.csig,1)+dot(r.c.fcsig)+'</td>'
-   +'<td style="text-align:left;font-weight:700;color:'+vdInk(r.x.bucket)+'">'
-     +dm(r.x.bucket)+'</td></tr>'});
+  return {d:d,s:s,x:x,c:c}}));
+ const rk=(key,get)=>{const o=rows.slice().sort((a,b)=>get(b)-get(a));
+  o.forEach((r,i)=>r[key]=i+1)};
+ rk('rs',r=>r.x.dscore); rk('rv',r=>r.x.vscore); rk('rc',r=>r.c.cscore);
+ const m=(sig,fsig,rank)=>'<span class="m" style="background:'+SIGC[sig]
+  +';border:.14cqw solid '+SIGC[fsig]+'">'+rank+'</span>';
+ put('l-tbl',GRP.map(g=>{
+  const list=rows.filter(r=>r.x.bucket===g[0]);
+  if(!list.length) return '';
+  return '<div class="tlgrp"><div class="tlh" style="color:'+g[1]+'"><i style="background:'
+   +g[2]+'"></i>'+g[0]+'</div>'
+   +list.map(r=>'<div class="tlrow'+(hidden.has(r.d)?' off':'')+'" data-d="'+r.d+'">'
+    +'<span class="nm"><i style="background:'+C(r.d)+'"></i>'+r.d+' \u00b7 '+r.s+'</span>'
+    +'<span class="tlmini">'+m(r.x.dsig,r.x.fdsig,r.rs)+m(r.x.vsig,r.x.fvsig,r.rv)
+    +m(r.c.csig,r.c.fcsig,r.rc)+'</span></div>').join('')+'</div>';
+ }).join(''));
+ $$('#l-tbl .tlrow').forEach(el=>{el.onclick=()=>toggle(el.dataset.d)});
  const col=b=>b==='Best time to invest'?'var(--green)':b==='Not the best time'?'var(--red)'
   :b==='Past its peak'?'var(--orange)':'var(--blue)';
  put('l-map','<svg viewBox="0 0 '+MAPD.w+' '+MAPD.h+'" xmlns="http://www.w3.org/2000/svg" role="img">'
