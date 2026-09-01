@@ -1127,17 +1127,21 @@ function panels(hostId,items,spec,opt){
  let g='<svg class="ch" viewBox="0 0 '+W+' '+Ht+'" xmlns="http://www.w3.org/2000/svg"'
   +' role="img"><title>'+(opt.title||'')+'</title>';
  const geom=[];
- /* white card + header (swatch, district name) + per-card key, drawn in the same SVG
-    so hit-testing, tooltips and the hidden-district filter all keep working */
+ /* white card + header (district name) + per-card key, drawn in the same SVG
+    so hit-testing, tooltips and the hidden-district filter all keep working.
+    The key takes THIS card's series - colour and opacity as drawn on the plot -
+    not the shared keyItems, which carry the first card's colours; keyItems only
+    sizes the layout, which is safe because the names are the same on every card.
+    With the key wearing the district colour, a name swatch would say the same
+    thing twice, so the name stands alone in ink. */
  const cardHdr=(ox,oy,it)=>{
   let s='<rect x="'+ox.toFixed(1)+'" y="'+(oy-TOP).toFixed(1)+'" width="'+cw.toFixed(1)
    +'" height="'+(TOP+chh).toFixed(1)+'" rx="6" fill="#FFFFFF" stroke="rgba(23,27,36,.09)"/>';
   const hy=oy-TOP+13;
-  s+='<rect x="'+(ox+CPAD).toFixed(1)+'" y="'+(hy-7.4).toFixed(1)+'" width="8" height="8" rx="1.6"'
-   +' fill="'+C(it.d)+'"/><text x="'+(ox+CPAD+12).toFixed(1)+'" y="'+hy.toFixed(1)
+  s+='<text x="'+(ox+CPAD).toFixed(1)+'" y="'+hy.toFixed(1)
    +'" font-size="12.4" font-weight="700" fill="var(--ink)">'+it.label+'</text>';
   let kx=(keyRows===0)?(ox+cw-CPAD-keyW):(ox+CPAD), ky=(keyRows===0)?hy:(oy-TOP+25), used=0;
-  keyItems.forEach(q=>{const w=kwOf(q);
+  spec(it).filter(q=>q.name).forEach(q=>{const w=kwOf(q);
    if(keyRows>0&&used>0&&used+w>inner){ky+=11;used=0}
    const g0=kx+used;
    if(q.type==='bar') s+='<rect x="'+g0.toFixed(1)+'" y="'+(ky-5.2).toFixed(1)+'" width="'+GLW
