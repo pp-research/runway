@@ -1936,11 +1936,17 @@ function pJA(){
   'Gosford & Central Coast is the Central Coast district \u00b7 JSA publishes nothing finer than these two regions \u00b7 the series begins May 2010');
 }
 function pUnemp(){
+ /* noEnds: the legend below names every series, as on the job-index page. lbl still
+    feeds the crosshair readout. */
  multiLine('c-unemp',d=>H[d].unemp,
-  {fmt:v=>v.toFixed(1)+'%',lbl:d=>d==='NSW'?'NSW trend':d,colFor:d=>d==='NSW'?'#3E4C55':C(d),
+  {fmt:v=>v.toFixed(1)+'%',noEnds:1,lbl:d=>d==='NSW'?'NSW trend':d,colFor:d=>d==='NSW'?'#3E4C55':C(d),
    extra:[{name:'NSW',o:MOCK.nat.unemp}],
    title:'Unemployment rate',ytitle:'Unemployment Rate'});
- divLegend('c-unemp-lg','dashed grey = NSW-wide, ABS 6202.0 trend \u00b7 district lines are JSA SALM smoothed');
+ /* Plain keys rather than the hide-toggles: the NSW line needs a key too, and one
+    non-district entry cannot ride the district toggle row. Hiding a district still
+    works from any page that keeps the toggles. */
+ seriesLegend('c-unemp-lg',ORDER.map(d=>[C(d),d]).concat([['#3E4C55','NSW trend (dashed)']]),
+  'district lines JSA SALM smoothed \u00b7 NSW: ABS 6202.0 trend');
 }
 function pYieldCmp(){
  bars('c-yield',ORDER,[
