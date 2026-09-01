@@ -1945,7 +1945,7 @@ function pUnemp(){
  /* Plain keys rather than the hide-toggles: the NSW line needs a key too, and one
     non-district entry cannot ride the district toggle row. Hiding a district still
     works from any page that keeps the toggles. */
- seriesLegend('c-unemp-lg',ORDER.map(d=>[C(d),d]).concat([['#3E4C55','NSW trend (dashed)']]),
+ seriesLegend('c-unemp-lg',ORDER.map(d=>[C(d),d,1]).concat([['#3E4C55','NSW trend (dashed)',1]]),
   'district lines JSA SALM smoothed \u00b7 NSW: ABS 6202.0 trend');
 }
 function pYieldCmp(){
