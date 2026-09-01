@@ -1195,9 +1195,14 @@ function panels(hostId,items,spec,opt){
    +'" y2="'+f(0).toFixed(1)+'" stroke="'+AX+'" stroke-width="1.1"/>';
   ss.forEach(s=>{const ff=s.ax==='r'?f2:f;
    if(s.type==='bar'){const bw=Math.max(1.2,(cw-P[1]-P[3])/ys.length*.6);
+    /* Bars run from the value to zero, but only zeroL charts are guaranteed to hold zero
+       inside the scale. som and appr sit on zoomed scales where ff(0) lands beneath the
+       plot, so the bars ran past the axis into the year labels. The base clamps to the
+       plot edge instead; on zeroL charts ff(0) is inside the box and nothing changes. */
+    const pB=oy+chh-P[2], b=Math.max(oy+P[0],Math.min(ff(0),pB));
     ys.forEach(y=>{const v=at(s.d,y); if(v==null||!isFinite(v))return;
-     g+='<rect x="'+(x(y)-bw/2).toFixed(1)+'" y="'+Math.min(ff(v),ff(0)).toFixed(1)+'" width="'
-      +bw.toFixed(1)+'" height="'+Math.max(.8,Math.abs(ff(0)-ff(v))).toFixed(1)+'" fill="'+s.col
+     g+='<rect x="'+(x(y)-bw/2).toFixed(1)+'" y="'+Math.min(ff(v),b).toFixed(1)+'" width="'
+      +bw.toFixed(1)+'" height="'+Math.max(.8,Math.abs(b-ff(v))).toFixed(1)+'" fill="'+s.col
       +'" fill-opacity="'+(s.op||.85)+'"/>'})}
    else{let dd='',open=false;
     ys.forEach(y=>{const v=at(s.d,y);
