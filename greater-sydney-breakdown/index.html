@@ -1104,7 +1104,7 @@ function multiLine(hostId,pick,opt){
     ended up flush against its bottom edge. 44 leaves ~10 units of clearance. */
  /* padL: pages with wide tick labels (dollar prices) widen the left gutter so the
     rotated axis title clears the numbers instead of running through them */
- const P=[26,opt.noEnds?26:150,opt.xrot?44:52,opt.padL||74];
+ const P=[26,opt.padR||(opt.noEnds?26:150),opt.xrot?44:52,opt.padL||74];
  const ser=vis().map(d=>({d:d,o:pick(d)})).filter(s=>s.o);
  /* extra: named non-district series (the unemployment page overlays NSW). Always
     shown - the hide filter is district-scoped - and colFor/lbl carry their look. */
@@ -2145,7 +2145,7 @@ function render(){
    owner-occupier, black for investor, as specified. Compare movement, not levels. */
 function lendPage(id,s){
  multiLine(id,d=>MOCK.ml.price[d+'|'+s],
-  {monthly:1,noEnds:1,solid:1,padL:106,fmt:v=>v>=1e6?'$'+(v/1e6).toFixed(2)+'m':'$'+Math.round(v/1e3)+'k',
+  {monthly:1,noEnds:1,solid:1,padL:106,padR:58,ax2Labels:1,fmt:v=>v>=1e6?'$'+(v/1e6).toFixed(2)+'m':'$'+Math.round(v/1e3)+'k',
    lbl:d=>d,colFor:d=>d==='Investor'?'#171B24':d==='Owner-occupier'?'#C4203C':C(d),
    extra:[{name:'Owner-occupier',o:MOCK.ml.oo,ax2:1,fmt:v=>'$'+v.toFixed(1)+'bn'},
           {name:'Investor',o:MOCK.ml.inv,ax2:1,fmt:v=>'$'+v.toFixed(1)+'bn'}],
