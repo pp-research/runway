@@ -1140,6 +1140,12 @@ function multiLine(hostId,pick,opt){
   g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+yy+'" y2="'+yy+'" stroke="'+GRID+'"/>'
    +'<text x="'+(P[3]-9)+'" y="'+(+yy+3.6).toFixed(1)+'" text-anchor="end" font-size="10"'
    +' fill="'+AXT+'">'+(opt.fmt?opt.fmt(v):v.toFixed(0))+'</text>'});
+ /* a labelled right axis for ax2 extras: five ticks on their own scale, formatted by
+    the first extra's own formatter. Needs padR wide enough for the label text. */
+ if(v2.length&&opt.ax2Labels){const fm2=(ser.find(s=>s.ax2)||{}).fm||(v=>v.toFixed(1));
+  for(let i=0;i<=4;i++){const v=lo2+(hi2-lo2)*i/4, yy=f2(v).toFixed(1);
+   g+='<text x="'+(W-P[1]+9)+'" y="'+(+yy+3.6).toFixed(1)+'" text-anchor="start" font-size="10"'
+    +' fill="'+AXT+'">'+fm2(v)+'</text>'}}
  /* an opt-in threshold rule, so every vacancy page marks 3% the same way */
  if(opt.ref!=null&&opt.ref.v>=lo&&opt.ref.v<=hi){const ry=f(opt.ref.v).toFixed(1);
   g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+ry+'" y2="'+ry+'" stroke="'
