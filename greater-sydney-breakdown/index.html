@@ -299,9 +299,6 @@ body.railshut .stage{margin-left:56px}
 .rwc.off{opacity:.35}
 .rwc-top{display:flex;align-items:center;gap:.5cqw;font-size:1.5cqw;font-weight:800;color:var(--ink)}
 .rwc-top i{width:.8cqw;height:.8cqw;border-radius:.2cqw;flex:none}
-.rwc-clock{margin-left:auto;font-size:.72cqw;font-weight:800;color:var(--ink);
- border:.08cqw solid var(--hair);border-radius:.35cqw;padding:.12cqw .45cqw}
-.rwc-clock small{font-size:.45cqw;font-weight:700;letter-spacing:.08em;color:var(--ink-dim);display:block;text-align:center}
 .rwc-stats{display:flex;gap:1.5cqw;margin:.6cqw 0 .5cqw;font-size:.95cqw;color:var(--ink-dim)}
 .rwc-stats b{display:block;font-size:1.35cqw;color:var(--ink);letter-spacing:-.01em;margin-top:.15cqw}
 .rwtrack{height:1.6cqw;background:#EDF0F3;border:.06cqw solid var(--hair);border-radius:.8cqw;overflow:hidden;margin:.4cqw 0}
@@ -1764,10 +1761,6 @@ const RW_CEIL=(inc,share,r)=>{const i=r/1200,g=Math.pow(1+i,360);
  return (inc*52*share)/12*((g-1)/(i*g))/.8};
 const RW_BAND=j=>j>=1?'95%':j>=.75?'90%':j>=.5?'80%':j>=.295?'70%':j>=.15?'60%'
  :j>=0?'50%':j>=-.05?'30%':j>=-.15?'20%':'10%';
-const RW_CLOCK=j=>{if(j<-.05)return '&mdash;';const l=[[1.25,'5:30'],[1.15,'6:00'],[1.05,'6:30'],
- [0.95,'7:00'],[0.85,'7:30'],[0.75,'8:00'],[0.65,'8:30'],[0.55,'9:00'],[0.45,'9:30'],
- [0.35,'10:00'],[0.25,'10:30'],[0.15,'11:00'],[0.05,'11:30'],[0,'12:00'],[-0.05,'12:30']];
- for(const [t,s] of l) if(j>=t) return s; return '&mdash;'};
 const RW_FMT=v=>'$'+Math.round(v).toLocaleString('en-AU');
 function pRunway(){
  if(rwRate===null) rwRate=MOCK.rw.fcst;
@@ -1792,7 +1785,7 @@ function pRunway(){
   const pos=Math.max(0,Math.min(1,price/ceil)), up=rw>=0;
   return '<div class="rwc'+(hidden.has(d)?' off':'')+'">'
    +'<div class="rwc-top"><i style="background:'+C(d)+'"></i>'+d
-   +'<span class="rwc-clock">'+RW_CLOCK(rw)+'<small>CLOCK</small></span></div>'
+   +'</div>'
    +'<div class="rwc-stats"><span>Median<b>'+RW_FMT(price)+'</b></span>'
    +'<span>Ceiling<b>'+RW_FMT(ceil)+'</b></span>'
    +'<span>AI @ '+rwRate.toFixed(2)+'%<b>'+(aiSc*100).toFixed(0)+'% \u00b7 '+(aiSc/share*100).toFixed(0)+'% of peak</b></span>'
