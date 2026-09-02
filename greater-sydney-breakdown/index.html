@@ -280,7 +280,7 @@ body.railshut .stage{margin-left:56px}
 #l-tbl{width:max-content;max-width:100%}
 .tlhead{display:flex;align-items:flex-start;justify-content:space-between;gap:.8cqw;margin-bottom:.25cqw}
 .tlhead h3{margin:0}
-.mapwrap.sm{width:10.5cqw;flex:none}
+.mapwrap.sm{width:13cqw;flex:none}
 .tlth{display:flex;align-items:center;justify-content:space-between;padding:.1cqw 0 .28cqw;border-bottom:1px solid rgba(23,27,36,.16)}
 .tlth .nm{font-size:.7cqw;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1B3350}
 .tlth button{border:0;background:transparent;width:1.42cqw;padding:0;font-size:.52cqw;font-weight:800;
@@ -573,7 +573,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>Traffic lights</h2>
-   <div class="body"><div class="tl2n"><div class="pnl"><h3>Pillar indicators</h3><div id="l-pil"></div></div><div class="pnl"><div class="tlhead"><h3>Twelve markets</h3><div class="mapwrap sm" id="l-map"></div></div><div id="l-tbl"></div><p style="font-size:.78cqw;color:var(--ink-dim);margin:.5cqw 0 0;max-width:17cqw">Circle = current signal, ring = forecast where it differs; the number is the market&rsquo;s rank of twelve on that pillar. Click a pillar header to sort; click a market to hide its district everywhere.</p></div></div></div>
+   <div class="body"><div class="tl2n"><div class="pnl"><h3>Pillar indicators</h3><div id="l-pil"></div></div><div class="pnl"><div class="tlhead"><h3>Twelve markets</h3><div class="mapwrap sm" id="l-map"></div></div><div id="l-tbl"></div></div></div></div>
   </div>
   <div class="pnum">3 / 39</div>
  </div>
@@ -1610,8 +1610,7 @@ function pLights(){
  const rk=(key,get)=>{const o=rows.slice().sort((a,b)=>get(b)-get(a));
   o.forEach((r,i)=>r[key]=i+1)};
  rk('rs',r=>r.x.dscore); rk('rv',r=>r.x.vscore); rk('rc',r=>r.c.cscore);
- const m=(sig,fsig,rank)=>'<span class="m" style="background:'+SIGC[sig]
-  +';border:.14cqw solid '+SIGC[fsig]+'">'+rank+'</span>';
+ const m=(sig,rank)=>'<span class="m" style="background:'+SIGC[sig]+'">'+rank+'</span>';
  const KEYS={sd:r=>r.rs,val:r=>r.rv,conf:r=>r.rc};
  let list=rows.slice();
  if(tlSort&&KEYS[tlSort]) list.sort((a,b)=>KEYS[tlSort](a)-KEYS[tlSort](b));
@@ -1620,8 +1619,8 @@ function pLights(){
    +'" aria-pressed="'+(tlSort===k[0])+'">'+k[1]+(tlSort===k[0]?' \u25be':'')+'</button>').join('')+'</span></div>'
   +list.map(r=>'<div class="tlrow'+(hidden.has(r.d)?' off':'')+'" data-d="'+r.d+'">'
    +'<span class="nm"><i style="background:'+C(r.d)+'"></i>'+r.d+' \u00b7 '+r.s+'</span>'
-   +'<span class="tlmini">'+m(r.x.dsig,r.x.fdsig,r.rs)+m(r.x.vsig,r.x.fvsig,r.rv)
-   +m(r.c.csig,r.c.fcsig,r.rc)+'</span></div>').join(''));
+   +'<span class="tlmini">'+m(r.x.dsig,r.rs)+m(r.x.vsig,r.rv)
+   +m(r.c.csig,r.rc)+'</span></div>').join(''));
  $$('#l-tbl .tlrow').forEach(el=>{el.onclick=()=>toggle(el.dataset.d)});
  $$('#l-tbl .tlth button').forEach(b=>b.onclick=()=>{tlSort=(tlSort===b.dataset.k?null:b.dataset.k);pLights()});
  const SIG2=v=>v>=7?'GREEN':v>=4?'ORANGE':'RED';
