@@ -1619,7 +1619,7 @@ function pLights(){
   +'<title>Districts shaded by house verdict</title>'+ORDER.map(d=>{
    const b=MOCK.divisions[d].seg.house.bucket;
    return '<path d="'+MAPD.paths[d]+'" data-d="'+d+'" fill="'+col(b)+'" fill-opacity="'
-    +(hidden.has(d)?.12:.55)+'"></path>'}).join('')+'</svg>');
+    +(hidden.has(d)?.12:.55)+'" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"></path>'}).join('')+'</svg>');
  $$('#l-map path').forEach(p=>{
   p.onclick=()=>toggle(p.dataset.d);
   p.onpointermove=e=>{const d=p.dataset.d, x=MOCK.divisions[d];
