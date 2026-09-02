@@ -1181,8 +1181,14 @@ function multiLine(hostId,pick,opt){
    +'" stroke-width="1" stroke-opacity=".55"/>'
    +'<text x="'+px+'" y="'+py+'" transform="rotate(-90 '+px+' '+py+')" text-anchor="end"'
    +' font-size="10" fill="'+AXT+'">'+y+'</text>'});
- else if(opt.monthly){const t=[];for(let yy=Math.ceil(y0);yy<=Math.floor(y1);yy++)t.push(yy);
-  g+=xLabels(t.filter((v,i)=>t.length<=22||i%2===0),x,plotB+15);}
+ else if(opt.monthly){
+  /* month-formatted axis: every sixth sample, staggered on two rows like xLabels -
+     241 labels cannot fit, and integer years would misstate the monthly cadence */
+  const T=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  ys.filter((v,i)=>i%6===0).forEach((y,i)=>{const mi=Math.round((y-Math.floor(y))*12);
+   g+='<text x="'+x(y).toFixed(1)+'" y="'+(plotB+15+(i%2?12.5:0)).toFixed(1)
+    +'" text-anchor="middle" font-size="10" fill="'+AXT+'">'+T[mi]+' '+String(Math.floor(y)).slice(2)+'</text>'});
+ }
  else g+=xLabels(ys,x,plotB+15);
  g+='<g id="'+hostId+'-cross"></g>';
  host.innerHTML=g+'</svg>';
