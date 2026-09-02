@@ -1756,7 +1756,19 @@ function pAIU(){ aiPage('c-aiu','unit') }
    price is -PV(r/12,360,income*52*share/12)/.8. District ceilings come from each
    district's measured peak share (the aiPeak toggle), because the workbook only
    fixes ceilings for whole regions. */
+/* Runway engine - the workbook's, validated against all 72 of its region rows */
 let rwS='house', rwRate=null;
+const RW_PMT=(price,inc,r)=>{const i=r/1200,g=Math.pow(1+i,360);
+ return (price*.8)*(i*g)/(g-1)*12/(inc*52)};
+const RW_CEIL=(inc,share,r)=>{const i=r/1200,g=Math.pow(1+i,360);
+ return (inc*52*share)/12*((g-1)/(i*g))/.8};
+const RW_BAND=j=>j>=1?'95%':j>=.75?'90%':j>=.5?'80%':j>=.295?'70%':j>=.15?'60%'
+ :j>=0?'50%':j>=-.05?'30%':j>=-.15?'20%':'10%';
+const RW_CLOCK=j=>{if(j<-.05)return '&mdash;';const l=[[1.25,'5:30'],[1.15,'6:00'],[1.05,'6:30'],
+ [0.95,'7:00'],[0.85,'7:30'],[0.75,'8:00'],[0.65,'8:30'],[0.55,'9:00'],[0.45,'9:30'],
+ [0.35,'10:00'],[0.25,'10:30'],[0.15,'11:00'],[0.05,'11:30'],[0,'12:00'],[-0.05,'12:30']];
+ for(const [t,s] of l) if(j>=t) return s; return '&mdash;'};
+const RW_FMT=v=>'$'+Math.round(v).toLocaleString('en-AU');
 function pRunway(){
  if(rwRate===null) rwRate=MOCK.rw.fcst;
  const inc=at(MOCK.inc[ORDER[0]],2026);
