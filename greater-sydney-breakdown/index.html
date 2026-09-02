@@ -1831,19 +1831,19 @@ function pScatter(){
   +'<rect x="'+X6+'" y="'+Y3+'" width="'+(L+pw-X6)+'" height="'+(T+ph-Y3)+'" fill="#E2F0E3"/>';
  for(let v=-20;v<=80;v+=10){const y=fy(v);
   s+='<line x1="'+L+'" y1="'+y+'" x2="'+(L+pw)+'" y2="'+y+'" stroke="#00000012"/>'
-   +'<text x="'+(L-12)+'" y="'+(y+6)+'" text-anchor="end" font-size="19" fill="#555">'+v+'</text>';}
+   +'<text x="'+(L-12)+'" y="'+(y+6)+'" text-anchor="end" font-size="19" fill="#8FA0AB">'+v+'</text>';}
  for(let v=0;v<=xmax;v+=20){const x=fx(v);
   s+='<line x1="'+x+'" y1="'+T+'" x2="'+x+'" y2="'+(T+ph)+'" stroke="#00000012"/>'
-   +'<text x="'+x+'" y="'+(T+ph+30)+'" text-anchor="middle" font-size="19" fill="#555">'+v+'%</text>';}
+   +'<text x="'+x+'" y="'+(T+ph+30)+'" text-anchor="middle" font-size="19" fill="#8FA0AB">'+v+'%</text>';}
  s+='<line x1="'+fx(0)+'" y1="'+T+'" x2="'+fx(0)+'" y2="'+(T+ph)+'" stroke="#66707A" stroke-width="1.6"/>'
   +'<line x1="'+L+'" y1="'+fy(0)+'" x2="'+(L+pw)+'" y2="'+fy(0)+'" stroke="#66707A" stroke-width="1.6"/>'
   +'<line x1="'+X6+'" y1="'+T+'" x2="'+X6+'" y2="'+(T+ph)+'" stroke="#98A2AC" stroke-width="1.6" stroke-dasharray="7 6"/>';
  [[70,'10%+'],[50,'5%+'],[30,'CPI+'],[10,'0%'],[-10,'-5%']].forEach(q=>{
-  s+='<text x="'+(L+pw+14)+'" y="'+(fy(q[0])+6)+'" font-size="19" fill="#555">'+q[1]+'</text>';});
+  s+='<text x="'+(L+pw+14)+'" y="'+(fy(q[0])+6)+'" font-size="19" fill="#8FA0AB">'+q[1]+'</text>';});
  s+='<text transform="rotate(-90 '+(W-26)+' '+(T+ph/2)+')" x="'+(W-26)+'" y="'+(T+ph/2)
-  +'" text-anchor="middle" font-size="20" font-weight="600" fill="#444">Possible Rental Growth</text>'
+  +'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Possible Rental Growth</text>'
   +'<text transform="rotate(-90 30 '+(T+ph/2)+')" x="30" y="'+(T+ph/2)
-  +'" text-anchor="middle" font-size="20" font-weight="600" fill="#444">Demand Score</text>';
+  +'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Demand Score</text>';
  const NAVY='#26356F',PINK='#E8536F',placed=[];
  pts.forEach(p=>{const x=fx(p.x),y=fy(p.y);let ly=y-16;
   placed.forEach(q=>{if(Math.abs(q[0]-x)<120&&Math.abs(q[1]-ly)<26)ly=y+32});
