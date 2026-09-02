@@ -564,7 +564,7 @@ body.presenting .exitfs{display:grid}
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
    <h2>Traffic lights</h2>
-   <div class="body"><div class="two wide"><div class="pnl"><h3>Twelve markets</h3><div id="l-tbl"></div><p style="font-size:.78cqw;color:var(--ink-dim);margin:.5cqw 0 0">Circle = current signal, ring = forecast where it differs; the number is the market&rsquo;s rank of twelve on that pillar &mdash; S&amp;D, Value, Confidence in that order. Click a market to hide its district everywhere.</p></div><div class="pnl"><h3>Verdict by district</h3><div class="mapwrap" id="l-map"></div><div class="lgd" id="l-lgd"></div></div></div></div>
+   <div class="body"><div class="tl3"><div class="pnl"><h3>Verdict by district</h3><div class="mapwrap" id="l-map"></div><div class="lgd" id="l-lgd"></div></div><div class="pnl"><h3>Pillar indicators</h3><div id="l-pil"></div></div><div class="pnl"><h3>Twelve markets</h3><div id="l-tbl"></div><p style="font-size:.78cqw;color:var(--ink-dim);margin:.5cqw 0 0">Circle = current signal, ring = forecast where it differs; the number is the market&rsquo;s rank of twelve on that pillar &mdash; S&amp;D, Value, Confidence in that order. Click a market to hide its district everywhere.</p></div></div></div>
   </div>
   <div class="pnum">3 / 39</div>
  </div>
@@ -1619,6 +1619,26 @@ function pLights(){
     +m(r.c.csig,r.c.fcsig,r.rc)+'</span></div>').join('')+'</div>';
  }).join(''));
  $$('#l-tbl .tlrow').forEach(el=>{el.onclick=()=>toggle(el.dataset.d)});
+ const SIG2=v=>v>=7?'GREEN':v>=4?'ORANGE':'RED';
+ const ppSig=g=>g>=3?'GREEN':g<=-3?'RED':'ORANGE';
+ const rwSig=(r,s)=>s==='house'?(r>=40?'GREEN':r<=15?'RED':'ORANGE'):(r>=60?'GREEN':r<=30?'RED':'ORANGE');
+ const dotStrip=get=>'<span class="pdots">'+ORDER.map(d=>{const sg=get(d);
+  return '<i style="background:'+SIGC[sg]+(hidden.has(d)?';opacity:.25':'')+'" title="'+d+'"></i>'}).join('')+'</span>';
+ const prow=(label,h)=>'<div class="prow"><span>'+label+'</span>'+h+'</div>';
+ put('l-pil',
+  '<div class="prow" style="border-top:0"><span style="font-weight:700;color:#1B3350">District key</span><span class="pdots">'
+   +ORDER.map(d=>'<i style="background:'+C(d)+(hidden.has(d)?';opacity:.25':'')+'" title="'+d+'"></i>').join('')+'</span></div>'
+  +'<div class="pgrp">S&amp;D</div>'
+  +prow('Demand score · houses',dotStrip(d=>MOCK.divisions[d].seg.house.dsig))
+  +prow('Demand score · units',dotStrip(d=>MOCK.divisions[d].seg.unit.dsig))
+  +'<div class="pgrp">Value</div>'
+  +prow('Price position · houses',dotStrip(d=>ppSig(MOCK.divisions[d].seg.house.gap)))
+  +prow('Price position · units',dotStrip(d=>ppSig(MOCK.divisions[d].seg.unit.gap)))
+  +prow('Runway · houses',dotStrip(d=>rwSig(100*MOCK.divisions[d].seg.house.runway,'house')))
+  +prow('Runway · units',dotStrip(d=>rwSig(100*MOCK.divisions[d].seg.unit.runway,'unit')))
+  +'<div class="pgrp">Confidence</div>'
+  +MOCK.divisions[ORDER[0]].conf.inds.map((x,i)=>prow(x.n,dotStrip(d=>SIG2(MOCK.divisions[d].conf.inds[i].s10)))).join('')
+  +'<div class="pnote">Each strip runs North · East · Central · South · West · Central Coast; colours are the indicator’s signal under the published tools’ thresholds.</div>');
  const col=b=>b==='Best time to invest'?'var(--green)':b==='Not the best time'?'var(--red)'
   :b==='Past its peak'?'var(--orange)':'var(--blue)';
  put('l-map','<svg viewBox="0 0 '+MAPD.w+' '+MAPD.h+'" xmlns="http://www.w3.org/2000/svg" role="img">'
