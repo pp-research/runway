@@ -2163,7 +2163,7 @@ function pConf(){
    return '<td><b>'+c.cscore.toFixed(2)+'</b> \u2192 '+c.fcscore.toFixed(2)+'</td>'}).join('')
   +'</tr></tbody></table>');
  $$('#c-conf th[data-d]').forEach(th=>th.onclick=()=>toggle(th.dataset.d));
- put('c-conf-note','Four indicators are NSW-wide, so those rows are identical across districts. '+
+ put('c-conf-note','Four indicators are NSW-wide, so those rows are identical across districts. '++
   'Unemployment (SALM) and Job Ads (IVI, Sydney metro v Central Coast) vary by district and drive '
   +'the contrarian detection. Scores are the tool\u2019s in-band construction. Click a column header '
   +'to hide that district.');
