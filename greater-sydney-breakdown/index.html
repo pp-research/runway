@@ -279,7 +279,7 @@ body.railshut .stage{margin-left:56px}
 .tl2n{display:grid;grid-template-columns:44fr 56fr;gap:1.1cqw;flex:1;min-height:0}
 .tlhead{display:flex;align-items:flex-start;justify-content:space-between;gap:.8cqw;margin-bottom:.25cqw}
 .tlhead h3{margin:0}
-.mapwrap.sm{width:44%;flex:none}
+.mapwrap.sm{width:34%;flex:none}
 .tlth{display:flex;align-items:center;justify-content:space-between;padding:.1cqw 0 .28cqw;border-bottom:1px solid rgba(23,27,36,.16)}
 .tlth .nm{font-size:.7cqw;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1B3350}
 .tlth button{border:0;background:transparent;width:1.42cqw;padding:0;font-size:.52cqw;font-weight:800;
@@ -1647,7 +1647,7 @@ function pLights(){
   +'<title>Districts in their own colours</title>'+ORDER.map(d=>
    '<path d="'+MAPD.paths[d]+'" data-d="'+d+'" fill="'+C(d)+'" fill-opacity="'
     +(hidden.has(d)?.12:.85)+'" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"></path>').join('')+'</svg>');
- const MAPOFF={'North':[0,0],'East':[0,0],'Central':[0,0],'South':[0,0],'West':[0,0],'Central Coast':[0,0]};
+ const MAPOFF={'North':[26,-18],'East':[14,20],'Central':[-34,14],'South':[-14,12],'West':[0,0],'Central Coast':[6,-8]};
  const msvg=gid('l-map').querySelector('svg');
  $$('#l-map path').forEach(p=>{const d=p.dataset.d, b=p.getBBox(), o=MAPOFF[d]||[0,0];
   const t=document.createElementNS('http://www.w3.org/2000/svg','text');
