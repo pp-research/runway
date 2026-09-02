@@ -1857,8 +1857,8 @@ function pScatter(){
    +'" stroke="'+(p.s==='house'?'#fff':dc)+'" stroke-width="'+(p.s==='house'?2:3)+'"><title>'+p.d+' '+p.s+'s \u00b7 demand '+p.y.toFixed(1)
    +' \u00b7 runway '+(p.x>=0?'+':'')+p.x.toFixed(1)+'%</title></circle>'
    +'<text x="'+lx+'" y="'+ly+'" text-anchor="middle" font-size="19" fill="#333">'+p.d+'</text></g>';});
- s+='<circle cx="'+(L+14)+'" cy="'+(H-26)+'" r="9" fill="'+NAVY+'"/><text x="'+(L+30)+'" y="'+(H-19)+'" font-size="20" fill="#8FA0AB">Houses</text>'
-  +'<circle cx="'+(L+134)+'" cy="'+(H-26)+'" r="9" fill="'+PINK+'"/><text x="'+(L+150)+'" y="'+(H-19)+'" font-size="20" fill="#8FA0AB">Units</text>'
+ s+='<circle cx="'+(L+14)+'" cy="'+(H-26)+'" r="9" fill="#8FA0AB"/><text x="'+(L+30)+'" y="'+(H-19)+'" font-size="20" fill="#8FA0AB">Houses</text>'
+  +'<circle cx="'+(L+134)+'" cy="'+(H-26)+'" r="8" fill="none" stroke="#8FA0AB" stroke-width="3"/><text x="'+(L+150)+'" y="'+(H-19)+'" font-size="20" fill="#8FA0AB">Units</text>'
   +'<text x="'+(L+pw/2)+'" y="'+(H-19)+'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Runway &#8212; 5-year wage growth | PP variable rate: '+rate.toFixed(2)+'%</text></svg>';
  put('c-dvr',s);
 }
