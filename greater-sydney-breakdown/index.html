@@ -454,14 +454,13 @@ body.railshut .stage{margin-left:56px}
    label-above-value card needs ~30px a row; a 16:9 page only affords ~22, so the
    grid is transposed — which also suits the wider page. */
 .agmx{display:flex;flex-direction:column;gap:.5cqw;flex:1;min-height:0}
-.aggrid{display:grid;grid-template-columns:11.5cqw repeat(6,1fr);gap:0 .8cqw;align-items:center}
-.agcard .agmr:first-of-type .v{border-radius:.5cqw .5cqw 0 0}
-.agcard .agmr:last-of-type .v{border-radius:0 0 .5cqw .5cqw}
-.aghdr button{border-radius:.5cqw;font-weight:700}
+.aggrid{display:grid;grid-template-columns:11.5cqw repeat(6,1fr);gap:0 .22cqw;align-items:center}
+.agmet{background:#16283E;color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+ text-align:center;border-radius:.2cqw;padding:.34cqw 0;font-size:.8cqw}
 .aghdr{flex:none;padding:0 .6cqw .15cqw}
-.aghdr button{background:transparent;border:0;padding:0;display:flex;align-items:center;
- justify-content:flex-end;gap:.3cqw;font-size:.92cqw;font-weight:700;color:var(--pg-ink);
- white-space:nowrap;transition:.12s}
+.aghdr button{border:0;padding:.34cqw 0;width:100%;display:flex;align-items:center;
+ justify-content:center;font-size:.8cqw;font-weight:700;color:#fff;text-transform:uppercase;
+ letter-spacing:.07em;white-space:nowrap;transition:.12s;border-radius:.2cqw}
 .aghdr button:hover{color:#8FE3EF}
 .aghdr button:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
 .aghdr button.off{opacity:.35;text-decoration:line-through}
@@ -470,12 +469,12 @@ body.railshut .stage{margin-left:56px}
  border-radius:.45cqw;padding:.4cqw .6cqw .45cqw;display:flex;flex-direction:column;min-height:0}
 .agcard.n4{flex:4 1 0}
 .agcard.n6{flex:6 1 0}
-.agcard h5{flex:none;margin:0 0 .2cqw;font-size:.68cqw;font-weight:700;text-transform:uppercase;
- letter-spacing:.09em;color:#5C6E78}
+.agcard h5{flex:none;margin:0 0 .2cqw;font-size:.74cqw;font-weight:700;text-transform:uppercase;
+ letter-spacing:.09em;color:#1B3350}
 .agmr{flex:1 1 0;min-height:0;border-top:1px solid rgba(23,27,36,.11)}
 .agmr:first-of-type{border-top:0}
 .agmr .mn{font-size:.72cqw;color:#4A5566;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.agmr .v{font-size:1.02cqw;font-weight:700;color:var(--ink);text-align:right;white-space:nowrap;
+.agmr .v{font-size:1.02cqw;font-weight:700;color:var(--ink);text-align:center;white-space:nowrap;
  letter-spacing:-.01em}
 .agmr .v.off{opacity:.3}
 @media(max-width:900px){.aggrid{grid-template-columns:9cqw repeat(6,1fr)}}
