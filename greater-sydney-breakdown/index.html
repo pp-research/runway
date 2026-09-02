@@ -1845,17 +1845,21 @@ function pScatter(){
   +'<text transform="rotate(-90 30 '+(T+ph/2)+')" x="30" y="'+(T+ph/2)
   +'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Demand Score</text>';
  const NAVY='#26356F',PINK='#E8536F',placed=[];
- pts.forEach(p=>{const x=fx(p.x),y=fy(p.y);let ly=y-16;
-  placed.forEach(q=>{if(Math.abs(q[0]-x)<120&&Math.abs(q[1]-ly)<26)ly=y+32});
-  placed.push([x,ly]);
+ pts.forEach(p=>{const x=fx(p.x),y=fy(p.y);
+  const cand=[[0,-16],[0,32],[80,7],[-80,7],[0,-36],[0,52],[112,7],[-112,7]];
+  let lx=x,ly=y-16;
+  for(const c of cand){const cx=x+c[0],cy=y+c[1];
+   if(!placed.some(q=>Math.abs(q[0]-cx)<110&&Math.abs(q[1]-cy)<24)
+    &&!pts.some(q=>q!==p&&Math.abs(fx(q.x)-cx)<54&&Math.abs(fy(q.y)-cy)<17)){lx=cx;ly=cy;break}}
+  placed.push([lx,ly]);
   const off=hidden.has(p.d);
   s+='<g style="opacity:'+(off?.15:1)+'"><circle cx="'+x+'" cy="'+y+'" r="9" fill="'+(p.s==='house'?NAVY:PINK)
    +'" stroke="#fff" stroke-width="2"><title>'+p.d+' '+p.s+'s \u00b7 demand '+p.y.toFixed(1)
    +' \u00b7 runway '+(p.x>=0?'+':'')+p.x.toFixed(1)+'%</title></circle>'
-   +'<text x="'+x+'" y="'+ly+'" text-anchor="middle" font-size="19" fill="#333">'+p.d+'</text></g>';});
- s+='<circle cx="'+(L+14)+'" cy="'+(H-26)+'" r="9" fill="'+NAVY+'"/><text x="'+(L+30)+'" y="'+(H-19)+'" font-size="20" fill="#333">Houses</text>'
-  +'<circle cx="'+(L+134)+'" cy="'+(H-26)+'" r="9" fill="'+PINK+'"/><text x="'+(L+150)+'" y="'+(H-19)+'" font-size="20" fill="#333">Units</text>'
-  +'<text x="'+(L+pw/2)+'" y="'+(H-19)+'" text-anchor="middle" font-size="20" font-weight="600" fill="#333">Runway &#8212; 5-year wage growth | PP variable rate: '+rate.toFixed(2)+'%</text></svg>';
+   +'<text x="'+lx+'" y="'+ly+'" text-anchor="middle" font-size="19" fill="#333">'+p.d+'</text></g>';});
+ s+='<circle cx="'+(L+14)+'" cy="'+(H-26)+'" r="9" fill="'+NAVY+'"/><text x="'+(L+30)+'" y="'+(H-19)+'" font-size="20" fill="#8FA0AB">Houses</text>'
+  +'<circle cx="'+(L+134)+'" cy="'+(H-26)+'" r="9" fill="'+PINK+'"/><text x="'+(L+150)+'" y="'+(H-19)+'" font-size="20" fill="#8FA0AB">Units</text>'
+  +'<text x="'+(L+pw/2)+'" y="'+(H-19)+'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Runway &#8212; 5-year wage growth | PP variable rate: '+rate.toFixed(2)+'%</text></svg>';
  put('c-dvr',s);
 }
 function pPTI(){
