@@ -2153,8 +2153,7 @@ function lendPage(id,s){
    title:'NSW lending v median price, '+s+'s',
    ytitle:'Median '+(s==='house'?'House':'Unit')+' Price',ytitle2:'NSW New Loan Commitments, $bn per quarter'});
  seriesLegend(id+'-lg',ORDER.map(d=>[C(d),d,1]).concat(
-  [['#C4203C','Owner-occupier lending (dashed)',1],['#171B24','Investor lending (dashed)',1]]),
-  'quarterly, Jun 2006 \u2013 Mar 2026 \u00b7 lending: NSW quarterly commitments on their own scale');
+  [['#C4203C','Owner-occupier lending (dashed)',1],['#171B24','Investor lending (dashed)',1]]));
 }
 function pLendH(){ lendPage('c-lendh','house') }
 function pLendU(){ lendPage('c-lendu','unit') }
