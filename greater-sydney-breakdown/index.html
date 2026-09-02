@@ -1771,7 +1771,7 @@ function pAIU(){ aiPage('c-aiu','unit') }
    district's measured peak share (the aiPeak toggle), because the workbook only
    fixes ceilings for whole regions. */
 /* Runway engine - the workbook's, validated against all 72 of its region rows */
-let rwS='house', rwRate=null;
+let rwS='house';
 const RW_PMT=(price,inc,r)=>{const i=r/1200,g=Math.pow(1+i,360);
  return (price*.8)*(i*g)/(g-1)*12/(inc*52)};
 const RW_CEIL=(inc,share,r)=>{const i=r/1200,g=Math.pow(1+i,360);
@@ -1780,20 +1780,12 @@ const RW_BAND=j=>j>=1?'95%':j>=.75?'90%':j>=.5?'80%':j>=.295?'70%':j>=.15?'60%'
  :j>=0?'50%':j>=-.05?'30%':j>=-.15?'20%':'10%';
 const RW_FMT=v=>'$'+Math.round(v).toLocaleString('en-AU');
 function pRunway(){
- if(rwRate===null) rwRate=MOCK.rw.fcst;
+ const rwRate=MOCK.rw.fcst;
  const inc=at(MOCK.inc[ORDER[0]],2026);
  put('rw-s',['house','unit'].map(s=>'<button data-s="'+s+'" aria-pressed="'+(s===rwS)+'">'+(s==='house'?'Houses':'Units')+'</button>').join(''));
  $$('#rw-s button').forEach(b=>b.onclick=()=>{rwS=b.dataset.s;render()});
  peakToggle('rw-pk');
- put('rw-sub','All six districts under one rate. NSW income '+RW_FMT(inc)+'/wk, wage-growth applied \u00b7 ceiling: district peak ('+AI_PEAKS.find(p=>p[0]===aiPeak)[1].toLowerCase()+') \u00b7 workbook rates, Feb 2025');
- const rv=gid('rw-rateval'); if(rv) rv.textContent=rwRate.toFixed(2)+'%';
- const sl=gid('rw-slider'); if(sl){sl.value=rwRate;sl.oninput=()=>{rwRate=parseFloat(sl.value);pRunway()}}
- const bm=gid('rw-minus'); if(bm) bm.onclick=()=>{rwRate=Math.max(2,Math.round((rwRate-0.05)*100)/100);pRunway()};
- const bp=gid('rw-plus'); if(bp) bp.onclick=()=>{rwRate=Math.min(10,Math.round((rwRate+0.05)*100)/100);pRunway()};
- const chips=[['Current '+MOCK.rw.cur.toFixed(2)+'%',MOCK.rw.cur],['Forecast '+MOCK.rw.fcst.toFixed(2)+'%',MOCK.rw.fcst],
-  ['Forecast +1%',MOCK.rw.fcst+1],['Forecast +2%',MOCK.rw.fcst+2]];
- put('rw-chips',chips.map((c,i)=>'<button data-r="'+c[1]+'" aria-pressed="'+(Math.abs(rwRate-c[1])<0.005)+'">'+c[0]+'</button>').join(''));
- $$('#rw-chips button').forEach(b=>b.onclick=()=>{rwRate=parseFloat(b.dataset.r);pRunway()});
+ put('rw-sub','All six districts at the '+rwRate.toFixed(2)+'% forecast rate. NSW income '+RW_FMT(inc)+'/wk, wage-growth applied \u00b7 ceiling: district peak ('+AI_PEAKS.find(p=>p[0]===aiPeak)[1].toLowerCase()+') \u00b7 workbook rates, Feb 2025');
  put('rw-grid',ORDER.map(d=>{
   const price=R.divisions[d][rwS].price, share=MOCK.divisions[d].seg[rwS][aiPeak]/100;
   const ceil=RW_CEIL(inc,share,rwRate), rw=ceil/price-1;
