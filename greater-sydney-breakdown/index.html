@@ -279,7 +279,7 @@ body.railshut .stage{margin-left:56px}
 .tl2n{display:grid;grid-template-columns:57fr 43fr;gap:1.1cqw;flex:1;min-height:0}
 .tlhead{display:flex;align-items:flex-start;justify-content:space-between;gap:.8cqw;margin-bottom:.25cqw}
 .tlhead h3{margin:0}
-.mapwrap.sm{width:31%;flex:none}
+.mapwrap.sm{width:38%;flex:none}
 .tlth{display:flex;align-items:center;justify-content:space-between;padding:.1cqw 0 .28cqw;border-bottom:1px solid rgba(23,27,36,.16)}
 .tlth .nm{font-size:.7cqw;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1B3350}
 .tlth button{border:0;background:transparent;width:1.42cqw;padding:0;font-size:.52cqw;font-weight:800;
@@ -1653,7 +1653,7 @@ function pLights(){
   const t=document.createElementNS('http://www.w3.org/2000/svg','text');
   t.setAttribute('x',b.x+b.width/2+o[0]); t.setAttribute('y',b.y+b.height/2+o[1]);
   t.setAttribute('text-anchor','middle');
-  t.setAttribute('style','font-size:20px;font-weight:700;fill:#16202C;pointer-events:none;opacity:'+(hidden.has(d)?.25:1));
+  t.setAttribute('style','font-size:24px;font-weight:700;fill:#16202C;pointer-events:none;opacity:'+(hidden.has(d)?.25:1));
   t.textContent=d; msvg.appendChild(t);});
  $$('#l-map path').forEach(p=>{
   p.onclick=()=>toggle(p.dataset.d);
