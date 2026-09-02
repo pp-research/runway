@@ -1832,11 +1832,11 @@ function pDemandCards(){
  const SIGC={GREEN:'#2F8F52',ORANGE:'#D9962B',RED:'#C4203C'};
  const GRAD={GREEN:'linear-gradient(90deg,#2F8F52,#71B357)',ORANGE:'linear-gradient(90deg,#C77F1F,#E5B25C)',RED:'linear-gradient(90deg,#C4203C,#E58FA8)'};
  put('ds-s',['house','unit'].map(s=>'<button data-s="'+s+'" aria-pressed="'+(s===dsS)+'">'+(s==='house'?'Houses':'Units')+'</button>').join(''));
- $$('#ds-s button').forEach(b=>b.onclick=()=>{dsS=b.dataset.s;render()});
+ $$('#ds-s button').forEach(b=>b.onclick=()=>{dsS=b.dataset.s;pDemandCards()});
  const bench=MOCK.divisions[ORDER[0]].seg[dsS].bench;
  put('ds-sub','All six districts under one segment \u00b7 graded against the July 2026 national 36-region benchmark (grade '+bench+') \u00b7 green at a score of 30, orange at 5');
  put('ds-chips',[['now','Current VR'],['fcst','Forecast VR']].map(c=>'<button data-m="'+c[0]+'" aria-pressed="'+(dsMode===c[0])+'">'+c[1]+'</button>').join(''));
- $$('#ds-chips button').forEach(b=>b.onclick=()=>{dsMode=b.dataset.m;render()});
+ $$('#ds-chips button').forEach(b=>b.onclick=()=>{dsMode=b.dataset.m;pDemandCards()});
  put('ds-grid',ORDER.map(d=>{
   const g=MOCK.divisions[d].seg[dsS];
   const sc=dsMode==='now'?g.dscore:g.fdscore, sig=dsMode==='now'?g.dsig:g.fdsig;
