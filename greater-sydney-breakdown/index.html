@@ -1102,7 +1102,9 @@ function multiLine(hostId,pick,opt){
     runs about 25 units below its anchor, which itself sits 9 below the axis - 34 in all.
     The other 74 were dead space that pushed the whole svg past the panel, so the years
     ended up flush against its bottom edge. 44 leaves ~10 units of clearance. */
- const P=[26,opt.noEnds?26:150,opt.xrot?44:52,74];
+ /* padL: pages with wide tick labels (dollar prices) widen the left gutter so the
+    rotated axis title clears the numbers instead of running through them */
+ const P=[26,opt.noEnds?26:150,opt.xrot?44:52,opt.padL||74];
  const ser=vis().map(d=>({d:d,o:pick(d)})).filter(s=>s.o);
  /* extra: named non-district series (the unemployment page overlays NSW). Always
     shown - the hide filter is district-scoped - and colFor/lbl carry their look. */
