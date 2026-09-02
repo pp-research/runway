@@ -2151,7 +2151,7 @@ function lendPage(id,s){
    extra:[{name:'Owner-occupier',o:MOCK.ml.oo,ax2:1,fmt:v=>'$'+v.toFixed(1)+'bn'},
           {name:'Investor',o:MOCK.ml.inv,ax2:1,fmt:v=>'$'+v.toFixed(1)+'bn'}],
    title:'NSW lending v median price, '+s+'s',
-   ytitle:'Median '+(s==='house'?'House':'Unit')+' Price'});
+   ytitle:'Median '+(s==='house'?'House':'Unit')+' Price',ytitle2:'NSW New Loan Commitments, $bn per quarter'});
  seriesLegend(id+'-lg',ORDER.map(d=>[C(d),d,1]).concat(
   [['#C4203C','Owner-occupier lending (dashed)',1],['#171B24','Investor lending (dashed)',1]]),
   'quarterly, Jun 2006 \u2013 Mar 2026 \u00b7 lending: NSW quarterly commitments on their own scale');
