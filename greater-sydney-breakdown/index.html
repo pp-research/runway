@@ -2139,7 +2139,7 @@ function render(){
    owner-occupier, black for investor, as specified. Compare movement, not levels. */
 function lendPage(id,s){
  multiLine(id,d=>MOCK.ml.price[d+'|'+s],
-  {monthly:1,noEnds:1,solid:1,fmt:v=>v>=1e6?'$'+(v/1e6).toFixed(2)+'m':'$'+Math.round(v/1e3)+'k',
+  {monthly:1,noEnds:1,solid:1,padL:106,fmt:v=>v>=1e6?'$'+(v/1e6).toFixed(2)+'m':'$'+Math.round(v/1e3)+'k',
    lbl:d=>d,colFor:d=>d==='Investor'?'#171B24':d==='Owner-occupier'?'#C4203C':C(d),
    extra:[{name:'Owner-occupier',o:MOCK.ml.oo,ax2:1,fmt:v=>'$'+v.toFixed(1)+'bn'},
           {name:'Investor',o:MOCK.ml.inv,ax2:1,fmt:v=>'$'+v.toFixed(1)+'bn'}],
