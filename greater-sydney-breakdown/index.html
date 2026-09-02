@@ -1844,8 +1844,8 @@ function pScatter(){
   +'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Possible Rental Growth</text>'
   +'<text transform="rotate(-90 30 '+(T+ph/2)+')" x="30" y="'+(T+ph/2)
   +'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Demand Score</text>';
- const NAVY='#26356F',PINK='#E8536F',placed=[];
- pts.forEach(p=>{const x=fx(p.x),y=fy(p.y);
+ const placed=[];
+ pts.forEach(p=>{const x=fx(p.x),y=fy(p.y),dc=C(p.d);
   const cand=[[0,-16],[0,32],[80,7],[-80,7],[0,-36],[0,52],[112,7],[-112,7]];
   let lx=x,ly=y-16;
   for(const c of cand){const cx=x+c[0],cy=y+c[1];
@@ -1853,8 +1853,8 @@ function pScatter(){
     &&!pts.some(q=>q!==p&&Math.abs(fx(q.x)-cx)<54&&Math.abs(fy(q.y)-cy)<17)){lx=cx;ly=cy;break}}
   placed.push([lx,ly]);
   const off=hidden.has(p.d);
-  s+='<g style="opacity:'+(off?.15:1)+'"><circle cx="'+x+'" cy="'+y+'" r="9" fill="'+(p.s==='house'?NAVY:PINK)
-   +'" stroke="#fff" stroke-width="2"><title>'+p.d+' '+p.s+'s \u00b7 demand '+p.y.toFixed(1)
+  s+='<g style="opacity:'+(off?.15:1)+'"><circle cx="'+x+'" cy="'+y+'" r="9" fill="'+(p.s==='house'?dc:'none')
+   +'" stroke="'+(p.s==='house'?'#fff':dc)+'" stroke-width="'+(p.s==='house'?2:3)+'"><title>'+p.d+' '+p.s+'s \u00b7 demand '+p.y.toFixed(1)
    +' \u00b7 runway '+(p.x>=0?'+':'')+p.x.toFixed(1)+'%</title></circle>'
    +'<text x="'+lx+'" y="'+ly+'" text-anchor="middle" font-size="19" fill="#333">'+p.d+'</text></g>';});
  s+='<circle cx="'+(L+14)+'" cy="'+(H-26)+'" r="9" fill="'+NAVY+'"/><text x="'+(L+30)+'" y="'+(H-19)+'" font-size="20" fill="#8FA0AB">Houses</text>'
