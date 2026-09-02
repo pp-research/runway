@@ -1152,7 +1152,7 @@ function multiLine(hostId,pick,opt){
   +f(0).toFixed(1)+'" stroke="'+AX+'" stroke-width="1.2"/>';
  if(opt.lta!=null) g+=ltaMark(opt.lta,f,P[3],W-P[1],opt.ltaL||'');
  (opt.events||[]).forEach(e=>{if(e.y>=y0&&e.y<=y1) g+=eventMark(e,x,P[0],plotB)});
- g+=axTitle(opt.ytitle,P[3]-40,(P[0]+plotB)/2);
+ g+=axTitle(opt.ytitle,P[3]-40-(opt.padL?16:0),(P[0]+plotB)/2);
  const ends=ser.map(s=>{let v=null;
   for(let i=ys.length-1;i>=0;i--){const t=at(s.o,ys[i]); if(t!=null&&isFinite(t)){v=t;break}}
   return {d:s.d,v:v,y:f(v)}}).sort((a,b)=>a.y-b.y);
