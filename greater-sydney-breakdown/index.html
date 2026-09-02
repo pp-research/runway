@@ -691,7 +691,6 @@ body.presenting .exitfs{display:grid}
    <div class="rwhead"><h2>Demand score</h2><div class="pk" id="ds-s"></div></div>
    <p class="cap" id="ds-sub"></p>
    <div class="body"><div class="pmeta"><span>&copy; 2026 PPA Services Pty Ltd</span><span>Source: CoreLogic &amp; PP Demand Grading</span></div>
-<div class="rwbar"><span class="lbl2">Vacancy basis</span><span class="rwchips" id="ds-chips"></span></div>
 <div class="rwgrid" id="ds-grid"></div>
 </div>
   </div>
@@ -1816,7 +1815,7 @@ function pRunway(){
    +'</div></div>';
  }).join(''));
 }
-let dsS='house', dsMode='now';
+let dsS='house';
 function pDemandCards(){
  const SIGC={GREEN:'#2F8F52',ORANGE:'#D9962B',RED:'#C4203C'};
  const GRAD={GREEN:'linear-gradient(90deg,#2F8F52,#71B357)',ORANGE:'linear-gradient(90deg,#C77F1F,#E5B25C)',RED:'linear-gradient(90deg,#C4203C,#E58FA8)'};
@@ -1824,12 +1823,9 @@ function pDemandCards(){
  $$('#ds-s button').forEach(b=>b.onclick=()=>{dsS=b.dataset.s;pDemandCards()});
  const bench=MOCK.divisions[ORDER[0]].seg[dsS].bench;
  put('ds-sub','All six districts under one segment \u00b7 graded against the July 2026 national 36-region benchmark (grade '+bench+') \u00b7 green at a score of 30, orange at 5');
- put('ds-chips',[['now','Current VR'],['fcst','Forecast VR']].map(c=>'<button data-m="'+c[0]+'" aria-pressed="'+(dsMode===c[0])+'">'+c[1]+'</button>').join(''));
- $$('#ds-chips button').forEach(b=>b.onclick=()=>{dsMode=b.dataset.m;pDemandCards()});
  put('ds-grid',ORDER.map(d=>{
   const g=MOCK.divisions[d].seg[dsS];
-  const sc=dsMode==='now'?g.dscore:g.fdscore, sig=dsMode==='now'?g.dsig:g.fdsig;
-  const alt=dsMode==='now'?g.fdscore:g.dscore, altSig=dsMode==='now'?g.fdsig:g.dsig;
+  const sc=g.dscore, sig=g.dsig;
   const pos=Math.max(0,Math.min(1,sc/80));
   return '<div class="rwc'+(hidden.has(d)?' off':'')+'">'
    +'<div class="rwc-top"><i style="background:'+C(d)+'"></i>'+d+'</div>'
@@ -1837,12 +1833,11 @@ function pDemandCards(){
    +'%;background:'+GRAD[sig]+'"></div></div>'
    +'<span class="big" style="color:'+SIGC[sig]+'">'+sc.toFixed(1)+'</span></div>'
    +'<div class="rwc-list">'
-   +'<div><span>Signal</span><b style="color:'+SIGC[sig]+'">'+sig+'</b></div>'
+   +'<div><span>Days on market</span><b>'+Math.round(g.ds/(1-g.rg36/100))+' days</b></div>'
+   +'<div><span>Rent growth \u00b7 36 months</span><b>'+(g.rg36>=0?'+':'')+g.rg36.toFixed(1)+'%</b></div>'
+   +'<div><span>Listings per 1,000 persons</span><b>'+g.lpp.toFixed(2)+'</b></div>'
+   +'<div><span>Vacancy rate</span><b>'+(g.ss/g.lpp).toFixed(2)+'%</b></div>'
    +'<div><span>Grade v benchmark '+bench+'</span><b>'+g.grade.toFixed(1)+'</b></div>'
-   +'<div><span>Supply \u00b7 listings/1,000 \u00d7 VR</span><b>'+g.ss.toFixed(2)+'</b></div>'
-   +'<div><span>Demand \u00b7 DOM \u00d7 rent factor</span><b>'+g.ds.toFixed(1)+'</b></div>'
-   +'<div><span>'+(dsMode==='now'?'Forecast VR score':'Current VR score')+'</span><b style="color:'
-   +SIGC[altSig]+'">'+alt.toFixed(1)+' \u00b7 '+altSig+'</b></div>'
    +'</div></div>';
  }).join(''));
 }
