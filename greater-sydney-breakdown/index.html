@@ -1589,17 +1589,12 @@ function pGlance(){
   +segCard('house')+segCard('unit'));
  $$('#g-wrap button[data-d]').forEach(b=>b.onclick=()=>toggle(b.dataset.d));
 }
+let tlSort=null;
 function pLights(){
- /* Restyled after traffic-lights-ranked.html: markets grouped by verdict, and each
-    pillar shown as a rank-numbered signal circle instead of a score column - the
-    circle is the current signal, its ring the forecast where it differs, and the
-    number the market's rank of twelve on that pillar. Group inks are darker than
-    the map's 55%-opacity fills because text needs full contrast; the header dot
-    carries the map colour itself, so the list and the choropleth agree at a glance. */
- const GRP=[['Best time to invest','#1F6B4F','var(--green)'],
-            ['Worth watching','#1D6A8C','var(--blue)'],
-            ['Past its peak','#8A4B00','var(--orange)'],
-            ['Not the best time','#A81028','var(--red)']];
+ /* Flat, sortable market list (no verdict grouping): each pillar shown as a
+    rank-numbered signal circle - the circle is the current signal, its ring the
+    forecast where it differs, the number the market's rank of twelve on that
+    pillar. Pillar headers sort by rank; the map wears the district colours. */
  const SIGC={GREEN:'#2F8F52',ORANGE:'#D9962B',RED:'#C4203C'};
  const rows=ORDER.flatMap(d=>SEGS.map(s=>{const x=MOCK.divisions[d].seg[s], c=MOCK.divisions[d].conf;
   return {d:d,s:s,x:x,c:c}}));
