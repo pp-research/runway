@@ -1603,17 +1603,18 @@ function pLights(){
  rk('rs',r=>r.x.dscore); rk('rv',r=>r.x.vscore); rk('rc',r=>r.c.cscore);
  const m=(sig,fsig,rank)=>'<span class="m" style="background:'+SIGC[sig]
   +';border:.14cqw solid '+SIGC[fsig]+'">'+rank+'</span>';
- put('l-tbl',GRP.map(g=>{
-  const list=rows.filter(r=>r.x.bucket===g[0]);
-  if(!list.length) return '';
-  return '<div class="tlgrp"><div class="tlh" style="color:'+g[1]+'"><i style="background:'
-   +g[2]+'"></i>'+g[0]+'</div>'
-   +list.map(r=>'<div class="tlrow'+(hidden.has(r.d)?' off':'')+'" data-d="'+r.d+'">'
-    +'<span class="nm"><i style="background:'+C(r.d)+'"></i>'+r.d+' \u00b7 '+r.s+'</span>'
-    +'<span class="tlmini">'+m(r.x.dsig,r.x.fdsig,r.rs)+m(r.x.vsig,r.x.fvsig,r.rv)
-    +m(r.c.csig,r.c.fcsig,r.rc)+'</span></div>').join('')+'</div>';
- }).join(''));
+ const KEYS={sd:r=>r.rs,val:r=>r.rv,conf:r=>r.rc};
+ let list=rows.slice();
+ if(tlSort&&KEYS[tlSort]) list.sort((a,b)=>KEYS[tlSort](a)-KEYS[tlSort](b));
+ put('l-tbl','<div class="tlth"><span class="nm">Market</span><span class="tlmini">'
+  +[['sd','S&amp;D'],['val','Val'],['conf','Conf']].map(k=>'<button data-k="'+k[0]
+   +'" aria-pressed="'+(tlSort===k[0])+'">'+k[1]+(tlSort===k[0]?' \u25be':'')+'</button>').join('')+'</span></div>'
+  +list.map(r=>'<div class="tlrow'+(hidden.has(r.d)?' off':'')+'" data-d="'+r.d+'">'
+   +'<span class="nm"><i style="background:'+C(r.d)+'"></i>'+r.d+' \u00b7 '+r.s+'</span>'
+   +'<span class="tlmini">'+m(r.x.dsig,r.x.fdsig,r.rs)+m(r.x.vsig,r.x.fvsig,r.rv)
+   +m(r.c.csig,r.c.fcsig,r.rc)+'</span></div>').join(''));
  $$('#l-tbl .tlrow').forEach(el=>{el.onclick=()=>toggle(el.dataset.d)});
+ $$('#l-tbl .tlth button').forEach(b=>b.onclick=()=>{tlSort=(tlSort===b.dataset.k?null:b.dataset.k);pLights()});
  const SIG2=v=>v>=7?'GREEN':v>=4?'ORANGE':'RED';
  const ppSig=g=>g>=3?'GREEN':g<=-3?'RED':'ORANGE';
  const rwSig=(r,s)=>s==='house'?(r>=40?'GREEN':r<=15?'RED':'ORANGE'):(r>=60?'GREEN':r<=30?'RED':'ORANGE');
