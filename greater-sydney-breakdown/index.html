@@ -1788,14 +1788,16 @@ function pRunway(){
   return '<div class="rwc'+(hidden.has(d)?' off':'')+'">'
    +'<div class="rwc-top"><i style="background:'+C(d)+'"></i>'+d
    +'</div>'
-   +'<div class="rwc-stats"><span>Median<b>'+RW_FMT(price)+'</b></span>'
-   +'<span>Ceiling<b>'+RW_FMT(ceil)+'</b></span>'
-   +'<span>AI @ '+rwRate.toFixed(2)+'%<b>'+(aiSc*100).toFixed(0)+'% \u00b7 '+(aiSc/share*100).toFixed(0)+'% of peak</b></span>'
-   +'<span>Band<b>'+RW_BAND(rw)+'</b></span></div>'
-   +'<div class="rwtrack"><div class="rwfill" style="width:'+(up?pos*100:100).toFixed(1)
+   +'<div class="rwc-bar"><div class="rwtrack"><div class="rwfill" style="width:'+(up?pos*100:100).toFixed(1)
    +'%;background:'+(up?'linear-gradient(90deg,#71B357,#9CCB84)':'linear-gradient(90deg,#C4203C,#E58FA8)')+'"></div></div>'
-   +'<div class="rwc-foot"><span class="big" style="color:'+(up?'#2F8F52':'#C4203C')+'">'+(up?'+':'')+(rw*100).toFixed(2)+'%</span>'
-   +'<span>at current '+MOCK.rw.cur.toFixed(2)+'%: '+(rwCur>=0?'+':'')+(rwCur*100).toFixed(2)+'%</span></div></div>';
+   +'<span class="big" style="color:'+(up?'#2F8F52':'#C4203C')+'">'+(up?'+':'')+(rw*100).toFixed(2)+'%</span></div>'
+   +'<div class="rwc-list">'
+   +'<div><span>Median</span><b>'+RW_FMT(price)+'</b></div>'
+   +'<div><span>Ceiling at '+rwRate.toFixed(2)+'%</span><b>'+RW_FMT(ceil)+'</b></div>'
+   +'<div><span>AI at '+rwRate.toFixed(2)+'%</span><b>'+(aiSc*100).toFixed(0)+'% \u00b7 '+(aiSc/share*100).toFixed(0)+'% of peak</b></div>'
+   +'<div><span>Upside band</span><b>'+RW_BAND(rw)+'</b></div>'
+   +'<div><span>Runway at current '+MOCK.rw.cur.toFixed(2)+'%</span><b>'+(rwCur>=0?'+':'')+(rwCur*100).toFixed(2)+'%</b></div>'
+   +'</div></div>';
  }).join(''));
 }
 function pPTI(){
