@@ -1819,7 +1819,7 @@ function pScatter(){
   const g=MOCK.divisions[d].seg[s], price=R.divisions[d][s].price,
    run=(RW_CEIL(inc,g.ceiling/100,rate)/price-1)*100;
   pts.push({d:d,s:s,x:run,y:g.dscore});}));
- const W=1560,H=780,L=100,Rm=170,T=26,B=110,pw=W-L-Rm,ph=H-T-B;
+ const W=1560,H=706,L=100,Rm=170,T=24,B=104,pw=W-L-Rm,ph=H-T-B;
  let xmax=80; pts.forEach(p=>{if(p.x+12>xmax)xmax=Math.ceil((p.x+12)/20)*20});
  const xmin=-10,ymin=-25,ymax=82;
  const fx=v=>L+(v-xmin)/(xmax-xmin)*pw, fy=v=>T+(ymax-v)/(ymax-ymin)*ph;
