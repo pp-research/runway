@@ -294,20 +294,20 @@ body.railshut .stage{margin-left:56px}
 .rwchips button{font-size:.6cqw;font-weight:700;padding:.2cqw .55cqw;border:.08cqw solid var(--hair);
  border-radius:.35cqw;background:#fff;cursor:pointer;color:var(--ink)}
 .rwchips button[aria-pressed=true]{background:var(--rail-active-bg);border-color:var(--rail-active-bg);color:var(--rail-active-txt)}
-.rwgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7cqw}
-.rwc{background:#FFFFFF;border:.08cqw solid var(--hair);border-radius:.55cqw;padding:.55cqw .75cqw}
+.rwgrid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:.8cqw;height:39.2cqw}
+.rwc{background:#FFFFFF;border:.08cqw solid var(--hair);border-radius:.55cqw;padding:1.1cqw 1.3cqw;display:flex;flex-direction:column;justify-content:space-between}
 .rwc.off{opacity:.35}
-.rwc-top{display:flex;align-items:center;gap:.4cqw;font-size:.95cqw;font-weight:800;color:var(--ink)}
-.rwc-top i{width:.55cqw;height:.55cqw;border-radius:.15cqw;flex:none}
+.rwc-top{display:flex;align-items:center;gap:.5cqw;font-size:1.5cqw;font-weight:800;color:var(--ink)}
+.rwc-top i{width:.8cqw;height:.8cqw;border-radius:.2cqw;flex:none}
 .rwc-clock{margin-left:auto;font-size:.72cqw;font-weight:800;color:var(--ink);
  border:.08cqw solid var(--hair);border-radius:.35cqw;padding:.12cqw .45cqw}
 .rwc-clock small{font-size:.45cqw;font-weight:700;letter-spacing:.08em;color:var(--ink-dim);display:block;text-align:center}
-.rwc-stats{display:flex;gap:.9cqw;margin:.35cqw 0 .3cqw;font-size:.62cqw;color:var(--ink-dim)}
-.rwc-stats b{display:block;font-size:.82cqw;color:var(--ink);letter-spacing:-.01em}
-.rwtrack{height:.85cqw;background:#EDF0F3;border:.06cqw solid var(--hair);border-radius:.45cqw;overflow:hidden;margin:.25cqw 0 .25cqw}
+.rwc-stats{display:flex;gap:1.5cqw;margin:.6cqw 0 .5cqw;font-size:.95cqw;color:var(--ink-dim)}
+.rwc-stats b{display:block;font-size:1.35cqw;color:var(--ink);letter-spacing:-.01em;margin-top:.15cqw}
+.rwtrack{height:1.6cqw;background:#EDF0F3;border:.06cqw solid var(--hair);border-radius:.8cqw;overflow:hidden;margin:.4cqw 0}
 .rwfill{height:100%;border-radius:.45cqw}
-.rwc-foot{display:flex;align-items:baseline;justify-content:space-between;font-size:.6cqw;color:var(--ink-dim)}
-.rwc-foot .big{font-size:1.05cqw;font-weight:800}
+.rwc-foot{display:flex;align-items:baseline;justify-content:space-between;font-size:.95cqw;color:var(--ink-dim)}
+.rwc-foot .big{font-size:1.9cqw;font-weight:800}
 /* Hollow for "now", solid for the forecast - the same reading the projection bands
    use. The "now" case is marked with an explicit class, NOT by position: .dot is also
    used on its own (the confidence indicators), and there the value that follows is
