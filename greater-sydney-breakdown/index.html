@@ -299,12 +299,14 @@ body.railshut .stage{margin-left:56px}
 .rwc.off{opacity:.35}
 .rwc-top{display:flex;align-items:center;gap:.5cqw;font-size:1.5cqw;font-weight:800;color:var(--ink)}
 .rwc-top i{width:.8cqw;height:.8cqw;border-radius:.2cqw;flex:none}
-.rwc-stats{display:flex;gap:1.5cqw;margin:.6cqw 0 .5cqw;font-size:.95cqw;color:var(--ink-dim)}
-.rwc-stats b{display:block;font-size:1.35cqw;color:var(--ink);letter-spacing:-.01em;margin-top:.15cqw}
+.rwc-bar{display:flex;align-items:center;gap:.8cqw;margin:.5cqw 0 .55cqw}
+.rwc-bar .rwtrack{flex:1;margin:0}
+.rwc-bar .big{font-size:1.9cqw;font-weight:800;letter-spacing:-.02em;flex:none}
+.rwc-list div{display:flex;justify-content:space-between;align-items:baseline;padding:.34cqw 0;border-top:.06cqw solid var(--hair);font-size:.95cqw;color:var(--ink-dim)}
+.rwc-list div:first-child{border-top:none}
+.rwc-list b{font-size:1.1cqw;color:var(--ink);letter-spacing:-.01em;font-weight:800}
 .rwtrack{height:1.6cqw;background:#EDF0F3;border:.06cqw solid var(--hair);border-radius:.8cqw;overflow:hidden;margin:.4cqw 0}
 .rwfill{height:100%;border-radius:.45cqw}
-.rwc-foot{display:flex;align-items:baseline;justify-content:space-between;font-size:.95cqw;color:var(--ink-dim)}
-.rwc-foot .big{font-size:1.9cqw;font-weight:800}
 /* Hollow for "now", solid for the forecast - the same reading the projection bands
    use. The "now" case is marked with an explicit class, NOT by position: .dot is also
    used on its own (the confidence indicators), and there the value that follows is
