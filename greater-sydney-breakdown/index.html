@@ -1767,7 +1767,7 @@ function pAIU(){ aiPage('c-aiu','unit') }
    district's measured peak share (the aiPeak toggle), because the workbook only
    fixes ceilings for whole regions. */
 /* Runway engine - the workbook's, validated against all 72 of its region rows */
-let rwS='house';
+let rwS='house', rwMode='fcst';
 const RW_PMT=(price,inc,r)=>{const i=r/1200,g=Math.pow(1+i,360);
  return (price*.8)*(i*g)/(g-1)*12/(inc*52)};
 const RW_CEIL=(inc,share,r)=>{const i=r/1200,g=Math.pow(1+i,360);
@@ -1776,12 +1776,14 @@ const RW_BAND=j=>j>=1?'95%':j>=.75?'90%':j>=.5?'80%':j>=.295?'70%':j>=.15?'60%'
  :j>=0?'50%':j>=-.05?'30%':j>=-.15?'20%':'10%';
 const RW_FMT=v=>'$'+Math.round(v).toLocaleString('en-AU');
 function pRunway(){
- const rwRate=MOCK.rw.fcst;
+ const rwRate=rwMode==='fcst'?MOCK.rw.fcst:MOCK.rw.cur;
  const inc=at(MOCK.inc[ORDER[0]],2026);
  put('rw-s',['house','unit'].map(s=>'<button data-s="'+s+'" aria-pressed="'+(s===rwS)+'">'+(s==='house'?'Houses':'Units')+'</button>').join(''));
  $$('#rw-s button').forEach(b=>b.onclick=()=>{rwS=b.dataset.s;render()});
+ put('rw-rate',[['fcst','Forecast '+MOCK.rw.fcst.toFixed(2)+'%'],['cur','Current '+MOCK.rw.cur.toFixed(2)+'%']].map(c=>'<button data-m="'+c[0]+'" aria-pressed="'+(rwMode===c[0])+'">'+c[1]+'</button>').join(''));
+ $$('#rw-rate button').forEach(b=>b.onclick=()=>{rwMode=b.dataset.m;pRunway()});
  peakToggle('rw-pk');
- put('rw-sub','All six districts at the '+rwRate.toFixed(2)+'% forecast rate. NSW income '+RW_FMT(inc)+'/wk, wage-growth applied \u00b7 ceiling: district peak ('+AI_PEAKS.find(p=>p[0]===aiPeak)[1].toLowerCase()+') \u00b7 workbook rates, Feb 2025');
+ put('rw-sub','All six districts at the '+rwRate.toFixed(2)+'% '+(rwMode==='fcst'?'forecast':'current')+' rate. NSW income '+RW_FMT(inc)+'/wk, wage-growth applied \u00b7 ceiling: district peak ('+AI_PEAKS.find(p=>p[0]===aiPeak)[1].toLowerCase()+') \u00b7 workbook rates, Feb 2025');
  put('rw-grid',ORDER.map(d=>{
   const price=R.divisions[d][rwS].price, share=MOCK.divisions[d].seg[rwS][aiPeak]/100;
   const ceil=RW_CEIL(inc,share,rwRate), rw=ceil/price-1;
