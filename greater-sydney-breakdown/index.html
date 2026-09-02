@@ -466,7 +466,7 @@ body.railshut .stage{margin-left:56px}
 .aghdr button:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
 .aghdr button.off{opacity:.35;text-decoration:line-through}
 .aghdr button i{width:.7cqw;height:.7cqw;border-radius:.14cqw;flex:none}
-.agcard{background:linear-gradient(180deg,#D9EDF4 0%,#EAF6F9 45%,#FAFDFE 100%);
+.agcard{background:#FDFEFE;
  border-radius:.45cqw;padding:.4cqw .6cqw .45cqw;display:flex;flex-direction:column;min-height:0}
 .agcard.n4{flex:4 1 0}
 .agcard.n6{flex:6 1 0}
@@ -1561,7 +1561,7 @@ const cagr3=g36=>(Math.pow(1+g36/100,1/3)-1)*100;
 function pGlance(){
  const money=v=>'$'+Math.round(v).toLocaleString();
  const mrow=(label,fn)=>'<div class="agmr aggrid"><div class="mn">'+label+'</div>'
-  +ORDER.map(d=>'<div class="v'+(hidden.has(d)?' off':'')+'" style="background:'+C(d)+'2E">'+fn(d)+'</div>').join('')+'</div>';
+  +ORDER.map(d=>'<div class="v'+(hidden.has(d)?' off':'')+'" style="background:'+C(d)+'4D">'+fn(d)+'</div>').join('')+'</div>';
  const segCard=sg=>'<div class="agcard n6"><h5>'+(sg==='house'?'Houses':'Units')+'</h5>'
   +mrow('Avg. of LGA medians',d=>money(R.divisions[d][sg].price))
   +mrow('Avg. Days on Market',d=>R.divisions[d][sg].dom.toFixed(0))
