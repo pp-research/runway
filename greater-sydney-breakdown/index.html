@@ -1108,10 +1108,10 @@ function eventMark(e,x,top,bot){
 function ltaMark(v,f,x0,x1,label){
  const y=f(v);
  return '<line x1="'+x0+'" x2="'+x1+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)
-  +'" stroke="#3E4C55" stroke-width="2.2" stroke-dasharray="9 5" stroke-linecap="round"/>'
-  +'<text x="'+(x0+7)+'" y="'+(y-7).toFixed(1)+'" font-size="10" font-weight="700"'
-  +' font-style="italic" paint-order="stroke" stroke="var(--pnl)" stroke-width="3.2"'
-  +' stroke-linejoin="round" fill="#3E4C55">'+label+'</text>';
+  +'" stroke="#14202B" stroke-width="3" stroke-dasharray="9 5" stroke-linecap="round"/>'
+  +'<text x="'+(x0+7)+'" y="'+(y-8).toFixed(1)+'" font-size="11.5" font-weight="700"'
+  +' font-style="italic" paint-order="stroke" stroke="var(--pnl)" stroke-width="3.4"'
+  +' stroke-linejoin="round" fill="#14202B">'+label+'</text>';
 }
 const MARK=(cx,cy,col)=>'<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="3.1" fill="'
  +col+'" stroke="#FBFDFE" stroke-width="1.1"/>';
@@ -1823,6 +1823,7 @@ function pRunway(){
    +'<div class="rwc-list">'
    +'<div><span>Ceiling at '+rwRate.toFixed(2)+'%</span><b>'+RW_FMT(ceil)+'</b></div>'
    +'<div><span>Current median</span><b>'+RW_FMT(price)+'</b></div>'
+   +'<div><span>Average income</span><b>'+RW_FMT(inc)+'/wk</b></div>'
    +'<div><span>AI peak · '+AI_PEAKS.find(p=>p[0]===aiPeak)[1].toLowerCase()+'</span><b>'+(share*100).toFixed(0)+'%</b></div>'
    +'<div><span>AI at '+rwRate.toFixed(2)+'%</span><b>'+(aiAt*100).toFixed(0)+'%</b></div>'
    +'</div></div>';
@@ -2165,7 +2166,7 @@ function pHholds(){
 }
 function pPopch(){
  const _lt=mean(Object.values(MOCK.nat.gspopch));   // whole-GS growth, population-weighted
- multiLine('c-popch',d=>H[d].popch,{zeroL:1,solid:1,lta:_lt,
+ multiLine('c-popch',d=>H[d].popch,{zeroL:1,solid:1,noEnds:1,xrot:1,noDots:1,lta:_lt,
   ltaL:'Greater Sydney long-term average '+_lt.toFixed(1)+'%',
   fmt:v=>v.toFixed(1)+'%',title:'Change in population',ytitle:'Population Change'});
  divLegend('c-popch-lg','NSW and national comparison lines need the ABS release');
