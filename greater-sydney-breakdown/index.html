@@ -2010,12 +2010,12 @@ function vrRentChart(hostId,d,lo,hi,VMAX,seg){
   const c=gid(hostId+'-cross');
   if(vx<L-14||vx>R+14||vy<T-14||vy>B+14){if(c)c.innerHTML='';return null}
   const yr=Math.max(y0,Math.min(y1,Math.round(y0+(vx-L)/((R-L)||1)*(y1-y0))));
-  const cx=x(yr), hr=at(rs,yr), hu=at(us,yr), hv=at(vs,yr);
+  const cx=x(yr), hr=at(rs,yr), hv=at(vs,yr);
   /* the year is named on the chart itself, not only in the tooltip, so the reader can
      see which point they are on without moving their eyes off the line */
   if(c) c.innerHTML='<line x1="'+cx.toFixed(1)+'" x2="'+cx.toFixed(1)+'" y1="'+T+'" y2="'+B
    +'" stroke="'+AX+'" stroke-width="3" stroke-dasharray="9 9"/>'
-   +[[hr,f,C(d),1],[hu,f,C(d),.45],[hv,fv,'#5A6B75',1]].map(([v,ff,col,opq])=>
+   +[[hr,f,C(d),seg==='house'?1:.45],[hv,fv,'#5A6B75',1]].map(([v,ff,col,opq])=>
      v==null||!isFinite(v)?'':'<circle cx="'+cx.toFixed(1)+'" cy="'+ff(v).toFixed(1)
       +'" r="11" fill="'+col+'" fill-opacity="'+opq+'" stroke="#FBFDFE" stroke-width="4"/>')
     .join('')
@@ -2027,8 +2027,7 @@ function vrRentChart(hostId,d,lo,hi,VMAX,seg){
   const row=(n,v,col,fm)=>v==null||!isFinite(v)?''
    :'<tr><td>'+swatch(col)+n+'</td><td><b>'+fm(v)+'</b></td></tr>';
   return '<b>'+d+' · '+yr+'</b><table>'
-   +row('House rent',hr,C(d),money)
-   +row('Unit rent',hu,C(d),money)
+   +row((seg==='house'?'House':'Unit')+' rent',hr,C(d),money)
    +row('Vacancy rate',hv,'#5A6B75',v=>v.toFixed(2)+'%')+'</table>';
  }};
  bind(hostId);
