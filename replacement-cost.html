@@ -509,10 +509,17 @@ function buildOne(type){
   const isHouse=type==='house';
   const st=sortState[type];
   const activeRegion=document.getElementById('region').value;
+  const idx={outer:0,mid:1,inner:2}[st.key];
   const rows=REGIONS.slice().sort(function(a,b){
     if(st.key==='region'){ return a.region<b.region?-st.dir:a.region>b.region?st.dir:0; }
     const va=ringVals(a,isHouse), vb=ringVals(b,isHouse);
-    const idx={outer:0,mid:1,inner:2}[st.key];
+    // single markets have no Middle/Inner value: keep them grouped at the bottom on those sorts
+    if(idx>0){
+      const aHas=a.rings, bHas=b.rings;
+      if(aHas&&!bHas) return -1;
+      if(!aHas&&bHas) return 1;
+      if(!aHas&&!bHas) return a.region<b.region?-1:a.region>b.region?1:0; // stable A-Z among singles
+    }
     const fa=va[va.length>idx?idx:va.length-1], fb=vb[vb.length>idx?idx:vb.length-1];
     const pa=fa.est/fa.trc, pb=fb.est/fb.trc;   // ratio shown by the bar
     return (pa-pb)*st.dir;
