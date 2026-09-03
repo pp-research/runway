@@ -27,21 +27,21 @@
   --shadow:0 1px 3px rgba(23,27,36,.04),0 8px 24px rgba(23,27,36,.06);
 }
 [data-theme="dark"]{
-  --pp-teal:#2BC4D8; --pp-dark-teal:#0B0E14;
-  --pp-white:#fff; --pp-light-gray:#3A4048; --pp-dark-gray:#9AA0A7;
-  --pp-green:#7Fc46a; --pp-yellow:#FFB53D; --pp-red:#FF5c78;
-  --pp-teal-50:#123138; --pp-teal-100:#1B454E;
-  --surface:#0E1116; --card:#171B22; --line:#2A2F38;
-  --ink:#EEF1F3; --ink-soft:#C2C7CD; --ink-mute:#868D95;
-  --card-grad:#1A1F27; --row-alt:#1C222B; --row-line:#242A33;
-  --neutral-bg:#242A33; --note-ink:#8FD9E6; --grand-ink:#0B0E14;
-  --chip0-bg:#2A303A; --chip0-fg:#B4BAC1;
-  --chip1-bg:#123138; --chip1-fg:#7FD6E4;
-  --chip2-bg:#1E3A22; --chip2-fg:#9BDC8E;
-  --chip3-bg:#27512B; --chip3-fg:#B8E4B0;
-  --chipn-bg:#4A1620; --chipn-fg:#FF9DAE;
-  --ring-bg1:#14323A; --ring-bg2:#0F2830; --ring-border:#1F4A54; --ring-disc:#8FD9E6;
-  --shadow:0 1px 3px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.45);
+  --pp-teal:#3AD4E8; --pp-dark-teal:#0C1017;
+  --pp-white:#fff; --pp-light-gray:#4C535D; --pp-dark-gray:#AEB4BC;
+  --pp-green:#8AD673; --pp-yellow:#FFC155; --pp-red:#FF6B84;
+  --pp-teal-50:#153A43; --pp-teal-100:#215863;
+  --surface:#151A22; --card:#1E242E; --line:#39414D;
+  --ink:#F3F5F7; --ink-soft:#CED3DA; --ink-mute:#9AA1AB;
+  --card-grad:#232A35; --row-alt:#262E3A; --row-line:#323B47;
+  --neutral-bg:#2D3644; --note-ink:#A6E4EF; --grand-ink:#0C1017;
+  --chip0-bg:#323B47; --chip0-fg:#C4CAD2;
+  --chip1-bg:#153A43; --chip1-fg:#8FE0EE;
+  --chip2-bg:#234A28; --chip2-fg:#A8E89A;
+  --chip3-bg:#2F6234; --chip3-fg:#C4EFBC;
+  --chipn-bg:#5A1B27; --chipn-fg:#FFAAB8;
+  --ring-bg1:#1B3D46; --ring-bg2:#153138; --ring-border:#2C5D69; --ring-disc:#A6E4EF;
+  --shadow:0 1px 3px rgba(0,0,0,.4),0 10px 32px rgba(0,0,0,.55);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Montserrat',system-ui,sans-serif;background:var(--surface);color:var(--ink);
@@ -313,7 +313,7 @@ details[open] summary svg{transform:rotate(90deg)}
   </details>
   <div class="summary">
     <h2>All markets</h2>
-    <div class="sub">Bar shows the established median as a share of new-build replacement cost &mdash; how far prices have travelled toward build-cost (100% = established equals replacement; red = already above). With replacement $/m&sup2;, total replacement, and established median. Click a market to load it above; click a column to sort.</div>
+    <div class="sub">Bar shows the established median as a share of new-build replacement cost &mdash; how far prices have travelled toward replacement cost (100% = established equals replacement; red = already above). With replacement $/m&sup2;, total replacement, and established median. Click a market to load it above; click a column to sort.</div>
     <div class="mblock" id="mblock-house">
       <div class="mlabel">House <span>&middot; MHP = median house price</span></div>
       <div class="mtable-wrap"><table class="mtable" id="mtable-house"></table></div>
@@ -413,7 +413,7 @@ function render(){
     return '<div class="ring '+dc+'"><div class="bar"></div>'+
       '<div class="tag">'+name+(m!==1.0?' &middot; '+m+'x land':'')+'</div>'+
       '<div class="disc '+(over?'neg':'pos')+'">'+ratio.toFixed(0)+'<span class="u">%</span></div>'+
-      '<div class="disclbl">'+(over?'MHP is above build-cost':'of build-cost reached')+'</div>'+
+      '<div class="disclbl">'+(over?'MHP is above replacement cost':'of replacement cost reached')+'</div>'+
       '<div class="runway '+(over?'over':'')+'"><span class="rwbar"><span class="rwfill" style="width:'+fill.toFixed(0)+'%"></span></span></div>'+
       '<div class="rows">'+
         '<div class="row"><span>Discount</span><b class="'+(pos?'':'negtxt')+'">'+discTxt+'</b></div>'+
@@ -487,7 +487,7 @@ function stackCell(f,isHouse){
   const pos=f.disc>=0;
   const discTxt=(pos?'':'\u2212')+Math.abs(f.disc*100).toFixed(1)+'%';
   return '<div class="cellstack">'+
-    '<span class="cbnum'+(over?' over':'')+'">'+ratio.toFixed(1)+'%<i> to build-cost</i></span>'+
+    '<span class="cbnum'+(over?' over':'')+'">'+ratio.toFixed(1)+'%<i> to replacement cost</i></span>'+
     '<span class="cbar'+(over?' over':'')+'"><span class="cbarfill" style="width:'+fill.toFixed(0)+'%"></span></span>'+
     '<span class="cl"><i>Discount</i><b'+(pos?'':' class="negtxt"')+'>'+discTxt+'</b></span>'+
     '<span class="cl"><i>Repl $/m\u00B2</i>'+fmt0(f.psm)+'</span>'+
@@ -767,11 +767,10 @@ buildAssumptions();
 buildRtable();
 wireDataButtons();
 wireTabs();
-// theme toggle (in-memory; defaults to system preference)
+// theme toggle (in-memory; defaults to light)
 (function(){
   const root=document.documentElement;
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  if(prefersDark) root.setAttribute('data-theme','dark');
+  root.setAttribute('data-theme','light');
   document.getElementById('themeBtn').addEventListener('click',function(){
     root.setAttribute('data-theme', root.getAttribute('data-theme')==='dark'?'light':'dark');
   });
