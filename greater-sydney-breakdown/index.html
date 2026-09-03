@@ -1642,7 +1642,7 @@ function pLights(){
   +'<title>Districts in their own colours</title>'+ORDER.map(d=>
    '<path d="'+MAPD.paths[d]+'" data-d="'+d+'" fill="'+C(d)+'" fill-opacity="'
     +(hidden.has(d)?.12:.85)+'" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"></path>').join('')+'</svg>');
- const MAPOFF={'North':[26,-18],'East':[14,20],'Central':[-34,14],'South':[-14,12],'West':[0,0],'Central Coast':[6,-8]};
+ const MAPOFF={'North':[26,-18],'East':[14,20],'Central':[-2,40],'South':[-14,12],'West':[-42,0],'Central Coast':[6,-8]};
  const msvg=gid('l-map').querySelector('svg');
  $$('#l-map path').forEach(p=>{const d=p.dataset.d, b=p.getBBox(), o=MAPOFF[d]||[0,0];
   const t=document.createElementNS('http://www.w3.org/2000/svg','text');
