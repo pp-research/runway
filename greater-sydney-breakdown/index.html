@@ -1219,7 +1219,7 @@ function multiLine(hostId,pick,opt){
   ys.forEach(y=>{const v=at(s.o,y);
    if(v==null||!isFinite(v)){open=false;return}
    d+=(open?'L':'M')+x(y).toFixed(1)+' '+fx(v).toFixed(1)+' ';open=true});
-  const dsh=PAL[s.d]?(opt.solid?'none':DASH(s.d)):'6 4';   // extras stay dashed even under opt.solid - the dash is what marks them as reference
+  const dsh=PAL[s.d]?(opt.solid?'none':DASH(s.d)):(opt.solidExtra?'none':'6 4');   // extras stay dashed (their reference mark) unless solidExtra
   g+='<path d="'+d.trim()+'" fill="none" stroke="'+LC(s.d)+'" stroke-width="2.1"'
    +' stroke-linejoin="round" stroke-linecap="round"'
    +(dsh!=='none'?' stroke-dasharray="'+dsh+'"':'')+'/>';
