@@ -288,6 +288,8 @@ body.railshut .stage{margin-left:56px}
 .tlth button{border:0;background:transparent;width:1.42cqw;padding:0;font-size:.52cqw;font-weight:800;
  letter-spacing:.02em;text-transform:uppercase;color:#1B3350;cursor:pointer;text-align:center;white-space:nowrap}
 .tlth button[aria-pressed="true"]{color:#0E7490}
+.tlr2{display:inline-flex;align-items:center;gap:.8cqw}
+.vch{font-size:.74cqw;font-weight:700;width:7.8cqw;text-align:right;white-space:nowrap}
 .pgrp{font-size:.72cqw;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#1B3350;margin:.55cqw 0 .2cqw}
 .prow{display:flex;align-items:center;justify-content:space-between;gap:.5cqw;padding:.2cqw 0;border-top:1px solid rgba(23,27,36,.08);font-size:.8cqw;color:#4A5566}
 .pdots{display:inline-flex;gap:.28cqw}
@@ -1607,22 +1609,23 @@ function pLights(){
     forecast where it differs, the number the market's rank of twelve on that
     pillar. Pillar headers sort by rank; the map wears the district colours. */
  const SIGC={GREEN:'#2F8F52',ORANGE:'#D9962B',RED:'#C4203C'};
- const rows=ORDER.flatMap(d=>SEGS.map(s=>{const x=MOCK.divisions[d].seg[s], c=MOCK.divisions[d].conf;
-  return {d:d,s:s,x:x,c:c}}));
+ const rows=ORDER.map(d=>({d:d,p:MOCK.divisions[d].dvd,c:MOCK.divisions[d].conf}));
  const rk=(key,get)=>{const o=rows.slice().sort((a,b)=>get(b)-get(a));
   o.forEach((r,i)=>r[key]=i+1)};
- rk('rs',r=>r.x.dscore); rk('rv',r=>r.x.vscore); rk('rc',r=>r.c.cscore);
+ rk('rs',r=>r.p.sd10); rk('rv',r=>r.p.val10); rk('rc',r=>r.c.cscore);
  const m=(sig,rank)=>'<span class="m" style="background:'+SIGC[sig]+'">'+rank+'</span>';
+ const VCOL={'Best time to invest':'#1F6B4F','Worth watching':'#1D6A8C','Past its peak':'#8A4B00','Not the best time':'#A81028'};
  const KEYS={sd:r=>r.rs,val:r=>r.rv,conf:r=>r.rc};
  let list=rows.slice();
  if(tlSort&&KEYS[tlSort]) list.sort((a,b)=>KEYS[tlSort](a)-KEYS[tlSort](b));
- put('l-tbl','<div class="tlth"><span class="nm">Market</span><span class="tlmini">'
+ put('l-tbl','<div class="tlth"><span class="nm">District</span><span class="tlr2"><span class="tlmini">'
   +[['sd','S&amp;D'],['val','Val'],['conf','Conf']].map(k=>'<button data-k="'+k[0]
-   +'" aria-pressed="'+(tlSort===k[0])+'">'+k[1]+(tlSort===k[0]?' \u25be':'')+'</button>').join('')+'</span></div>'
+   +'" aria-pressed="'+(tlSort===k[0])+'">'+k[1]+(tlSort===k[0]?' \u25be':'')+'</button>').join('')
+  +'</span><span class="vch" style="color:#1B3350">Verdict</span></span></div>'
   +list.map(r=>'<div class="tlrow'+(hidden.has(r.d)?' off':'')+'" data-d="'+r.d+'">'
-   +'<span class="nm"><i style="background:'+C(r.d)+'"></i>'+r.d+' \u00b7 '+r.s+'</span>'
-   +'<span class="tlmini">'+m(r.x.dsig,r.rs)+m(r.x.vsig,r.rv)
-   +m(r.c.csig,r.rc)+'</span></div>').join(''));
+   +'<span class="nm"><i style="background:'+C(r.d)+'"></i>'+r.d+'</span>'
+   +'<span class="tlr2"><span class="tlmini">'+m(r.p.sd,r.rs)+m(r.p.val,r.rv)+m(r.c.csig,r.rc)+'</span>'
+   +'<span class="vch" style="color:'+VCOL[r.p.verdict]+'">'+r.p.verdict+'</span></span></div>').join(''));
  $$('#l-tbl .tlrow').forEach(el=>{el.onclick=()=>toggle(el.dataset.d)});
  $$('#l-tbl .tlth button').forEach(b=>b.onclick=()=>{tlSort=(tlSort===b.dataset.k?null:b.dataset.k);pLights()});
  const SIG2=v=>v>=7?'GREEN':v>=4?'ORANGE':'RED';
