@@ -1502,10 +1502,8 @@ function bars(hostId,cats,series,opt){
 
 /* ---------- clickable legend ---------- */
 function divLegend(hostId,note){
- const mk=d=>'<svg width="24" height="9" viewBox="0 0 24 9" aria-hidden="true">'
-  +'<line x1="1" x2="23" y1="4.5" y2="4.5" stroke="'+C(d)+'" stroke-width="2.1"'
-  +(DASH(d)!=='none'?' stroke-dasharray="'+DASH(d)+'"':'')+'/>'
-  +'<circle cx="12" cy="4.5" r="3.1" fill="'+C(d)+'" stroke="#FBFDFE" stroke-width="1"/></svg>';
+ const mk=d=>'<svg width="11" height="11" viewBox="0 0 11 11" aria-hidden="true">'
+  +'<rect x="0.5" y="0.5" width="10" height="10" rx="2.2" fill="'+C(d)+'"/></svg>';
  put(hostId,ORDER.map(d=>'<button data-tog="'+d+'" aria-pressed="'+(!hidden.has(d))+'"'
   +' title="click to '+(hidden.has(d)?'show':'hide')+' '+d+' everywhere">'+mk(d)+d+'</button>').join('')
   +(note?'<span class="st">'+note+'</span>':''));
@@ -2166,7 +2164,7 @@ function pHholds(){
 }
 function pPopch(){
  const _lt=mean(Object.values(MOCK.nat.gspopch));   // whole-GS growth, population-weighted
- multiLine('c-popch',d=>H[d].popch,{zeroL:1,events:MOCK.events,lta:_lt,
+ multiLine('c-popch',d=>H[d].popch,{zeroL:1,solid:1,lta:_lt,
   ltaL:'Greater Sydney long-term average '+_lt.toFixed(1)+'%',
   fmt:v=>v.toFixed(1)+'%',title:'Change in population',ytitle:'Population Change'});
  divLegend('c-popch-lg','NSW and national comparison lines need the ABS release');
