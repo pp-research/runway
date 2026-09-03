@@ -89,6 +89,12 @@ select:focus{outline:none;border-color:var(--pp-teal)}
 .ring .disc{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1}
 .ring .disc .u{font-size:17px;font-weight:700;margin-left:1px}
 .ring .disclbl{font-size:11.5px;font-weight:600;color:var(--ink-mute);margin-top:3px}
+.ring .runway{margin-top:12px;margin-bottom:2px}
+.ring .runway .rwbar{display:block;height:6px;border-radius:3px;background:var(--ring-border);overflow:hidden}
+.ring .runway .rwfill{display:block;height:100%;border-radius:3px;background:var(--pp-teal);transition:width .3s}
+.ring .runway.over .rwfill{background:var(--pp-red)}
+.ring .runway.over .rwbar{background:var(--chipn-bg)}
+.ring .row b.negtxt{color:var(--pp-red)}
 .ring .rows{margin-top:15px;border-top:1px dashed var(--ring-border);padding-top:12px;display:flex;flex-direction:column;gap:7px}
 .ring .row{display:flex;justify-content:space-between;font-size:12.5px}
 .ring .row span{color:var(--ink-mute);font-weight:500}
@@ -168,10 +174,17 @@ details[open] summary svg{transform:rotate(90deg)}
 .mtable td.mkt .st{color:var(--ink-mute);font-weight:500;font-size:10.5px}
 .mtable td.single{color:var(--ink-mute);font-weight:500;font-style:italic;text-align:center;font-size:11px;line-height:1.3}
 .mtable .sep{border-left:1px solid var(--line)}
-.cellstack{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.cellstack{display:flex;flex-direction:column;align-items:stretch;gap:3px}
 .cellstack .cl{font-size:10px;color:var(--ink-mute);font-weight:600;font-variant-numeric:tabular-nums;
-  display:flex;gap:5px;align-items:baseline;white-space:nowrap}
-.cellstack .cl i{font-style:normal;color:var(--pp-light-gray);font-weight:500;font-size:9px;text-transform:uppercase;letter-spacing:.02em}
+  display:flex;gap:5px;align-items:baseline;white-space:nowrap;justify-content:flex-end}
+.cellstack .cl i{font-style:normal;color:var(--pp-light-gray);font-weight:500;font-size:9px;text-transform:uppercase;letter-spacing:.02em;margin-right:auto}
+.cbnum{font-size:13px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;text-align:right;display:block}
+.cbnum i{font-style:normal;font-size:9px;font-weight:600;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.02em;margin-left:3px}
+.cbnum.over{color:var(--pp-red)}
+.cbar{position:relative;display:block;height:7px;border-radius:4px;background:var(--ring-border);overflow:hidden;margin:3px 0 5px;min-width:96px}
+.cbarfill{position:absolute;top:0;left:0;height:100%;border-radius:4px;background:var(--pp-teal);transition:width .3s}
+.cbar.over .cbarfill{background:var(--pp-red)}
+.cellstack .cl b.negtxt{color:var(--pp-red)}
 .dchip{display:inline-block;min-width:52px;padding:3px 8px;border-radius:6px;font-weight:800;text-align:center;font-size:13px;margin-bottom:2px}
 .d0{background:var(--chip0-bg);color:var(--pp-dark-gray)}
 .d1{background:var(--pp-teal-50);color:var(--note-ink)}
@@ -189,6 +202,68 @@ details[open] summary svg{transform:rotate(90deg)}
   .head,.controls,.ctx,.rings,.note,details,.foot{padding-left:18px;padding-right:18px}
   .ring .disc{font-size:30px}
 }
+/* tabs */
+.tabs{display:flex;gap:4px;padding:14px 26px 0;border-bottom:1px solid var(--line)}
+.tab{font-family:inherit;font-size:13px;font-weight:700;color:var(--ink-mute);background:none;border:none;
+  padding:10px 16px;cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab:hover{color:var(--ink-soft)}
+.tab.on{color:var(--pp-teal);border-bottom-color:var(--pp-teal)}
+.panel{display:none}
+.panel.on{display:block}
+/* data editor */
+.datawrap{padding:22px 26px 8px}
+.databar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px;
+  background:var(--pp-teal-50);border:1px solid var(--ring-border);border-radius:12px;padding:14px 16px}
+.dbinfo{font-size:12.5px;color:var(--note-ink);font-weight:500;flex:1;min-width:240px;line-height:1.5}
+.dbinfo b{font-weight:700}
+.dbbtns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:inherit;font-size:12.5px;font-weight:700;border-radius:9px;padding:9px 15px;cursor:pointer;
+  border:1.5px solid var(--line);transition:all .15s;white-space:nowrap}
+.btn.ghost{background:var(--card);color:var(--ink-soft)}
+.btn.ghost:hover{border-color:var(--pp-teal);color:var(--pp-teal)}
+.btn.primary{background:var(--pp-teal);color:#fff;border-color:var(--pp-teal)}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.saved{background:var(--pp-green);border-color:var(--pp-green);color:#fff}
+.dsec{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-mute);
+  margin:6px 0 12px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.dsecsub{font-size:10.5px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--ink-mute)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:26px}
+.afield{display:flex;flex-direction:column;gap:5px;background:var(--surface);border:1px solid var(--line);
+  border-radius:10px;padding:10px 12px}
+.afield label{font-size:10.5px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--ink-mute)}
+.afield .wrap{display:flex;align-items:center;gap:6px}
+.afield .pre{font-size:13px;color:var(--ink-mute);font-weight:600}
+.afield input{font-family:inherit;font-size:14px;font-weight:700;color:var(--ink);background:var(--card);
+  border:1.5px solid var(--line);border-radius:7px;padding:7px 9px;width:100%;text-align:right}
+.afield input:focus{outline:none;border-color:var(--pp-teal)}
+.afield .suf{font-size:12px;color:var(--ink-mute);font-weight:600;white-space:nowrap}
+.rtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.rtable{width:100%;border-collapse:collapse;font-size:12px;min-width:920px}
+.rtable thead th{position:sticky;top:0;background:var(--card);font-size:9.5px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.03em;color:var(--ink-mute);padding:9px 8px;border-bottom:1.5px solid var(--line);text-align:right;white-space:nowrap}
+.rtable thead th.l{text-align:left}
+.rtable tbody td{padding:5px 8px;border-bottom:1px solid var(--row-line);text-align:right}
+.rtable tbody tr:last-child td{border-bottom:none}
+.rtable tbody tr:hover td{background:var(--row-alt)}
+.rtable td.rname{text-align:left;font-weight:700;color:var(--ink);white-space:nowrap}
+.rtable td.rname .st{color:var(--ink-mute);font-weight:500;font-size:10px}
+.rtable input{font-family:inherit;font-size:12px;font-weight:600;color:var(--ink);background:transparent;
+  border:1px solid transparent;border-radius:6px;padding:5px 6px;width:88px;text-align:right;transition:all .12s}
+.rtable input:hover{border-color:var(--line);background:var(--card)}
+.rtable input:focus{outline:none;border-color:var(--pp-teal);background:var(--card)}
+.rtable input.mult{width:64px}
+.rtable input:disabled{color:var(--pp-light-gray);background:transparent;border-color:transparent}
+.ringtgl{position:relative;width:42px;height:23px;border-radius:14px;background:var(--line);border:none;cursor:pointer;
+  transition:background .15s;flex:none}
+.ringtgl::after{content:"";position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;
+  background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.ringtgl.on{background:var(--pp-teal)}
+.ringtgl.on::after{transform:translateX(19px)}
+.rtnote{font-size:11px;color:var(--ink-mute);font-weight:500;margin:12px 2px 4px;line-height:1.5}
+@media(max-width:640px){
+  .tabs{padding-left:18px;padding-right:18px}
+  .datawrap{padding-left:18px;padding-right:18px}
+}
 </style>
 </head>
 <body>
@@ -204,6 +279,12 @@ details[open] summary svg{transform:rotate(90deg)}
       <svg class="ico-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
     </button>
   </div>
+  <div class="tabs">
+    <button class="tab on" data-tab="calc">Calculator</button>
+    <button class="tab" data-tab="data">Data</button>
+  </div>
+
+  <div class="panel on" id="panel-calc">
   <div class="controls">
     <div class="field grow">
       <label for="region">Market</label>
@@ -227,7 +308,7 @@ details[open] summary svg{transform:rotate(90deg)}
   </details>
   <div class="summary">
     <h2>All markets</h2>
-    <div class="sub">Discount of established median vs new-build replacement cost, per ring, with replacement $/m&sup2;, total replacement, and established median. Click a market to load it above; click a column to sort.</div>
+    <div class="sub">Bar shows the established median as a share of new-build replacement cost &mdash; how far prices have travelled toward build-cost (100% = established equals replacement; red = already above). With replacement $/m&sup2;, total replacement, and established median. Click a market to load it above; click a column to sort.</div>
     <div class="mblock" id="mblock-house">
       <div class="mlabel">House <span>&middot; MHP = median house price</span></div>
       <div class="mtable-wrap"><table class="mtable" id="mtable-house"></table></div>
@@ -247,12 +328,39 @@ details[open] summary svg{transform:rotate(90deg)}
       <div><b>Single-market regions</b> show one figure where vacant-land sampling did not support a defensible ring gradient (flat, thin, or inverted) &mdash; the calibration doubles as a test of whether a market is multi-centred enough for rings.</div>
     </div>
   </details>
+  </div><!-- /panel-calc -->
+
+  <div class="panel" id="panel-data">
+    <div class="datawrap">
+      <div class="databar">
+        <div class="dbinfo">Edit the model inputs below. Changes recompute the calculator live. Use <b>Save</b> to download a standalone copy with your edits baked in.</div>
+        <div class="dbbtns">
+          <button class="btn ghost" id="btnCopy">Copy JSON</button>
+          <button class="btn ghost" id="btnReset">Reset</button>
+          <button class="btn primary" id="btnSave">Save standalone HTML</button>
+        </div>
+      </div>
+
+      <h3 class="dsec">Global assumptions</h3>
+      <div class="agrid" id="agrid"></div>
+
+      <h3 class="dsec">Region data <span class="dsecsub">click a row's rings toggle to switch a market between 3-ring and single</span></h3>
+      <div class="rtable-wrap">
+        <table class="rtable" id="rtable"></table>
+      </div>
+      <div class="rtnote">Land price, land size, Rawlinsons multiplier, ABS index, and the established house/unit medians drive the calculation. Middle/Inner multipliers apply only when Rings is on.</div>
+    </div>
+  </div><!-- /panel-data -->
+
   <div class="foot">Land &amp; price medians: CoreLogic. Build cost: ABS Construction Index &times; Rawlinsons. Ring multipliers: realestate.com.au vacant-land sales. Indicative model for portfolio screening &mdash; not a formal valuation.</div>
 </div>
 <script>
 const REGIONS = [{"region":"Adelaide","state":"SA","landPrice":360019,"landSize":325,"raw":100,"idx":164.7,"houseEst":920000,"unitEst":665000,"rings":true,"mid":1.5,"inner":1.8},{"region":"Albury","state":"NSW","landPrice":305000,"landSize":906,"raw":101,"idx":164.6,"houseEst":700000,"unitEst":419000,"rings":false,"mid":null,"inner":null},{"region":"Ballarat","state":"VIC","landPrice":275000,"landSize":507,"raw":100,"idx":166.6,"houseEst":610000,"unitEst":435000,"rings":false,"mid":null,"inner":null},{"region":"Brisbane","state":"QLD","landPrice":489000,"landSize":450,"raw":100,"idx":170.1,"houseEst":1100000,"unitEst":790000,"rings":true,"mid":1.7,"inner":2.2},{"region":"Bunbury","state":"WA","landPrice":419000,"landSize":780,"raw":105,"idx":157.7,"houseEst":700000,"unitEst":576500,"rings":false,"mid":null,"inner":null},{"region":"Bundaberg","state":"QLD","landPrice":335000,"landSize":1044,"raw":107,"idx":170.1,"houseEst":717000,"unitEst":520000,"rings":false,"mid":null,"inner":null},{"region":"Cairns","state":"QLD","landPrice":415000,"landSize":810,"raw":110,"idx":170.1,"houseEst":781500,"unitEst":440000,"rings":false,"mid":null,"inner":null},{"region":"Canberra","state":"ACT","landPrice":717000,"landSize":595,"raw":102,"idx":172.6,"houseEst":1000000,"unitEst":606000,"rings":false,"mid":null,"inner":null},{"region":"Central Coast","state":"NSW","landPrice":660000,"landSize":602,"raw":102,"idx":164.6,"houseEst":1050000,"unitEst":712000,"rings":false,"mid":null,"inner":null},{"region":"Coffs Harbour","state":"NSW","landPrice":520000,"landSize":652,"raw":105,"idx":164.6,"houseEst":955000,"unitEst":630000,"rings":false,"mid":null,"inner":null},{"region":"Darwin","state":"NT","landPrice":400000,"landSize":836,"raw":100,"idx":141.7,"houseEst":677500,"unitEst":420000,"rings":false,"mid":null,"inner":null},{"region":"Gladstone","state":"QLD","landPrice":270000,"landSize":1012,"raw":117,"idx":170.1,"houseEst":630000,"unitEst":395000,"rings":false,"mid":null,"inner":null},{"region":"Gold Coast","state":"QLD","landPrice":880000,"landSize":744,"raw":102,"idx":170.1,"houseEst":1336800,"unitEst":915000,"rings":true,"mid":1.7,"inner":3},{"region":"Greater Bendigo","state":"VIC","landPrice":279500,"landSize":626,"raw":100,"idx":166.6,"houseEst":640000,"unitEst":481000,"rings":false,"mid":null,"inner":null},{"region":"Greater Geelong","state":"VIC","landPrice":378000,"landSize":399,"raw":100,"idx":166.6,"houseEst":730000,"unitEst":550000,"rings":true,"mid":1.2,"inner":1.6},{"region":"Hobart","state":"TAS","landPrice":320000,"landSize":752,"raw":100,"idx":161.9,"houseEst":750000,"unitEst":575500,"rings":true,"mid":1.4,"inner":2},{"region":"Ipswich","state":"QLD","landPrice":433500,"landSize":440,"raw":100,"idx":170.1,"houseEst":890000,"unitEst":700000,"rings":false,"mid":null,"inner":null},{"region":"Launceston","state":"TAS","landPrice":285000,"landSize":906,"raw":95,"idx":161.9,"houseEst":632600,"unitEst":480000,"rings":false,"mid":null,"inner":null},{"region":"Mackay","state":"QLD","landPrice":280800,"landSize":892,"raw":117,"idx":170.1,"houseEst":700000,"unitEst":415000,"rings":false,"mid":null,"inner":null},{"region":"Mandurah","state":"WA","landPrice":340000,"landSize":406,"raw":100,"idx":157.7,"houseEst":823000,"unitEst":640000,"rings":false,"mid":null,"inner":null},{"region":"Melbourne","state":"VIC","landPrice":416000,"landSize":378,"raw":100,"idx":166.6,"houseEst":895000,"unitEst":640000,"rings":true,"mid":1.6,"inner":4},{"region":"Mildura","state":"VIC","landPrice":182000,"landSize":635,"raw":105,"idx":166.6,"houseEst":555000,"unitEst":411000,"rings":false,"mid":null,"inner":null},{"region":"Newcastle","state":"NSW","landPrice":692500,"landSize":652,"raw":101,"idx":164.6,"houseEst":1090000,"unitEst":765000,"rings":true,"mid":1.5,"inner":3.1},{"region":"Orange","state":"NSW","landPrice":345000,"landSize":613,"raw":105,"idx":164.6,"houseEst":765000,"unitEst":505000,"rings":false,"mid":null,"inner":null},{"region":"Perth","state":"WA","landPrice":414000,"landSize":375,"raw":100,"idx":157.7,"houseEst":940000,"unitEst":675000,"rings":true,"mid":1.5,"inner":2.3},{"region":"Port Macquarie-Hastings","state":"NSW","landPrice":468500,"landSize":661,"raw":107,"idx":164.6,"houseEst":912000,"unitEst":647750,"rings":false,"mid":null,"inner":null},{"region":"Rockhampton","state":"QLD","landPrice":255000,"landSize":1200,"raw":117,"idx":170.1,"houseEst":636000,"unitEst":525250,"rings":false,"mid":null,"inner":null},{"region":"Rockingham","state":"WA","landPrice":355250,"landSize":429,"raw":100,"idx":157.7,"houseEst":854000,"unitEst":633000,"rings":false,"mid":null,"inner":null},{"region":"Sunshine Coast","state":"QLD","landPrice":680000,"landSize":715,"raw":102,"idx":170.1,"houseEst":1260000,"unitEst":875000,"rings":true,"mid":1.5,"inner":3.1},{"region":"Sydney","state":"NSW","landPrice":729000,"landSize":450,"raw":100,"idx":164.6,"houseEst":1550000,"unitEst":838000,"rings":true,"mid":1.4,"inner":1.9},{"region":"Tamworth Regional","state":"NSW","landPrice":250000,"landSize":835,"raw":105,"idx":164.6,"houseEst":630000,"unitEst":392500,"rings":false,"mid":null,"inner":null},{"region":"Toowoomba","state":"QLD","landPrice":369000,"landSize":913,"raw":102,"idx":170.1,"houseEst":800000,"unitEst":647500,"rings":false,"mid":null,"inner":null},{"region":"Townsville","state":"QLD","landPrice":274000,"landSize":682,"raw":116,"idx":170.1,"houseEst":686500,"unitEst":470000,"rings":false,"mid":null,"inner":null},{"region":"Wagga Wagga","state":"NSW","landPrice":305000,"landSize":725,"raw":103,"idx":164.6,"houseEst":704000,"unitEst":445000,"rings":false,"mid":null,"inner":null},{"region":"Wodonga","state":"VIC","landPrice":245000,"landSize":628,"raw":103,"idx":166.6,"houseEst":650000,"unitEst":445000,"rings":false,"mid":null,"inner":null},{"region":"Wollongong","state":"NSW","landPrice":611250,"landSize":478,"raw":101,"idx":164.6,"houseEst":1230000,"unitEst":796500,"rings":false,"mid":null,"inner":null}];
-const A = {landShare:100,houseFloor:180,unitFloor:85,profit:0.25,landAcq:0.10,other:0.20,
+let A = {landShare:100,houseFloor:180,unitFloor:85,profit:0.25,landAcq:0.10,other:0.20,
   houseAnchor:2358.12,unitAnchor:4225.37,indexAnchor:163.3};
+// deep-frozen originals for Reset
+const ORIG_A = JSON.parse(JSON.stringify(A));
+const ORIG_REGIONS = JSON.parse(JSON.stringify(REGIONS));
 let dwelling='house';
 const fmt0=v=>'$'+Math.round(v).toLocaleString('en-AU');
 function calc(r,type,mult){
@@ -289,11 +397,18 @@ function render(){
     const c=calc(r,dwelling,m);
     const dc=discClass(c.disc);
     const pos=c.disc>=0;
+    const ratio=c.est/c.trc*100;          // MHP as % of replacement cost
+    const over=ratio>100;
+    const fill=Math.max(0,Math.min(100,ratio));
+    const discTxt=(pos?'':'&minus;')+Math.abs(c.disc*100).toFixed(1)+'%';
+    const discLbl=pos?'cheaper to buy established':'cheaper to build new';
     return '<div class="ring '+dc+'"><div class="bar"></div>'+
       '<div class="tag">'+name+(m!==1.0?' &middot; '+m+'x land':'')+'</div>'+
-      '<div class="disc '+(pos?'pos':'neg')+'">'+(pos?'':'&minus;')+Math.abs(c.disc*100).toFixed(1)+'<span class="u">%</span></div>'+
-      '<div class="disclbl">'+(pos?'cheaper to buy established':'cheaper to build new')+'</div>'+
+      '<div class="disc '+(over?'neg':'pos')+'">'+ratio.toFixed(0)+'<span class="u">%</span></div>'+
+      '<div class="disclbl">'+(over?'MHP is above build-cost':'of build-cost reached')+'</div>'+
+      '<div class="runway '+(over?'over':'')+'"><span class="rwbar"><span class="rwfill" style="width:'+fill.toFixed(0)+'%"></span></span></div>'+
       '<div class="rows">'+
+        '<div class="row"><span>Discount</span><b class="'+(pos?'':'negtxt')+'">'+discTxt+'</b></div>'+
         '<div class="row"><span>Replacement $/m&sup2;</span><b>'+fmt0(c.psm)+'</b></div>'+
         '<div class="row"><span>Total replacement</span><b>'+fmt0(c.trc)+'</b></div>'+
       '</div></div>';
@@ -356,13 +471,17 @@ function buildTable(r,ringsDef){
   html+='</tbody>';
   document.getElementById('ctable').innerHTML=html;
 }
-function discChipClass(d){ if(d<0)return'dn'; if(d>=0.30)return'd3'; if(d>=0.15)return'd2'; if(d>=0.05)return'd1'; return'd0'; }
 function stackCell(f,isHouse){
-  const pos=f.disc>=0;
-  const pct=(pos?'':'\u2212')+Math.abs(f.disc*100).toFixed(1)+'%';
   const estLbl=isHouse?'MHP':'MUP';
+  const ratio=f.est/f.trc*100;
+  const over=ratio>100;
+  const fill=Math.max(0,Math.min(100,ratio));
+  const pos=f.disc>=0;
+  const discTxt=(pos?'':'\u2212')+Math.abs(f.disc*100).toFixed(1)+'%';
   return '<div class="cellstack">'+
-    '<span class="dchip '+discChipClass(f.disc)+'">'+pct+'</span>'+
+    '<span class="cbnum'+(over?' over':'')+'">'+ratio.toFixed(1)+'%<i> to build-cost</i></span>'+
+    '<span class="cbar'+(over?' over':'')+'"><span class="cbarfill" style="width:'+fill.toFixed(0)+'%"></span></span>'+
+    '<span class="cl"><i>Discount</i><b'+(pos?'':' class="negtxt"')+'>'+discTxt+'</b></span>'+
     '<span class="cl"><i>Repl $/m\u00B2</i>'+fmt0(f.psm)+'</span>'+
     '<span class="cl"><i>Total repl</i>'+fmt0(f.trc)+'</span>'+
     '<span class="cl"><i>Est '+estLbl+'</i>'+fmt0(f.est)+'</span>'+
@@ -394,8 +513,8 @@ function buildOne(type){
     if(st.key==='region'){ return a.region<b.region?-st.dir:a.region>b.region?st.dir:0; }
     const va=ringVals(a,isHouse), vb=ringVals(b,isHouse);
     const idx={outer:0,mid:1,inner:2}[st.key];
-    const pa=va[va.length>idx?idx:va.length-1].disc;
-    const pb=vb[vb.length>idx?idx:vb.length-1].disc;
+    const fa=va[va.length>idx?idx:va.length-1], fb=vb[vb.length>idx?idx:vb.length-1];
+    const pa=fa.est/fa.trc, pb=fb.est/fb.trc;   // ratio shown by the bar
     return (pa-pb)*st.dir;
   });
   const arr=function(k){
@@ -441,6 +560,155 @@ function buildOne(type){
 function buildMatrix(){ buildOne('house'); buildOne('unit'); }
 
 
+// ---------- DATA EDITOR ----------
+// assumption field specs: key, label, prefix, suffix, type(pct|money|num), step
+const A_FIELDS=[
+  ['landShare','Land share per unit','','m\u00B2','num',1],
+  ['houseFloor','House floor area','','m\u00B2','num',1],
+  ['unitFloor','Unit floor area','','m\u00B2','num',1],
+  ['profit','Developer profit margin','','%','pct',0.5],
+  ['landAcq','Land acquisition cost','','%','pct',0.5],
+  ['other','Other costs','','%','pct',0.5],
+  ['houseAnchor','House build anchor','$','/m\u00B2','money',1],
+  ['unitAnchor','Unit build anchor','$','/m\u00B2','money',1],
+  ['indexAnchor','ABS index anchor','','','num',0.1]
+];
+function buildAssumptions(){
+  const g=document.getElementById('agrid');
+  g.innerHTML=A_FIELDS.map(function(f){
+    const key=f[0],lab=f[1],pre=f[2],suf=f[3],type=f[4],step=f[5];
+    const val=(type==='pct')?(A[key]*100):A[key];
+    return '<div class="afield"><label>'+lab+'</label><div class="wrap">'+
+      (pre?'<span class="pre">'+pre+'</span>':'')+
+      '<input type="number" step="'+step+'" data-akey="'+key+'" data-atype="'+type+'" value="'+val+'">'+
+      (suf?'<span class="suf">'+suf+'</span>':'')+
+      '</div></div>';
+  }).join('');
+  g.querySelectorAll('input').forEach(function(inp){
+    inp.addEventListener('input',function(){
+      const key=inp.dataset.akey, type=inp.dataset.atype;
+      let v=parseFloat(inp.value); if(isNaN(v))return;
+      A[key]=(type==='pct')?v/100:v;
+      recomputeAll();
+    });
+  });
+}
+// region columns: key, label, width class, step, mult?(only when rings)
+const R_COLS=[
+  ['landPrice','Land price','',1000],
+  ['landSize','Land size','',1],
+  ['raw','Rawlinsons','',1],
+  ['idx','ABS index','',0.1],
+  ['houseEst','House median','',1000],
+  ['unitEst','Unit median','',1000]
+];
+function buildRtable(){
+  let h='<thead><tr><th class="l">Market</th>';
+  R_COLS.forEach(function(c){ h+='<th>'+c[1]+'</th>'; });
+  h+='<th>Rings</th><th>Middle &times;</th><th>Inner &times;</th></tr></thead><tbody>';
+  REGIONS.forEach(function(r,i){
+    h+='<tr data-i="'+i+'"><td class="rname">'+r.region+' <span class="st">'+r.state+'</span></td>';
+    R_COLS.forEach(function(c){
+      h+='<td><input type="number" step="'+c[3]+'" data-i="'+i+'" data-key="'+c[0]+'" value="'+r[c[0]]+'"></td>';
+    });
+    // rings toggle
+    h+='<td style="text-align:center"><button class="ringtgl'+(r.rings?' on':'')+'" data-i="'+i+'" aria-label="Toggle rings"></button></td>';
+    // multipliers (disabled when rings off)
+    const dis=r.rings?'':' disabled';
+    const midv=r.rings?r.mid:'';
+    const innv=r.rings?r.inner:'';
+    h+='<td><input class="mult" type="number" step="0.1" data-i="'+i+'" data-key="mid" value="'+midv+'"'+dis+'></td>';
+    h+='<td><input class="mult" type="number" step="0.1" data-i="'+i+'" data-key="inner" value="'+innv+'"'+dis+'></td>';
+    h+='</tr>';
+  });
+  h+='</tbody>';
+  const t=document.getElementById('rtable');
+  t.innerHTML=h;
+  // numeric field edits
+  t.querySelectorAll('input').forEach(function(inp){
+    inp.addEventListener('input',function(){
+      const i=+inp.dataset.i, key=inp.dataset.key;
+      let v=parseFloat(inp.value);
+      if(isNaN(v)){ if(key==='mid'||key==='inner'){ return; } else return; }
+      REGIONS[i][key]=v;
+      recomputeAll();
+    });
+  });
+  // rings toggles
+  t.querySelectorAll('.ringtgl').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      const i=+btn.dataset.i, r=REGIONS[i];
+      r.rings=!r.rings;
+      if(r.rings){ if(r.mid==null)r.mid=1.5; if(r.inner==null)r.inner=2.0; }
+      buildRtable();       // rebuild to enable/disable mult inputs
+      recomputeAll();
+    });
+  });
+}
+function recomputeAll(){
+  // keep dropdown selection valid, refresh everything that shows numbers
+  render();
+  buildMatrix();
+}
+// ---- Save standalone / copy / reset ----
+function currentDataJSON(){ return JSON.stringify(REGIONS,null,2); }
+function buildStandalone(){
+  // clone current document, strip runtime-injected panels, replace the REGIONS + A defaults
+  const doc='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  // replace the REGIONS array literal
+  const regRe=/const REGIONS = \[[\s\S]*?\];/;
+  const aRe=/let A = \{[\s\S]*?\};/;
+  const newReg='const REGIONS = '+JSON.stringify(REGIONS)+';';
+  const newA='let A = '+JSON.stringify(A)+';';
+  let out=doc.replace(regRe,function(){return newReg;}).replace(aRe,function(){return newA;});
+  // the outerHTML captured live DOM (tables already rendered); that's fine — script re-renders on load.
+  return out;
+}
+function download(filename,text){
+  const blob=new Blob([text],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); },100);
+}
+function wireDataButtons(){
+  document.getElementById('btnSave').addEventListener('click',function(){
+    const btn=this;
+    try{
+      download('replacement-cost-tool.html', buildStandalone());
+      btn.textContent='Saved \u2713'; btn.classList.add('saved');
+      setTimeout(function(){ btn.textContent='Save standalone HTML'; btn.classList.remove('saved'); },1800);
+    }catch(e){ btn.textContent='Save failed'; setTimeout(function(){btn.textContent='Save standalone HTML';},1800); }
+  });
+  document.getElementById('btnCopy').addEventListener('click',function(){
+    const btn=this;
+    const txt=currentDataJSON();
+    const done=function(){ btn.textContent='Copied \u2713'; setTimeout(function(){btn.textContent='Copy JSON';},1500); };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done,done); }
+    else { const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
+      try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); done(); }
+  });
+  document.getElementById('btnReset').addEventListener('click',function(){
+    A=JSON.parse(JSON.stringify(ORIG_A));
+    // restore regions in place (preserve array identity used by closures)
+    ORIG_REGIONS.forEach(function(o,i){ REGIONS[i]=JSON.parse(JSON.stringify(o)); });
+    buildAssumptions(); buildRtable(); recomputeAll();
+    const btn=this; btn.textContent='Reset \u2713'; setTimeout(function(){btn.textContent='Reset';},1500);
+  });
+}
+// ---- tab switching ----
+function wireTabs(){
+  document.querySelectorAll('.tab').forEach(function(tb){
+    tb.addEventListener('click',function(){
+      document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===tb);});
+      const which=tb.dataset.tab;
+      document.getElementById('panel-calc').classList.toggle('on',which==='calc');
+      document.getElementById('panel-data').classList.toggle('on',which==='data');
+    });
+  });
+}
+
 const sel=document.getElementById('region');
 REGIONS.forEach(function(r){ const o=document.createElement('option'); o.value=r.region;
   o.textContent=r.region+', '+r.state; sel.appendChild(o); });
@@ -454,6 +722,10 @@ document.getElementById('dwelling').addEventListener('click',function(e){
 });
 render();
 buildMatrix();
+buildAssumptions();
+buildRtable();
+wireDataButtons();
+wireTabs();
 // theme toggle (in-memory; defaults to system preference)
 (function(){
   const root=document.documentElement;
