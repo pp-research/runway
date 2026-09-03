@@ -1342,7 +1342,9 @@ function panels(hostId,items,spec,opt){
   return s};
  list.forEach((it,i)=>{
   const ox=(i%cols)*(cw+gx), oy=Math.floor(i/cols)*(TOP+chh+gy)+TOP;
-  const ss=spec(it), ys=yl(ss[0].d), y0=ys[0], y1=ys[ys.length-1];
+  const ss=spec(it), ys=opt.unionYears
+   ?Array.from(new Set(ss.reduce((a,q)=>a.concat(Object.keys(q.d).map(Number)),[]))).sort((a,b)=>a-b)
+   :yl(ss[0].d), y0=ys[0], y1=ys[ys.length-1];
   const x=y=>ox+P[3]+(y-y0)/((y1-y0)||1)*(cw-P[1]-P[3]);
   const f=v=>oy+P[0]+(hi-v)/((hi-lo)||1)*(chh-P[0]-P[2]);
   const f2=v=>oy+P[0]+(hi2-v)/((hi2-lo2)||1)*(chh-P[0]-P[2]);
@@ -2137,7 +2139,7 @@ function somDomPage(id,s){
  panels(id,DIVSEG1(s),it=>[
   {d:H[it.d].som[s],type:'bar',col:C(it.d),op:.45,name:'Stock on market'},
   {d:H[it.d].dom[s],type:'line',col:C(it.d),ax:'r',name:'Days on market'}],
-  {fmt:v=>v.toFixed(1)+'%',cards:1,H:440,
+  {fmt:v=>v.toFixed(1)+'%',cards:1,H:440,unionYears:1,
    title:'Stock on market v days on market, '+s+'s',ytitle:'Stock on Market'});
 }
 function pSomDomH(){ somDomPage('c-somdomh','house') }
