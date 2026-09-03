@@ -238,27 +238,32 @@ details[open] summary svg{transform:rotate(90deg)}
 .afield input:focus{outline:none;border-color:var(--pp-teal)}
 .afield .suf{font-size:12px;color:var(--ink-mute);font-weight:600;white-space:nowrap}
 .rtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
-.rtable{width:100%;border-collapse:collapse;font-size:12px;min-width:920px}
-.rtable thead th{position:sticky;top:0;background:var(--card);font-size:9.5px;font-weight:800;text-transform:uppercase;
-  letter-spacing:.03em;color:var(--ink-mute);padding:9px 8px;border-bottom:1.5px solid var(--line);text-align:right;white-space:nowrap}
+.rtable{width:100%;border-collapse:collapse;font-size:11.5px;min-width:680px;table-layout:fixed}
+.rtable thead th{position:sticky;top:0;background:var(--card);font-size:9px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.02em;color:var(--ink-mute);padding:8px 4px;border-bottom:1.5px solid var(--line);text-align:right;white-space:normal;line-height:1.15}
 .rtable thead th.l{text-align:left}
-.rtable tbody td{padding:5px 8px;border-bottom:1px solid var(--row-line);text-align:right}
+.rtable tbody td{padding:4px 4px;border-bottom:1px solid var(--row-line);text-align:right}
 .rtable tbody tr:last-child td{border-bottom:none}
 .rtable tbody tr:hover td{background:var(--row-alt)}
-.rtable td.rname{text-align:left;font-weight:700;color:var(--ink);white-space:nowrap}
-.rtable td.rname .st{color:var(--ink-mute);font-weight:500;font-size:10px}
-.rtable input{font-family:inherit;font-size:12px;font-weight:600;color:var(--ink);background:transparent;
-  border:1px solid transparent;border-radius:6px;padding:5px 6px;width:88px;text-align:right;transition:all .12s}
+.rtable td.rname{text-align:left;font-weight:700;color:var(--ink);white-space:normal;line-height:1.2;padding-left:8px}
+.rtable td.rname .st{color:var(--ink-mute);font-weight:500;font-size:9.5px}
+.rtable input{font-family:inherit;font-size:11.5px;font-weight:600;color:var(--ink);background:transparent;
+  border:1px solid transparent;border-radius:6px;padding:5px 4px;width:100%;text-align:right;transition:all .12s}
 .rtable input:hover{border-color:var(--line);background:var(--card)}
 .rtable input:focus{outline:none;border-color:var(--pp-teal);background:var(--card)}
-.rtable input.mult{width:64px}
 .rtable input:disabled{color:var(--pp-light-gray);background:transparent;border-color:transparent}
-.ringtgl{position:relative;width:42px;height:23px;border-radius:14px;background:var(--line);border:none;cursor:pointer;
-  transition:background .15s;flex:none}
-.ringtgl::after{content:"";position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;
+/* fixed column widths: name auto-ish, money wider, numbers medium, rings + mult compact */
+.rtable col.c-name{width:15%}
+.rtable col.c-money{width:12%}
+.rtable col.c-num{width:8%}
+.rtable col.c-rings{width:8%}
+.rtable col.c-mult{width:8%}
+.ringtgl{position:relative;width:38px;height:21px;border-radius:12px;background:var(--line);border:none;cursor:pointer;
+  transition:background .15s;flex:none;display:inline-block}
+.ringtgl::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;
   background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.25)}
 .ringtgl.on{background:var(--pp-teal)}
-.ringtgl.on::after{transform:translateX(19px)}
+.ringtgl.on::after{transform:translateX(17px)}
 .rtnote{font-size:11px;color:var(--ink-mute);font-weight:500;margin:12px 2px 4px;line-height:1.5}
 @media(max-width:640px){
   .tabs{padding-left:18px;padding-right:18px}
@@ -363,6 +368,9 @@ const ORIG_A = JSON.parse(JSON.stringify(A));
 const ORIG_REGIONS = JSON.parse(JSON.stringify(REGIONS));
 let dwelling='house';
 const fmt0=v=>'$'+Math.round(v).toLocaleString('en-AU');
+// editable money field helpers: display "$729,000", parse digits back to number
+const fmtMoneyInput=v=>(v===''||v==null||isNaN(v))?'':'$'+Math.round(v).toLocaleString('en-AU');
+const parseMoney=s=>{ const n=parseFloat(String(s).replace(/[^0-9.]/g,'')); return isNaN(n)?NaN:n; };
 function calc(r,type,mult){
   const isHouse=type==='house';
   const floor=isHouse?A.houseFloor:A.unitFloor;
@@ -584,6 +592,12 @@ function buildAssumptions(){
   const g=document.getElementById('agrid');
   g.innerHTML=A_FIELDS.map(function(f){
     const key=f[0],lab=f[1],pre=f[2],suf=f[3],type=f[4],step=f[5];
+    if(type==='money'){
+      return '<div class="afield"><label>'+lab+'</label><div class="wrap">'+
+        '<input type="text" inputmode="numeric" data-akey="'+key+'" data-atype="money" value="'+fmtMoneyInput(A[key])+'">'+
+        (suf?'<span class="suf">'+suf+'</span>':'')+
+        '</div></div>';
+    }
     const val=(type==='pct')?(A[key]*100):A[key];
     return '<div class="afield"><label>'+lab+'</label><div class="wrap">'+
       (pre?'<span class="pre">'+pre+'</span>':'')+
@@ -592,31 +606,44 @@ function buildAssumptions(){
       '</div></div>';
   }).join('');
   g.querySelectorAll('input').forEach(function(inp){
+    const type=inp.dataset.atype;
     inp.addEventListener('input',function(){
-      const key=inp.dataset.akey, type=inp.dataset.atype;
-      let v=parseFloat(inp.value); if(isNaN(v))return;
+      const key=inp.dataset.akey;
+      let v=(type==='money')?parseMoney(inp.value):parseFloat(inp.value);
+      if(isNaN(v))return;
       A[key]=(type==='pct')?v/100:v;
       recomputeAll();
     });
+    if(type==='money'){
+      inp.addEventListener('blur',function(){ inp.value=fmtMoneyInput(A[inp.dataset.akey]); });
+    }
   });
 }
-// region columns: key, label, width class, step, mult?(only when rings)
+// region columns: key, label, step, money?
 const R_COLS=[
-  ['landPrice','Land price','',1000],
-  ['landSize','Land size','',1],
-  ['raw','Rawlinsons','',1],
-  ['idx','ABS index','',0.1],
-  ['houseEst','House median','',1000],
-  ['unitEst','Unit median','',1000]
+  ['landPrice','Land $',1000,true],
+  ['landSize','Land m\u00B2',1,false],
+  ['raw','Rawl.',1,false],
+  ['idx','ABS idx',0.1,false],
+  ['houseEst','House $',1000,true],
+  ['unitEst','Unit $',1000,true]
 ];
 function buildRtable(){
-  let h='<thead><tr><th class="l">Market</th>';
+  let h='<colgroup><col class="c-name">'+
+    '<col class="c-money"><col class="c-num"><col class="c-num"><col class="c-num"><col class="c-money"><col class="c-money">'+
+    '<col class="c-rings"><col class="c-mult"><col class="c-mult"></colgroup>';
+  h+='<thead><tr><th class="l">Market</th>';
   R_COLS.forEach(function(c){ h+='<th>'+c[1]+'</th>'; });
-  h+='<th>Rings</th><th>Middle &times;</th><th>Inner &times;</th></tr></thead><tbody>';
+  h+='<th>Rings</th><th>Mid &times;</th><th>Inner &times;</th></tr></thead><tbody>';
   REGIONS.forEach(function(r,i){
     h+='<tr data-i="'+i+'"><td class="rname">'+r.region+' <span class="st">'+r.state+'</span></td>';
     R_COLS.forEach(function(c){
-      h+='<td><input type="number" step="'+c[3]+'" data-i="'+i+'" data-key="'+c[0]+'" value="'+r[c[0]]+'"></td>';
+      const key=c[0], step=c[2], money=c[3];
+      if(money){
+        h+='<td><input class="money" type="text" inputmode="numeric" data-i="'+i+'" data-key="'+key+'" data-money="1" value="'+fmtMoneyInput(r[key])+'"></td>';
+      } else {
+        h+='<td><input type="number" step="'+step+'" data-i="'+i+'" data-key="'+key+'" value="'+r[key]+'"></td>';
+      }
     });
     // rings toggle
     h+='<td style="text-align:center"><button class="ringtgl'+(r.rings?' on':'')+'" data-i="'+i+'" aria-label="Toggle rings"></button></td>';
@@ -631,15 +658,22 @@ function buildRtable(){
   h+='</tbody>';
   const t=document.getElementById('rtable');
   t.innerHTML=h;
-  // numeric field edits
+  // numeric + money field edits
   t.querySelectorAll('input').forEach(function(inp){
+    const money=inp.dataset.money==='1';
     inp.addEventListener('input',function(){
       const i=+inp.dataset.i, key=inp.dataset.key;
-      let v=parseFloat(inp.value);
-      if(isNaN(v)){ if(key==='mid'||key==='inner'){ return; } else return; }
+      let v=money?parseMoney(inp.value):parseFloat(inp.value);
+      if(isNaN(v))return;
       REGIONS[i][key]=v;
       recomputeAll();
     });
+    if(money){
+      inp.addEventListener('blur',function(){
+        const i=+inp.dataset.i, key=inp.dataset.key;
+        inp.value=fmtMoneyInput(REGIONS[i][key]);
+      });
+    }
   });
   // rings toggles
   t.querySelectorAll('.ringtgl').forEach(function(btn){
