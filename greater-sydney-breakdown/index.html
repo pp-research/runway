@@ -2240,7 +2240,7 @@ function pYieldCmp(){
    as specified. Everything is a percentage, so one scale carries all eight. */
 function ycrPage(id,s){
  multiLine('c-'+id,d=>H[d].yld[s],
-  {noEnds:1,solid:1,noDots:1,fmt:v=>TKF(v)+'%',
+  {noEnds:1,solid:1,noDots:1,xrot:1,fmt:v=>TKF(v)+'%',
    lbl:d=>d,colFor:d=>d==='Cash rate'?'#171B24':d==='Variable rate'?'#C4203C':C(d),
    extra:[{name:'Cash rate',o:MOCK.nat.cash},{name:'Variable rate',o:MOCK.nat.var}],
    title:'Yield v cash rate, '+s+'s',ytitle:'Gross Yield / Rates'});
