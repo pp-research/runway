@@ -1482,12 +1482,13 @@ function bars(hostId,cats,series,opt){
  if(!keep.length){host.innerHTML='<svg class="ch" viewBox="0 0 10 10"></svg>';
   CH[hostId]={W:10,Ht:10,hit:()=>null};return}
  const vals=series.flatMap(s=>keep.map(o=>s.d[o.i])).filter(v=>isFinite(v));
- const [lo,hi]=scale(vals,true);
+ let [lo,hi]=scale(vals,true);
+ const nbB=niceBounds(lo,hi,4); lo=nbB[0]; hi=nbB[1];
  const slot=(W-P[1]-P[3])/keep.length, bw=Math.min(46,slot*.74/series.length);
  const f=v=>P[0]+(hi-v)/((hi-lo)||1)*(Ht-P[0]-P[2]);
  let g='<svg class="ch" viewBox="0 0 '+W+' '+Ht+'" xmlns="http://www.w3.org/2000/svg"'
   +' role="img"><title>'+(opt.title||'')+'</title>';
- for(let i=0;i<=4;i++){const v=lo+(hi-lo)*i/4;
+ for(let v=lo;v<=hi+nbB[2]*1e-6;v+=nbB[2]){
   g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+f(v).toFixed(1)+'" y2="'+f(v).toFixed(1)
    +'" stroke="'+GRID+'"/><text x="'+(P[3]-9)+'" y="'+(f(v)+3.6).toFixed(1)
    +'" text-anchor="end" font-size="10.5" fill="'+AXT+'">'
