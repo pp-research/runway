@@ -740,10 +740,9 @@ body.presenting .exitfs{display:grid}
   <div class="dban ref"><span class="lbl">Reference</span><span class="det">Section divider.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="dvk">Pillar 02</div>
    <h2 class="dvt">Value</h2>
    <div class="dvrule"></div>
-   <p class="dvs">Where prices sit &mdash; growth history, affordability against district incomes, runway to each market&rsquo;s ceiling, and the returns on offer.</p>
+   <ul class="dvl" id="dvl-div-val"></ul>
   </div>
   <div class="pnum">16 / 43</div>
  </div>
@@ -964,10 +963,9 @@ body.presenting .exitfs{display:grid}
   <div class="dban ref"><span class="lbl">Reference</span><span class="det">Section divider.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="dvk">Pillar 03</div>
    <h2 class="dvt">Confidence</h2>
    <div class="dvrule"></div>
-   <p class="dvs">The macro backdrop the confidence pillar scores &mdash; job creation, unemployment, and the flow of housing and business finance.</p>
+   <ul class="dvl" id="dvl-div-conf"></ul>
   </div>
   <div class="pnum">35 / 43</div>
  </div>
@@ -1035,10 +1033,9 @@ body.presenting .exitfs{display:grid}
   <div class="dban ref"><span class="lbl">Reference</span><span class="det">Section divider.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <div class="dvk">Appendix</div>
    <h2 class="dvt">Reference</h2>
    <div class="dvrule"></div>
-   <p class="dvs">State-level context and the full method and source register.</p>
+   <ul class="dvl" id="dvl-div-ref"></ul>
   </div>
   <div class="pnum">41 / 43</div>
  </div>
@@ -2394,7 +2391,7 @@ function gsPage(id,seg){
    cards:1,H:460,groupBars:1,zeroL:1,
    title:'District v Greater Sydney price',ytitle:'Median '+(seg==='house'?'House':'Unit')+' Price'});
 }
- pCover();pGlance();pLights();pDistricts();pPrice();gsPage('gsmhp','house');gsPage('gsmhpu','unit');pYoY();pHvU();pPxRH();pPxRU();pCAGR();pAIH();pAIU();
+ pDividers();pCover();pGlance();pLights();pDistricts();pPrice();gsPage('gsmhp','house');gsPage('gsmhpu','unit');pYoY();pHvU();pPxRH();pPxRU();pCAGR();pAIH();pAIU();
  pRunway();pDemandCards();pScatter();pPTI();pIncRentH();pIncRentU();pLendH();pLendU();pVRRentH();pVRRentU();pVRProj();pSomDomH();pSomDomU();pSales();
  pAppr();pHholds();pPopch();pPopMov();pJA();pUnemp();pYieldCmp();pYcrH();pYcrU();pBizLend();
 }
