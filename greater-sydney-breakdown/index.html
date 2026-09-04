@@ -2208,7 +2208,7 @@ function pJA(){
  /* noEnds: the legend names the two series, so end-of-line labels would repeat it and
     the plot takes the reclaimed width instead. */
  multiLine('c-ja',d=>IVI[d]?H[d].jam:null,
-  {fmt:v=>v.toFixed(0),noEnds:1,monthly:1,lbl:d=>IVI[d],colFor:d=>d==='North'?'#007685':C(d),
+  {fmt:v=>v.toFixed(0),noEnds:1,monthly:1,solid:1,lbl:d=>IVI[d],colFor:d=>d==='North'?'#007685':C(d),
    title:'Job creation index',ytitle:'Job Creation Index'});
  /* Two series, so two keys - not the six district toggles, four of which would have
     nothing on this chart to toggle. Plain keys, since neither is one hideable district. */
@@ -2219,7 +2219,7 @@ function pUnemp(){
  /* noEnds: the legend below names every series, as on the job-index page. lbl still
     feeds the crosshair readout. */
  multiLine('c-unemp',d=>H[d].unemp,
-  {fmt:v=>TKF(v)+'%',noEnds:1,solid:1,lbl:d=>d==='NSW'?'NSW':d,colFor:d=>d==='NSW'?'#3E4C55':C(d),
+  {fmt:v=>TKF(v)+'%',noEnds:1,solid:1,noDots:1,lbl:d=>d==='NSW'?'NSW':d,colFor:d=>d==='NSW'?'#3E4C55':C(d),
    extra:[{name:'NSW',o:MOCK.nat.unemp}],
    title:'Unemployment rate',ytitle:'Unemployment Rate'});
  /* Plain keys rather than the hide-toggles: the NSW line needs a key too, and one
