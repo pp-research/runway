@@ -1393,9 +1393,9 @@ function panels(hostId,items,spec,opt){
    g+='<line x1="'+(ox+P[3]).toFixed(1)+'" x2="'+(ox+cw-P[1]).toFixed(1)+'" y1="'+ry+'" y2="'+ry
     +'" stroke="'+(rr.col||AX)+'" stroke-width="1.6" stroke-dasharray="7 4"'
     +(rr.op?' stroke-opacity="'+rr.op+'"':'')+'/>'});
-  for(const v of (card?[hi,(hi+lo)/2,lo]:[hi,lo])) g+='<text x="'+(ox+P[3]-4).toFixed(1)+'" y="'+(f(v)+3.4).toFixed(1)
+  for(const v of (card?[chi,(chi+clo)/2,clo]:[chi,clo])) g+='<text x="'+(ox+P[3]-4).toFixed(1)+'" y="'+(f(v)+3.4).toFixed(1)
    +'" text-anchor="end" font-size="9.2" fill="'+AXT+'">'+(opt.fmt?opt.fmt(v):v.toFixed(0))+'</text>';
-  if(lo<0&&hi>0) g+='<line x1="'+x(y0).toFixed(1)+'" x2="'+x(y1).toFixed(1)+'" y1="'+f(0).toFixed(1)
+  if(clo<0&&chi>0) g+='<line x1="'+x(y0).toFixed(1)+'" x2="'+x(y1).toFixed(1)+'" y1="'+f(0).toFixed(1)
    +'" y2="'+f(0).toFixed(1)+'" stroke="'+AX+'" stroke-width="1.1"/>';
   ss.forEach(s=>{const ff=s.ax==='r'?f2:f;
    if(s.type==='bar'){const bw=Math.max(1.2,(cw-P[1]-P[3])/ys.length*.6);
@@ -2269,7 +2269,7 @@ function pPopMov(){
   {d:H[it.d].pmov.nim,type:'bar',col:C(it.d),op:.5,name:'NIM'},
   {d:H[it.d].pmov.nom,type:'bar',col:C(it.d),op:.25,name:'NOM'},
   {d:H[it.d].pmov.pop,type:'line',col:C(it.d),ax:'r',name:'Pop'}],
-  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,groupBars:1,zeroL:1,ownR:1,
+  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,groupBars:1,zeroL:1,ownL:1,ownR:1,
    title:'Population movement',ytitle:'Persons per year'});
 }
 /* Business lending: all four series are NSW-wide, so all four draw dashed - the
