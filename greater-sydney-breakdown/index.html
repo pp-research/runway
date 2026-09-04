@@ -1178,14 +1178,13 @@ function multiLine(hostId,pick,opt){
   if(z<=a)return;
   g+='<rect x="'+x(a).toFixed(1)+'" y="'+P[0]+'" width="'+(x(z)-x(a)).toFixed(1)+'" height="'
    +(plotB-P[0])+'" fill="'+(b.type==='growth'?'#D6EEF5':'#CBD6DA')+'" fill-opacity=".75"/>'});
- /* opt.nice rounds the axis onto whole steps. Opt-in, because the other callers are
-    happy with data-fitted bounds. f() closes over lo/hi, so they must be reassigned
+ /* nice steps are the default: bounds snap to 1/2/2.5/5 x 10^n multiples and every
+    tick is a round number. f() closes over lo/hi, so they must be reassigned
     before the first f() call - which is this tick loop. */
  let ticks=[];
- if(opt.nice&&vAll.length){const nb=niceBounds(Math.min(...vAll),Math.max(...vAll),5);
+ {const nb=niceBounds(lo,hi,5);
   lo=nb[0];hi=nb[1];
   for(let v=lo;v<=hi+nb[2]*1e-6;v+=nb[2]) ticks.push(v)}
- else for(let i=0;i<=4;i++) ticks.push(lo+(hi-lo)*i/4);
  ticks.forEach(v=>{const yy=f(v).toFixed(1);
   g+='<line x1="'+P[3]+'" x2="'+(W-P[1])+'" y1="'+yy+'" y2="'+yy+'" stroke="'+GRID+'"/>'
    +'<text x="'+(P[3]-9)+'" y="'+(+yy+3.6).toFixed(1)+'" text-anchor="end" font-size="10"'
@@ -1310,7 +1309,8 @@ function panels(hostId,items,spec,opt){
  let gLo=[],gHi=[];
  list.forEach(it=>spec(it).forEach(s=>{const v=Object.values(s.d).filter(x=>x!=null&&isFinite(x));
   if(s.ax==='r')gHi.push(...v); else gLo.push(...v)}));
- const [lo,hi]=scale(gLo,opt.zeroL);
+ let [lo,hi]=scale(gLo,opt.zeroL);
+ const nbG=niceBounds(lo,hi,4); lo=nbG[0]; hi=nbG[1]; const stG=nbG[2];
  const [lo2,hi2]=gHi.length?scale(gHi,opt.zeroR):[0,1];   // right axis zeroes via zeroR only
  let g='<svg class="ch" viewBox="0 0 '+W+' '+Ht+'" xmlns="http://www.w3.org/2000/svg"'
   +' role="img"><title>'+(opt.title||'')+'</title>';
