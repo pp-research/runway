@@ -1644,10 +1644,16 @@ function pCover(){
    +'<em>'+n+(n>1?' LGAs':' LGA')+'</em></div>'
    +'<div class="dlgas">'+mem+'</div></div>'}).join('');
  /* watermark silhouette of the district map - huge, whisper-faint white, sitting to
-    the right of the district list so the two never overlap */
+    the right of the district list so the two never overlap. The district boundaries
+    are cut OUT of the fill with a stroke mask, so the slide background shows through
+    as thin seams - reads as spacing between districts and works over the gradient */
+ const bd=ORDER.map(d=>'<path d="'+MAPD.paths[d]+'"/>').join('');
  const sil='<svg class="cvmap" viewBox="0 0 '+MAPD.w+' '+MAPD.h+'" aria-hidden="true">'
+  +'<defs><mask id="cvmask"><rect width="'+MAPD.w+'" height="'+MAPD.h+'" fill="#FFFFFF"/>'
+  +'<g fill="none" stroke="#000000" stroke-width="3.2" stroke-linejoin="round">'+bd+'</g></mask></defs>'
+  +'<g mask="url(#cvmask)">'
   +ORDER.map(d=>'<path d="'+MAPD.paths[d]+'" fill="#FFFFFF" fill-opacity=".045"/>').join('')
-  +'</svg>';
+  +'</g></svg>';
  put('p-cover',sil+'<h1>Greater Sydney breakdown</h1>'
   +'<p class="sub2">Research Report</p>'
   +'<div class="dlist">'+named+'</div>'
