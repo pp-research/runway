@@ -1646,8 +1646,7 @@ function pCover(){
  /* watermark silhouette of the district map - huge, whisper-faint white, sitting to
     the right of the district list so the two never overlap */
  const sil='<svg class="cvmap" viewBox="0 0 '+MAPD.w+' '+MAPD.h+'" aria-hidden="true">'
-  +ORDER.map(d=>'<path d="'+MAPD.paths[d]+'" fill="#FFFFFF" fill-opacity=".035"'
-   +' stroke="#FFFFFF" stroke-opacity=".10" stroke-width="1.6" stroke-linejoin="round"/>').join('')
+  +ORDER.map(d=>'<path d="'+MAPD.paths[d]+'" fill="#FFFFFF" fill-opacity=".045"/>').join('')
   +'</svg>';
  put('p-cover',sil+'<h1>Greater Sydney breakdown</h1>'
   +'<p class="sub2">Research Report</p>'
