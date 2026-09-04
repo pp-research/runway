@@ -1348,7 +1348,12 @@ function panels(hostId,items,spec,opt){
    :yl(ss[0].d), y0=ys[0], y1=ys[ys.length-1];
   const x=y=>ox+P[3]+(y-y0)/((y1-y0)||1)*(cw-P[1]-P[3]);
   const f=v=>oy+P[0]+(hi-v)/((hi-lo)||1)*(chh-P[0]-P[2]);
-  const f2=v=>oy+P[0]+(hi2-v)/((hi2-lo2)||1)*(chh-P[0]-P[2]);
+  /* ownR: this card's right axis scales to its own values (a shared population scale
+     puts small districts' lines on the floor) */
+  let clo2=lo2, chi2=hi2;
+  if(opt.ownR){const rv=[]; ss.forEach(s=>{if(s.ax==='r') Object.values(s.d).forEach(v=>{if(v!=null&&isFinite(v))rv.push(v)})});
+   if(rv.length){const sc=scale(rv,opt.zeroR); clo2=sc[0]; chi2=sc[1]}}
+  const f2=v=>oy+P[0]+(chi2-v)/((chi2-clo2)||1)*(chh-P[0]-P[2]);
   geom.push({it:it,ox:ox,oy:oy,x:x,f:f,y0:y0,y1:y1,ys:ys,ss:ss,cw:cw,chh:chh});
   if(card){g+=cardHdr(ox,oy,it)}else{g+='<rect x="'+(ox+P[3]).toFixed(1)+'" y="'+(oy-13).toFixed(1)+'" width="7.5" height="7.5"'
    +' rx="1.5" fill="'+C(it.d)+'"/><text x="'+(ox+P[3]+11.5).toFixed(1)+'" y="'+(oy-6).toFixed(1)
