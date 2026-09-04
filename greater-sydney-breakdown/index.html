@@ -553,11 +553,9 @@ body.presenting .exitfs{display:grid}
 .dvl li{font-size:1.22cqw;color:#C6D2DC;line-height:2.05;break-inside:avoid}
 .dvl li::before{content:'';display:inline-block;width:.5cqw;height:.5cqw;background:#7FB7C4;border-radius:.12cqw;margin-right:.85cqw;vertical-align:.08cqw}
 #rail button.k-div{font-weight:800;letter-spacing:.05em;text-transform:uppercase}
-/* cover map silhouette */
-.cvmap{position:absolute;right:-3cqw;top:50%;transform:translateY(-50%);width:47cqw;
- pointer-events:none;filter:drop-shadow(0 0 2.2cqw rgba(255,255,255,.09));
- -webkit-mask-image:linear-gradient(100deg,transparent 4%,#000 38%);
- mask-image:linear-gradient(100deg,transparent 4%,#000 38%)}
+/* cover map watermark */
+.cvmap{position:absolute;right:-13cqw;top:52%;transform:translateY(-50%);width:70cqw;
+ pointer-events:none}
 </style>
 </head>
 <body>
@@ -1645,12 +1643,11 @@ function pCover(){
   return '<div class="drow"><div class="dhead"><i style="background:'+C(d)+'"></i>'+label
    +'<em>'+n+(n>1?' LGAs':' LGA')+'</em></div>'
    +'<div class="dlgas">'+mem+'</div></div>'}).join('');
- /* faded silhouette of the district map behind the text - white at whisper opacity,
-    internal district boundaries a touch stronger, left edge masked so it melts into
-    the slide background instead of ending on a hard line */
+ /* watermark silhouette of the district map - huge, whisper-faint white, sitting to
+    the right of the district list so the two never overlap */
  const sil='<svg class="cvmap" viewBox="0 0 '+MAPD.w+' '+MAPD.h+'" aria-hidden="true">'
-  +ORDER.map(d=>'<path d="'+MAPD.paths[d]+'" fill="#FFFFFF" fill-opacity=".055"'
-   +' stroke="#FFFFFF" stroke-opacity=".18" stroke-width="1.4" stroke-linejoin="round"/>').join('')
+  +ORDER.map(d=>'<path d="'+MAPD.paths[d]+'" fill="#FFFFFF" fill-opacity=".035"'
+   +' stroke="#FFFFFF" stroke-opacity=".10" stroke-width="1.6" stroke-linejoin="round"/>').join('')
   +'</svg>';
  put('p-cover',sil+'<h1>Greater Sydney breakdown</h1>'
   +'<p class="sub2">Research Report</p>'
