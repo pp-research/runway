@@ -556,8 +556,9 @@ body.presenting .exitfs{display:grid}
 /* cover map watermark */
 .cvmap{position:absolute;right:-13cqw;top:52%;transform:translateY(-50%);width:70cqw;
  pointer-events:none}
-/* the cover carries the logo larger and in the lower right, clear of the page number */
-.cvlogo{top:auto;bottom:4.2cqw;height:4.4cqw}
+/* the cover carries the logo larger and in the lower right, clear of the page number.
+   ".page .plogo" sets the base position, so this needs the same two-class weight */
+.page .cvlogo{top:auto;bottom:4.2cqw;height:4.4cqw}
 </style>
 </head>
 <body>
