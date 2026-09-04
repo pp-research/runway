@@ -1726,7 +1726,7 @@ function pPrice(){
   /* No events here: panels() draws them as a bare dashed rule with no room for the pill
      label, so the 2008 and 2020 lines read as unexplained marks. They stay on the
      full-width charts, where eventMark can label them. */
-  {fmt:v=>v>=1e6?'$'+TKF(v/1e6)+'m':'$'+Math.round(v/1e3)+'k',
+  {fmt:v=>v>=1e6?'$'+TKF(v/1e6)+'m':v>=1000?'$'+Math.round(v/1e3)+'k':'$'+Math.round(v),
    bandsFor:()=>[],cards:1,H:460,title:'Average of LGA medians',
    ytitle:'Avg. of LGA medians \u2014 house / unit'});
 }
@@ -2262,7 +2262,7 @@ function render(){
    owner-occupier, black for investor, as specified. Compare movement, not levels. */
 function lendPage(id,s){
  multiLine(id,d=>MOCK.ml.price[d+'|'+s],
-  {monthly:1,noEnds:1,solid:1,padL:84,padR:84,ax2Labels:1,fmt:v=>v>=1e6?'$'+TKF(v/1e6)+'m':'$'+Math.round(v/1e3)+'k',
+  {monthly:1,noEnds:1,solid:1,padL:84,padR:84,ax2Labels:1,fmt:v=>v>=1e6?'$'+TKF(v/1e6)+'m':v>=1000?'$'+Math.round(v/1e3)+'k':'$'+Math.round(v),
    lbl:d=>d,colFor:d=>d==='Investor'?'#171B24':d==='Owner-occupier'?'#C4203C':C(d),
    extra:[{name:'Owner-occupier',o:MOCK.ml.oo,ax2:1,fmt:v=>'$'+TKF(v)+'bn'},
           {name:'Investor',o:MOCK.ml.inv,ax2:1,fmt:v=>'$'+TKF(v)+'bn'}],
@@ -2317,7 +2317,7 @@ function pGsmhp(){
    {d:GR(it.d,'house').ps,type:'bar',col:C(it.d),name:'District'},
    {d:gs,type:'bar',col:'#BCC3C8',name:'Greater Sydney'},
    {d:diff,type:'line',col:'#171B24',ax:'r',name:'% difference'}];},
-  {fmt:v=>v>=1e6?'$'+TKF(v/1e6)+'m':'$'+Math.round(v/1e3)+'k',
+  {fmt:v=>v>=1e6?'$'+TKF(v/1e6)+'m':v>=1000?'$'+Math.round(v/1e3)+'k':'$'+Math.round(v),
    cards:1,H:460,groupBars:1,zeroL:1,
    title:'District v Greater Sydney price',ytitle:'Median House Price'});
 }
