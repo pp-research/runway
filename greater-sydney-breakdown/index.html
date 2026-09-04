@@ -1968,7 +1968,7 @@ const VRR_GLYPH=(col,dash,opq)=>'<svg viewBox="0 0 30 10" aria-hidden="true">'
  +'<line x1="1" x2="29" y1="5" y2="5" stroke="'+col+'" stroke-width="2.6"'
  +' stroke-linecap="round" stroke-opacity="'+(opq==null?1:opq)+'"'
  +(dash?' stroke-dasharray="'+dash+'"':'')+'/></svg>';
-function vrRentChart(hostId,d,lo,hi,VMAX,seg){
+function vrRentChart(hostId,d,lo,hi,VMAX,seg,st){
  const host=gid(hostId); if(!host) return;
  /* left padding has to clear "$1560" at font 28 - Montserrat digits are wide and at
     96 the dollar sign was clipping off the card edge. The bottom is deep enough for
@@ -1988,7 +1988,7 @@ function vrRentChart(hostId,d,lo,hi,VMAX,seg){
   +' role="img"><title>'+d+': '+seg+' rent against the vacancy rate</title>';
  g+='<rect x="'+L+'" y="'+T+'" width="'+(R-L)+'" height="'+(B-T)+'" fill="#FFFFFF"'
   +' fill-opacity=".55" stroke="rgba(23,27,36,.10)" stroke-width="2.5"/>';
- for(let k=1;k<=2;k++){const gl=T+(B-T)*k/3;
+ for(let v=lo+st;v<hi-st*1e-6;v+=st){const gl=f(v);
   g+='<line x1="'+L+'" x2="'+R+'" y1="'+gl.toFixed(1)+'" y2="'+gl.toFixed(1)
    +'" stroke="'+GRID+'" stroke-width="3"/>'}
  /* vacancy first, as shaded context behind the rents */
@@ -2011,8 +2011,8 @@ function vrRentChart(hostId,d,lo,hi,VMAX,seg){
   g+='<path d="'+dd.trim()+'" fill="none" stroke="'+C(d)+'" stroke-width="7"'
    +' stroke-opacity="'+opq+'" stroke-linejoin="round" stroke-linecap="round"/>'});
  /* both axes labelled - rents left, vacancy right */
- [hi,(hi+lo)/2,lo].forEach(v=>g+='<text x="'+(L-10)+'" y="'+(f(v)+9).toFixed(1)
-  +'" text-anchor="end" font-size="28" fill="'+AXT+'">$'+Math.round(v)+'</text>');
+ for(let v=lo;v<=hi+st*1e-6;v+=st) g+='<text x="'+(L-10)+'" y="'+(f(v)+9).toFixed(1)
+  +'" text-anchor="end" font-size="28" fill="'+AXT+'">$'+Math.round(v)+'</text>';
  [0,3,VMAX].forEach(v=>g+='<text x="'+(R+10)+'" y="'+(fv(v)+9).toFixed(1)+'" font-size="28"'
   +' fill="'+(v===3?'#8A4B00':AXT)+'">'+v+'%</text>');
  g+='<line x1="'+L+'" x2="'+R+'" y1="'+B+'" y2="'+B+'" stroke="'+AX+'" stroke-width="3"/>';
@@ -2058,7 +2058,8 @@ function vrrPage(id,seg){
  const list=ORDER.filter(d=>!hidden.has(d));
  const rentVals=ORDER.flatMap(d=>[GR(d,'house').rs,GR(d,'unit').rs]
   .flatMap(o=>Object.values(o).filter(x=>x!=null&&isFinite(x))));
- const [lo,hi]=scale(rentVals);
+ let [lo,hi]=scale(rentVals);
+ const nbV=niceBounds(lo,hi,4); lo=nbV[0]; hi=nbV[1];
  const vAll=ORDER.flatMap(d=>Object.values(H[d].vr).filter(x=>x!=null&&isFinite(x)));
  const VMAX=Math.max(6,Math.ceil(Math.max(...vAll)));
  const cid=d=>'c-'+id+'-'+d.replace(/\s+/g,'');
@@ -2068,7 +2069,7 @@ function vrrPage(id,seg){
   +'<div class="vrrc-key"><span>'+VRR_GLYPH(C(d),null,seg==='house'?1:.45)+segCap+' rent</span>'
   +'<span>'+VRR_GLYPH('#5A6B75','7 4',.85)+'Vacancy rate</span></div></div>'
   +'<div class="vrrc-ch" id="'+cid(d)+'"></div></div>').join(''));
- list.forEach(d=>vrRentChart(cid(d),d,lo,hi,VMAX,seg));
+ list.forEach(d=>vrRentChart(cid(d),d,lo,hi,VMAX,seg,nbV[2]));
 }
 function pVRRentH(){ vrrPage('vrrenth','house') }
 function pVRRentU(){ vrrPage('vrrentu','unit') }
