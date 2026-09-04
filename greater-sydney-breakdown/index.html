@@ -556,6 +556,8 @@ body.presenting .exitfs{display:grid}
 /* cover map watermark */
 .cvmap{position:absolute;right:-13cqw;top:52%;transform:translateY(-50%);width:70cqw;
  pointer-events:none}
+/* the cover carries the logo a touch larger than the chart pages */
+.cvlogo{height:3cqw}
 </style>
 </head>
 <body>
@@ -1654,7 +1656,9 @@ function pCover(){
   +'<g mask="url(#cvmask)">'
   +ORDER.map(d=>'<path d="'+MAPD.paths[d]+'" fill="#FFFFFF" fill-opacity=".045"/>').join('')
   +'</g></svg>';
- put('p-cover',sil+'<h1>Greater Sydney breakdown</h1>'
+ put('p-cover',sil
+  +'<img class="plogo cvlogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">'
+  +'<h1>Greater Sydney breakdown</h1>'
   +'<p class="sub2">Research Report</p>'
   +'<div class="dlist">'+named+'</div>'
   );
