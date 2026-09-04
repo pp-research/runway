@@ -24,24 +24,28 @@
   --chip3-bg:#B8E4B0; --chip3-fg:#2B4620;
   --chipn-bg:#FBDBE1; --chipn-fg:#A5122D;
   --ring-bg1:#F2FBFC; --ring-bg2:#E9F7F9; --ring-border:#CFEAEE; --ring-disc:#0A5561;
+  --bar-track:#DCEFF2; --bar-g1:#00B8CE; --bar-g2:#00A0B4; --bar-g3:#0A7C8C; --bar-glow:rgba(0,160,180,.35);
+  --bar-track-over:#F6D6DC; --barn-g1:#FF6B84; --barn-g2:#E72347; --barn-g3:#C01230; --barn-glow:rgba(231,35,71,.30);
   --shadow:0 1px 3px rgba(23,27,36,.04),0 8px 24px rgba(23,27,36,.06);
 }
 [data-theme="dark"]{
-  --pp-teal:#2BC4D8; --pp-dark-teal:#0B0E14;
-  --pp-white:#fff; --pp-light-gray:#3A4048; --pp-dark-gray:#9AA0A7;
-  --pp-green:#7Fc46a; --pp-yellow:#FFB53D; --pp-red:#FF5c78;
-  --pp-teal-50:#123138; --pp-teal-100:#1B454E;
-  --surface:#0E1116; --card:#171B22; --line:#2A2F38;
-  --ink:#EEF1F3; --ink-soft:#C2C7CD; --ink-mute:#868D95;
-  --card-grad:#1A1F27; --row-alt:#1C222B; --row-line:#242A33;
-  --neutral-bg:#242A33; --note-ink:#8FD9E6; --grand-ink:#0B0E14;
-  --chip0-bg:#2A303A; --chip0-fg:#B4BAC1;
-  --chip1-bg:#123138; --chip1-fg:#7FD6E4;
-  --chip2-bg:#1E3A22; --chip2-fg:#9BDC8E;
-  --chip3-bg:#27512B; --chip3-fg:#B8E4B0;
-  --chipn-bg:#4A1620; --chipn-fg:#FF9DAE;
-  --ring-bg1:#14323A; --ring-bg2:#0F2830; --ring-border:#1F4A54; --ring-disc:#8FD9E6;
-  --shadow:0 1px 3px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.45);
+  --pp-teal:#3AD4E8; --pp-dark-teal:#0C1017;
+  --pp-white:#fff; --pp-light-gray:#4C535D; --pp-dark-gray:#AEB4BC;
+  --pp-green:#8AD673; --pp-yellow:#FFC155; --pp-red:#FF6B84;
+  --pp-teal-50:#153A43; --pp-teal-100:#215863;
+  --surface:#151A22; --card:#1E242E; --line:#39414D;
+  --ink:#F3F5F7; --ink-soft:#CED3DA; --ink-mute:#9AA1AB;
+  --card-grad:#232A35; --row-alt:#262E3A; --row-line:#323B47;
+  --neutral-bg:#2D3644; --note-ink:#A6E4EF; --grand-ink:#0C1017;
+  --chip0-bg:#323B47; --chip0-fg:#C4CAD2;
+  --chip1-bg:#153A43; --chip1-fg:#8FE0EE;
+  --chip2-bg:#234A28; --chip2-fg:#A8E89A;
+  --chip3-bg:#2F6234; --chip3-fg:#C4EFBC;
+  --chipn-bg:#5A1B27; --chipn-fg:#FFAAB8;
+  --ring-bg1:#1B3D46; --ring-bg2:#153138; --ring-border:#2C5D69; --ring-disc:#A6E4EF;
+  --bar-track:#38434F; --bar-g1:#3AD4E8; --bar-g2:#22B8CC; --bar-g3:#1A96A8; --bar-glow:rgba(58,212,232,.45);
+  --bar-track-over:#4E2530; --barn-g1:#FF8B9E; --barn-g2:#FF6B84; --barn-g3:#E0405C; --barn-glow:rgba(255,107,132,.45);
+  --shadow:0 1px 3px rgba(0,0,0,.4),0 10px 32px rgba(0,0,0,.55);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Montserrat',system-ui,sans-serif;background:var(--surface);color:var(--ink);
@@ -89,6 +93,19 @@ select:focus{outline:none;border-color:var(--pp-teal)}
 .ring .disc{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1}
 .ring .disc .u{font-size:17px;font-weight:700;margin-left:1px}
 .ring .disclbl{font-size:11.5px;font-weight:600;color:var(--ink-mute);margin-top:3px}
+.ring .runway{margin-top:12px;margin-bottom:2px}
+.ring .runway .rwbar{position:relative;display:block;height:9px;border-radius:6px;background:var(--bar-track);
+  overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.12)}
+.ring .runway .rwfill{position:relative;display:block;height:100%;border-radius:6px;
+  background:linear-gradient(90deg,var(--bar-g3),var(--bar-g2) 55%,var(--bar-g1));
+  box-shadow:0 0 8px var(--bar-glow);transition:width .5s cubic-bezier(.22,1,.36,1);overflow:hidden}
+.ring .runway .rwfill::after{content:"";position:absolute;top:0;left:0;right:0;height:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0));border-radius:6px 6px 0 0}
+.ring .runway.over .rwbar{background:var(--bar-track-over)}
+.ring .runway.over .rwfill{background:linear-gradient(90deg,var(--barn-g3),var(--barn-g2) 55%,var(--barn-g1));
+  box-shadow:0 0 8px var(--barn-glow)}
+.ring .runway.over .rwbar{background:var(--chipn-bg)}
+.ring .row b.negtxt{color:var(--pp-red)}
 .ring .rows{margin-top:15px;border-top:1px dashed var(--ring-border);padding-top:12px;display:flex;flex-direction:column;gap:7px}
 .ring .row{display:flex;justify-content:space-between;font-size:12.5px}
 .ring .row span{color:var(--ink-mute);font-weight:500}
@@ -148,30 +165,46 @@ details[open] summary svg{transform:rotate(90deg)}
 .mlabel.unit{color:var(--pp-dark-gray)}
 .mlabel span{font-weight:500;color:var(--ink-mute);font-size:10.5px;text-transform:none;letter-spacing:0}
 .mtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
-.mtable{width:100%;border-collapse:collapse;font-size:12px;min-width:440px}
+.mtable{width:100%;border-collapse:collapse;font-size:12px;min-width:440px;table-layout:fixed}
 .mtable thead th{position:sticky;top:0;background:var(--card);font-weight:800;font-size:10px;text-transform:uppercase;
   letter-spacing:.04em;color:var(--ink-mute);padding:9px 10px;border-bottom:1.5px solid var(--line);text-align:right;white-space:nowrap}
 .mtable thead th.grp{text-align:center;color:var(--pp-teal);border-bottom:1.5px solid var(--pp-teal-100);font-size:10px}
 .mtable thead th.grp.unit{color:var(--pp-dark-gray)}
 .mtable thead tr.g2 th{font-size:9.5px;padding-top:6px;padding-bottom:6px}
-.mtable th.mkt,.mtable td.mkt{text-align:left;padding-left:14px}
+.mtable col.c-mkt{width:16%}
+.mtable col.c-ring{width:28%}
+.mtable th.mkt,.mtable td.mkt{text-align:left;padding-left:14px;white-space:normal;line-height:1.25}
 .mtable thead th.sortable{cursor:pointer;user-select:none}
 .mtable thead th.sortable:hover{color:var(--ink)}
 .mtable thead th .arr{font-size:9px;margin-left:3px;color:var(--pp-light-gray)}
 .mtable thead th .arr.on{color:var(--pp-teal)}
 .mtable thead th.sortable:hover .arr{color:var(--ink-mute)}
-.mtable tbody td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--row-line);vertical-align:top}
+.mtable tbody td{padding:9px 16px;text-align:right;border-bottom:1px solid var(--row-line);vertical-align:top}
 .mtable tbody tr:last-child td{border-bottom:none}
 .mtable tbody tr:hover td{background:var(--row-alt)}
 .mtable tbody tr.active td{background:var(--pp-teal-50)}
 .mtable td.mkt{font-weight:700;color:var(--ink);vertical-align:top;padding-top:11px}
 .mtable td.mkt .st{color:var(--ink-mute);font-weight:500;font-size:10.5px}
-.mtable td.single{color:var(--ink-mute);font-weight:500;font-style:italic;text-align:center;font-size:11px;line-height:1.3}
+.mtable td.single{color:var(--ink-mute);font-weight:500;font-style:italic;text-align:center;font-size:11px;line-height:1.3;vertical-align:middle}
 .mtable .sep{border-left:1px solid var(--line)}
-.cellstack{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
-.cellstack .cl{font-size:10px;color:var(--ink-mute);font-weight:600;font-variant-numeric:tabular-nums;
-  display:flex;gap:5px;align-items:baseline;white-space:nowrap}
-.cellstack .cl i{font-style:normal;color:var(--pp-light-gray);font-weight:500;font-size:9px;text-transform:uppercase;letter-spacing:.02em}
+.cellstack{display:flex;flex-direction:column;align-items:stretch;gap:3px}
+.cellstack .cl{font-size:10.5px;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;
+  display:flex;gap:5px;align-items:baseline;white-space:nowrap;justify-content:flex-end}
+.cellstack .cl i{font-style:normal;color:var(--ink-mute);font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:.02em;margin-right:auto}
+.cbnum{font-size:13px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;text-align:right;display:block}
+.cbnum i{font-style:normal;font-size:9px;font-weight:600;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.02em;margin-left:3px}
+.cbnum.over{color:var(--pp-red)}
+.cbar{position:relative;display:block;height:8px;border-radius:5px;background:var(--bar-track);overflow:hidden;
+  margin:3px 0 5px;min-width:96px;box-shadow:inset 0 1px 2px rgba(0,0,0,.12)}
+.cbarfill{position:absolute;top:0;left:0;height:100%;border-radius:5px;
+  background:linear-gradient(90deg,var(--bar-g3),var(--bar-g2) 55%,var(--bar-g1));
+  box-shadow:0 0 7px var(--bar-glow);transition:width .5s cubic-bezier(.22,1,.36,1);overflow:hidden}
+.cbarfill::after{content:"";position:absolute;top:0;left:0;right:0;height:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,0));border-radius:5px 5px 0 0}
+.cbar.over{background:var(--bar-track-over)}
+.cbar.over .cbarfill{background:linear-gradient(90deg,var(--barn-g3),var(--barn-g2) 55%,var(--barn-g1));
+  box-shadow:0 0 7px var(--barn-glow)}
+.cellstack .cl b.negtxt{color:var(--pp-red)}
 .dchip{display:inline-block;min-width:52px;padding:3px 8px;border-radius:6px;font-weight:800;text-align:center;font-size:13px;margin-bottom:2px}
 .d0{background:var(--chip0-bg);color:var(--pp-dark-gray)}
 .d1{background:var(--pp-teal-50);color:var(--note-ink)}
@@ -189,6 +222,73 @@ details[open] summary svg{transform:rotate(90deg)}
   .head,.controls,.ctx,.rings,.note,details,.foot{padding-left:18px;padding-right:18px}
   .ring .disc{font-size:30px}
 }
+/* tabs */
+.tabs{display:flex;gap:4px;padding:14px 26px 0;border-bottom:1px solid var(--line)}
+.tab{font-family:inherit;font-size:13px;font-weight:700;color:var(--ink-mute);background:none;border:none;
+  padding:10px 16px;cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab:hover{color:var(--ink-soft)}
+.tab.on{color:var(--pp-teal);border-bottom-color:var(--pp-teal)}
+.panel{display:none}
+.panel.on{display:block}
+/* data editor */
+.datawrap{padding:22px 26px 8px}
+.databar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px;
+  background:var(--pp-teal-50);border:1px solid var(--ring-border);border-radius:12px;padding:14px 16px}
+.dbinfo{font-size:12.5px;color:var(--note-ink);font-weight:500;flex:1;min-width:240px;line-height:1.5}
+.dbinfo b{font-weight:700}
+.dbbtns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:inherit;font-size:12.5px;font-weight:700;border-radius:9px;padding:9px 15px;cursor:pointer;
+  border:1.5px solid var(--line);transition:all .15s;white-space:nowrap}
+.btn.ghost{background:var(--card);color:var(--ink-soft)}
+.btn.ghost:hover{border-color:var(--pp-teal);color:var(--pp-teal)}
+.btn.primary{background:var(--pp-teal);color:#fff;border-color:var(--pp-teal)}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.saved{background:var(--pp-green);border-color:var(--pp-green);color:#fff}
+.dsec{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-mute);
+  margin:6px 0 12px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.dsecsub{font-size:10.5px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--ink-mute)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:26px}
+.afield{display:flex;flex-direction:column;gap:5px;background:var(--surface);border:1px solid var(--line);
+  border-radius:10px;padding:10px 12px}
+.afield label{font-size:10.5px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--ink-mute)}
+.afield .wrap{display:flex;align-items:center;gap:6px}
+.afield .pre{font-size:13px;color:var(--ink-mute);font-weight:600}
+.afield input{font-family:inherit;font-size:14px;font-weight:700;color:var(--ink);background:var(--card);
+  border:1.5px solid var(--line);border-radius:7px;padding:7px 9px;width:100%;text-align:right}
+.afield input:focus{outline:none;border-color:var(--pp-teal)}
+.afield .suf{font-size:12px;color:var(--ink-mute);font-weight:600;white-space:nowrap}
+.rtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.rtable{width:100%;border-collapse:collapse;font-size:11.5px;min-width:680px;table-layout:fixed}
+.rtable thead th{position:sticky;top:0;background:var(--card);font-size:9px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.02em;color:var(--ink-mute);padding:8px 4px;border-bottom:1.5px solid var(--line);text-align:center;white-space:normal;line-height:1.15}
+.rtable thead th.l{text-align:left}
+.rtable tbody td{padding:4px 4px;border-bottom:1px solid var(--row-line);text-align:center}
+.rtable tbody tr:last-child td{border-bottom:none}
+.rtable tbody tr:hover td{background:var(--row-alt)}
+.rtable td.rname{text-align:left;font-weight:700;color:var(--ink);white-space:normal;line-height:1.2;padding-left:8px}
+.rtable td.rname .st{color:var(--ink-mute);font-weight:500;font-size:9.5px}
+.rtable input{font-family:inherit;font-size:11.5px;font-weight:600;color:var(--ink);background:transparent;
+  border:1px solid transparent;border-radius:6px;padding:5px 4px;width:100%;text-align:center;transition:all .12s}
+.rtable input:hover{border-color:var(--line);background:var(--card)}
+.rtable input:focus{outline:none;border-color:var(--pp-teal);background:var(--card)}
+.rtable input:disabled{color:var(--pp-light-gray);background:transparent;border-color:transparent}
+/* fixed column widths: name auto-ish, money wider, numbers medium, rings + mult compact */
+.rtable col.c-name{width:15%}
+.rtable col.c-money{width:12%}
+.rtable col.c-num{width:8%}
+.rtable col.c-rings{width:8%}
+.rtable col.c-mult{width:8%}
+.ringtgl{position:relative;width:38px;height:21px;border-radius:12px;background:var(--line);border:none;cursor:pointer;
+  transition:background .15s;flex:none;display:inline-block}
+.ringtgl::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;
+  background:#fff;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.ringtgl.on{background:var(--pp-teal)}
+.ringtgl.on::after{transform:translateX(17px)}
+.rtnote{font-size:11px;color:var(--ink-mute);font-weight:500;margin:12px 2px 4px;line-height:1.5}
+@media(max-width:640px){
+  .tabs{padding-left:18px;padding-right:18px}
+  .datawrap{padding-left:18px;padding-right:18px}
+}
 </style>
 </head>
 <body>
@@ -204,6 +304,12 @@ details[open] summary svg{transform:rotate(90deg)}
       <svg class="ico-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
     </button>
   </div>
+  <div class="tabs">
+    <button class="tab on" data-tab="calc">Calculator</button>
+    <button class="tab" data-tab="data">Data</button>
+  </div>
+
+  <div class="panel on" id="panel-calc">
   <div class="controls">
     <div class="field grow">
       <label for="region">Market</label>
@@ -227,7 +333,7 @@ details[open] summary svg{transform:rotate(90deg)}
   </details>
   <div class="summary">
     <h2>All markets</h2>
-    <div class="sub">Discount of established median vs new-build replacement cost, per ring, with replacement $/m&sup2;, total replacement, and established median. Click a market to load it above; click a column to sort.</div>
+    <div class="sub">Runway = how much the established median must rise to reach new-build replacement cost. The empty part of the bar is that runway (full = established equals replacement; red = already above, i.e. negative runway). With replacement $/m&sup2;, total replacement, established median, and discount. Click a market to load it above; click a column to sort.</div>
     <div class="mblock" id="mblock-house">
       <div class="mlabel">House <span>&middot; MHP = median house price</span></div>
       <div class="mtable-wrap"><table class="mtable" id="mtable-house"></table></div>
@@ -247,14 +353,44 @@ details[open] summary svg{transform:rotate(90deg)}
       <div><b>Single-market regions</b> show one figure where vacant-land sampling did not support a defensible ring gradient (flat, thin, or inverted) &mdash; the calibration doubles as a test of whether a market is multi-centred enough for rings.</div>
     </div>
   </details>
+  </div><!-- /panel-calc -->
+
+  <div class="panel" id="panel-data">
+    <div class="datawrap">
+      <div class="databar">
+        <div class="dbinfo">Edit the model inputs below. Changes recompute the calculator live. Use <b>Save</b> to download a standalone copy with your edits baked in.</div>
+        <div class="dbbtns">
+          <button class="btn ghost" id="btnCopy">Copy JSON</button>
+          <button class="btn ghost" id="btnReset">Reset</button>
+          <button class="btn primary" id="btnSave">Save standalone HTML</button>
+        </div>
+      </div>
+
+      <h3 class="dsec">Global assumptions</h3>
+      <div class="agrid" id="agrid"></div>
+
+      <h3 class="dsec">Region data <span class="dsecsub">click a row's rings toggle to switch a market between 3-ring and single</span></h3>
+      <div class="rtable-wrap">
+        <table class="rtable" id="rtable"></table>
+      </div>
+      <div class="rtnote">Land price, land size, Rawlinsons multiplier, ABS index, and the established house/unit medians drive the calculation. Middle/Inner multipliers apply only when Rings is on.</div>
+    </div>
+  </div><!-- /panel-data -->
+
   <div class="foot">Land &amp; price medians: CoreLogic. Build cost: ABS Construction Index &times; Rawlinsons. Ring multipliers: realestate.com.au vacant-land sales. Indicative model for portfolio screening &mdash; not a formal valuation.</div>
 </div>
 <script>
 const REGIONS = [{"region":"Adelaide","state":"SA","landPrice":360019,"landSize":325,"raw":100,"idx":164.7,"houseEst":920000,"unitEst":665000,"rings":true,"mid":1.5,"inner":1.8},{"region":"Albury","state":"NSW","landPrice":305000,"landSize":906,"raw":101,"idx":164.6,"houseEst":700000,"unitEst":419000,"rings":false,"mid":null,"inner":null},{"region":"Ballarat","state":"VIC","landPrice":275000,"landSize":507,"raw":100,"idx":166.6,"houseEst":610000,"unitEst":435000,"rings":false,"mid":null,"inner":null},{"region":"Brisbane","state":"QLD","landPrice":489000,"landSize":450,"raw":100,"idx":170.1,"houseEst":1100000,"unitEst":790000,"rings":true,"mid":1.7,"inner":2.2},{"region":"Bunbury","state":"WA","landPrice":419000,"landSize":780,"raw":105,"idx":157.7,"houseEst":700000,"unitEst":576500,"rings":false,"mid":null,"inner":null},{"region":"Bundaberg","state":"QLD","landPrice":335000,"landSize":1044,"raw":107,"idx":170.1,"houseEst":717000,"unitEst":520000,"rings":false,"mid":null,"inner":null},{"region":"Cairns","state":"QLD","landPrice":415000,"landSize":810,"raw":110,"idx":170.1,"houseEst":781500,"unitEst":440000,"rings":false,"mid":null,"inner":null},{"region":"Canberra","state":"ACT","landPrice":717000,"landSize":595,"raw":102,"idx":172.6,"houseEst":1000000,"unitEst":606000,"rings":false,"mid":null,"inner":null},{"region":"Central Coast","state":"NSW","landPrice":660000,"landSize":602,"raw":102,"idx":164.6,"houseEst":1050000,"unitEst":712000,"rings":false,"mid":null,"inner":null},{"region":"Coffs Harbour","state":"NSW","landPrice":520000,"landSize":652,"raw":105,"idx":164.6,"houseEst":955000,"unitEst":630000,"rings":false,"mid":null,"inner":null},{"region":"Darwin","state":"NT","landPrice":400000,"landSize":836,"raw":100,"idx":141.7,"houseEst":677500,"unitEst":420000,"rings":false,"mid":null,"inner":null},{"region":"Gladstone","state":"QLD","landPrice":270000,"landSize":1012,"raw":117,"idx":170.1,"houseEst":630000,"unitEst":395000,"rings":false,"mid":null,"inner":null},{"region":"Gold Coast","state":"QLD","landPrice":880000,"landSize":744,"raw":102,"idx":170.1,"houseEst":1336800,"unitEst":915000,"rings":true,"mid":1.7,"inner":3},{"region":"Greater Bendigo","state":"VIC","landPrice":279500,"landSize":626,"raw":100,"idx":166.6,"houseEst":640000,"unitEst":481000,"rings":false,"mid":null,"inner":null},{"region":"Greater Geelong","state":"VIC","landPrice":378000,"landSize":399,"raw":100,"idx":166.6,"houseEst":730000,"unitEst":550000,"rings":true,"mid":1.2,"inner":1.6},{"region":"Hobart","state":"TAS","landPrice":320000,"landSize":752,"raw":100,"idx":161.9,"houseEst":750000,"unitEst":575500,"rings":true,"mid":1.4,"inner":2},{"region":"Ipswich","state":"QLD","landPrice":433500,"landSize":440,"raw":100,"idx":170.1,"houseEst":890000,"unitEst":700000,"rings":false,"mid":null,"inner":null},{"region":"Launceston","state":"TAS","landPrice":285000,"landSize":906,"raw":95,"idx":161.9,"houseEst":632600,"unitEst":480000,"rings":false,"mid":null,"inner":null},{"region":"Mackay","state":"QLD","landPrice":280800,"landSize":892,"raw":117,"idx":170.1,"houseEst":700000,"unitEst":415000,"rings":false,"mid":null,"inner":null},{"region":"Mandurah","state":"WA","landPrice":340000,"landSize":406,"raw":100,"idx":157.7,"houseEst":823000,"unitEst":640000,"rings":false,"mid":null,"inner":null},{"region":"Melbourne","state":"VIC","landPrice":416000,"landSize":378,"raw":100,"idx":166.6,"houseEst":895000,"unitEst":640000,"rings":true,"mid":1.6,"inner":4},{"region":"Mildura","state":"VIC","landPrice":182000,"landSize":635,"raw":105,"idx":166.6,"houseEst":555000,"unitEst":411000,"rings":false,"mid":null,"inner":null},{"region":"Newcastle","state":"NSW","landPrice":692500,"landSize":652,"raw":101,"idx":164.6,"houseEst":1090000,"unitEst":765000,"rings":true,"mid":1.5,"inner":3.1},{"region":"Orange","state":"NSW","landPrice":345000,"landSize":613,"raw":105,"idx":164.6,"houseEst":765000,"unitEst":505000,"rings":false,"mid":null,"inner":null},{"region":"Perth","state":"WA","landPrice":414000,"landSize":375,"raw":100,"idx":157.7,"houseEst":940000,"unitEst":675000,"rings":true,"mid":1.5,"inner":2.3},{"region":"Port Macquarie-Hastings","state":"NSW","landPrice":468500,"landSize":661,"raw":107,"idx":164.6,"houseEst":912000,"unitEst":647750,"rings":false,"mid":null,"inner":null},{"region":"Rockhampton","state":"QLD","landPrice":255000,"landSize":1200,"raw":117,"idx":170.1,"houseEst":636000,"unitEst":525250,"rings":false,"mid":null,"inner":null},{"region":"Rockingham","state":"WA","landPrice":355250,"landSize":429,"raw":100,"idx":157.7,"houseEst":854000,"unitEst":633000,"rings":false,"mid":null,"inner":null},{"region":"Sunshine Coast","state":"QLD","landPrice":680000,"landSize":715,"raw":102,"idx":170.1,"houseEst":1260000,"unitEst":875000,"rings":true,"mid":1.5,"inner":3.1},{"region":"Sydney","state":"NSW","landPrice":729000,"landSize":450,"raw":100,"idx":164.6,"houseEst":1550000,"unitEst":838000,"rings":true,"mid":1.4,"inner":1.9},{"region":"Tamworth Regional","state":"NSW","landPrice":250000,"landSize":835,"raw":105,"idx":164.6,"houseEst":630000,"unitEst":392500,"rings":false,"mid":null,"inner":null},{"region":"Toowoomba","state":"QLD","landPrice":369000,"landSize":913,"raw":102,"idx":170.1,"houseEst":800000,"unitEst":647500,"rings":false,"mid":null,"inner":null},{"region":"Townsville","state":"QLD","landPrice":274000,"landSize":682,"raw":116,"idx":170.1,"houseEst":686500,"unitEst":470000,"rings":false,"mid":null,"inner":null},{"region":"Wagga Wagga","state":"NSW","landPrice":305000,"landSize":725,"raw":103,"idx":164.6,"houseEst":704000,"unitEst":445000,"rings":false,"mid":null,"inner":null},{"region":"Wodonga","state":"VIC","landPrice":245000,"landSize":628,"raw":103,"idx":166.6,"houseEst":650000,"unitEst":445000,"rings":false,"mid":null,"inner":null},{"region":"Wollongong","state":"NSW","landPrice":611250,"landSize":478,"raw":101,"idx":164.6,"houseEst":1230000,"unitEst":796500,"rings":false,"mid":null,"inner":null}];
-const A = {landShare:100,houseFloor:180,unitFloor:85,profit:0.25,landAcq:0.10,other:0.20,
+let A = {landShare:100,houseFloor:180,unitFloor:85,profit:0.25,landAcq:0.10,other:0.20,
   houseAnchor:2358.12,unitAnchor:4225.37,indexAnchor:163.3};
+// deep-frozen originals for Reset
+const ORIG_A = JSON.parse(JSON.stringify(A));
+const ORIG_REGIONS = JSON.parse(JSON.stringify(REGIONS));
 let dwelling='house';
 const fmt0=v=>'$'+Math.round(v).toLocaleString('en-AU');
+// editable money field helpers: display "$729,000", parse digits back to number
+const fmtMoneyInput=v=>(v===''||v==null||isNaN(v))?'':'$'+Math.round(v).toLocaleString('en-AU');
+const parseMoney=s=>{ const n=parseFloat(String(s).replace(/[^0-9.]/g,'')); return isNaN(n)?NaN:n; };
 function calc(r,type,mult){
   const isHouse=type==='house';
   const floor=isHouse?A.houseFloor:A.unitFloor;
@@ -277,9 +413,8 @@ function render(){
   const r=REGIONS.find(x=>x.region===document.getElementById('region').value);
   const est=dwelling==='house'?r.houseEst:r.unitEst;
   const ctx=document.getElementById('ctx');
-  ctx.innerHTML='<div class="r1">'+r.region+'<span class="state">, '+r.state+'</span>'+
-    (r.rings?'<span class="pill">3-ring market</span>':'<span class="pill single">single market</span>')+'</div>'+
-    '<div class="r2">Established '+dwelling+' median <b>'+fmt0(est)+'</b></div>';
+  ctx.innerHTML='<div class="r1"><span class="rgn">'+r.region+'<span class="state">, '+r.state+'</span></span>'+
+    (r.rings?'<span class="pill">3-ring market</span>':'<span class="pill single">single market</span>')+'</div>';
   const wrap=document.getElementById('rings');
   let ringsDef;
   if(r.rings){ ringsDef=[['Outer',1.0],['Middle',r.mid],['Inner',r.inner]]; wrap.className='rings'; }
@@ -289,13 +424,21 @@ function render(){
     const c=calc(r,dwelling,m);
     const dc=discClass(c.disc);
     const pos=c.disc>=0;
+    const runway=(c.trc-c.est)/c.est*100;     // % MHP must rise to reach replacement cost
+    const over=runway<0;                      // MHP already above replacement
+    const fill=Math.max(0,Math.min(100,100-runway));  // filled = climbed toward peak; empty = runway left
+    const runwayTxt=(over?'&minus;':'')+Math.abs(runway).toFixed(1)+'%';
+    const discTxt=(pos?'':'&minus;')+Math.abs(c.disc*100).toFixed(1)+'%';
     return '<div class="ring '+dc+'"><div class="bar"></div>'+
       '<div class="tag">'+name+(m!==1.0?' &middot; '+m+'x land':'')+'</div>'+
-      '<div class="disc '+(pos?'pos':'neg')+'">'+(pos?'':'&minus;')+Math.abs(c.disc*100).toFixed(1)+'<span class="u">%</span></div>'+
-      '<div class="disclbl">'+(pos?'cheaper to buy established':'cheaper to build new')+'</div>'+
+      '<div class="disc '+(over?'neg':'pos')+'">'+runwayTxt.replace('%','')+'<span class="u">%</span></div>'+
+      '<div class="disclbl">'+(over?'MHP above replacement cost':'runway to replacement cost')+'</div>'+
+      '<div class="runway '+(over?'over':'')+'"><span class="rwbar"><span class="rwfill" style="width:'+fill.toFixed(0)+'%"></span></span></div>'+
       '<div class="rows">'+
         '<div class="row"><span>Replacement $/m&sup2;</span><b>'+fmt0(c.psm)+'</b></div>'+
         '<div class="row"><span>Total replacement</span><b>'+fmt0(c.trc)+'</b></div>'+
+        '<div class="row"><span>Est '+(dwelling==='house'?'MHP':'MUP')+'</span><b>'+fmt0(c.est)+'</b></div>'+
+        '<div class="row"><span>Discount</span><b class="'+(pos?'':'negtxt')+'">'+discTxt+'</b></div>'+
       '</div></div>';
   }).join('');
   buildTable(r,ringsDef);
@@ -356,16 +499,21 @@ function buildTable(r,ringsDef){
   html+='</tbody>';
   document.getElementById('ctable').innerHTML=html;
 }
-function discChipClass(d){ if(d<0)return'dn'; if(d>=0.30)return'd3'; if(d>=0.15)return'd2'; if(d>=0.05)return'd1'; return'd0'; }
 function stackCell(f,isHouse){
-  const pos=f.disc>=0;
-  const pct=(pos?'':'\u2212')+Math.abs(f.disc*100).toFixed(1)+'%';
   const estLbl=isHouse?'MHP':'MUP';
+  const runway=(f.trc-f.est)/f.est*100;      // % MHP must rise to reach replacement
+  const over=runway<0;
+  const fill=Math.max(0,Math.min(100,100-runway));  // empty portion = runway remaining
+  const pos=f.disc>=0;
+  const discTxt=(pos?'':'\u2212')+Math.abs(f.disc*100).toFixed(1)+'%';
+  const runwayTxt=(over?'\u2212':'')+Math.abs(runway).toFixed(1)+'%';
   return '<div class="cellstack">'+
-    '<span class="dchip '+discChipClass(f.disc)+'">'+pct+'</span>'+
+    '<span class="cbnum'+(over?' over':'')+'">'+runwayTxt+'<i> runway</i></span>'+
+    '<span class="cbar'+(over?' over':'')+'"><span class="cbarfill" style="width:'+fill.toFixed(0)+'%"></span></span>'+
     '<span class="cl"><i>Repl $/m\u00B2</i>'+fmt0(f.psm)+'</span>'+
     '<span class="cl"><i>Total repl</i>'+fmt0(f.trc)+'</span>'+
     '<span class="cl"><i>Est '+estLbl+'</i>'+fmt0(f.est)+'</span>'+
+    '<span class="cl"><i>Discount</i><b'+(pos?'':' class="negtxt"')+'>'+discTxt+'</b></span>'+
     '</div>';
 }
 let sortState={house:{key:'region',dir:1}, unit:{key:'region',dir:1}};
@@ -390,19 +538,27 @@ function buildOne(type){
   const isHouse=type==='house';
   const st=sortState[type];
   const activeRegion=document.getElementById('region').value;
+  const idx={outer:0,mid:1,inner:2}[st.key];
   const rows=REGIONS.slice().sort(function(a,b){
     if(st.key==='region'){ return a.region<b.region?-st.dir:a.region>b.region?st.dir:0; }
     const va=ringVals(a,isHouse), vb=ringVals(b,isHouse);
-    const idx={outer:0,mid:1,inner:2}[st.key];
-    const pa=va[va.length>idx?idx:va.length-1].disc;
-    const pb=vb[vb.length>idx?idx:vb.length-1].disc;
+    // single markets have no Middle/Inner value: keep them grouped at the bottom on those sorts
+    if(idx>0){
+      const aHas=a.rings, bHas=b.rings;
+      if(aHas&&!bHas) return -1;
+      if(!aHas&&bHas) return 1;
+      if(!aHas&&!bHas) return a.region<b.region?-1:a.region>b.region?1:0; // stable A-Z among singles
+    }
+    const fa=va[va.length>idx?idx:va.length-1], fb=vb[vb.length>idx?idx:vb.length-1];
+    const pa=fa.est/fa.trc, pb=fb.est/fb.trc;   // ratio shown by the bar
     return (pa-pb)*st.dir;
   });
   const arr=function(k){
     if(st.key===k) return '<span class="arr on">'+(st.dir>0?'\u25B2':'\u25BC')+'</span>';
     return '<span class="arr">\u2195</span>';
   };
-  let html='<thead><tr>'+
+  let html='<colgroup><col class="c-mkt"><col class="c-ring"><col class="c-ring"><col class="c-ring"></colgroup>'+
+    '<thead><tr>'+
     '<th class="mkt sortable" data-k="region">Market'+arr('region')+'</th>'+
     '<th class="sortable sep" data-k="outer">Outer'+arr('outer')+'</th>'+
     '<th class="sortable" data-k="mid">Middle'+arr('mid')+'</th>'+
@@ -441,6 +597,181 @@ function buildOne(type){
 function buildMatrix(){ buildOne('house'); buildOne('unit'); }
 
 
+// ---------- DATA EDITOR ----------
+// assumption field specs: key, label, prefix, suffix, type(pct|money|num), step
+const A_FIELDS=[
+  ['landShare','Land share per unit','','m\u00B2','num',1],
+  ['houseFloor','House floor area','','m\u00B2','num',1],
+  ['unitFloor','Unit floor area','','m\u00B2','num',1],
+  ['profit','Developer profit margin','','%','pct',0.5],
+  ['landAcq','Land acquisition cost','','%','pct',0.5],
+  ['other','Other costs','','%','pct',0.5],
+  ['houseAnchor','House build anchor','$','/m\u00B2','money',1],
+  ['unitAnchor','Unit build anchor','$','/m\u00B2','money',1],
+  ['indexAnchor','ABS index anchor','','','num',0.1]
+];
+function buildAssumptions(){
+  const g=document.getElementById('agrid');
+  g.innerHTML=A_FIELDS.map(function(f){
+    const key=f[0],lab=f[1],pre=f[2],suf=f[3],type=f[4],step=f[5];
+    if(type==='money'){
+      return '<div class="afield"><label>'+lab+'</label><div class="wrap">'+
+        '<input type="text" inputmode="numeric" data-akey="'+key+'" data-atype="money" value="'+fmtMoneyInput(A[key])+'">'+
+        (suf?'<span class="suf">'+suf+'</span>':'')+
+        '</div></div>';
+    }
+    const val=(type==='pct')?(A[key]*100):A[key];
+    return '<div class="afield"><label>'+lab+'</label><div class="wrap">'+
+      (pre?'<span class="pre">'+pre+'</span>':'')+
+      '<input type="number" step="'+step+'" data-akey="'+key+'" data-atype="'+type+'" value="'+val+'">'+
+      (suf?'<span class="suf">'+suf+'</span>':'')+
+      '</div></div>';
+  }).join('');
+  g.querySelectorAll('input').forEach(function(inp){
+    const type=inp.dataset.atype;
+    inp.addEventListener('input',function(){
+      const key=inp.dataset.akey;
+      let v=(type==='money')?parseMoney(inp.value):parseFloat(inp.value);
+      if(isNaN(v))return;
+      A[key]=(type==='pct')?v/100:v;
+      recomputeAll();
+    });
+    if(type==='money'){
+      inp.addEventListener('blur',function(){ inp.value=fmtMoneyInput(A[inp.dataset.akey]); });
+    }
+  });
+}
+// region columns: key, label, step, money?
+const R_COLS=[
+  ['landPrice','Land $',1000,true],
+  ['landSize','Land m\u00B2',1,false],
+  ['raw','Rawl.',1,false],
+  ['idx','ABS idx',0.1,false],
+  ['houseEst','House $',1000,true],
+  ['unitEst','Unit $',1000,true]
+];
+function buildRtable(){
+  let h='<colgroup><col class="c-name">'+
+    '<col class="c-money"><col class="c-num"><col class="c-num"><col class="c-num"><col class="c-money"><col class="c-money">'+
+    '<col class="c-rings"><col class="c-mult"><col class="c-mult"></colgroup>';
+  h+='<thead><tr><th class="l">Market</th>';
+  R_COLS.forEach(function(c){ h+='<th>'+c[1]+'</th>'; });
+  h+='<th>Rings</th><th>Mid &times;</th><th>Inner &times;</th></tr></thead><tbody>';
+  REGIONS.forEach(function(r,i){
+    h+='<tr data-i="'+i+'"><td class="rname">'+r.region+' <span class="st">'+r.state+'</span></td>';
+    R_COLS.forEach(function(c){
+      const key=c[0], step=c[2], money=c[3];
+      if(money){
+        h+='<td><input class="money" type="text" inputmode="numeric" data-i="'+i+'" data-key="'+key+'" data-money="1" value="'+fmtMoneyInput(r[key])+'"></td>';
+      } else {
+        h+='<td><input type="number" step="'+step+'" data-i="'+i+'" data-key="'+key+'" value="'+r[key]+'"></td>';
+      }
+    });
+    // rings toggle
+    h+='<td style="text-align:center"><button class="ringtgl'+(r.rings?' on':'')+'" data-i="'+i+'" aria-label="Toggle rings"></button></td>';
+    // multipliers (disabled when rings off)
+    const dis=r.rings?'':' disabled';
+    const midv=r.rings?r.mid:'';
+    const innv=r.rings?r.inner:'';
+    h+='<td><input class="mult" type="number" step="0.1" data-i="'+i+'" data-key="mid" value="'+midv+'"'+dis+'></td>';
+    h+='<td><input class="mult" type="number" step="0.1" data-i="'+i+'" data-key="inner" value="'+innv+'"'+dis+'></td>';
+    h+='</tr>';
+  });
+  h+='</tbody>';
+  const t=document.getElementById('rtable');
+  t.innerHTML=h;
+  // numeric + money field edits
+  t.querySelectorAll('input').forEach(function(inp){
+    const money=inp.dataset.money==='1';
+    inp.addEventListener('input',function(){
+      const i=+inp.dataset.i, key=inp.dataset.key;
+      let v=money?parseMoney(inp.value):parseFloat(inp.value);
+      if(isNaN(v))return;
+      REGIONS[i][key]=v;
+      recomputeAll();
+    });
+    if(money){
+      inp.addEventListener('blur',function(){
+        const i=+inp.dataset.i, key=inp.dataset.key;
+        inp.value=fmtMoneyInput(REGIONS[i][key]);
+      });
+    }
+  });
+  // rings toggles
+  t.querySelectorAll('.ringtgl').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      const i=+btn.dataset.i, r=REGIONS[i];
+      r.rings=!r.rings;
+      if(r.rings){ if(r.mid==null)r.mid=1.5; if(r.inner==null)r.inner=2.0; }
+      buildRtable();       // rebuild to enable/disable mult inputs
+      recomputeAll();
+    });
+  });
+}
+function recomputeAll(){
+  // keep dropdown selection valid, refresh everything that shows numbers
+  render();
+  buildMatrix();
+}
+// ---- Save standalone / copy / reset ----
+function currentDataJSON(){ return JSON.stringify(REGIONS,null,2); }
+function buildStandalone(){
+  // clone current document, strip runtime-injected panels, replace the REGIONS + A defaults
+  const doc='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  // replace the REGIONS array literal
+  const regRe=/const REGIONS = \[[\s\S]*?\];/;
+  const aRe=/let A = \{[\s\S]*?\};/;
+  const newReg='const REGIONS = '+JSON.stringify(REGIONS)+';';
+  const newA='let A = '+JSON.stringify(A)+';';
+  let out=doc.replace(regRe,function(){return newReg;}).replace(aRe,function(){return newA;});
+  // the outerHTML captured live DOM (tables already rendered); that's fine — script re-renders on load.
+  return out;
+}
+function download(filename,text){
+  const blob=new Blob([text],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); },100);
+}
+function wireDataButtons(){
+  document.getElementById('btnSave').addEventListener('click',function(){
+    const btn=this;
+    try{
+      download('replacement-cost-tool.html', buildStandalone());
+      btn.textContent='Saved \u2713'; btn.classList.add('saved');
+      setTimeout(function(){ btn.textContent='Save standalone HTML'; btn.classList.remove('saved'); },1800);
+    }catch(e){ btn.textContent='Save failed'; setTimeout(function(){btn.textContent='Save standalone HTML';},1800); }
+  });
+  document.getElementById('btnCopy').addEventListener('click',function(){
+    const btn=this;
+    const txt=currentDataJSON();
+    const done=function(){ btn.textContent='Copied \u2713'; setTimeout(function(){btn.textContent='Copy JSON';},1500); };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done,done); }
+    else { const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
+      try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); done(); }
+  });
+  document.getElementById('btnReset').addEventListener('click',function(){
+    A=JSON.parse(JSON.stringify(ORIG_A));
+    // restore regions in place (preserve array identity used by closures)
+    ORIG_REGIONS.forEach(function(o,i){ REGIONS[i]=JSON.parse(JSON.stringify(o)); });
+    buildAssumptions(); buildRtable(); recomputeAll();
+    const btn=this; btn.textContent='Reset \u2713'; setTimeout(function(){btn.textContent='Reset';},1500);
+  });
+}
+// ---- tab switching ----
+function wireTabs(){
+  document.querySelectorAll('.tab').forEach(function(tb){
+    tb.addEventListener('click',function(){
+      document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===tb);});
+      const which=tb.dataset.tab;
+      document.getElementById('panel-calc').classList.toggle('on',which==='calc');
+      document.getElementById('panel-data').classList.toggle('on',which==='data');
+    });
+  });
+}
+
 const sel=document.getElementById('region');
 REGIONS.forEach(function(r){ const o=document.createElement('option'); o.value=r.region;
   o.textContent=r.region+', '+r.state; sel.appendChild(o); });
@@ -454,11 +785,14 @@ document.getElementById('dwelling').addEventListener('click',function(e){
 });
 render();
 buildMatrix();
-// theme toggle (in-memory; defaults to system preference)
+buildAssumptions();
+buildRtable();
+wireDataButtons();
+wireTabs();
+// theme toggle (in-memory; defaults to light)
 (function(){
   const root=document.documentElement;
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  if(prefersDark) root.setAttribute('data-theme','dark');
+  root.setAttribute('data-theme','light');
   document.getElementById('themeBtn').addEventListener('click',function(){
     root.setAttribute('data-theme', root.getAttribute('data-theme')==='dark'?'light':'dark');
   });
