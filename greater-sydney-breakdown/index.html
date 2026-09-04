@@ -2260,11 +2260,11 @@ function pLendU(){ lendPage('c-lendu','unit') }
    issues on disk publish components, so the window is 2022-2025. */
 function pPopMov(){
  panels('c-popmov',DIV6(),it=>[
-  {d:H[it.d].pmov.ni,type:'bar',col:BAR.hLt,name:'Natural increase'},
-  {d:H[it.d].pmov.nim,type:'bar',col:BAR.uDk,name:'Net internal migration'},
-  {d:H[it.d].pmov.nom,type:'bar',col:BAR.x5,name:'Net overseas migration'},
-  {d:H[it.d].pmov.pop,type:'line',col:C(it.d),ax:'r',name:'Population'}],
-  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,groupBars:1,zeroL:1,
+  {d:H[it.d].pmov.ni,type:'bar',col:C(it.d),op:.9,name:'NI'},
+  {d:H[it.d].pmov.nim,type:'bar',col:C(it.d),op:.5,name:'NIM'},
+  {d:H[it.d].pmov.nom,type:'bar',col:C(it.d),op:.25,name:'NOM'},
+  {d:H[it.d].pmov.pop,type:'line',col:C(it.d),ax:'r',name:'Pop'}],
+  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,groupBars:1,zeroL:1,ownR:1,
    title:'Population movement',ytitle:'Persons per year'});
 }
 /* Business lending: all four series are NSW-wide, so all four draw dashed - the
