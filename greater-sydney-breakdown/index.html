@@ -1120,6 +1120,9 @@ const MARK=(cx,cy,col)=>'<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r
 /* Round axis bounds to a readable step so ticks land on 0/2/4/6/8 rather than the
    1.5/3.6/5.8/7.9 that scale()'s data-fitted padding produces. Feed it the RAW min
    and max, not scale()'s padded output, or the top tick floats above the data. */
+/* tick formatter: rounds away float drift and drops trailing zeros, so a tick at
+   10 prints "10", not "10.0", while 2.5 stays "2.5" */
+const TKF=v=>String(Math.round(v*1000)/1000);
 function niceBounds(lo,hi,n){
  const raw=(hi-lo)/n;
  if(!isFinite(raw)||raw<=0) return [lo,hi,1];
@@ -1772,7 +1775,7 @@ function pCAGR(){
      H 443 rather than the 390 default: the svg is width-driven, so the viewBox aspect sets
      the rendered height. At 390 it left 72px of the panel empty below the axis; 443 fills
      it down to a ~14px margin. */
-  {fmt:v=>v.toFixed(1)+'%',labels:1,H:443,title:'Ten-year compound annual growth'});
+  {fmt:v=>TKF(v)+'%',labels:1,H:443,title:'Ten-year compound annual growth'});
  /* The swatches carry solid v pale, so the labels do not have to name it. */
  seriesLegend('c-cagr-lg',[['#3E4C55','House 10-yr',1],['#3E4C55','Unit 10-yr',1,.45]],
   'each district in its own colour');
@@ -2161,7 +2164,7 @@ function somDomPage(id,s){
  panels(id,DIVSEG1(s),it=>[
   {d:H[it.d].som[s],type:'bar',col:C(it.d),op:.45,name:'Stock on market'},
   {d:H[it.d].dom[s],type:'line',col:C(it.d),ax:'r',name:'Days on market'}],
-  {fmt:v=>v.toFixed(1)+'%',cards:1,H:440,unionYears:1,
+  {fmt:v=>TKF(v)+'%',cards:1,H:440,unionYears:1,
    title:'Stock on market v days on market, '+s+'s',ytitle:'Stock on Market'});
 }
 function pSomDomH(){ somDomPage('c-somdomh','house') }
@@ -2170,13 +2173,13 @@ function pSales(){
  panels('c-sales',DIV6(),it=>[
   {d:H[it.d].sales.house,type:'line',col:C(it.d),name:'House sales'},
   {d:H[it.d].sales.unit,type:'line',col:C(it.d),op:.45,name:'Unit sales'}],
-  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,title:'Dwelling sales',ytitle:'House / Unit Sales'});
+  {fmt:v=>TKF(v/1000)+'k',cards:1,H:460,title:'Dwelling sales',ytitle:'House / Unit Sales'});
 }
 function pAppr(){
  panels('c-appr',DIV6(),it=>[
   {d:H[it.d].appr,type:'bar',col:C(it.d),op:.45,name:'Approvals'},
   {d:H[it.d].popch,type:'line',col:C(it.d),ax:'r',name:'Population change'}],
-  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,title:'Approvals v population change',ytitle:'Dwelling Approvals'});
+  {fmt:v=>TKF(v/1000)+'k',cards:1,H:460,title:'Approvals v population change',ytitle:'Dwelling Approvals'});
 }
 function pHholds(){
  panels('c-hholds',DIV6(),it=>[
@@ -2184,13 +2187,13 @@ function pHholds(){
      otherwise adjacent bars in one district colour are hard to tell apart */
   {d:H[it.d].hhnew,type:'bar',col:C(it.d),op:.85,name:'New households'},
   {d:H[it.d].appr,type:'bar',col:C(it.d),op:.3,name:'Approvals'}],
-  {zeroL:1,fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,title:'New households v housing',ytitle:'New Households / Approvals'});
+  {zeroL:1,fmt:v=>TKF(v/1000)+'k',cards:1,H:460,title:'New households v housing',ytitle:'New Households / Approvals'});
 }
 function pPopch(){
  const _lt=mean(Object.values(MOCK.nat.gspopch));   // whole-GS growth, population-weighted
  multiLine('c-popch',d=>H[d].popch,{zeroL:1,solid:1,noEnds:1,xrot:1,noDots:1,lta:_lt,
   ltaL:'Greater Sydney long-term average '+_lt.toFixed(1)+'%',
-  fmt:v=>v.toFixed(1)+'%',title:'Change in population',ytitle:'Population Change'});
+  fmt:v=>TKF(v)+'%',title:'Change in population',ytitle:'Population Change'});
  divLegend('c-popch-lg','NSW and national comparison lines need the ABS release');
 }
 /* JSA publishes nothing finer than the Sydney IVI region inside the metro area, so one
@@ -2215,7 +2218,7 @@ function pUnemp(){
  /* noEnds: the legend below names every series, as on the job-index page. lbl still
     feeds the crosshair readout. */
  multiLine('c-unemp',d=>H[d].unemp,
-  {fmt:v=>v.toFixed(1)+'%',noEnds:1,solid:1,lbl:d=>d==='NSW'?'NSW':d,colFor:d=>d==='NSW'?'#3E4C55':C(d),
+  {fmt:v=>TKF(v)+'%',noEnds:1,solid:1,lbl:d=>d==='NSW'?'NSW':d,colFor:d=>d==='NSW'?'#3E4C55':C(d),
    extra:[{name:'NSW',o:MOCK.nat.unemp}],
    title:'Unemployment rate',ytitle:'Unemployment Rate'});
  /* Plain keys rather than the hide-toggles: the NSW line needs a key too, and one
@@ -2228,7 +2231,7 @@ function pYieldCmp(){
  bars('c-yield',ORDER,[
   {d:ORDER.map(d=>R.divisions[d].house.yield),byDiv:1,name:'House yield'},
   {d:ORDER.map(d=>R.divisions[d].unit.yield),byDiv:1,op:.45,name:'Unit yield'}],
-  {fmt:v=>v.toFixed(2)+'%',labels:1,title:'Gross yield by district',ytitle:'Gross Yield'});
+  {fmt:v=>TKF(v)+'%',labels:1,title:'Gross yield by district',ytitle:'Gross Yield'});
  seriesLegend('c-yield-lg',[['#3E4C55','Houses',1],['#3E4C55','Units',1,.45]],'each district in its own colour; units pale');
 }
 /* One segment per page, one full-width chart: district yields solid in district
@@ -2236,7 +2239,7 @@ function pYieldCmp(){
    as specified. Everything is a percentage, so one scale carries all eight. */
 function ycrPage(id,s){
  multiLine('c-'+id,d=>H[d].yld[s],
-  {noEnds:1,solid:1,fmt:v=>v.toFixed(1)+'%',
+  {noEnds:1,solid:1,fmt:v=>TKF(v)+'%',
    lbl:d=>d,colFor:d=>d==='Cash rate'?'#171B24':d==='Variable rate'?'#C4203C':C(d),
    extra:[{name:'Cash rate',o:MOCK.nat.cash},{name:'Variable rate',o:MOCK.nat.var}],
    title:'Yield v cash rate, '+s+'s',ytitle:'Gross Yield / Rates'});
@@ -2261,8 +2264,8 @@ function lendPage(id,s){
  multiLine(id,d=>MOCK.ml.price[d+'|'+s],
   {monthly:1,noEnds:1,solid:1,padL:84,padR:84,ax2Labels:1,fmt:v=>v>=1e6?'$'+(v/1e6).toFixed(2)+'m':'$'+Math.round(v/1e3)+'k',
    lbl:d=>d,colFor:d=>d==='Investor'?'#171B24':d==='Owner-occupier'?'#C4203C':C(d),
-   extra:[{name:'Owner-occupier',o:MOCK.ml.oo,ax2:1,fmt:v=>'$'+v.toFixed(1)+'bn'},
-          {name:'Investor',o:MOCK.ml.inv,ax2:1,fmt:v=>'$'+v.toFixed(1)+'bn'}],
+   extra:[{name:'Owner-occupier',o:MOCK.ml.oo,ax2:1,fmt:v=>'$'+TKF(v)+'bn'},
+          {name:'Investor',o:MOCK.ml.inv,ax2:1,fmt:v=>'$'+TKF(v)+'bn'}],
    title:'NSW lending v median price, '+s+'s',
    ytitle:'Median '+(s==='house'?'House':'Unit')+' Price',ytitle2:'NSW New Loan Commitments, $bn per quarter'});
  seriesLegend(id+'-lg',ORDER.map(d=>[C(d),d,1]).concat(
@@ -2279,7 +2282,7 @@ function pPopMov(){
   {d:H[it.d].pmov.nim,type:'bar',col:C(it.d),op:.5,name:'NIM'},
   {d:H[it.d].pmov.nom,type:'bar',col:C(it.d),op:.25,name:'NOM'},
   {d:H[it.d].pmov.pop,type:'line',col:C(it.d),ax:'r',name:'Pop'}],
-  {fmt:v=>(v/1000).toFixed(1)+'k',cards:1,H:460,groupBars:1,zeroL:1,ownL:1,ownR:1,
+  {fmt:v=>TKF(v/1000)+'k',cards:1,H:460,groupBars:1,zeroL:1,ownL:1,ownR:1,
    title:'Population movement',ytitle:'Persons per year'});
 }
 /* Business lending: all four series are NSW-wide, so all four draw dashed - the
@@ -2289,7 +2292,7 @@ const BIZC={'Small \u00b7 construction':BAR.hLt,'Medium \u00b7 construction':BAR
  'Small \u00b7 property purchase':BAR.uLt,'Medium \u00b7 property purchase':BAR.uDk};
 function pBizLend(){
  multiLine('c-bizlend',d=>null,
-  {noEnds:1,monthly:1,solidExtra:1,fmt:v=>'$'+v.toFixed(1)+'bn',lbl:d=>d,colFor:d=>BIZC[d]||C(d),
+  {noEnds:1,monthly:1,solidExtra:1,fmt:v=>'$'+TKF(v)+'bn',lbl:d=>d,colFor:d=>BIZC[d]||C(d),
    extra:[{name:'Small \u00b7 construction',o:MOCK.nat.biz.sc},
           {name:'Medium \u00b7 construction',o:MOCK.nat.biz.mc},
           {name:'Small \u00b7 property purchase',o:MOCK.nat.biz.sp},
