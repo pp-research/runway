@@ -2376,6 +2376,17 @@ function pBizLend(){
    sales-weighted across all six, the same convention the price page uses to roll
    LGAs up. The gap line rides the right axis; zeroL squares the price columns
    with the axis without flattening the gap. */
+/* divider slides list the titles of the pages in their section, read straight from
+   PAGES so a rename or reorder can never leave a stale list. Sections run from one
+   "div"-class tuple to the next. Six or fewer titles stay in a single column. */
+function pDividers(){
+ PAGES.forEach((p,i)=>{if(p[3]!=='div')return;
+  const items=[];
+  for(let k=i+1;k<PAGES.length&&PAGES[k][3]!=='div';k++) items.push(PAGES[k][1]);
+  const ul=gid('dvl-'+p[0]); if(!ul) return;
+  ul.className='dvl'+(items.length<=6?' one':'');
+  ul.innerHTML=items.map(t=>'<li>'+t+'</li>').join('');});
+}
 function gsPage(id,seg){
  const yrs=Object.keys(GR('North',seg).ps), gs={};
  yrs.forEach(y=>{let pv=0,w=0;ORDER.forEach(d=>{const p=at(GR(d,seg).ps,y),n=at(H[d].sales[seg],y);
