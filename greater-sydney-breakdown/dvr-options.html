@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Demand v runway — design options</title>
+<title>Demand v runway — fills, round 2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -19,94 +19,84 @@ h3{margin:4px 0 14px;font-size:15px;letter-spacing:.08em;text-transform:uppercas
 .pt{font-size:2.1cqw;font-weight:700;margin:0 0 .9cqw;letter-spacing:-.02em}
 .ch{flex:1;min-height:0}
 svg{width:100%;height:100%}
-.rail{display:flex;gap:3.2cqw}
-.rail .ch{flex:1}
-.rk{flex:0 0 22cqw;display:flex;flex-direction:column;justify-content:center;gap:.42cqw}
-.rk .r{display:flex;align-items:center;gap:.6cqw;font-size:.86cqw;color:#C6D2DC;
- background:#FFFFFF08;border:1px solid #FFFFFF12;border-radius:.4cqw;padding:.4cqw .7cqw}
-.rk .r i{width:.7cqw;height:.7cqw;border-radius:50%;flex:none}
-.rk .r i.u{background:transparent!important;border:.14cqw solid}
-.rk .r b{margin-left:auto;font-weight:600;color:#F0F5F7;font-variant-numeric:tabular-nums}
-.rk .hd{font-size:.66cqw;letter-spacing:.2em;text-transform:uppercase;color:#7FB7C4;font-weight:700;margin-bottom:.2cqw}
 </style>
 </head>
 <body>
-<h3>Demand v. runway — 4 premium directions (positions are the real July 2026 readings)</h3>
+<h3>Round 2 — dark luxe (A) with three ways to bring the quadrant colours back</h3>
 <div class="grid" id="grid"></div>
 <script>
 const ORDER=['North','East','Central','South','West','Central Coast'];
 const PAL={'North':'#9AA3B1','East':'#F5A623','Central':'#5CC8E0','South':'#C2A4D6','West':'#3ECF8E','Central Coast':'#E58FA8'};
 const Hp={'North':[23,27],'East':[21,31],'Central':[19,24],'South':[19,31],'West':[17,26],'Central Coast':[15,22]};
 const Up={'North':[77,47],'East':[56,41],'Central':[86,46],'South':[60,60],'West':[52,63],'Central Coast':[62,55]};
+const QC={tl:'#F5A623',tr:'#5CC8E0',bl:'#E0556F',br:'#3ECF8E'};
 const X0=0,X1=120,Y0=-20,Y1=80,W=1000,Ht=560,P=[26,30,64,64];
 const x=v=>P[3]+(v-X0)/(X1-X0)*(W-P[1]-P[3]);
 const y=v=>P[0]+(Y1-v)/(Y1-Y0)*(Ht-P[0]-P[2]);
+let uid=0;
 
-function scatter(theme){
- const t={
-  dark:{grid:'#FFFFFF10',ax:'#8FA9B4',lab:'#8FA9B4',thr:'#7FB7C4',thrOp:.8,quadFill:null,
-   qlab:'#FFFFFF',qlabOp:.10,dotGlow:1,panel:null,ink:'#E8EEF2'},
-  glass:{grid:'#FFFFFF0E',ax:'#8FA9B4',lab:'#8FA9B4',thr:'#7FB7C4',thrOp:.7,
-   quadFill:['#F5A62312','#5CC8E014','#C2033C0E','#3ECF8E10'],qlab:'#FFFFFF',qlabOp:.14,dotGlow:0,panel:null,ink:'#E8EEF2'},
-  light:{grid:'#E2E7EA',ax:'#5A6B75',lab:'#7C8A94',thr:'#22303B',thrOp:.55,quadFill:null,
-   qlab:'#22303B',qlabOp:.08,dotGlow:0,panel:'#FDFEFE',ink:'#22303B'},
- }[theme];
+function scatter(fillMode){
+ const id='g'+(uid++);
+ const mx=x(60),my=y(30);
  let g='<svg viewBox="0 0 '+W+' '+Ht+'">';
- if(t.panel) g+='<rect x="0" y="0" width="'+W+'" height="'+Ht+'" rx="10" fill="'+t.panel+'"/>';
- if(t.quadFill){
-  const mx=x(60),my=y(30);
-  g+='<rect x="'+x(X0)+'" y="'+y(Y1)+'" width="'+(mx-x(X0))+'" height="'+(my-y(Y1))+'" fill="'+t.quadFill[0]+'"/>'
-   +'<rect x="'+mx+'" y="'+y(Y1)+'" width="'+(x(X1)-mx)+'" height="'+(my-y(Y1))+'" fill="'+t.quadFill[1]+'"/>'
-   +'<rect x="'+x(X0)+'" y="'+my+'" width="'+(mx-x(X0))+'" height="'+(y(Y0)-my)+'" fill="'+t.quadFill[2]+'"/>'
-   +'<rect x="'+mx+'" y="'+my+'" width="'+(x(X1)-mx)+'" height="'+(y(Y0)-my)+'" fill="'+t.quadFill[3]+'"/>';
+ if(fillMode==='corner'){
+  g+='<defs>'
+   +'<radialGradient id="'+id+'tl" cx="0%" cy="0%" r="95%"><stop offset="0%" stop-color="'+QC.tl+'" stop-opacity=".20"/><stop offset="70%" stop-color="'+QC.tl+'" stop-opacity="0"/></radialGradient>'
+   +'<radialGradient id="'+id+'tr" cx="100%" cy="0%" r="95%"><stop offset="0%" stop-color="'+QC.tr+'" stop-opacity=".22"/><stop offset="70%" stop-color="'+QC.tr+'" stop-opacity="0"/></radialGradient>'
+   +'<radialGradient id="'+id+'bl" cx="0%" cy="100%" r="95%"><stop offset="0%" stop-color="'+QC.bl+'" stop-opacity=".16"/><stop offset="70%" stop-color="'+QC.bl+'" stop-opacity="0"/></radialGradient>'
+   +'<radialGradient id="'+id+'br" cx="100%" cy="100%" r="95%"><stop offset="0%" stop-color="'+QC.br+'" stop-opacity=".16"/><stop offset="70%" stop-color="'+QC.br+'" stop-opacity="0"/></radialGradient>'
+   +'</defs>'
+   +'<rect x="'+x(X0)+'" y="'+y(Y1)+'" width="'+(mx-x(X0))+'" height="'+(my-y(Y1))+'" fill="url(#'+id+'tl)"/>'
+   +'<rect x="'+mx+'" y="'+y(Y1)+'" width="'+(x(X1)-mx)+'" height="'+(my-y(Y1))+'" fill="url(#'+id+'tr)"/>'
+   +'<rect x="'+x(X0)+'" y="'+my+'" width="'+(mx-x(X0))+'" height="'+(y(Y0)-my)+'" fill="url(#'+id+'bl)"/>'
+   +'<rect x="'+mx+'" y="'+my+'" width="'+(x(X1)-mx)+'" height="'+(y(Y0)-my)+'" fill="url(#'+id+'br)"/>';
  }
- for(let v=X0;v<=X1;v+=20) g+='<line x1="'+x(v)+'" x2="'+x(v)+'" y1="'+y(Y1)+'" y2="'+y(Y0)+'" stroke="'+t.grid+'"/>'
-  +'<text x="'+x(v)+'" y="'+(y(Y0)+22)+'" text-anchor="middle" font-size="12" fill="'+t.lab+'">'+v+'%</text>';
- for(let v=-20;v<=80;v+=20) g+='<line x1="'+x(X0)+'" x2="'+x(X1)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="'+t.grid+'"/>'
-  +'<text x="'+(x(X0)-10)+'" y="'+(y(v)+4)+'" text-anchor="end" font-size="12" fill="'+t.lab+'">'+v+'</text>';
- // thresholds
- g+='<line x1="'+x(60)+'" x2="'+x(60)+'" y1="'+y(Y1)+'" y2="'+y(Y0)+'" stroke="'+t.thr+'" stroke-opacity="'+t.thrOp+'" stroke-width="1.6" stroke-dasharray="7 5"/>'
-  +'<line x1="'+x(X0)+'" x2="'+x(X1)+'" y1="'+y(30)+'" y2="'+y(30)+'" stroke="'+t.thr+'" stroke-opacity="'+t.thrOp+'" stroke-width="1.6" stroke-dasharray="7 5"/>';
- // ghosted quadrant captions
- const q=(tx,anchor,px,py)=>'<text x="'+px+'" y="'+py+'" text-anchor="'+anchor+'" font-size="15" font-weight="800"'
-  +' letter-spacing="3" fill="'+t.qlab+'" fill-opacity="'+t.qlabOp+'">'+tx.toUpperCase()+'</text>';
- g+=q('Strong demand · short runway','start',x(X0)+14,y(Y1)+26)
-  +q('Best of both','end',x(X1)-14,y(Y1)+26)
-  +q('Weak demand · short runway','start',x(X0)+14,y(Y0)-14)
-  +q('Long runway · weak demand','end',x(X1)-14,y(Y0)-14);
- // dots
+ if(fillMode==='flat'){
+  g+='<rect x="'+x(X0)+'" y="'+y(Y1)+'" width="'+(mx-x(X0))+'" height="'+(my-y(Y1))+'" fill="'+QC.tl+'" fill-opacity=".07"/>'
+   +'<rect x="'+mx+'" y="'+y(Y1)+'" width="'+(x(X1)-mx)+'" height="'+(my-y(Y1))+'" fill="'+QC.tr+'" fill-opacity=".09"/>'
+   +'<rect x="'+x(X0)+'" y="'+my+'" width="'+(mx-x(X0))+'" height="'+(y(Y0)-my)+'" fill="'+QC.bl+'" fill-opacity=".06"/>'
+   +'<rect x="'+mx+'" y="'+my+'" width="'+(x(X1)-mx)+'" height="'+(y(Y0)-my)+'" fill="'+QC.br+'" fill-opacity=".07"/>';
+ }
+ for(let v=X0;v<=X1;v+=20) g+='<line x1="'+x(v)+'" x2="'+x(v)+'" y1="'+y(Y1)+'" y2="'+y(Y0)+'" stroke="#FFFFFF10"/>'
+  +'<text x="'+x(v)+'" y="'+(y(Y0)+22)+'" text-anchor="middle" font-size="12" fill="#8FA9B4">'+v+'%</text>';
+ for(let v=-20;v<=80;v+=20) g+='<line x1="'+x(X0)+'" x2="'+x(X1)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="#FFFFFF10"/>'
+  +'<text x="'+(x(X0)-10)+'" y="'+(y(v)+4)+'" text-anchor="end" font-size="12" fill="#8FA9B4">'+v+'</text>';
+ g+='<line x1="'+mx+'" x2="'+mx+'" y1="'+y(Y1)+'" y2="'+y(Y0)+'" stroke="#7FB7C4" stroke-opacity=".8" stroke-width="1.6" stroke-dasharray="7 5"/>'
+  +'<line x1="'+x(X0)+'" x2="'+x(X1)+'" y1="'+my+'" y2="'+my+'" stroke="#7FB7C4" stroke-opacity=".8" stroke-width="1.6" stroke-dasharray="7 5"/>';
+ const capCol=fillMode==='captions'?QC:{tl:'#FFF',tr:'#FFF',bl:'#FFF',br:'#FFF'};
+ const capOp=fillMode==='captions'?.55:.10;
+ const q=(tx,anchor,px,py,c)=>'<text x="'+px+'" y="'+py+'" text-anchor="'+anchor+'" font-size="15" font-weight="800"'
+  +' letter-spacing="3" fill="'+c+'" fill-opacity="'+capOp+'">'+tx.toUpperCase()+'</text>';
+ g+=q('Strong demand · short runway','start',x(X0)+14,y(Y1)+26,capCol.tl)
+  +q('Best of both','end',x(X1)-14,y(Y1)+26,capCol.tr)
+  +q('Weak demand · short runway','start',x(X0)+14,y(Y0)-14,capCol.bl)
+  +q('Long runway · weak demand','end',x(X1)-14,y(Y0)-14,capCol.br);
+ if(fillMode==='captions'){
+  const L=34;
+  g+='<path d="M'+(x(X0)+2)+' '+(y(Y1)+2+L)+' V'+(y(Y1)+2)+' H'+(x(X0)+2+L)+'" fill="none" stroke="'+QC.tl+'" stroke-opacity=".7" stroke-width="3"/>'
+   +'<path d="M'+(x(X1)-2-L)+' '+(y(Y1)+2)+' H'+(x(X1)-2)+' V'+(y(Y1)+2+L)+'" fill="none" stroke="'+QC.tr+'" stroke-opacity=".7" stroke-width="3"/>'
+   +'<path d="M'+(x(X0)+2)+' '+(y(Y0)-2-L)+' V'+(y(Y0)-2)+' H'+(x(X0)+2+L)+'" fill="none" stroke="'+QC.bl+'" stroke-opacity=".7" stroke-width="3"/>'
+   +'<path d="M'+(x(X1)-2-L)+' '+(y(Y0)-2)+' H'+(x(X1)-2)+' V'+(y(Y0)-2-L)+'" fill="none" stroke="'+QC.br+'" stroke-opacity=".7" stroke-width="3"/>';
+ }
  ORDER.forEach(d=>{
   const h=Hp[d],u=Up[d];
-  if(t.dotGlow) g+='<circle cx="'+x(h[0])+'" cy="'+y(h[1])+'" r="16" fill="'+PAL[d]+'" fill-opacity=".18"/>'
-   +'<circle cx="'+x(u[0])+'" cy="'+y(u[1])+'" r="16" fill="'+PAL[d]+'" fill-opacity=".14"/>';
-  g+='<circle cx="'+x(h[0])+'" cy="'+y(h[1])+'" r="8" fill="'+PAL[d]+'"'+(t.panel?' stroke="#22303B" stroke-width="1"':'')+'/>'
+  g+='<circle cx="'+x(h[0])+'" cy="'+y(h[1])+'" r="16" fill="'+PAL[d]+'" fill-opacity=".18"/>'
+   +'<circle cx="'+x(u[0])+'" cy="'+y(u[1])+'" r="16" fill="'+PAL[d]+'" fill-opacity=".14"/>'
+   +'<circle cx="'+x(h[0])+'" cy="'+y(h[1])+'" r="8" fill="'+PAL[d]+'"/>'
    +'<circle cx="'+x(u[0])+'" cy="'+y(u[1])+'" r="8" fill="none" stroke="'+PAL[d]+'" stroke-width="2.6"/>'
-   +'<text x="'+(x(u[0]))+'" y="'+(y(u[1])-14)+'" text-anchor="middle" font-size="12.5" font-weight="600" fill="'+t.ink+'">'+d+'</text>';
+   +'<text x="'+(x(u[0]))+'" y="'+(y(u[1])-14)+'" text-anchor="middle" font-size="12.5" font-weight="600" fill="#E8EEF2">'+d+'</text>';
  });
- // axis titles
- g+='<text x="'+((x(X0)+x(X1))/2)+'" y="'+(Ht-8)+'" text-anchor="middle" font-size="12.5" fill="'+t.lab+'">Runway at 4.90% — upside to the affordability ceiling</text>'
-  +'<text transform="rotate(-90 16 '+((y(Y0)+y(Y1))/2)+')" x="16" y="'+((y(Y0)+y(Y1))/2)+'" text-anchor="middle" font-size="12.5" fill="'+t.lab+'">Demand score</text>';
+ g+='<text x="'+((x(X0)+x(X1))/2)+'" y="'+(Ht-8)+'" text-anchor="middle" font-size="12.5" fill="#8FA9B4">Runway at 4.90% — upside to the affordability ceiling</text>'
+  +'<text transform="rotate(-90 16 '+((y(Y0)+y(Y1))/2)+')" x="16" y="'+((y(Y0)+y(Y1))/2)+'" text-anchor="middle" font-size="12.5" fill="#8FA9B4">Demand score</text>';
  return g+'</svg>';
 }
-function rank(){
- const all=[];
- ORDER.forEach(d=>{all.push({d,seg:'H',v:Hp[d]});all.push({d,seg:'U',v:Up[d]})});
- all.sort((a,b)=>(b.v[0]+b.v[1]*1.5)-(a.v[0]+a.v[1]*1.5));
- return '<div class="rk"><div class="hd">Ranked · demand + runway</div>'+all.slice(0,12).map(m=>
-  '<div class="r"><i class="'+(m.seg==='U'?'u':'')+'" style="background:'+PAL[m.d]+';border-color:'+PAL[m.d]+'"></i>'
-  +m.d+' '+(m.seg==='H'?'houses':'units')+'<b>'+m.v[1]+' · '+m.v[0]+'%</b></div>').join('')+'</div>';
-}
 const V=[
- ['A - Dark luxe: no quadrant fills - hairlines, ghosted captions, glowing district dots',
-  '<div class="pad"><h2 class="pt">Demand v. runway</h2><div class="ch">'+scatter('dark')+'</div></div>'],
- ['B - Glass quadrants: barely-there tinted quadrants + ghost captions on the dark slide',
-  '<div class="pad"><h2 class="pt">Demand v. runway</h2><div class="ch">'+scatter('glass')+'</div></div>'],
- ['C - Scatter + ranked rail: dark luxe chart with the 12 markets ranked beside it',
-  '<div class="pad"><h2 class="pt">Demand v. runway</h2><div class="rail"><div class="ch">'+scatter('dark')+'</div>'+rank()+'</div></div>'],
- ['D - Light editorial: white panel, print-report styling, outlined dots',
-  '<div class="pad"><h2 class="pt">Demand v. runway</h2><div class="ch">'+scatter('light')+'</div></div>'],
+ ['1 - Corner washes: each quadrant colour glows in from its corner and fades to the centre',scatter('corner')],
+ ['2 - Flat glass tints: whole quadrants tinted at whisper opacity',scatter('flat')],
+ ['3 - Coloured captions + corner brackets: no fill at all - the colour lives in the caption and a corner accent',scatter('captions')],
+ ['A - reference: the plain dark luxe you liked, no fills',scatter('none')],
 ];
-document.getElementById('grid').innerHTML=V.map(v=>'<div class="sl"><div class="tag">'+v[0]+'</div>'+v[1]+'</div>').join('');
+document.getElementById('grid').innerHTML=V.map(v=>'<div class="sl"><div class="tag">'+v[0]+'</div><div class="pad"><h2 class="pt">Demand v. runway</h2><div class="ch">'+v[1]+'</div></div></div>').join('');
 </script>
 </body>
 </html>
