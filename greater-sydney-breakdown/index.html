@@ -1999,20 +1999,31 @@ function pScatter(){
  const xmin=120-xmax,ymin=-25,ymax=82;
  const fx=v=>L+(v-xmin)/(xmax-xmin)*pw, fy=v=>T+(ymax-v)/(ymax-ymin)*ph;
  const X6=fx(60),Y3=fy(30);
+ /* dark luxe: no quadrant fills - the quadrant colours live in the corner captions
+    and thin corner brackets instead, so the plot itself stays clean */
+ const QC={tl:'#F5A623',tr:'#5CC8E0',bl:'#E0556F',br:'#3ECF8E'};
  let s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" role="img" style="width:100%;height:auto">';
- s+='<rect x="'+L+'" y="'+T+'" width="'+(X6-L)+'" height="'+(Y3-T)+'" fill="#FAF7DC"/>'
-  +'<rect x="'+X6+'" y="'+T+'" width="'+(L+pw-X6)+'" height="'+(Y3-T)+'" fill="#DAEBF7"/>'
-  +'<rect x="'+L+'" y="'+Y3+'" width="'+(X6-L)+'" height="'+(T+ph-Y3)+'" fill="#F8E3EA"/>'
-  +'<rect x="'+X6+'" y="'+Y3+'" width="'+(L+pw-X6)+'" height="'+(T+ph-Y3)+'" fill="#E2F0E3"/>';
  for(let v=-20;v<=80;v+=10){const y=fy(v);
-  s+='<line x1="'+L+'" y1="'+y+'" x2="'+(L+pw)+'" y2="'+y+'" stroke="#00000012"/>'
+  s+='<line x1="'+L+'" y1="'+y+'" x2="'+(L+pw)+'" y2="'+y+'" stroke="#FFFFFF12"/>'
    +'<text x="'+(L-12)+'" y="'+(y+6)+'" text-anchor="end" font-size="19" fill="#8FA0AB">'+v+'</text>';}
  for(let v=0;v<=xmax;v+=20){const x=fx(v);
-  s+='<line x1="'+x+'" y1="'+T+'" x2="'+x+'" y2="'+(T+ph)+'" stroke="#00000012"/>'
+  s+='<line x1="'+x+'" y1="'+T+'" x2="'+x+'" y2="'+(T+ph)+'" stroke="#FFFFFF12"/>'
    +'<text x="'+x+'" y="'+(T+ph+30)+'" text-anchor="middle" font-size="19" fill="#8FA0AB">'+v+'%</text>';}
- s+='<line x1="'+fx(0)+'" y1="'+T+'" x2="'+fx(0)+'" y2="'+(T+ph)+'" stroke="#66707A" stroke-width="1.6"/>'
-  +'<line x1="'+L+'" y1="'+fy(0)+'" x2="'+(L+pw)+'" y2="'+fy(0)+'" stroke="#66707A" stroke-width="1.6"/>'
-  +'<line x1="'+X6+'" y1="'+T+'" x2="'+X6+'" y2="'+(T+ph)+'" stroke="#98A2AC" stroke-width="1.6" stroke-dasharray="7 6"/>';
+ s+='<line x1="'+fx(0)+'" y1="'+T+'" x2="'+fx(0)+'" y2="'+(T+ph)+'" stroke="#8FA9B4" stroke-opacity=".55" stroke-width="1.6"/>'
+  +'<line x1="'+L+'" y1="'+fy(0)+'" x2="'+(L+pw)+'" y2="'+fy(0)+'" stroke="#8FA9B4" stroke-opacity=".55" stroke-width="1.6"/>'
+  +'<line x1="'+X6+'" y1="'+T+'" x2="'+X6+'" y2="'+(T+ph)+'" stroke="#7FB7C4" stroke-opacity=".8" stroke-width="1.6" stroke-dasharray="7 6"/>'
+  +'<line x1="'+L+'" y1="'+Y3+'" x2="'+(L+pw)+'" y2="'+Y3+'" stroke="#7FB7C4" stroke-opacity=".8" stroke-width="1.6" stroke-dasharray="7 6"/>';
+ const cap=(tx,anchor,px,py,c)=>'<text x="'+px+'" y="'+py+'" text-anchor="'+anchor
+  +'" font-size="22" font-weight="800" letter-spacing="4" fill="'+c+'" fill-opacity=".55">'+tx+'</text>';
+ s+=cap('STRONG DEMAND · SHORT RUNWAY','start',L+20,T+38,QC.tl)
+  +cap('BEST OF BOTH','end',L+pw-20,T+38,QC.tr)
+  +cap('WEAK DEMAND · SHORT RUNWAY','start',L+20,T+ph-20,QC.bl)
+  +cap('LONG RUNWAY · WEAK DEMAND','end',L+pw-20,T+ph-20,QC.br);
+ const BL2=50;
+ s+='<path d="M'+(L+3)+' '+(T+3+BL2)+' V'+(T+3)+' H'+(L+3+BL2)+'" fill="none" stroke="'+QC.tl+'" stroke-opacity=".7" stroke-width="3.5"/>'
+  +'<path d="M'+(L+pw-3-BL2)+' '+(T+3)+' H'+(L+pw-3)+' V'+(T+3+BL2)+'" fill="none" stroke="'+QC.tr+'" stroke-opacity=".7" stroke-width="3.5"/>'
+  +'<path d="M'+(L+3)+' '+(T+ph-3-BL2)+' V'+(T+ph-3)+' H'+(L+3+BL2)+'" fill="none" stroke="'+QC.bl+'" stroke-opacity=".7" stroke-width="3.5"/>'
+  +'<path d="M'+(L+pw-3-BL2)+' '+(T+ph-3)+' H'+(L+pw-3)+' V'+(T+ph-3-BL2)+'" fill="none" stroke="'+QC.br+'" stroke-opacity=".7" stroke-width="3.5"/>';
  [[70,'10%+'],[50,'5%+'],[30,'CPI+'],[10,'0%'],[-10,'-5%']].forEach(q=>{
   s+='<text x="'+(L+pw+14)+'" y="'+(fy(q[0])+6)+'" font-size="19" fill="#8FA0AB">'+q[1]+'</text>';});
  s+='<text transform="rotate(-90 '+(W-26)+' '+(T+ph/2)+')" x="'+(W-26)+'" y="'+(T+ph/2)
