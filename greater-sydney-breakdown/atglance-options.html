@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>At a glance — design options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0A1014;font-family:Montserrat,-apple-system,Segoe UI,Roboto,sans-serif;color:#E8EEF2;padding:18px}
+h3{margin:4px 0 14px;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:#8FA9B4}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.sl{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;container-type:inline-size;
+ background:radial-gradient(115% 85% at 12% 14%,#1E525E 0%,#16303A 48%,#0F1A20 100%)}
+.tag{position:absolute;left:0;top:0;background:#0A1014D0;color:#CFE3EA;font-size:12px;font-weight:700;
+ padding:6px 12px;border-radius:0 0 10px 0;letter-spacing:.06em;z-index:9}
+.pad{position:absolute;inset:0;padding:5cqw 3.2cqw 2.6cqw;display:flex;flex-direction:column}
+.pt{font-size:2.1cqw;font-weight:700;margin:0 0 1.2cqw;letter-spacing:-.02em}
+
+/* ============ A: premium district cards ============ */
+.vA .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1cqw;flex:1}
+.vA .c{background:#FFFFFF0A;border:1px solid #FFFFFF17;border-radius:.7cqw;overflow:hidden;
+ display:flex;flex-direction:column;backdrop-filter:blur(2px)}
+.vA .bar{height:.42cqw}
+.vA .hd{display:flex;align-items:baseline;justify-content:space-between;padding:.75cqw .95cqw .3cqw}
+.vA .nm{font-size:1.25cqw;font-weight:700}
+.vA .meta{font-size:.72cqw;color:#9DB0BB}
+.vA .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 .8cqw;padding:.15cqw .95cqw .8cqw;flex:1}
+.vA .seg{font-size:.62cqw;letter-spacing:.18em;color:#8FA9B4;text-transform:uppercase;margin-bottom:.25cqw}
+.vA .big{font-size:1.28cqw;font-weight:700;margin-bottom:.35cqw}
+.vA .kv{display:flex;justify-content:space-between;font-size:.72cqw;color:#B9C6CF;line-height:1.75}
+.vA .kv b{color:#E8EEF2;font-weight:600}
+
+/* ============ B: editorial light table ============ */
+.vB .panel{background:#FDFEFE;border-radius:.7cqw;flex:1;padding:1.4cqw 1.6cqw;color:#22303B;display:flex;flex-direction:column}
+.vB table{width:100%;border-collapse:collapse;flex:1}
+.vB th{font-size:1.02cqw;font-weight:700;text-align:right;padding:.45cqw .7cqw .5cqw;border-top:.28cqw solid}
+.vB th.m{border-top:.28cqw solid transparent}
+.vB td{font-size:.92cqw;text-align:right;padding:.34cqw .7cqw;border-bottom:1px solid #E9EDF0;
+ font-variant-numeric:tabular-nums;color:#22303B;font-weight:600}
+.vB td.m,.vB th.m{text-align:left;color:#7C8A94;font-weight:500}
+.vB .sec td{border-bottom:none;padding-top:.7cqw;font-size:.68cqw;letter-spacing:.2em;color:#93A3AD;
+ text-transform:uppercase;font-weight:700;text-align:left}
+
+/* ============ C: dark luxe table ============ */
+.vC table{width:100%;border-collapse:collapse;flex:1}
+.vC th{padding:.5cqw .7cqw;text-align:right}
+.vC th .chip{display:inline-block;width:2.6cqw;height:.3cqw;border-radius:.15cqw;margin-bottom:.35cqw}
+.vC th .n{display:block;font-size:1.02cqw;font-weight:700;color:#F2F6F8}
+.vC td{font-size:.92cqw;text-align:right;padding:.4cqw .7cqw;border-bottom:1px solid #FFFFFF12;
+ color:#DCE5EA;font-variant-numeric:tabular-nums;font-weight:500}
+.vC td.m,.vC th.m{text-align:left}
+.vC td.m{color:#8FA9B4;font-weight:500;font-size:.85cqw}
+.vC .sec td{border-bottom:none;padding-top:.85cqw;font-size:.68cqw;letter-spacing:.22em;color:#7FB7C4;
+ text-transform:uppercase;font-weight:700;text-align:left}
+
+/* ============ D: colour-edge strips ============ */
+.vD .strips{display:grid;grid-template-columns:repeat(6,1fr);gap:.85cqw;flex:1}
+.vD .s{background:#FFFFFF0A;border:1px solid #FFFFFF14;border-left-width:.4cqw;border-radius:.55cqw;
+ padding:.85cqw .8cqw;display:flex;flex-direction:column}
+.vD .nm{font-size:1.02cqw;font-weight:700;margin-bottom:.55cqw}
+.vD .lab{font-size:.58cqw;letter-spacing:.16em;color:#8FA9B4;text-transform:uppercase;margin-top:.55cqw}
+.vD .val{font-size:1.12cqw;font-weight:700}
+.vD .sm{font-size:.74cqw;color:#B9C6CF;line-height:1.7}
+.vD .sm b{color:#E8EEF2;font-weight:600}
+</style>
+</head>
+<body>
+<h3>At a glance — 4 premium directions (values are layout samples)</h3>
+<div class="grid" id="grid"></div>
+<script>
+const ORDER=['North','East','Central','South','West','Central Coast'];
+const PAL={'North':'#9AA3B1','East':'#F5A623','Central':'#5CC8E0','South':'#C2A4D6','West':'#3ECF8E','Central Coast':'#E58FA8'};
+const D={pop:['939k','1084k','1208k','795k','1255k','358k'],vr:['1.87%','1.95%','1.98%','1.71%','2.18%','1.99%'],
+ un:['3.5%','3.7%','4.4%','4.7%','4.5%','3.7%']};
+const Hm={price:['$3.01m','$2.97m','$1.55m','$1.81m','$1.17m','$1.05m'],dom:['34','32','36','33','38','41'],
+ c10:['6.0%','5.5%','5.8%','5.7%','6.0%','6.7%'],rent:['$1310','$1250','$780','$950','$680','$670'],
+ yld:['2.28%','2.25%','2.67%','2.74%','3.08%','3.36%']};
+const Um={price:['$1.12m','$1.05m','$720k','$760k','$610k','$560k'],dom:['36','35','38','36','42','44'],
+ c10:['2.6%','1.7%','0.7%','2.2%','3.0%','5.6%'],rent:['$820','$890','$620','$640','$530','$540'],
+ yld:['3.78%','4.29%','5.00%','4.32%','4.50%','4.15%']};
+
+function mockA(){
+ return '<div class="pad"><h2 class="pt">At a glance</h2><div class="cards">'+ORDER.map((d,i)=>
+  '<div class="c"><div class="bar" style="background:'+PAL[d]+'"></div>'
+  +'<div class="hd"><span class="nm" style="color:'+PAL[d]+'">'+d+'</span>'
+  +'<span class="meta">'+D.pop[i]+' · VR '+D.vr[i]+'</span></div>'
+  +'<div class="cols">'
+  +'<div><div class="seg">Houses</div><div class="big">'+Hm.price[i]+'</div>'
+   +'<div class="kv"><span>10yr</span><b>'+Hm.c10[i]+'</b></div>'
+   +'<div class="kv"><span>Rent</span><b>'+Hm.rent[i]+'</b></div>'
+   +'<div class="kv"><span>Yield</span><b>'+Hm.yld[i]+'</b></div></div>'
+  +'<div><div class="seg">Units</div><div class="big">'+Um.price[i]+'</div>'
+   +'<div class="kv"><span>10yr</span><b>'+Um.c10[i]+'</b></div>'
+   +'<div class="kv"><span>Rent</span><b>'+Um.rent[i]+'</b></div>'
+   +'<div class="kv"><span>Yield</span><b>'+Um.yld[i]+'</b></div></div>'
+  +'</div></div>').join('')+'</div></div>';
+}
+function rows(cls){
+ const row=(m,vals)=>'<tr><td class="m">'+m+'</td>'+vals.map(v=>'<td>'+v+'</td>').join('')+'</tr>';
+ const sec=t=>'<tr class="sec"><td colspan="7">'+t+'</td></tr>';
+ return sec('District')+row('Population',D.pop)+row('Vacancy rate',D.vr)+row('Unemployment',D.un)
+  +sec('Houses')+row('Median price',Hm.price)+row('Days on market',Hm.dom)+row('10yr CAGR',Hm.c10)
+  +row('Weekly rent',Hm.rent)+row('Gross yield',Hm.yld)
+  +sec('Units')+row('Median price',Um.price)+row('Gross yield',Um.yld);
+}
+function mockB(){
+ return '<div class="pad"><h2 class="pt">At a glance</h2><div class="panel"><table><thead><tr>'
+  +'<th class="m"></th>'+ORDER.map(d=>'<th style="border-top-color:'+PAL[d]+';color:'+PAL[d].replace(')','')+'">'+d+'</th>').join('')
+  +'</tr></thead><tbody>'+rows()+'</tbody></table></div></div>';
+}
+function mockC(){
+ return '<div class="pad"><h2 class="pt">At a glance</h2><table><thead><tr><th class="m"></th>'
+  +ORDER.map(d=>'<th><span class="chip" style="background:'+PAL[d]+'"></span><span class="n">'+d+'</span></th>').join('')
+  +'</tr></thead><tbody>'+rows()+'</tbody></table></div>';
+}
+function mockD(){
+ return '<div class="pad"><h2 class="pt">At a glance</h2><div class="strips">'+ORDER.map((d,i)=>
+  '<div class="s" style="border-left-color:'+PAL[d]+'">'
+  +'<div class="nm" style="color:'+PAL[d]+'">'+d+'</div>'
+  +'<div class="sm">Pop <b>'+D.pop[i]+'</b><br>VR <b>'+D.vr[i]+'</b><br>Unemp <b>'+D.un[i]+'</b></div>'
+  +'<div class="lab">House median</div><div class="val">'+Hm.price[i]+'</div>'
+  +'<div class="sm">10yr <b>'+Hm.c10[i]+'</b> · Yield <b>'+Hm.yld[i]+'</b></div>'
+  +'<div class="lab">Unit median</div><div class="val">'+Um.price[i]+'</div>'
+  +'<div class="sm">10yr <b>'+Um.c10[i]+'</b> · Yield <b>'+Um.yld[i]+'</b></div>'
+  +'</div>').join('')+'</div></div>';
+}
+const V=[
+ ['vA','A - District cards: one glass card per district, colour top bar, houses/units side by side',mockA()],
+ ['vB','B - Editorial light: white panel, colour only in the column headers and top borders',mockB()],
+ ['vC','C - Dark luxe: no panel - hairline table straight on the slide, colour chips over names',mockC()],
+ ['vD','D - Colour-edge strips: six vertical panels, thick district-colour left edge',mockD()],
+];
+document.getElementById('grid').innerHTML=V.map(v=>'<div class="sl '+v[0]+'"><div class="tag">'+v[1]+'</div>'+v[2]+'</div>').join('');
+</script>
+</body>
+</html>
