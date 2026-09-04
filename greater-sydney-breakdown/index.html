@@ -1351,13 +1351,15 @@ function panels(hostId,items,spec,opt){
      largest district makes the smallest district's bars invisible */
   let clo=lo, chi=hi;
   if(opt.ownL){const lv=[]; ss.forEach(s=>{if(s.ax!=='r') Object.values(s.d).forEach(v=>{if(v!=null&&isFinite(v))lv.push(v)})});
-   if(lv.length){const sc=scale(lv,opt.zeroL); clo=sc[0]; chi=sc[1]}}
+   if(lv.length){const mx=Math.max.apply(null,lv), mn=Math.min.apply(null,lv), span=(mx-mn)||1;
+    const sc=scale([mn<0?mn-span*.1:mn, mx+span*.12],opt.zeroL); clo=sc[0]; chi=sc[1]}}
   const f=v=>oy+P[0]+(chi-v)/((chi-clo)||1)*(chh-P[0]-P[2]);
   /* ownR: this card's right axis scales to its own values (a shared population scale
      puts small districts' lines on the floor) */
   let clo2=lo2, chi2=hi2;
   if(opt.ownR){const rv=[]; ss.forEach(s=>{if(s.ax==='r') Object.values(s.d).forEach(v=>{if(v!=null&&isFinite(v))rv.push(v)})});
-   if(rv.length){const sc=scale(rv,opt.zeroR); clo2=sc[0]; chi2=sc[1]}}
+   if(rv.length){const mx=Math.max.apply(null,rv), mn=Math.min.apply(null,rv), span=(mx-mn)||1;
+    const sc=scale([mn-span*.08, mx+span*.1],opt.zeroR); clo2=sc[0]; chi2=sc[1]}}
   const f2=v=>oy+P[0]+(chi2-v)/((chi2-clo2)||1)*(chh-P[0]-P[2]);
   geom.push({it:it,ox:ox,oy:oy,x:x,f:f,y0:y0,y1:y1,ys:ys,ss:ss,cw:cw,chh:chh});
   if(card){g+=cardHdr(ox,oy,it)}else{g+='<rect x="'+(ox+P[3]).toFixed(1)+'" y="'+(oy-13).toFixed(1)+'" width="7.5" height="7.5"'
