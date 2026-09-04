@@ -331,7 +331,7 @@ details[open] summary svg{transform:rotate(90deg)}
   </details>
   <div class="summary">
     <h2>All markets</h2>
-    <div class="sub">Bar shows the established median as a share of new-build replacement cost &mdash; how far prices have travelled toward replacement cost (100% = established equals replacement; red = already above). With replacement $/m&sup2;, total replacement, and established median. Click a market to load it above; click a column to sort.</div>
+    <div class="sub">Runway = how much the established median must rise to reach new-build replacement cost. The bar fills toward replacement (full = established equals replacement; red = already above, i.e. negative runway). With discount, replacement $/m&sup2;, total replacement, and established median. Click a market to load it above; click a column to sort.</div>
     <div class="mblock" id="mblock-house">
       <div class="mlabel">House <span>&middot; MHP = median house price</span></div>
       <div class="mtable-wrap"><table class="mtable" id="mtable-house"></table></div>
@@ -422,21 +422,22 @@ function render(){
     const c=calc(r,dwelling,m);
     const dc=discClass(c.disc);
     const pos=c.disc>=0;
-    const ratio=c.est/c.trc*100;          // MHP as % of replacement cost
-    const over=ratio>100;
+    const ratio=c.est/c.trc*100;              // MHP as % of replacement (bar fill = how close to peak)
+    const runway=(c.trc-c.est)/c.est*100;     // % MHP must rise to reach replacement cost
+    const over=runway<0;                      // MHP already above replacement
     const fill=Math.max(0,Math.min(100,ratio));
+    const runwayTxt=(over?'&minus;':'')+Math.abs(runway).toFixed(1)+'%';
     const discTxt=(pos?'':'&minus;')+Math.abs(c.disc*100).toFixed(1)+'%';
-    const discLbl=pos?'cheaper to buy established':'cheaper to build new';
     return '<div class="ring '+dc+'"><div class="bar"></div>'+
       '<div class="tag">'+name+(m!==1.0?' &middot; '+m+'x land':'')+'</div>'+
-      '<div class="disc '+(over?'neg':'pos')+'">'+ratio.toFixed(0)+'<span class="u">%</span></div>'+
-      '<div class="disclbl">'+(over?'MHP is above replacement cost':'of replacement cost reached')+'</div>'+
+      '<div class="disc '+(over?'neg':'pos')+'">'+runwayTxt.replace('%','')+'<span class="u">%</span></div>'+
+      '<div class="disclbl">'+(over?'MHP above replacement cost':'runway to replacement cost')+'</div>'+
       '<div class="runway '+(over?'over':'')+'"><span class="rwbar"><span class="rwfill" style="width:'+fill.toFixed(0)+'%"></span></span></div>'+
       '<div class="rows">'+
-        '<div class="row"><span>Discount</span><b class="'+(pos?'':'negtxt')+'">'+discTxt+'</b></div>'+
         '<div class="row"><span>Replacement $/m&sup2;</span><b>'+fmt0(c.psm)+'</b></div>'+
         '<div class="row"><span>Total replacement</span><b>'+fmt0(c.trc)+'</b></div>'+
         '<div class="row"><span>Est '+(dwelling==='house'?'MHP':'MUP')+'</span><b>'+fmt0(c.est)+'</b></div>'+
+        '<div class="row"><span>Discount</span><b class="'+(pos?'':'negtxt')+'">'+discTxt+'</b></div>'+
       '</div></div>';
   }).join('');
   buildTable(r,ringsDef);
@@ -499,18 +500,20 @@ function buildTable(r,ringsDef){
 }
 function stackCell(f,isHouse){
   const estLbl=isHouse?'MHP':'MUP';
-  const ratio=f.est/f.trc*100;
-  const over=ratio>100;
+  const ratio=f.est/f.trc*100;               // bar fill = how close to peak
+  const runway=(f.trc-f.est)/f.est*100;      // % MHP must rise to reach replacement
+  const over=runway<0;
   const fill=Math.max(0,Math.min(100,ratio));
   const pos=f.disc>=0;
   const discTxt=(pos?'':'\u2212')+Math.abs(f.disc*100).toFixed(1)+'%';
+  const runwayTxt=(over?'\u2212':'')+Math.abs(runway).toFixed(1)+'%';
   return '<div class="cellstack">'+
-    '<span class="cbnum'+(over?' over':'')+'">'+ratio.toFixed(1)+'%<i> to replacement cost</i></span>'+
+    '<span class="cbnum'+(over?' over':'')+'">'+runwayTxt+'<i> runway</i></span>'+
     '<span class="cbar'+(over?' over':'')+'"><span class="cbarfill" style="width:'+fill.toFixed(0)+'%"></span></span>'+
-    '<span class="cl"><i>Discount</i><b'+(pos?'':' class="negtxt"')+'>'+discTxt+'</b></span>'+
     '<span class="cl"><i>Repl $/m\u00B2</i>'+fmt0(f.psm)+'</span>'+
     '<span class="cl"><i>Total repl</i>'+fmt0(f.trc)+'</span>'+
     '<span class="cl"><i>Est '+estLbl+'</i>'+fmt0(f.est)+'</span>'+
+    '<span class="cl"><i>Discount</i><b'+(pos?'':' class="negtxt"')+'>'+discTxt+'</b></span>'+
     '</div>';
 }
 let sortState={house:{key:'region',dir:1}, unit:{key:'region',dir:1}};
