@@ -548,7 +548,9 @@ body.presenting .exitfs{display:grid}
    section's page titles in a list on the right */
 .divider .pad{flex-direction:row;align-items:center;gap:4cqw;justify-content:flex-start}
 .dvleft{flex:0 0 34cqw}
-.dvt{font-size:5.6cqw;font-weight:800;letter-spacing:.04em;margin:0;color:#F4F7F9;line-height:1.05;text-transform:uppercase}
+/* ".page h2" carries higher specificity than a lone class, so the divider title
+   needs the same two-part weight - sized to match the cover h1 (4.6cqw) */
+.page .dvt{font-size:4.6cqw;font-weight:700;letter-spacing:-.03em;margin:0;color:#F4F7F9;line-height:1.05;text-transform:uppercase}
 .dvrule{width:6.4cqw;height:.32cqw;border-radius:.16cqw;background:#7FB7C4;margin:1.7cqw 0 0}
 .divline{width:.14cqw;align-self:stretch;margin:6cqw 0;
  background:linear-gradient(180deg,transparent,#7FB7C4AA 30%,#7FB7C4AA 70%,transparent)}
