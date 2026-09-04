@@ -331,7 +331,7 @@ details[open] summary svg{transform:rotate(90deg)}
   </details>
   <div class="summary">
     <h2>All markets</h2>
-    <div class="sub">Runway = how much the established median must rise to reach new-build replacement cost. The bar fills toward replacement (full = established equals replacement; red = already above, i.e. negative runway). With discount, replacement $/m&sup2;, total replacement, and established median. Click a market to load it above; click a column to sort.</div>
+    <div class="sub">Runway = how much the established median must rise to reach new-build replacement cost. The empty part of the bar is that runway (full = established equals replacement; red = already above, i.e. negative runway). With replacement $/m&sup2;, total replacement, established median, and discount. Click a market to load it above; click a column to sort.</div>
     <div class="mblock" id="mblock-house">
       <div class="mlabel">House <span>&middot; MHP = median house price</span></div>
       <div class="mtable-wrap"><table class="mtable" id="mtable-house"></table></div>
@@ -422,10 +422,9 @@ function render(){
     const c=calc(r,dwelling,m);
     const dc=discClass(c.disc);
     const pos=c.disc>=0;
-    const ratio=c.est/c.trc*100;              // MHP as % of replacement (bar fill = how close to peak)
     const runway=(c.trc-c.est)/c.est*100;     // % MHP must rise to reach replacement cost
     const over=runway<0;                      // MHP already above replacement
-    const fill=Math.max(0,Math.min(100,ratio));
+    const fill=Math.max(0,Math.min(100,100-runway));  // filled = climbed toward peak; empty = runway left
     const runwayTxt=(over?'&minus;':'')+Math.abs(runway).toFixed(1)+'%';
     const discTxt=(pos?'':'&minus;')+Math.abs(c.disc*100).toFixed(1)+'%';
     return '<div class="ring '+dc+'"><div class="bar"></div>'+
@@ -500,10 +499,9 @@ function buildTable(r,ringsDef){
 }
 function stackCell(f,isHouse){
   const estLbl=isHouse?'MHP':'MUP';
-  const ratio=f.est/f.trc*100;               // bar fill = how close to peak
   const runway=(f.trc-f.est)/f.est*100;      // % MHP must rise to reach replacement
   const over=runway<0;
-  const fill=Math.max(0,Math.min(100,ratio));
+  const fill=Math.max(0,Math.min(100,100-runway));  // empty portion = runway remaining
   const pos=f.disc>=0;
   const discTxt=(pos?'':'\u2212')+Math.abs(f.disc*100).toFixed(1)+'%';
   const runwayTxt=(over?'\u2212':'')+Math.abs(runway).toFixed(1)+'%';
