@@ -1195,7 +1195,7 @@ function multiLine(hostId,pick,opt){
    +' fill="'+AXT+'">'+(opt.fmt?opt.fmt(v):v.toFixed(0))+'</text>'});
  /* a labelled right axis for ax2 extras: five ticks on their own scale, formatted by
     the first extra's own formatter. Needs padR wide enough for the label text. */
- if(v2.length&&opt.ax2Labels){const fm2=(ser.find(s=>s.ax2)||{}).fm||(v=>v.toFixed(1));
+ if(v2.length&&opt.ax2Labels){const fm2=(ser.find(s=>s.ax2)||{}).fm||TKF;
   for(let v=lo2;v<=hi2+st2*1e-6;v+=st2){const yy=f2(v).toFixed(1);
    g+='<text x="'+(W-P[1]+9)+'" y="'+(+yy+3.6).toFixed(1)+'" text-anchor="start" font-size="10"'
     +' fill="'+AXT+'">'+fm2(v)+'</text>'}}
