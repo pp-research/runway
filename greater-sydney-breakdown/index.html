@@ -544,12 +544,16 @@ body.presenting .exitfs{display:grid}
  .page{max-width:none;width:100%;border-radius:0;box-shadow:none;break-after:page}
  @page{size:landscape;margin:0}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-/* section dividers */
-.divider .pad{justify-content:center}
-.dvt{font-size:7cqw;font-weight:800;letter-spacing:.04em;margin:0;color:#F4F7F9;line-height:1.05;text-transform:uppercase}
-.dvrule{width:6.4cqw;height:.32cqw;border-radius:.16cqw;background:#7FB7C4;margin:1.7cqw 0 2.2cqw}
-.dvl{list-style:none;margin:0;padding:0;columns:2;column-gap:4.5cqw;max-width:72cqw}
-.dvl.one{columns:1}
+/* section dividers - split layout: title left of a soft vertical hairline, the
+   section's page titles in a list on the right */
+.divider .pad{flex-direction:row;align-items:center;gap:4cqw;justify-content:flex-start}
+.dvleft{flex:0 0 34cqw}
+.dvt{font-size:5.6cqw;font-weight:800;letter-spacing:.04em;margin:0;color:#F4F7F9;line-height:1.05;text-transform:uppercase}
+.dvrule{width:6.4cqw;height:.32cqw;border-radius:.16cqw;background:#7FB7C4;margin:1.7cqw 0 0}
+.divline{width:.14cqw;align-self:stretch;margin:6cqw 0;
+ background:linear-gradient(180deg,transparent,#7FB7C4AA 30%,#7FB7C4AA 70%,transparent)}
+.dvl{list-style:none;margin:0;padding:0;flex:1}
+.dvl.two{columns:2;column-gap:4cqw}
 .dvl li{font-size:1.22cqw;color:#C6D2DC;line-height:2.05;break-inside:avoid}
 .dvl li::before{content:'';display:inline-block;width:.5cqw;height:.5cqw;background:#7FB7C4;border-radius:.12cqw;margin-right:.85cqw;vertical-align:.08cqw}
 #rail button.k-div{font-weight:800;letter-spacing:.05em;text-transform:uppercase}
@@ -619,8 +623,8 @@ body.presenting .exitfs{display:grid}
   <div class="dban ref"><span class="lbl">Reference</span><span class="det">Section divider.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <h2 class="dvt">Supply &amp; Demand</h2>
-   <div class="dvrule"></div>
+   <div class="dvleft"><h2 class="dvt">Supply &amp; Demand</h2><div class="dvrule"></div></div>
+   <div class="divline"></div>
    <ul class="dvl" id="dvl-div-sd"></ul>
   </div>
   <div class="pnum">5 / 43</div>
@@ -758,8 +762,8 @@ body.presenting .exitfs{display:grid}
   <div class="dban ref"><span class="lbl">Reference</span><span class="det">Section divider.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <h2 class="dvt">Value</h2>
-   <div class="dvrule"></div>
+   <div class="dvleft"><h2 class="dvt">Value</h2><div class="dvrule"></div></div>
+   <div class="divline"></div>
    <ul class="dvl" id="dvl-div-val"></ul>
   </div>
   <div class="pnum">17 / 43</div>
@@ -970,8 +974,8 @@ body.presenting .exitfs{display:grid}
   <div class="dban ref"><span class="lbl">Reference</span><span class="det">Section divider.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <h2 class="dvt">Confidence</h2>
-   <div class="dvrule"></div>
+   <div class="dvleft"><h2 class="dvt">Confidence</h2><div class="dvrule"></div></div>
+   <div class="divline"></div>
    <ul class="dvl" id="dvl-div-conf"></ul>
   </div>
   <div class="pnum">35 / 43</div>
@@ -1040,8 +1044,8 @@ body.presenting .exitfs{display:grid}
   <div class="dban ref"><span class="lbl">Reference</span><span class="det">Section divider.</span></div>
   <div class="pad">
    <img class="plogo" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-white.png" alt="Performance Property">
-   <h2 class="dvt">Reference</h2>
-   <div class="dvrule"></div>
+   <div class="dvleft"><h2 class="dvt">Reference</h2><div class="dvrule"></div></div>
+   <div class="divline"></div>
    <ul class="dvl" id="dvl-div-ref"></ul>
   </div>
   <div class="pnum">41 / 43</div>
@@ -2404,7 +2408,7 @@ function pDividers(){
   const items=[];
   for(let k=i+1;k<PAGES.length&&PAGES[k][3]!=='div';k++) items.push(PAGES[k][1]);
   const ul=gid('dvl-'+p[0]); if(!ul) return;
-  ul.className='dvl'+(items.length<=6?' one':'');
+  ul.className='dvl'+(items.length>14?' two':'');
   ul.innerHTML=items.map(t=>'<li>'+t+'</li>').join('');});
 }
 function gsPage(id,seg){
