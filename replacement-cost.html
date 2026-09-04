@@ -165,19 +165,21 @@ details[open] summary svg{transform:rotate(90deg)}
 .mlabel.unit{color:var(--pp-dark-gray)}
 .mlabel span{font-weight:500;color:var(--ink-mute);font-size:10.5px;text-transform:none;letter-spacing:0}
 .mtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
-.mtable{width:100%;border-collapse:collapse;font-size:12px;min-width:440px}
+.mtable{width:100%;border-collapse:collapse;font-size:12px;min-width:440px;table-layout:fixed}
 .mtable thead th{position:sticky;top:0;background:var(--card);font-weight:800;font-size:10px;text-transform:uppercase;
   letter-spacing:.04em;color:var(--ink-mute);padding:9px 10px;border-bottom:1.5px solid var(--line);text-align:right;white-space:nowrap}
 .mtable thead th.grp{text-align:center;color:var(--pp-teal);border-bottom:1.5px solid var(--pp-teal-100);font-size:10px}
 .mtable thead th.grp.unit{color:var(--pp-dark-gray)}
 .mtable thead tr.g2 th{font-size:9.5px;padding-top:6px;padding-bottom:6px}
-.mtable th.mkt,.mtable td.mkt{text-align:left;padding-left:14px}
+.mtable col.c-mkt{width:16%}
+.mtable col.c-ring{width:28%}
+.mtable th.mkt,.mtable td.mkt{text-align:left;padding-left:14px;white-space:normal;line-height:1.25}
 .mtable thead th.sortable{cursor:pointer;user-select:none}
 .mtable thead th.sortable:hover{color:var(--ink)}
 .mtable thead th .arr{font-size:9px;margin-left:3px;color:var(--pp-light-gray)}
 .mtable thead th .arr.on{color:var(--pp-teal)}
 .mtable thead th.sortable:hover .arr{color:var(--ink-mute)}
-.mtable tbody td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--row-line);vertical-align:top}
+.mtable tbody td{padding:9px 16px;text-align:right;border-bottom:1px solid var(--row-line);vertical-align:top}
 .mtable tbody tr:last-child td{border-bottom:none}
 .mtable tbody tr:hover td{background:var(--row-alt)}
 .mtable tbody tr.active td{background:var(--pp-teal-50)}
@@ -555,7 +557,8 @@ function buildOne(type){
     if(st.key===k) return '<span class="arr on">'+(st.dir>0?'\u25B2':'\u25BC')+'</span>';
     return '<span class="arr">\u2195</span>';
   };
-  let html='<thead><tr>'+
+  let html='<colgroup><col class="c-mkt"><col class="c-ring"><col class="c-ring"><col class="c-ring"></colgroup>'+
+    '<thead><tr>'+
     '<th class="mkt sortable" data-k="region">Market'+arr('region')+'</th>'+
     '<th class="sortable sep" data-k="outer">Outer'+arr('outer')+'</th>'+
     '<th class="sortable" data-k="mid">Middle'+arr('mid')+'</th>'+
