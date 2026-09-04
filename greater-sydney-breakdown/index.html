@@ -2307,22 +2307,22 @@ function pBizLend(){
    sales-weighted across all six, the same convention the price page uses to roll
    LGAs up. The gap line rides the right axis; zeroL squares the price columns
    with the axis without flattening the gap. */
-function pGsmhp(){
- const yrs=Object.keys(GR('North','house').ps), gs={};
- yrs.forEach(y=>{let pv=0,w=0;ORDER.forEach(d=>{const p=at(GR(d,'house').ps,y),n=at(H[d].sales.house,y);
+function gsPage(id,seg){
+ const yrs=Object.keys(GR('North',seg).ps), gs={};
+ yrs.forEach(y=>{let pv=0,w=0;ORDER.forEach(d=>{const p=at(GR(d,seg).ps,y),n=at(H[d].sales[seg],y);
   if(p!=null&&n!=null){pv+=p*n;w+=n}});if(w)gs[y]=pv/w});
- panels('c-gsmhp',DIV6(),it=>{
-  const diff={};yrs.forEach(y=>{const p=at(GR(it.d,'house').ps,y);
+ panels('c-'+id,DIV6(),it=>{
+  const diff={};yrs.forEach(y=>{const p=at(GR(it.d,seg).ps,y);
    if(p!=null&&gs[y])diff[y]=100*(p-gs[y])/gs[y]});
   return [
-   {d:GR(it.d,'house').ps,type:'bar',col:C(it.d),name:'District'},
+   {d:GR(it.d,seg).ps,type:'bar',col:C(it.d),name:'District'},
    {d:gs,type:'bar',col:'#BCC3C8',name:'Greater Sydney'},
    {d:diff,type:'line',col:'#171B24',ax:'r',name:'% difference'}];},
   {fmt:v=>v>=1e6?'$'+TKF(v/1e6)+'m':v>=1000?'$'+Math.round(v/1e3)+'k':'$'+Math.round(v),
    cards:1,H:460,groupBars:1,zeroL:1,
-   title:'District v Greater Sydney price',ytitle:'Median House Price'});
+   title:'District v Greater Sydney price',ytitle:'Median '+(seg==='house'?'House':'Unit')+' Price'});
 }
- pCover();pGlance();pLights();pDistricts();pPrice();pGsmhp();pYoY();pHvU();pPxRH();pPxRU();pCAGR();pAIH();pAIU();
+ pCover();pGlance();pLights();pDistricts();pPrice();gsPage('gsmhp','house');gsPage('gsmhpu','unit');pYoY();pHvU();pPxRH();pPxRU();pCAGR();pAIH();pAIU();
  pRunway();pDemandCards();pScatter();pPTI();pIncRentH();pIncRentU();pLendH();pLendU();pVRRentH();pVRRentU();pVRProj();pSomDomH();pSomDomU();pSales();
  pAppr();pHholds();pPopch();pPopMov();pJA();pUnemp();pYieldCmp();pYcrH();pYcrU();pBizLend();
 }
