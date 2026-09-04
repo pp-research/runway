@@ -554,8 +554,7 @@ body.presenting .exitfs{display:grid}
 .dvrule{width:6.4cqw;height:.32cqw;border-radius:.16cqw;background:#7FB7C4;margin:1.7cqw 0 0}
 .divline{width:.14cqw;align-self:stretch;margin:6cqw 0;
  background:linear-gradient(180deg,transparent,#7FB7C4AA 30%,#7FB7C4AA 70%,transparent)}
-.dvl{list-style:none;margin:0;padding:0;flex:1}
-.dvl.two{columns:2;column-gap:4cqw}
+.dvl{list-style:none;margin:0;padding:0;flex:1;columns:1}
 .dvl li{font-size:1.22cqw;color:#C6D2DC;line-height:2.05;break-inside:avoid;
  padding-left:1.35cqw;text-indent:-1.35cqw}
 .dvl li::before{content:'';display:inline-block;width:.5cqw;height:.5cqw;background:#7FB7C4;border-radius:.12cqw;margin-right:.85cqw;vertical-align:.08cqw}
@@ -2408,10 +2407,14 @@ function pBizLend(){
    "div"-class tuple to the next. Six or fewer titles stay in a single column. */
 function pDividers(){
  PAGES.forEach((p,i)=>{if(p[3]!=='div')return;
+  /* houses/units page pairs collapse to one entry - drop the suffix and dedupe */
   const items=[];
-  for(let k=i+1;k<PAGES.length&&PAGES[k][3]!=='div';k++) items.push(PAGES[k][1]);
+  for(let k=i+1;k<PAGES.length&&PAGES[k][3]!=='div';k++){
+   const t=PAGES[k][1].replace(/\s*\((Houses|Units)\)$/,'');
+   if(items[items.length-1]!==t) items.push(t);
+  }
   const ul=gid('dvl-'+p[0]); if(!ul) return;
-  ul.className='dvl'+(items.length>14?' two':'');
+  ul.className='dvl';
   ul.innerHTML=items.map(t=>'<li>'+t+'</li>').join('');});
 }
 function gsPage(id,seg){
