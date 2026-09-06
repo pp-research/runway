@@ -1371,8 +1371,10 @@ function multiLine(hostId,pick,opt){
    +ser.map(s=>{const v=at(s.o,yr); return (v==null||!isFinite(v))?''
     :'<circle cx="'+cx.toFixed(1)+'" cy="'+(s.ax2?f2:f)(v).toFixed(1)+'" r="4.2" fill="'+LC(s.d)
      +'" stroke="#FBFDFE" stroke-width="1.4"/>'}).join('');
+  /* opt.tipFirst pins a benchmark series (e.g. NSW on the unemployment page) to the
+     top of the readout; the rest stay sorted by value */
   const rows=ser.map(s=>({d:s.d,v:at(s.o,yr),fm:s.fm})).filter(r=>r.v!=null&&isFinite(r.v))
-   .sort((a,b)=>b.v-a.v);
+   .sort((a,b)=>((b.d===opt.tipFirst)-(a.d===opt.tipFirst))||b.v-a.v);
   return '<b>'+(opt.monthly?MLBL(yr):yr)+'</b><table>'+rows.map(r=>'<tr><td>'+swatch(LC(r.d))+LN(r.d)+'</td><td><b>'
    +(r.fm||fmt)(r.v)+'</b></td></tr>').join('')+'</table>';
  }};
@@ -2356,7 +2358,7 @@ function pUnemp(){
  /* noEnds: the legend below names every series, as on the job-index page. lbl still
     feeds the crosshair readout. */
  multiLine('c-unemp',d=>H[d].unemp,
-  {fmt:v=>TKF(v)+'%',noEnds:1,solid:1,noDots:1,lbl:d=>d==='NSW'?'NSW':d,colFor:d=>d==='NSW'?'#3E4C55':C(d),
+  {fmt:v=>TKF(v)+'%',noEnds:1,solid:1,noDots:1,tipFirst:'NSW',lbl:d=>d==='NSW'?'NSW':d,colFor:d=>d==='NSW'?'#3E4C55':C(d),
    extra:[{name:'NSW',o:MOCK.nat.unemp}],
    title:'Unemployment rate',ytitle:'Unemployment Rate'});
  /* Plain keys rather than the hide-toggles: the NSW line needs a key too, and one
