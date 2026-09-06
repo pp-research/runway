@@ -2097,6 +2097,19 @@ function pScatter(){
  put('c-dvr','<div class="dvrbar"><button id="dvr-eye" aria-pressed="'+dvrShowX+'">'+eye
   +'<span>'+(dvrShowX?'Hide runway values':'Show runway values')+'</span></button></div>'+s);
  const eb=gid('dvr-eye'); if(eb) eb.onclick=()=>{dvrShowX=!dvrShowX;pScatter()};
+ /* styled TIP cards in place of the browser-native <title> tooltips: market name with
+    its swatch, both readings, and which quadrant the market sits in */
+ $$('#c-dvr circle[data-i]').forEach(c=>{
+  const p=pts[+c.dataset.i], dc=C(p.d);
+  const quad=p.y>=30?(p.x>=60?['Best of both',QC.tr]:['Strong demand · short runway',QC.tl])
+            :(p.x>=60?['Long runway · weak demand',QC.br]:['Weak demand · short runway',QC.bl]);
+  const html='<b>'+swatch(dc)+p.d+' — '+(p.s==='house'?'Houses':'Units')+'</b><table>'
+   +'<tr><td>Demand score</td><td><b>'+p.y.toFixed(1)+'</b></td></tr>'
+   +'<tr><td>Runway at '+rate.toFixed(2)+'%</td><td><b>'+(p.x>=0?'+':'')+p.x.toFixed(1)+'%</b></td></tr>'
+   +'<tr><td>Quadrant</td><td><b style="color:'+quad[1]+'">'+quad[0]+'</b></td></tr></table>';
+  c.onpointermove=e=>TIP.show(html,e.clientX,e.clientY);
+  c.onpointerleave=()=>TIP.hide();
+ });
 }
 function pPTI(){
  panels('c-pti',DIV6(),it=>[
