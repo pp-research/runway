@@ -2054,7 +2054,7 @@ function pScatter(){
   +'<text transform="rotate(-90 30 '+(T+ph/2)+')" x="30" y="'+(T+ph/2)
   +'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Demand Score</text>';
  const placed=[];
- pts.forEach(p=>{const x=fx(p.x),y=fy(p.y),dc=C(p.d);
+ pts.forEach((p,pi)=>{const x=fx(p.x),y=fy(p.y),dc=C(p.d);
   const cand=[[0,-16],[0,32],[80,7],[-80,7],[0,-36],[0,52],[112,7],[-112,7],
    [84,-26],[-84,-26],[84,34],[-84,34],[150,7],[-150,7],[0,-56],[0,72]];
   let lx=x,ly=y-16;
@@ -2081,9 +2081,10 @@ function pScatter(){
   s+='<g style="opacity:'+(off?.15:1)+'">'+lead
    +'<circle cx="'+x+'" cy="'+y+'" r="17" fill="'+dc+'" fill-opacity="'+(p.s==='house'?.18:.13)+'"/>'
    +'<circle cx="'+x+'" cy="'+y+'" r="9" fill="'+(p.s==='house'?dc:'none')
-   +(p.s==='house'?'"':'" stroke="'+dc+'" stroke-width="3"')+'><title>'+p.d+' '+p.s+'s \u00b7 demand '+p.y.toFixed(1)
-   +' \u00b7 runway '+(p.x>=0?'+':'')+p.x.toFixed(1)+'%</title></circle>'
-   +'<text x="'+lx+'" y="'+ly+'" text-anchor="middle" font-size="19" fill="#DCE5EA">'+p.d+'</text></g>';});
+   +(p.s==='house'?'"':'" stroke="'+dc+'" stroke-width="3"')+'/>'
+   +'<text x="'+lx+'" y="'+ly+'" text-anchor="middle" font-size="19" fill="#DCE5EA">'+p.d+'</text>'
+   /* oversized invisible circle on top = generous hover target for the TIP card */
+   +'<circle cx="'+x+'" cy="'+y+'" r="19" fill="#000" fill-opacity="0" data-i="'+pi+'" style="cursor:pointer"/></g>';});
  s+='<circle cx="'+(L+14)+'" cy="'+(H-26)+'" r="9" fill="#8FA0AB"/><text x="'+(L+30)+'" y="'+(H-19)+'" font-size="20" fill="#8FA0AB">Houses</text>'
   +'<circle cx="'+(L+134)+'" cy="'+(H-26)+'" r="8" fill="none" stroke="#8FA0AB" stroke-width="3"/><text x="'+(L+150)+'" y="'+(H-19)+'" font-size="20" fill="#8FA0AB">Units</text>'
   +'<text x="'+(L+pw/2)+'" y="'+(H-19)+'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Runway &#8212; 5-year wage growth | PP variable rate: '+rate.toFixed(2)+'%</text></svg>';
