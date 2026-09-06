@@ -2442,6 +2442,19 @@ function pPopMov(){
    grey property), lightness the business size, per the BAR convention. */
 const BIZC={'Small \u00b7 construction':BAR.hLt,'Medium \u00b7 construction':BAR.hDk,
  'Small \u00b7 property purchase':BAR.uLt,'Medium \u00b7 property purchase':BAR.uDk};
+/* NAB monthly survey: NSW confidence and conditions net balances. Two state-level
+   series, so the bizlend pattern: no district pick, both lines as named extras.
+   October 2024 was not published - the line simply bridges September to November. */
+function pNab(){
+ multiLine('c-nab',d=>null,
+  {noEnds:1,monthly:1,solidExtra:1,zeroL:1,fmt:v=>TKF(v),lbl:d=>d,
+   colFor:d=>d==='Business confidence'?'#007685':'#B5791B',
+   extra:[{name:'Business confidence',o:MOCK.nat.nab.conf},
+          {name:'Business conditions',o:MOCK.nat.nab.cond}],
+   title:'NSW business confidence',ytitle:'Net Balance'});
+ seriesLegend('c-nab-lg',[['#007685','Business confidence',1],['#B5791B','Business conditions',1]],
+  'NAB monthly survey, SA net balances · November 2023 to July 2026 · October 2024 not published');
+}
 function pBizLend(){
  multiLine('c-bizlend',d=>null,
   {noEnds:1,monthly:1,solidExtra:1,fmt:v=>'$'+TKF(v)+'bn',lbl:d=>d,colFor:d=>BIZC[d]||C(d),
@@ -2490,7 +2503,7 @@ function gsPage(id,seg){
 }
  pDividers();pCover();pGlance();pLights();pDistricts();pPrice();gsPage('gsmhp','house');gsPage('gsmhpu','unit');pYoY();pHvU();pPxRH();pPxRU();pCAGR();pAIH();pAIU();
  pRunway();pDemandCards();pScatter();pPTI();pIncRentH();pIncRentU();pLendH();pLendU();pVRRentH();pVRRentU();pVRProj();pSomDomH();pSomDomU();pSales();
- pAppr();pHholds();pPopch();pPopMov();pJA();pUnemp();pYieldCmp();pYcrH();pYcrU();pBizLend();
+ pAppr();pHholds();pPopch();pPopMov();pJA();pUnemp();pYieldCmp();pYcrH();pYcrU();pNab();pBizLend();
 }
 /* rail tooltip wording for each data kind, matching the on-slide banner labels */
 const KINDWORD={real:'Measured data',mixed:'Mixed',sample:'Sample data',ref:'Reference'};
