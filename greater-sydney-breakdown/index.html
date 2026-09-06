@@ -2055,7 +2055,8 @@ function pScatter(){
   +'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Demand Score</text>';
  const placed=[];
  pts.forEach(p=>{const x=fx(p.x),y=fy(p.y),dc=C(p.d);
-  const cand=[[0,-16],[0,32],[80,7],[-80,7],[0,-36],[0,52],[112,7],[-112,7]];
+  const cand=[[0,-16],[0,32],[80,7],[-80,7],[0,-36],[0,52],[112,7],[-112,7],
+   [84,-26],[-84,-26],[84,34],[-84,34],[150,7],[-150,7],[0,-56],[0,72]];
   let lx=x,ly=y-16;
   for(const c of cand){const cx=x+c[0],cy=y+c[1];
    if(!placed.some(q=>Math.abs(q[0]-cx)<110&&Math.abs(q[1]-cy)<24)
