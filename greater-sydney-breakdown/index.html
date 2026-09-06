@@ -2063,7 +2063,22 @@ function pScatter(){
     &&!pts.some(q=>q!==p&&Math.abs(fx(q.x)-cx)<54&&Math.abs(fy(q.y)-cy)<17)){lx=cx;ly=cy;break}}
   placed.push([lx,ly]);
   const off=hidden.has(p.d);
-  s+='<g style="opacity:'+(off?.15:1)+'">'
+  /* leader line: when a label sits away from its dot (the house cluster forces wide
+     placements), a thin line in the district colour ties the two together - it runs
+     from the dot's rim and stops at the edge of the label's text box */
+  let lead='';
+  {const tx=lx, ty=ly-7, ddx=tx-x, ddy=ty-y, dist=Math.hypot(ddx,ddy);
+   if(dist>30){
+    const ux=ddx/dist, uy=ddy/dist;
+    const hw=p.d.length*5.2+6, hh=14;
+    const k=Math.min(Math.abs(ux)>1e-6?hw/Math.abs(ux):1e9,
+                     Math.abs(uy)>1e-6?hh/Math.abs(uy):1e9)+3;
+    if(dist-k-13>4)
+     lead='<line x1="'+(x+ux*13).toFixed(1)+'" y1="'+(y+uy*13).toFixed(1)
+      +'" x2="'+(tx-ux*k).toFixed(1)+'" y2="'+(ty-uy*k).toFixed(1)
+      +'" stroke="'+dc+'" stroke-opacity=".55" stroke-width="1.6"/>';
+   }}
+  s+='<g style="opacity:'+(off?.15:1)+'">'+lead
    +'<circle cx="'+x+'" cy="'+y+'" r="17" fill="'+dc+'" fill-opacity="'+(p.s==='house'?.18:.13)+'"/>'
    +'<circle cx="'+x+'" cy="'+y+'" r="9" fill="'+(p.s==='house'?dc:'none')
    +(p.s==='house'?'"':'" stroke="'+dc+'" stroke-width="3"')+'><title>'+p.d+' '+p.s+'s \u00b7 demand '+p.y.toFixed(1)
