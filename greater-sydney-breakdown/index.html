@@ -1845,8 +1845,12 @@ function pTLI(){
   +row('Demand score · houses',d=>[P(d).seg.house.dsig,P(d).seg.house.dscore.toFixed(1)])
   +row('Demand score · units',d=>[P(d).seg.unit.dsig,P(d).seg.unit.dscore.toFixed(1)])
   +'<div class="pgrp2">Value</div>'
-  +row('Price position · houses',d=>{const g=P(d).seg.house.gap;return [ppSig(g),(g>=0?'+':'')+g.toFixed(1)+'%']})
-  +row('Price position · units',d=>{const g=P(d).seg.unit.gap;return [ppSig(g),(g>=0?'+':'')+g.toFixed(1)+'%']})
+  /* price position is a RANK inside the 34-LGA field: the cell shows the current
+     rank and the gap to the long-run average rank (positive = cheapened = good) */
+  +row('Price position · houses<span class="pgg">rank v LT avg</span>',
+    d=>{const s=P(d).seg.house;return [ppSig(s.gap),'#'+Math.round(s.lrrank+s.gap)+' · '+(s.gap>=0?'+':'')+s.gap.toFixed(1)]})
+  +row('Price position · units<span class="pgg">rank v LT avg</span>',
+    d=>{const s=P(d).seg.unit;return [ppSig(s.gap),'#'+Math.round(s.lrrank+s.gap)+' · '+(s.gap>=0?'+':'')+s.gap.toFixed(1)]})
   +row('Runway · houses',d=>{const r=100*P(d).seg.house.runway;return [rwSig(r,'house'),(r>=0?'+':'')+r.toFixed(0)+'%']})
   +row('Runway · units',d=>{const r=100*P(d).seg.unit.runway;return [rwSig(r,'unit'),(r>=0?'+':'')+r.toFixed(0)+'%']})
   +'<div class="pgrp2">Confidence · score out of 10</div>'
