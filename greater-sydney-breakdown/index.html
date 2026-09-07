@@ -2112,15 +2112,19 @@ function pScatter(){
  /* dark luxe: no quadrant fills - the quadrant colours live in the corner captions
     and thin corner brackets instead, so the plot itself stays clean */
  const QC={tl:'#F5A623',tr:'#5CC8E0',bl:'#E0556F',br:'#3ECF8E'};
+ /* the scatter draws straight on the slide, so its greys follow the shell theme */
+ const LM=document.documentElement.dataset.shell==='light';
+ const TGRID=LM?'#17202C14':'#FFFFFF12', TLAB=LM?'#5B6B76':'#8FA0AB',
+       TAX=LM?'#4A5A66':'#8FA9B4', TDOT=LM?'#22303B':'#DCE5EA';
  let s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" role="img" style="width:100%;height:auto">';
  for(let v=-20;v<=80;v+=10){const y=fy(v);
-  s+='<line x1="'+L+'" y1="'+y+'" x2="'+(L+pw)+'" y2="'+y+'" stroke="#FFFFFF12"/>'
-   +'<text x="'+(L-12)+'" y="'+(y+6)+'" text-anchor="end" font-size="19" fill="#8FA0AB">'+v+'</text>';}
+  s+='<line x1="'+L+'" y1="'+y+'" x2="'+(L+pw)+'" y2="'+y+'" stroke="'+TGRID+'"/>'
+   +'<text x="'+(L-12)+'" y="'+(y+6)+'" text-anchor="end" font-size="19" fill="'+TLAB+'">'+v+'</text>';}
  for(let v=0;v<=xmax;v+=20){const x=fx(v);
-  s+='<line x1="'+x+'" y1="'+T+'" x2="'+x+'" y2="'+(T+ph)+'" stroke="#FFFFFF12"/>'
-   +(dvrShowX?'<text x="'+x+'" y="'+(T+ph+30)+'" text-anchor="middle" font-size="19" fill="#8FA0AB">'+v+'%</text>':'');}
- s+='<line x1="'+fx(0)+'" y1="'+T+'" x2="'+fx(0)+'" y2="'+(T+ph)+'" stroke="#8FA9B4" stroke-opacity=".55" stroke-width="1.6"/>'
-  +'<line x1="'+L+'" y1="'+fy(0)+'" x2="'+(L+pw)+'" y2="'+fy(0)+'" stroke="#8FA9B4" stroke-opacity=".55" stroke-width="1.6"/>'
+  s+='<line x1="'+x+'" y1="'+T+'" x2="'+x+'" y2="'+(T+ph)+'" stroke="'+TGRID+'"/>'
+   +(dvrShowX?'<text x="'+x+'" y="'+(T+ph+30)+'" text-anchor="middle" font-size="19" fill="'+TLAB+'">'+v+'%</text>':'');}
+ s+='<line x1="'+fx(0)+'" y1="'+T+'" x2="'+fx(0)+'" y2="'+(T+ph)+'" stroke="'+TAX+'" stroke-opacity=".55" stroke-width="1.6"/>'
+  +'<line x1="'+L+'" y1="'+fy(0)+'" x2="'+(L+pw)+'" y2="'+fy(0)+'" stroke="'+TAX+'" stroke-opacity=".55" stroke-width="1.6"/>'
   +'<line x1="'+X6+'" y1="'+T+'" x2="'+X6+'" y2="'+(T+ph)+'" stroke="#7FB7C4" stroke-opacity=".8" stroke-width="1.6" stroke-dasharray="7 6"/>'
   +'<line x1="'+L+'" y1="'+Y3+'" x2="'+(L+pw)+'" y2="'+Y3+'" stroke="#7FB7C4" stroke-opacity=".8" stroke-width="1.6" stroke-dasharray="7 6"/>';
  const cap=(tx,anchor,px,py,c)=>'<text x="'+px+'" y="'+py+'" text-anchor="'+anchor
@@ -2135,11 +2139,11 @@ function pScatter(){
   +'<path d="M'+(L+3)+' '+(T+ph-3-BL2)+' V'+(T+ph-3)+' H'+(L+3+BL2)+'" fill="none" stroke="'+QC.bl+'" stroke-opacity=".7" stroke-width="3.5"/>'
   +'<path d="M'+(L+pw-3-BL2)+' '+(T+ph-3)+' H'+(L+pw-3)+' V'+(T+ph-3-BL2)+'" fill="none" stroke="'+QC.br+'" stroke-opacity=".7" stroke-width="3.5"/>';
  [[70,'10%+'],[50,'5%+'],[30,'CPI+'],[10,'0%'],[-10,'-5%']].forEach(q=>{
-  s+='<text x="'+(L+pw+14)+'" y="'+(fy(q[0])+6)+'" font-size="19" fill="#8FA0AB">'+q[1]+'</text>';});
+  s+='<text x="'+(L+pw+14)+'" y="'+(fy(q[0])+6)+'" font-size="19" fill="'+TLAB+'">'+q[1]+'</text>';});
  s+='<text transform="rotate(-90 '+(W-26)+' '+(T+ph/2)+')" x="'+(W-26)+'" y="'+(T+ph/2)
-  +'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Possible Rental Growth</text>'
+  +'" text-anchor="middle" font-size="20" font-weight="600" fill="'+TLAB+'">Possible Rental Growth</text>'
   +'<text transform="rotate(-90 30 '+(T+ph/2)+')" x="30" y="'+(T+ph/2)
-  +'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Demand Score</text>';
+  +'" text-anchor="middle" font-size="20" font-weight="600" fill="'+TLAB+'">Demand Score</text>';
  const placed=[];
  pts.forEach((p,pi)=>{const x=fx(p.x),y=fy(p.y),dc=C(p.d);
   const cand=[[0,-16],[0,32],[80,7],[-80,7],[0,-36],[0,52],[112,7],[-112,7],
@@ -2169,12 +2173,12 @@ function pScatter(){
    +'<circle cx="'+x+'" cy="'+y+'" r="17" fill="'+dc+'" fill-opacity="'+(p.s==='house'?.18:.13)+'"/>'
    +'<circle cx="'+x+'" cy="'+y+'" r="9" fill="'+(p.s==='house'?dc:'none')
    +(p.s==='house'?'"':'" stroke="'+dc+'" stroke-width="3"')+'/>'
-   +'<text x="'+lx+'" y="'+ly+'" text-anchor="middle" font-size="19" fill="#DCE5EA">'+p.d+'</text>'
+   +'<text x="'+lx+'" y="'+ly+'" text-anchor="middle" font-size="19" fill="'+TDOT+'">'+p.d+'</text>'
    /* oversized invisible circle on top = generous hover target for the TIP card */
    +'<circle cx="'+x+'" cy="'+y+'" r="19" fill="#000" fill-opacity="0" data-i="'+pi+'" style="cursor:pointer"/></g>';});
- s+='<circle cx="'+(L+14)+'" cy="'+(H-26)+'" r="9" fill="#8FA0AB"/><text x="'+(L+30)+'" y="'+(H-19)+'" font-size="20" fill="#8FA0AB">Houses</text>'
-  +'<circle cx="'+(L+134)+'" cy="'+(H-26)+'" r="8" fill="none" stroke="#8FA0AB" stroke-width="3"/><text x="'+(L+150)+'" y="'+(H-19)+'" font-size="20" fill="#8FA0AB">Units</text>'
-  +'<text x="'+(L+pw/2)+'" y="'+(H-19)+'" text-anchor="middle" font-size="20" font-weight="600" fill="#8FA0AB">Runway &#8212; 5-year wage growth | PP variable rate: '+rate.toFixed(2)+'%</text></svg>';
+ s+='<circle cx="'+(L+14)+'" cy="'+(H-26)+'" r="9" fill="'+TLAB+'"/><text x="'+(L+30)+'" y="'+(H-19)+'" font-size="20" fill="'+TLAB+'">Houses</text>'
+  +'<circle cx="'+(L+134)+'" cy="'+(H-26)+'" r="8" fill="none" stroke="#8FA0AB" stroke-width="3"/><text x="'+(L+150)+'" y="'+(H-19)+'" font-size="20" fill="'+TLAB+'">Units</text>'
+  +'<text x="'+(L+pw/2)+'" y="'+(H-19)+'" text-anchor="middle" font-size="20" font-weight="600" fill="'+TLAB+'">Runway &#8212; 5-year wage growth | PP variable rate: '+rate.toFixed(2)+'%</text></svg>';
  const eye='<svg viewBox="0 0 24 24" width="1.15em" height="1.15em" fill="none" stroke="currentColor"'
   +' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
   +(dvrShowX
@@ -2721,8 +2725,10 @@ document.addEventListener('DOMContentLoaded',()=>{
  document.addEventListener('fullscreenchange',()=>{
   if(!document.fullscreenElement && document.body.classList.contains('presenting'))
    setPresenting(false)});
- /* Shell theme only: the slides are byte-identical in both modes — this switches the
-    canvas behind them, the toolbar and the page rail. No storage, so it resets on reload. */
+ /* Theme toggle: switches the shell (canvas, toolbar, rail) AND the slides - the
+    light block at the end of the stylesheet restyles the slide surfaces, and the
+    rerender below redraws the one chart that paints straight onto the slide.
+    No storage, so it resets on reload. */
  const SUN='<circle cx="10" cy="10" r="3.7"/><path d="M16.2 10.0L18.4 10.0 M14.4 14.4L15.9 15.9 M10.0 16.2L10.0 18.4 M5.6 14.4L4.1 15.9 M3.8 10.0L1.6 10.0 M5.6 5.6L4.1 4.1 M10.0 3.8L10.0 1.6 M14.4 5.6L15.9 4.1"/>';
  const MOON='<path d="M15.6 12.4A6.5 6.5 0 0 1 7.6 4.4 6.9 6.9 0 1 0 15.6 12.4Z"/>';
  gid('theme').onclick=()=>{
@@ -2733,7 +2739,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   b.innerHTML='<svg viewBox="0 0 20 20" aria-hidden="true">'+(light?MOON:SUN)+'</svg>';
   const lbl='Switch to '+(light?'dark':'light')+' background';
   b.setAttribute('aria-label',lbl); b.title=lbl;
-  b.setAttribute('aria-pressed',light)};
+  b.setAttribute('aria-pressed',light);
+  render()};
  render();initRail();
 });
 
