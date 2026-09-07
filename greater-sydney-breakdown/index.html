@@ -458,7 +458,10 @@ body.railshut .stage{margin-left:56px}
    long disclaimer appeared clipped across the top of page 1. */
 .cover .disc{position:absolute;left:3.4cqw;right:3.4cqw;bottom:1.5cqw;font-size:.72cqw;
  color:#8FA0AB;font-style:italic;line-height:1.4}
-.cover .slide{background:radial-gradient(115% 85% at 12% 14%,#1E525E 0%,#16303A 48%,#0F1A20 100%)}
+.cover /* content slides sit on a flat surface; only the cover and the section dividers
+   keep the radial gradient (both themes - the flat colour rides the --pg token) */
+.slide{background:var(--pg)}
+.cover .slide,.divider .slide{background:radial-gradient(115% 85% at 12% 14%,#1E525E 0%,#16303A 48%,#0F1A20 100%)}
 .page.cover{background:#0F1A20}   /* matches the gradient's outer stop at the screen edge */
 .cover h1{font-size:4.6cqw;line-height:1.02;margin:0;font-weight:700;letter-spacing:-.03em;
  text-transform:uppercase;max-width:26ch}
