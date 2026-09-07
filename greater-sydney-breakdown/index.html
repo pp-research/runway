@@ -1997,6 +1997,10 @@ const RW_PMT=(price,inc,r)=>{const i=r/1200,g=Math.pow(1+i,360);
  return (price*.8)*(i*g)/(g-1)*12/(inc*52)};
 const RW_CEIL=(inc,share,r)=>{const i=r/1200,g=Math.pow(1+i,360);
  return (inc*52*share)/12*((g-1)/(i*g))/.8};
+/* the workbook's forecast side prices the ceiling off wage-grown income - five years
+   at 3% for the capital-city districts, 2% regional (Central Coast), exactly as its
+   Wage growth Prediction / Wage (Units) tabs do */
+const RW_G=d=>Math.pow(d==='Central Coast'?1.02:1.03,5);
 const RW_BAND=j=>j>=1?'95%':j>=.75?'90%':j>=.5?'80%':j>=.295?'70%':j>=.15?'60%'
  :j>=0?'50%':j>=-.05?'30%':j>=-.15?'20%':'10%';
 const RW_FMT=v=>'$'+Math.round(v).toLocaleString('en-AU');
@@ -2010,8 +2014,10 @@ function pRunway(){
  put('rw-sub','All six districts at the '+rwRate.toFixed(2)+'% '+(rwMode==='fcst'?'forecast':'current')+' rate. District incomes \u2014 the NSW wage series scaled by each district\u2019s ABS 6524 employee-income ratio \u00b7 ceiling: district peak ('+AI_PEAKS.find(p=>p[0]===aiPeak)[1].toLowerCase()+') \u00b7 workbook rates, Feb 2025');
  put('rw-grid',ORDER.map(d=>{
   const inc=at(MOCK.inc[d],2026), price=R.divisions[d][rwS].price, share=MOCK.divisions[d].seg[rwS][aiPeak]/100;
-  const ceil=RW_CEIL(inc,share,rwRate), rw=ceil/price-1;
-  const aiAt=RW_PMT(price,inc,rwRate);
+  /* the forecast side works on wage-grown income, as the workbook's forecast columns do */
+  const incF=rwMode==='fcst'?inc*RW_G(d):inc;
+  const ceil=RW_CEIL(incF,share,rwRate), rw=ceil/price-1;
+  const aiAt=RW_PMT(price,incF,rwRate);
   const pos=Math.max(0,Math.min(1,price/ceil)), up=rw>=0;
   return '<div class="rwc'+(hidden.has(d)?' off':'')+'">'
    +'<div class="rwc-top"><i style="background:'+C(d)+'"></i>'+d
@@ -2022,7 +2028,9 @@ function pRunway(){
    +'<div class="rwc-list">'
    +'<div><span>Ceiling at '+rwRate.toFixed(2)+'%</span><b>'+RW_FMT(ceil)+'</b></div>'
    +'<div><span>Current median</span><b>'+RW_FMT(price)+'</b></div>'
-   +'<div><span>Average income</span><b>'+RW_FMT(inc)+'/wk</b></div>'
+   +(rwMode==='fcst'
+     ?'<div><span>Income · 5yr wage growth</span><b>'+RW_FMT(incF)+'/wk</b></div>'
+     :'<div><span>Average income</span><b>'+RW_FMT(inc)+'/wk</b></div>')
    +'<div><span>AI peak · '+AI_PEAKS.find(p=>p[0]===aiPeak)[1].toLowerCase()+'</span><b>'+(share*100).toFixed(0)+'%</b></div>'
    +'<div><span>AI at '+rwRate.toFixed(2)+'%</span><b>'+(aiAt*100).toFixed(0)+'%</b></div>'
    +'</div></div>';
