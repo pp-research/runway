@@ -1958,7 +1958,9 @@ function pCAGR(){
    year's reading; the two- and three-peak averages are the mean of the highest two or
    three readings anywhere in the series - not consecutive years - so they are less
    hostage to a single year. Definitions come from the workbook's District summary. */
-let aiPeak='ceiling';
+/* fixed by decision: every ceiling in the deck is the 3-peak average computed
+   EXCLUDING the current year - no toggle. AI_PEAKS stays for the label lookup. */
+const aiPeak='ceiling3';
 const AI_PEAKS=[['ceiling','Ultimate peak'],['ceiling2','2-peak average'],['ceiling3','3-peak average']];
 function peakToggle(id){
  put(id,AI_PEAKS.map(p=>'<button data-pk="'+p[0]+'" aria-pressed="'+(aiPeak===p[0])+'"'
@@ -1971,7 +1973,6 @@ function peakToggle(id){
    inside it; the AI line stays on the left axis, where the peak rules draw, so a rule
    never floats against the wrong scale. Both pages share the aiPeak toggle state. */
 function aiPage(id,s){
- peakToggle(id.replace('c-','')+'-pk');
  /* line and columns share a 1992 start (the price series' first growth year); the
     peak ceilings still come from the workbook's full 1980-2026 history in seg.* */
  const aif=o=>{const r={};Object.keys(o).forEach(y=>{if(+y>=1992)r[y]=o[y]});return r};
@@ -2010,7 +2011,6 @@ function pRunway(){
  $$('#rw-s button').forEach(b=>b.onclick=()=>{rwS=b.dataset.s;render()});
  put('rw-rate',[['fcst','Forecast '+MOCK.rw.fcst.toFixed(2)+'%'],['cur','Current '+MOCK.rw.cur.toFixed(2)+'%']].map(c=>'<button data-m="'+c[0]+'" aria-pressed="'+(rwMode===c[0])+'">'+c[1]+'</button>').join(''));
  $$('#rw-rate button').forEach(b=>b.onclick=()=>{rwMode=b.dataset.m;pRunway()});
- peakToggle('rw-pk');
  put('rw-sub','All six districts at the '+rwRate.toFixed(2)+'% '+(rwMode==='fcst'?'forecast':'current')+' rate. District incomes \u2014 the NSW wage series scaled by each district\u2019s ABS 6524 employee-income ratio \u00b7 ceiling: district peak ('+AI_PEAKS.find(p=>p[0]===aiPeak)[1].toLowerCase()+') \u00b7 workbook rates, Feb 2025');
  put('rw-grid',ORDER.map(d=>{
   const inc=at(MOCK.inc[d],2026), price=R.divisions[d][rwS].price, share=MOCK.divisions[d].seg[rwS][aiPeak]/100;
