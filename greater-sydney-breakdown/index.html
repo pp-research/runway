@@ -1847,9 +1847,9 @@ function pTLI(){
   +'<div class="pgrp2">Value</div>'
   /* price position is a RANK inside the 34-LGA field: the cell shows the current
      rank and the gap to the long-run average rank (positive = cheapened = good) */
-  +row('Price position · houses<span class="pgg">rank v LT avg</span>',
+  +row('Price position · houses<span class="pgg">rank of 34 LGAs · v LT avg</span>',
     d=>{const s=P(d).seg.house;return [ppSig(s.gap),'#'+Math.round(s.lrrank+s.gap)+' · '+(s.gap>=0?'+':'')+s.gap.toFixed(1)]})
-  +row('Price position · units<span class="pgg">rank v LT avg</span>',
+  +row('Price position · units<span class="pgg">rank of 34 LGAs · v LT avg</span>',
     d=>{const s=P(d).seg.unit;return [ppSig(s.gap),'#'+Math.round(s.lrrank+s.gap)+' · '+(s.gap>=0?'+':'')+s.gap.toFixed(1)]})
   +row('Runway · houses',d=>{const r=100*P(d).seg.house.runway;return [rwSig(r,'house'),(r>=0?'+':'')+r.toFixed(0)+'%']})
   +row('Runway · units',d=>{const r=100*P(d).seg.unit.runway;return [rwSig(r,'unit'),(r>=0?'+':'')+r.toFixed(0)+'%']})
