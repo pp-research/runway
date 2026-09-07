@@ -1962,6 +1962,7 @@ function pCAGR(){
    EXCLUDING the current year - no toggle. AI_PEAKS stays for the label lookup. */
 const aiPeak='ceiling3';
 const AI_PEAKS=[['ceiling','Ultimate peak'],['ceiling2','2-peak average'],['ceiling3','3-peak average']];
+/* retired: the ceiling is fixed to the 3-peak average (ex current year) */
 function peakToggle(id){
  put(id,AI_PEAKS.map(p=>'<button data-pk="'+p[0]+'" aria-pressed="'+(aiPeak===p[0])+'"'
   +' title="show the '+p[1].toLowerCase()+' as a dashed rule on every card">'+p[1]+'</button>').join(''));
@@ -2069,7 +2070,7 @@ function pScatter(){
  const pts=[];
  ORDER.forEach(d=>SEGS.forEach(s=>{
   const g=MOCK.divisions[d].seg[s], price=R.divisions[d][s].price,
-   run=(RW_CEIL(at(MOCK.inc[d],2026)*RW_G(d),g.ceiling/100,rate)/price-1)*100;
+   run=(RW_CEIL(at(MOCK.inc[d],2026)*RW_G(d),g.ceiling3/100,rate)/price-1)*100;
   pts.push({d:d,s:s,x:run,y:g.dscore});}));
  const W=1560,H=706,L=100,Rm=170,T=24,B=104,pw=W-L-Rm,ph=H-T-B;
  let xmax=130; pts.forEach(p=>{if(p.x+12>xmax)xmax=Math.ceil((p.x+12)/20)*20});
