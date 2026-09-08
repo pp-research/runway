@@ -1578,9 +1578,9 @@ function panels(hostId,items,spec,opt){
    if(z<=a)return;
    g+='<rect x="'+x(a).toFixed(1)+'" y="'+(oy+P[0]).toFixed(1)+'" width="'+(x(z)-x(a)).toFixed(1)
     +'" height="'+(chh-P[0]-P[2]).toFixed(1)+'" fill="var(--band)"/>'});
-  /* stagnation bands: the printed report's correction periods as a light wash, each
-     labelled with its length and range so the flat stretches read at a glance */
-  if(opt.stagBands) BANDS.forEach(b=>{if(b.type==='growth')return;
+  /* stagnation bands, measured per card: opt.stagBands(it) returns that district's
+     own windows, each drawn as a light wash labelled with its length and range */
+  if(opt.stagBands) opt.stagBands(it).forEach(b=>{
    const a=Math.max(b.a,y0), z=Math.min(b.b,y1);
    if(z<=a)return;
    const bx1=x(a), bx2=x(z), mid=(bx1+bx2)/2, yrs=b.b-b.a;
@@ -1973,6 +1973,18 @@ const DIV6=()=>ORDER.map(d=>({d:d,label:d}));
    drops the H/U suffix because the slide heading already carries it. */
 const DIVSEG1=s=>ORDER.map(d=>({d:d,s:s,label:d}));
 
+/* measured stagnation windows for a price series: the years it sits below its own
+   prior December peak, kept when the run lasts two or more years; each window ends
+   at the recovery year. Computed live from the plotted series so it cannot drift. */
+function STAG(o){
+ const ys=yl(o); let peak=-Infinity, start=null; const runs=[];
+ ys.forEach(y=>{const v=at(o,y);
+  if(v==null||!isFinite(v))return;
+  if(v>=peak){ if(start!=null&&y-start>=2) runs.push({a:start,b:y}); start=null; peak=v }
+  else if(start==null) start=y;});
+ if(start!=null&&ys[ys.length-1]-start>=2) runs.push({a:start,b:ys[ys.length-1]});
+ return runs;
+}
 function pPrice(){
  panels('c-price',DIV6(),it=>[
   {d:GR(it.d,'house').ps,type:'line',col:C(it.d),name:'House'},
