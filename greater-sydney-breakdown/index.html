@@ -1993,7 +1993,7 @@ function pPrice(){
      label, so the 2008 and 2020 lines read as unexplained marks. They stay on the
      full-width charts, where eventMark can label them. */
   {fmt:v=>v>=1e6?'$'+TKF(v/1e6)+'m':v>=1000?'$'+Math.round(v/1e3)+'k':'$'+Math.round(v),
-   bandsFor:()=>[],stagBands:1,cards:1,H:460,title:'Average of LGA medians',
+   bandsFor:()=>[],stagBands:it=>STAG(GR(it.d,'house').ps),cards:1,H:460,title:'Average of LGA medians',
    ytitle:'Avg. of LGA medians \u2014 house / unit'});
 }
 function pYoY(){
@@ -2001,7 +2001,8 @@ function pYoY(){
   {d:GR(it.d,'house').pg,type:'line',col:C(it.d),name:'House'},
   {d:GR(it.d,'unit').pg,type:'line',col:C(it.d),op:.45,name:'Unit'}],
   {zeroL:1,fmt:v=>v.toFixed(0)+'%',            /* no events - see the note on pPrice */
-   stagBands:1,cards:1,H:460,title:'Year on year price movement',ytitle:'% Change Year on Year'});
+   stagBands:it=>STAG(GR(it.d,'house').ps),
+   cards:1,H:460,title:'Year on year price movement',ytitle:'% Change Year on Year'});
 }
 function HVU_LTA(){const v=[];
  ORDER.forEach(d=>{const gh=GR(d,'house'), gu=GR(d,'unit');
