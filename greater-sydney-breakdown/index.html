@@ -609,6 +609,26 @@ body.presenting .exitfs{display:grid}
 [data-shell=light] .cvmap{color:#0D2028}
 [data-shell=light] .cvmap path{fill-opacity:.09}
 [data-shell=light] .page.cover{background:#EAF0F3}
+/* ---- traffic lights: dark-luxe (no panel behind the grid; glass map card) ---- */
+#pg-lights .tl2n .pnl{background:transparent;box-shadow:none}
+#pg-lights .tl2n .pnl:last-child{background:#FFFFFF08;border:1px solid #FFFFFF12}
+#pg-lights .pgrid .pgl{color:#AAB6C2;border-bottom:1px solid #FFFFFF0D;padding:.32cqw 0}
+#pg-lights .pgrid .pc{border-bottom:1px solid #FFFFFF0D;border-radius:0;padding:.32cqw 0}
+#pg-lights .pgrp2{color:#7FB7C4}
+#pg-lights .pnl h3{color:#7FB7C4}
+#pg-lights .tlth{border-bottom:1px solid #FFFFFF14}
+#pg-lights .tlth .nm{color:#CFE0E8}
+#pg-lights .tlth button{color:#8FA9B4}
+#pg-lights .tlrow{border-bottom:1px solid #FFFFFF0D}
+#pg-lights .tlrow .nm{color:#DCE5EA}
+[data-shell=light] #pg-lights .tl2n .pnl:last-child{background:#17202C06;border-color:#17202C1A}
+[data-shell=light] #pg-lights .pgrid .pgl{color:#4A5866;border-bottom-color:#17202C12}
+[data-shell=light] #pg-lights .pgrid .pc{border-bottom-color:#17202C12}
+[data-shell=light] #pg-lights .pgrp2,[data-shell=light] #pg-lights .pnl h3{color:var(--teal-text)}
+[data-shell=light] #pg-lights .tlth{border-bottom-color:#17202C22}
+[data-shell=light] #pg-lights .tlth .nm{color:#22303B}
+[data-shell=light] #pg-lights .tlrow{border-bottom-color:#17202C12}
+[data-shell=light] #pg-lights .tlrow .nm{color:#22303B}
 /* ---- district filter chips in the toolbar ---- */
 .dbar{display:flex;gap:6px;margin-left:14px;align-items:center;flex-wrap:wrap;min-width:0}
 .dbar .dchip{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:11.5px;
