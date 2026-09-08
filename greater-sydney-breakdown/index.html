@@ -1975,18 +1975,10 @@ const DIV6=()=>ORDER.map(d=>({d:d,label:d}));
    drops the H/U suffix because the slide heading already carries it. */
 const DIVSEG1=s=>ORDER.map(d=>({d:d,s:s,label:d}));
 
-/* measured stagnation windows for a price series: the years it sits below its own
-   prior December peak, kept when the run lasts two or more years; each window ends
-   at the recovery year. Computed live from the plotted series so it cannot drift. */
-function STAG(o){
- const ys=yl(o); let peak=-Infinity, start=null; const runs=[];
- ys.forEach(y=>{const v=at(o,y);
-  if(v==null||!isFinite(v))return;
-  if(v>=peak){ if(start!=null&&y-start>=2) runs.push({a:start,b:y}); start=null; peak=v }
-  else if(start==null) start=y;});
- if(start!=null&&ys[ys.length-1]-start>=2) runs.push({a:start,b:ys[ys.length-1]});
- return runs;
-}
+/* stagnation bands come from MOCK.epis - the SAME measured underwater episodes the
+   Price v rent slides shade (house median below its prior peak, running from the
+   peak year to the year a new high is set, kept at three or more years) - so the
+   three slides can never disagree */
 function pPrice(){
  panels('c-price',DIV6(),it=>[
   {d:GR(it.d,'house').ps,type:'line',col:C(it.d),name:'House'},
@@ -1995,7 +1987,7 @@ function pPrice(){
      label, so the 2008 and 2020 lines read as unexplained marks. They stay on the
      full-width charts, where eventMark can label them. */
   {fmt:v=>v>=1e6?'$'+TKF(v/1e6)+'m':v>=1000?'$'+Math.round(v/1e3)+'k':'$'+Math.round(v),
-   bandsFor:()=>[],stagBands:it=>STAG(GR(it.d,'house').ps),cards:1,H:460,title:'Average of LGA medians',
+   bandsFor:()=>[],stagBands:it=>MOCK.epis[it.d+'|house']||[],cards:1,H:460,title:'Average of LGA medians',
    ytitle:'Avg. of LGA medians \u2014 house / unit'});
 }
 function pYoY(){
