@@ -2109,7 +2109,8 @@ function pDemandCards(){
  $$('#ds-s button').forEach(b=>b.onclick=()=>{dsS=b.dataset.s;pDemandCards()});
  const bench=MOCK.divisions[ORDER[0]].seg[dsS].bench;
  put('ds-sub','All six districts under one segment \u00b7 graded against the July 2026 national 36-region benchmark (grade '+bench+') \u00b7 green at a score of 30, orange at 5');
- put('ds-grid',ORDER.map(d=>{
+ const dsVis=DVIS();
+ put('ds-grid',dsVis.map(d=>{
   const g=MOCK.divisions[d].seg[dsS];
   const sc=g.dscore, sig=g.dsig;
   const pos=Math.max(0,Math.min(1,sc/80));
