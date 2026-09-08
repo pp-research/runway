@@ -1850,9 +1850,9 @@ function pLights(){
  const HDL={'North':'#4E5A6B','East':'#D28E0A','Central':'#189AB8','South':'#8355AE','West':'#1FA268','Central Coast':'#DB5E7E'};
  const dcell=(d,sig)=>'<div class="pc" style="background:'+C(d)+'1C'+(hidden.has(d)?';opacity:.25':'')
   +'"><i style="background:'+SIGC[sig]+'" title="'+d+'"></i></div>';
- const prow=(label,get)=>'<div class="pgl">'+label+'</div>'+ORDER.map(d=>dcell(d,get(d))).join('');
- put('l-pil','<div class="pgrid">'
-  +'<div></div>'+ORDER.map(d=>'<div class="ph" style="background:'+HDL[d]+(hidden.has(d)?';opacity:.35':'')+'">'+d+'</div>').join('')
+ const prow=(label,get)=>'<div class="pgl">'+label+'</div>'+VIS.map(d=>dcell(d,get(d))).join('');
+ put('l-pil','<div class="pgrid" style="grid-template-columns:minmax(9cqw,auto) repeat('+VIS.length+',1fr)">'
+  +'<div></div>'+VIS.map(d=>'<div class="ph" style="background:'+HDL[d]+'">'+d+'</div>').join('')
   +'<div class="pgrp2">S&amp;D</div>'
   +prow('Demand score · houses',d=>MOCK.divisions[d].seg.house.dsig)
   +prow('Demand score · units',d=>MOCK.divisions[d].seg.unit.dsig)
@@ -1893,11 +1893,13 @@ function pTLI(){
  const rwSig=(r,s)=>s==='house'?(r>=40?'GREEN':r<=15?'RED':'ORANGE'):(r>=60?'GREEN':r<=30?'RED':'ORANGE');
  const HDL={'North':'#4E5A6B','East':'#D28E0A','Central':'#189AB8','South':'#8355AE','West':'#1FA268','Central Coast':'#DB5E7E'};
  const P=d=>MOCK.divisions[d];
- const vcell=(d,sig,txt)=>'<div class="pc pcv" style="background:'+C(d)+'1C'+(hidden.has(d)?';opacity:.25':'')
+ const VIS=DVIS();
+ const vcell=(d,sig,txt)=>'<div class="pc pcv" style="background:'+C(d)+'1C'
   +'"><i style="background:'+SIGC[sig]+'" title="'+d+'"></i><b>'+txt+'</b></div>';
- const row=(label,get)=>'<div class="pgl">'+label+'</div>'+ORDER.map(d=>{const r=get(d);return vcell(d,r[0],r[1])}).join('');
- put('ti-grid','<div></div>'+ORDER.map(d=>'<div class="ph" style="background:'+HDL[d]
-   +(hidden.has(d)?';opacity:.35':'')+'">'+d+'</div>').join('')
+ const row=(label,get)=>'<div class="pgl">'+label+'</div>'+VIS.map(d=>{const r=get(d);return vcell(d,r[0],r[1])}).join('');
+ gid('ti-grid').style.gridTemplateColumns='minmax(9cqw,auto) repeat('+VIS.length+',1fr)';
+ put('ti-grid','<div></div>'+VIS.map(d=>'<div class="ph" style="background:'+HDL[d]
+   +'">'+d+'</div>').join('')
   +'<div class="pgrp2">S&amp;D</div>'
   +row('Demand score · houses',d=>[P(d).seg.house.dsig,P(d).seg.house.dscore.toFixed(1)])
   +row('Demand score · units',d=>[P(d).seg.unit.dsig,P(d).seg.unit.dscore.toFixed(1)])
