@@ -1807,8 +1807,9 @@ function pGlance(){
    +kv('10yr CAGR',s.cagr10.toFixed(2)+'%')
    +kv('Weekly rent','$'+s.rent.toFixed(0))
    +kv('Gross yield',s.yield.toFixed(2)+'%')};
- put('g-wrap','<div class="agstrips">'+ORDER.map(d=>
-  '<div class="agst'+(hidden.has(d)?' off':'')+'" style="border-left-color:'+C(d)+'">'
+ const agVis=DVIS();
+ put('g-wrap','<div class="agstrips" style="grid-template-columns:repeat('+agVis.length+',1fr)">'+agVis.map(d=>
+  '<div class="agst" style="border-left-color:'+C(d)+'">'
   +'<button class="agnm" data-d="'+d+'" style="color:'+C(d)+'" title="click to '
    +(hidden.has(d)?'show':'hide')+' '+d+' everywhere">'+d+'</button>'
   +kv('Population',(MOCK.divisions[d].pop/1000).toFixed(0)+'k')
@@ -2126,6 +2127,7 @@ function pDemandCards(){
    +'<div><span>Vacancy rate</span><b>'+(g.ss/g.lpp).toFixed(2)+'%</b></div>'
    +'</div></div>';
  }).join(''));
+ gid('ds-grid').style.gridTemplateColumns='repeat('+GRIDCOLS(dsVis.length)+',1fr)';
 }
 /* the runway axis values stay hidden by default - the eye button in the chart's top
    bar reveals them. Survives rerenders (district toggles) via this module flag. */
@@ -2133,7 +2135,7 @@ let dvrShowX=false;
 function pScatter(){
  const rate=MOCK.rw.fcst;
  const pts=[];
- ORDER.forEach(d=>SEGS.forEach(s=>{
+ DVIS().forEach(d=>SEGS.forEach(s=>{
   const g=MOCK.divisions[d].seg[s], price=R.divisions[d][s].price,
    run=(RW_CEIL(at(MOCK.inc[d],2026)*RW_G(d),g.ceiling3/100,rate)/price-1)*100;
   pts.push({d:d,s:s,x:run,y:g.dscore});}));
