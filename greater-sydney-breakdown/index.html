@@ -2313,7 +2313,9 @@ function vrRentChart(hostId,d,lo,hi,VMAX,seg,st,vbw,vbh){
     (height:auto), so this ratio is what makes the chart fill the card instead of
     leaving a gap beneath it. Cards are ~29.5 x 19.2cqw now that the page carries no
     kick line and no caption - re-derive this if that changes. */
- const W=1000, Ht=650, P=[14,70,96,116];  // top, right (VR axis), bottom (years), left ($)
+ /* the caller measures the live card and passes a pixel-true viewBox; the 1000x650
+    defaults are the tuned 3x2-grid aspect */
+ const W=vbw||1000, Ht=vbh||650, P=[14,70,96,116];  // top, right (VR axis), bottom (years), left ($)
  const rs=GR(d,seg).rs, vs=H[d].vr;
  const ys=yl(rs), y0=ys[0], y1=ys[ys.length-1];
  const L=P[3], R=W-P[1], T=P[0], B=Ht-P[2];
