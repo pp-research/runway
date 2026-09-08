@@ -2075,7 +2075,8 @@ function pRunway(){
  put('rw-rate',[['fcst','Forecast '+MOCK.rw.fcst.toFixed(2)+'%'],['cur','Current '+MOCK.rw.cur.toFixed(2)+'%']].map(c=>'<button data-m="'+c[0]+'" aria-pressed="'+(rwMode===c[0])+'">'+c[1]+'</button>').join(''));
  $$('#rw-rate button').forEach(b=>b.onclick=()=>{rwMode=b.dataset.m;pRunway()});
  put('rw-sub','All six districts at the '+rwRate.toFixed(2)+'% '+(rwMode==='fcst'?'forecast':'current')+' rate. District incomes \u2014 the NSW wage series scaled by each district\u2019s ABS 6524 employee-income ratio \u00b7 ceiling: district peak ('+AI_PEAKS.find(p=>p[0]===aiPeak)[1].toLowerCase()+') \u00b7 workbook rates, Feb 2025');
- put('rw-grid',ORDER.map(d=>{
+ const rwVis=DVIS();
+ put('rw-grid',rwVis.map(d=>{
   const inc=at(MOCK.inc[d],2026), price=R.divisions[d][rwS].price, share=MOCK.divisions[d].seg[rwS][aiPeak]/100;
   /* the forecast side works on wage-grown income, as the workbook's forecast columns do */
   const incF=rwMode==='fcst'?inc*RW_G(d):inc;
@@ -2098,6 +2099,7 @@ function pRunway(){
    +'<div><span>AI at '+rwRate.toFixed(2)+'%</span><b>'+(aiAt*100).toFixed(0)+'%</b></div>'
    +'</div></div>';
  }).join(''));
+ gid('rw-grid').style.gridTemplateColumns='repeat('+GRIDCOLS(rwVis.length)+',1fr)';
 }
 let dsS='house';
 function pDemandCards(){
