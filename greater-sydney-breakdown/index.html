@@ -635,6 +635,7 @@ body.presenting .exitfs{display:grid}
 <header class="bar">
  <img class="lg-dark" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-inverted.png" alt="Performance Property">
  <img class="lg-light" src="https://raw.githubusercontent.com/Performance-Property/pp-brand-assets/main/logos/performance-property/pp-logo-standard.png" alt="Performance Property">
+ <nav class="dbar" id="dbar" aria-label="District filter"></nav>
  <span class="grow"></span>
  <span class="hid" id="hid"></span>
  <button class="showall" id="showall" hidden>Show all districts</button>
@@ -2536,10 +2537,32 @@ const BK=[['Best time to invest','var(--green)'],['Past its peak','var(--orange)
  ['Worth watching','var(--blue)'],['Not the best time','var(--red)']];
 
 /* ================= shell ================= */
+/* toolbar district chips: click a district while everything is shown to ISOLATE it;
+   after that each click ticks districts in or out (compare mode); clicking the only
+   selected district - or All - restores the full set. State lives in the same
+   `hidden` set the legends and district-name clicks use, so they all stay in sync. */
+function drawDbar(){
+ const el=gid('dbar'); if(!el) return;
+ el.innerHTML='<button class="dchip all'+(hidden.size===0?' on':'')+'" data-d="*">All</button>'
+  +ORDER.map(d=>'<button class="dchip'+(hidden.has(d)?'':' on')+'" data-d="'+d
+   +'" style="--dc:'+C(d)+'" title="'+d+'"><i></i>'+(d==='Central Coast'?'C. Coast':d)+'</button>').join('');
+ $$('#dbar .dchip').forEach(b=>b.onclick=()=>{
+  const d=b.dataset.d;
+  if(d==='*') hidden.clear();
+  else{
+   const sel=ORDER.filter(x=>!hidden.has(x));
+   if(sel.length===ORDER.length) ORDER.forEach(x=>{if(x!==d)hidden.add(x)});
+   else if(!hidden.has(d)&&sel.length===1) hidden.clear();
+   else if(hidden.has(d)) hidden.delete(d);
+   else hidden.add(d);
+  }
+  render()});
+}
 function render(){
  const n=hidden.size;
  gid('hid').textContent=n?n+' district'+(n>1?'s':'')+' hidden':'';
  gid('showall').hidden=!n;
+ drawDbar();
 /* NSW lending v median price: six solid district price lines; the two NSW-wide
    lending series ride ax2 (their own hidden right scale) dashed - red for
    owner-occupier, black for investor, as specified. Compare movement, not levels. */
