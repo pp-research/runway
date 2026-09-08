@@ -2304,7 +2304,7 @@ const VRR_GLYPH=(col,dash,opq)=>'<svg viewBox="0 0 30 10" aria-hidden="true">'
  +'<line x1="1" x2="29" y1="5" y2="5" stroke="'+col+'" stroke-width="2.6"'
  +' stroke-linecap="round" stroke-opacity="'+(opq==null?1:opq)+'"'
  +(dash?' stroke-dasharray="'+dash+'"':'')+'/></svg>';
-function vrRentChart(hostId,d,lo,hi,VMAX,seg,st){
+function vrRentChart(hostId,d,lo,hi,VMAX,seg,st,vbw,vbh){
  const host=gid(hostId); if(!host) return;
  /* left padding has to clear "$1560" at font 28 - Montserrat digits are wide and at
     96 the dollar sign was clipping off the card edge. The bottom is deep enough for
@@ -2405,8 +2405,24 @@ function vrrPage(id,seg){
   +'<div class="vrrc-key"><span>'+VRR_GLYPH(C(d),null,seg==='house'?1:.45)+segCap+' rent</span>'
   +'<span>'+VRR_GLYPH('#5A6B75','7 4',.85)+'Vacancy rate</span></div></div>'
   +'<div class="vrrc-ch" id="'+cid(d)+'"></div></div>').join(''));
- list.forEach(d=>vrRentChart(cid(d),d,lo,hi,VMAX,seg,nbV[2]));
- gid('c-'+id+'-cards').style.gridTemplateColumns='repeat('+GRIDCOLS(list.length)+',1fr)';
+ /* size each chart's viewBox from the real card box so filtered views (1/2/3/4
+    districts) fill their cards instead of blowing out the fixed 3x2 aspect.
+    Scaling the viewBox WIDTH with the rendered card width keeps text and strokes
+    at constant pixel size; the height then follows the pixel budget for the row. */
+ const grid=gid('c-'+id+'-cards');
+ const cols=GRIDCOLS(list.length), rows=Math.ceil(list.length/cols);
+ grid.style.gridTemplateColumns='repeat('+cols+',1fr)';
+ let vbw=1000, vbh=650;
+ const card=grid.querySelector('.vrrc'), chEl=grid.querySelector('.vrrc-ch');
+ if(card&&chEl&&grid.clientWidth>0&&grid.clientHeight>0){
+  const gap=parseFloat(getComputedStyle(grid).rowGap)||8;
+  const chrome=card.clientHeight;                        /* header + padding: charts are still empty */
+  const rowH=(grid.clientHeight-(rows-1)*gap)/rows;
+  const cw=Math.max(120,chEl.clientWidth);
+  vbw=Math.max(600,Math.min(3400,Math.round(3000*cw/Math.max(cw,grid.clientWidth))));
+  vbh=Math.max(340,Math.min(1600,Math.round(vbw*Math.max(110,rowH-chrome-4)/cw)));
+ }
+ list.forEach(d=>vrRentChart(cid(d),d,lo,hi,VMAX,seg,nbV[2],vbw,vbh));
 }
 function pVRRentH(){ vrrPage('vrrenth','house') }
 function pVRRentU(){ vrrPage('vrrentu','unit') }
