@@ -1581,18 +1581,22 @@ function panels(hostId,items,spec,opt){
    g+='<rect x="'+x(a).toFixed(1)+'" y="'+(oy+P[0]).toFixed(1)+'" width="'+(x(z)-x(a)).toFixed(1)
     +'" height="'+(chh-P[0]-P[2]).toFixed(1)+'" fill="var(--band)"/>'});
   /* stagnation bands, measured per card: opt.stagBands(it) returns that district's
-     own windows, each drawn as a light wash labelled with its length and range */
-  if(opt.stagBands) opt.stagBands(it).forEach(b=>{
+     own windows, each drawn as a light wash labelled with its length and range.
+     Adjacent bands (Central Coast's 2004-10 + 2010-13) stagger their labels so
+     the ranges never run together. */
+  if(opt.stagBands){let prevR=-1e9;
+   opt.stagBands(it).forEach(b=>{
    const a=Math.max(b.a,y0), z=Math.min(b.b,y1);
    if(z<=a)return;
    const bx1=x(a), bx2=x(z), mid=(bx1+bx2)/2, yrs=b.b-b.a;
+   const drop=(mid-24<prevR+4)?22:0; prevR=mid+24;
    g+='<rect x="'+bx1.toFixed(1)+'" y="'+(oy+P[0]).toFixed(1)+'" width="'+(bx2-bx1).toFixed(1)
     +'" height="'+(chh-P[0]-P[2]).toFixed(1)+'" fill="#8FA9B4" fill-opacity=".16"/>'
-    +'<text x="'+mid.toFixed(1)+'" y="'+(oy+P[0]+11).toFixed(1)+'" text-anchor="middle"'
+    +'<text x="'+mid.toFixed(1)+'" y="'+(oy+P[0]+11+drop).toFixed(1)+'" text-anchor="middle"'
     +' font-size="8.4" font-weight="700" fill="#5A6B75">'+yrs+' yr'+(yrs>1?'s':'')+'</text>'
-    +'<text x="'+mid.toFixed(1)+'" y="'+(oy+P[0]+20.5).toFixed(1)+'" text-anchor="middle"'
+    +'<text x="'+mid.toFixed(1)+'" y="'+(oy+P[0]+20.5+drop).toFixed(1)+'" text-anchor="middle"'
     +' font-size="8" fill="#5A6B75">'+b.a+'–'+String(b.b).slice(2)+'</text>';
-  });
+  })}
   /* event rules: dashed line only — a pill label will not fit in a small panel */
   (opt.events||[]).forEach(e=>{if(e.y<y0||e.y>y1)return;
    g+='<line x1="'+x(e.y).toFixed(1)+'" x2="'+x(e.y).toFixed(1)+'" y1="'+(oy+P[0]).toFixed(1)
