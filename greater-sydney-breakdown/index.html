@@ -1578,6 +1578,19 @@ function panels(hostId,items,spec,opt){
    if(z<=a)return;
    g+='<rect x="'+x(a).toFixed(1)+'" y="'+(oy+P[0]).toFixed(1)+'" width="'+(x(z)-x(a)).toFixed(1)
     +'" height="'+(chh-P[0]-P[2]).toFixed(1)+'" fill="var(--band)"/>'});
+  /* stagnation bands: the printed report's correction periods as a light wash, each
+     labelled with its length and range so the flat stretches read at a glance */
+  if(opt.stagBands) BANDS.forEach(b=>{if(b.type==='growth')return;
+   const a=Math.max(b.a,y0), z=Math.min(b.b,y1);
+   if(z<=a)return;
+   const bx1=x(a), bx2=x(z), mid=(bx1+bx2)/2, yrs=b.b-b.a;
+   g+='<rect x="'+bx1.toFixed(1)+'" y="'+(oy+P[0]).toFixed(1)+'" width="'+(bx2-bx1).toFixed(1)
+    +'" height="'+(chh-P[0]-P[2]).toFixed(1)+'" fill="#8FA9B4" fill-opacity=".16"/>'
+    +'<text x="'+mid.toFixed(1)+'" y="'+(oy+P[0]+11).toFixed(1)+'" text-anchor="middle"'
+    +' font-size="8.4" font-weight="700" fill="#5A6B75">'+yrs+' yr'+(yrs>1?'s':'')+'</text>'
+    +'<text x="'+mid.toFixed(1)+'" y="'+(oy+P[0]+20.5).toFixed(1)+'" text-anchor="middle"'
+    +' font-size="8" fill="#5A6B75">'+b.a+'–'+String(b.b).slice(2)+'</text>';
+  });
   /* event rules: dashed line only — a pill label will not fit in a small panel */
   (opt.events||[]).forEach(e=>{if(e.y<y0||e.y>y1)return;
    g+='<line x1="'+x(e.y).toFixed(1)+'" x2="'+x(e.y).toFixed(1)+'" y1="'+(oy+P[0]).toFixed(1)
@@ -1968,7 +1981,7 @@ function pPrice(){
      label, so the 2008 and 2020 lines read as unexplained marks. They stay on the
      full-width charts, where eventMark can label them. */
   {fmt:v=>v>=1e6?'$'+TKF(v/1e6)+'m':v>=1000?'$'+Math.round(v/1e3)+'k':'$'+Math.round(v),
-   bandsFor:()=>[],cards:1,H:460,title:'Average of LGA medians',
+   bandsFor:()=>[],stagBands:1,cards:1,H:460,title:'Average of LGA medians',
    ytitle:'Avg. of LGA medians \u2014 house / unit'});
 }
 function pYoY(){
@@ -1976,7 +1989,7 @@ function pYoY(){
   {d:GR(it.d,'house').pg,type:'line',col:C(it.d),name:'House'},
   {d:GR(it.d,'unit').pg,type:'line',col:C(it.d),op:.45,name:'Unit'}],
   {zeroL:1,fmt:v=>v.toFixed(0)+'%',            /* no events - see the note on pPrice */
-   cards:1,H:460,title:'Year on year price movement',ytitle:'% Change Year on Year'});
+   stagBands:1,cards:1,H:460,title:'Year on year price movement',ytitle:'% Change Year on Year'});
 }
 function HVU_LTA(){const v=[];
  ORDER.forEach(d=>{const gh=GR(d,'house'), gu=GR(d,'unit');
