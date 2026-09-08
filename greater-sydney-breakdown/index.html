@@ -2415,14 +2415,14 @@ function vrrPage(id,seg){
  const cols=GRIDCOLS(list.length), rows=Math.ceil(list.length/cols);
  grid.style.gridTemplateColumns='repeat('+cols+',1fr)';
  let vbw=1000, vbh=650;
- const card=grid.querySelector('.vrrc'), chEl=grid.querySelector('.vrrc-ch');
- if(card&&chEl&&grid.clientWidth>0&&grid.clientHeight>0){
-  const gap=parseFloat(getComputedStyle(grid).rowGap)||8;
-  const chrome=card.clientHeight;                        /* header + padding: charts are still empty */
-  const rowH=(grid.clientHeight-(rows-1)*gap)/rows;
-  const cw=Math.max(120,chEl.clientWidth);
+ /* the freshly emptied .vrrc-ch stretches to exactly the space the chart should
+    fill (grid rows stretch, the card is a flex column, the chart box is flex:1),
+    so its own client box gives the pixel-true aspect directly */
+ const chEl=grid.querySelector('.vrrc-ch');
+ if(chEl&&chEl.clientWidth>50&&chEl.clientHeight>40){
+  const cw=chEl.clientWidth, chh=chEl.clientHeight;
   vbw=Math.max(600,Math.min(3400,Math.round(3000*cw/Math.max(cw,grid.clientWidth))));
-  vbh=Math.max(340,Math.min(1600,Math.round(vbw*Math.max(110,rowH-chrome-4)/cw)));
+  vbh=Math.max(300,Math.min(1700,Math.round(vbw*chh/cw)));
  }
  list.forEach(d=>vrRentChart(cid(d),d,lo,hi,VMAX,seg,nbV[2],vbw,vbh));
 }
