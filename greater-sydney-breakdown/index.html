@@ -1869,8 +1869,9 @@ function pLights(){
  const ppSig=g=>g>=3?'GREEN':g<=-3?'RED':'ORANGE';
  const rwSig=(r,s)=>s==='house'?(r>=40?'GREEN':r<=15?'RED':'ORANGE'):(r>=60?'GREEN':r<=30?'RED':'ORANGE');
  const HDL={'North':'#4E5A6B','East':'#D28E0A','Central':'#189AB8','South':'#8355AE','West':'#1FA268','Central Coast':'#DB5E7E'};
- const dcell=(d,sig)=>'<div class="pc" style="background:'+C(d)+'1C'+(hidden.has(d)?';opacity:.25':'')
-  +'"><i style="background:'+SIGC[sig]+'" title="'+d+'"></i></div>';
+ /* dark-luxe cells: no district tint - clean hairline rows with softly glowing dots */
+ const dcell=(d,sig)=>'<div class="pc"><i style="background:'+SIGC[sig]
+  +';box-shadow:0 0 .5cqw '+SIGC[sig]+'66" title="'+d+'"></i></div>';
  const prow=(label,get)=>'<div class="pgl">'+label+'</div>'+VIS.map(d=>dcell(d,get(d))).join('');
  put('l-pil','<div class="pgrid" style="grid-template-columns:minmax(9cqw,auto) repeat('+VIS.length+',1fr)">'
   +'<div></div>'+VIS.map(d=>'<div class="ph" style="background:'+HDL[d]+'">'+d+'</div>').join('')
@@ -1888,7 +1889,9 @@ function pLights(){
  put('l-map','<svg viewBox="0 0 '+MAPD.w+' '+MAPD.h+'" xmlns="http://www.w3.org/2000/svg" role="img">'
   +'<title>Districts in their own colours</title>'+ORDER.map(d=>
    '<path d="'+MAPD.paths[d]+'" data-d="'+d+'" fill="'+C(d)+'" fill-opacity="'
-    +(hidden.has(d)?.12:.85)+'" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"></path>').join('')+'</svg>');
+    +(hidden.has(d)?.12:.85)+'" stroke="'
+    +(document.documentElement.dataset.shell==='light'?'#FFFFFF':'#10202A')
+    +'" stroke-width="2.4" stroke-linejoin="round"></path>').join('')+'</svg>');
  const MAPOFF={'North':[26,-18],'East':[14,20],'Central':[-2,40],'South':[-14,12],'West':[-42,0],'Central Coast':[6,-8]};
  const msvg=gid('l-map').querySelector('svg');
  $$('#l-map path').forEach(p=>{const d=p.dataset.d, b=p.getBBox(), o=MAPOFF[d]||[0,0];
