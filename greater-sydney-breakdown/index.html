@@ -2168,7 +2168,7 @@ function pScatter(){
   const g=MOCK.divisions[d].seg[s], price=R.divisions[d][s].price,
    run=(RW_CEIL(at(MOCK.inc[d],2026)*RW_G(d),g.ceiling3/100,rate)/price-1)*100;
   pts.push({d:d,s:s,x:run,y:g.dscore});}));
- const W=1560,H=706,L=100,Rm=170,T=24,B=104,pw=W-L-Rm,ph=H-T-B;
+ const W=1560,H=676,L=100,Rm=170,T=24,B=74,pw=W-L-Rm,ph=H-T-B;
  let xmax=130; pts.forEach(p=>{if(p.x+12>xmax)xmax=Math.ceil((p.x+12)/20)*20});
  const xmin=120-xmax,ymin=-25,ymax=82;
  const fx=v=>L+(v-xmin)/(xmax-xmin)*pw, fy=v=>T+(ymax-v)/(ymax-ymin)*ph;
@@ -2183,7 +2183,7 @@ function pScatter(){
  let s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" role="img" style="width:100%;height:auto">';
  /* glass panel behind the chart only - it ends above the legend row so the key and
     the runway note sit on the plain slide */
- s+='<rect x="1" y="1" width="'+(W-2)+'" height="'+(H-50)+'" rx="12"'
+ s+='<rect x="1" y="1" width="'+(W-2)+'" height="'+(H-44)+'" rx="12"'
   +' fill="'+(LM?'#17202C':'#FFFFFF')+'" fill-opacity="'+(LM?'.035':'.032')+'"'
   +' stroke="'+(LM?'#17202C':'#FFFFFF')+'" stroke-opacity="'+(LM?'.10':'.08')+'"/>';
  for(let v=-20;v<=80;v+=10){const y=fy(v);
@@ -2191,7 +2191,7 @@ function pScatter(){
    +'<text x="'+(L-12)+'" y="'+(y+6)+'" text-anchor="end" font-size="19" fill="'+TLAB+'">'+v+'</text>';}
  for(let v=0;v<=xmax;v+=20){const x=fx(v);
   s+='<line x1="'+x+'" y1="'+T+'" x2="'+x+'" y2="'+(T+ph)+'" stroke="'+TGRID+'"/>'
-   +(dvrShowX?'<text x="'+x+'" y="'+(T+ph+30)+'" text-anchor="middle" font-size="19" fill="'+TLAB+'">'+v+'%</text>':'');}
+   +(dvrShowX?'<text x="'+x+'" y="'+(T+ph+20)+'" text-anchor="middle" font-size="19" fill="'+TLAB+'">'+v+'%</text>':'');}
  s+='<line x1="'+fx(0)+'" y1="'+T+'" x2="'+fx(0)+'" y2="'+(T+ph)+'" stroke="'+TAX+'" stroke-opacity=".55" stroke-width="1.6"/>'
   +'<line x1="'+L+'" y1="'+fy(0)+'" x2="'+(L+pw)+'" y2="'+fy(0)+'" stroke="'+TAX+'" stroke-opacity=".55" stroke-width="1.6"/>'
   +'<line x1="'+X6+'" y1="'+T+'" x2="'+X6+'" y2="'+(T+ph)+'" stroke="#7FB7C4" stroke-opacity=".8" stroke-width="1.6" stroke-dasharray="7 6"/>'
