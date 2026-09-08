@@ -1827,7 +1827,8 @@ function pLights(){
     forecast where it differs, the number the market's rank of twelve on that
     pillar. Pillar headers sort by rank; the map wears the district colours. */
  const SIGC={GREEN:'#2F8F52',ORANGE:'#D9962B',RED:'#C4203C'};
- const rows=ORDER.map(d=>({d:d,p:MOCK.divisions[d].dvd,c:MOCK.divisions[d].conf}));
+ const VIS=DVIS();
+ const rows=VIS.map(d=>({d:d,p:MOCK.divisions[d].dvd,c:MOCK.divisions[d].conf}));
  const rk=(key,get)=>{const o=rows.slice().sort((a,b)=>get(b)-get(a));
   o.forEach((r,i)=>r[key]=i+1)};
  rk('rs',r=>r.p.sd10); rk('rv',r=>r.p.val10); rk('rc',r=>r.c.cscore);
