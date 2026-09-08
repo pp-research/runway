@@ -570,7 +570,9 @@ body.presenting .exitfs{display:grid}
 .pgv .pgl{font-size:.98cqw}
 .pgg{color:#8492A0;font-weight:400;font-size:.74cqw;margin-left:.5cqw}
 /* demand v runway sits on a faint glass panel so the chart reads as its own object */
-#c-dvr{background:#FFFFFF08;border:1px solid #FFFFFF14;border-radius:.7cqw;padding:.9cqw 1.1cqw .5cqw}
+/* the glass panel behind the scatter is drawn INSIDE the svg so it can stop above
+   the legend row; the host keeps only its spacing */
+#c-dvr{padding:.2cqw 0 0}
 .dvrbar{display:flex;justify-content:flex-end;margin-bottom:.15cqw}
 .dvrbar button{display:inline-flex;align-items:center;gap:.5cqw;background:#FFFFFF10;border:1px solid #FFFFFF1E;
  color:#C6D2DC;border-radius:2cqw;padding:.34cqw .9cqw;font:inherit;font-size:.82cqw;font-weight:600;cursor:pointer}
@@ -642,7 +644,6 @@ body.presenting .exitfs{display:grid}
 [data-shell=light] .agkv{color:#5B6B76}
 [data-shell=light] .agkv b{color:#16202C}
 [data-shell=light] .agbig{color:#0F1A24}
-[data-shell=light] #c-dvr{background:#17202C06;border-color:#17202C1A}
 [data-shell=light] .dvrbar button{background:#17202C0D;border-color:#17202C29;color:#4A5A66}
 [data-shell=light] .dvrbar button:hover{background:#17202C1A;color:#16202C}
 </style>
@@ -2180,6 +2181,11 @@ function pScatter(){
  const TGRID=LM?'#17202C14':'#FFFFFF12', TLAB=LM?'#5B6B76':'#8FA0AB',
        TAX=LM?'#4A5A66':'#8FA9B4', TDOT=LM?'#22303B':'#DCE5EA';
  let s='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" role="img" style="width:100%;height:auto">';
+ /* glass panel behind the chart only - it ends above the legend row so the key and
+    the runway note sit on the plain slide */
+ s+='<rect x="1" y="1" width="'+(W-2)+'" height="'+(H-48)+'" rx="12"'
+  +' fill="'+(LM?'#17202C':'#FFFFFF')+'" fill-opacity="'+(LM?'.035':'.032')+'"'
+  +' stroke="'+(LM?'#17202C':'#FFFFFF')+'" stroke-opacity="'+(LM?'.10':'.08')+'"/>';
  for(let v=-20;v<=80;v+=10){const y=fy(v);
   s+='<line x1="'+L+'" y1="'+y+'" x2="'+(L+pw)+'" y2="'+y+'" stroke="'+TGRID+'"/>'
    +'<text x="'+(L-12)+'" y="'+(y+6)+'" text-anchor="end" font-size="19" fill="'+TLAB+'">'+v+'</text>';}
