@@ -637,7 +637,7 @@ body.presenting .exitfs{display:grid}
 #pg-tli .pgv .pc.pcv b{color:#F0F5F7}
 #pg-tli .pgg{color:#6E7E8A}
 #pg-tli .sc10{color:#F0F5F7;display:inline-block;margin-left:.42cqw;padding:.02cqw .42cqw;border-radius:.65cqw;font-size:.82em;font-weight:700;border:.06cqw solid transparent;vertical-align:baseline}
-#pg-tli .pcc b{min-width:3cqw;text-align:right}
+#pg-tli .pcc b{min-width:4.35cqw;text-align:right}
 #pg-tli .pcc .sc10{box-sizing:border-box;min-width:2.4cqw;text-align:center;padding:.02cqw .15cqw}
 [data-shell=light] #pg-tli .pgrid .pgl{color:#4A5866;border-bottom-color:#17202C12}
 [data-shell=light] #pg-tli .pgrid .pc{border-bottom-color:#17202C12}
@@ -1961,19 +1961,24 @@ function pTLI(){
   +';box-shadow:0 0 .5cqw '+SIGC[sig]+'66" title="'+d+'"></i><b>'+txt+'</b></div>';
  const row=(label,get)=>'<div class="pgl">'+label+'</div>'+VIS.map(d=>{const r=get(d);return vcell(d,r[0],r[1])}).join('');
  const crow=(label,get)=>'<div class="pgl">'+label+'</div>'+VIS.map(d=>{const r=get(d);return '<div class="pc pcv pcc" title="'+d+'"><b>'+r[1]+'</b><span class="sc10" style="background:'+SIGC[r[0]]+'26;border-color:'+SIGC[r[0]]+'40">'+r[2]+'</span></div>'}).join('');
+ /* pp band-rank s10, the VALUE pillar's own construction, from the stored gaps */
+ const PPS10=s=>{const B={GREEN:[7,10],ORANGE:[4,6.9],RED:[1,3.9]},out={};['GREEN','ORANGE','RED'].forEach(b=>{
+  const m=ORDER.filter(d=>ppSig(P(d).seg[s].gap)===b).sort((a,c)=>P(a).seg[s].gap-P(c).seg[s].gap),[lo,hi]=B[b];
+  m.forEach((d,i)=>out[d]=Math.round((m.length===1?(lo+hi)/2:lo+(hi-lo)*i/(m.length-1))*10)/10)});return out};
  gid('ti-grid').style.gridTemplateColumns='minmax(9cqw,auto) repeat('+VIS.length+',1fr)';
+ const PPHOUSE=PPS10('house'),PPUNIT=PPS10('unit');
  put('ti-grid','<div></div>'+VIS.map(d=>'<div class="ph" style="background:'+HDL[d]
    +'">'+d+'</div>').join('')
   +'<div class="pgrp2">S&amp;D</div>'
   +row('Demand score · houses',d=>[P(d).seg.house.dsig,P(d).seg.house.dscore.toFixed(1)])
   +row('Demand score · units',d=>[P(d).seg.unit.dsig,P(d).seg.unit.dscore.toFixed(1)])
   +'<div class="pgrp2">Value</div>'
-  /* price position is a RANK among the six districts (1 = dearest): the cell shows the current
-     rank and the gap to the long-run average rank (positive = cheapened = good) */
-  +row('Price position · houses<span class="pgg">rank of 6 · v LT avg</span>',
-    d=>{const s=P(d).seg.house;return [ppSig(s.gap),'#'+Math.round(s.lrrank+s.gap)+' · '+(s.gap>=0?'+':'')+s.gap.toFixed(1)]})
-  +row('Price position · units<span class="pgg">rank of 6 · v LT avg</span>',
-    d=>{const s=P(d).seg.unit;return [ppSig(s.gap),'#'+Math.round(s.lrrank+s.gap)+' · '+(s.gap>=0?'+':'')+s.gap.toFixed(1)]})
+  /* price position is a RANK among the six districts (1 = dearest): the cell shows the
+     current rank v the long-run average rank, with the band-rank score /10 in the chip */
+  +crow('Price position · houses<span class="pgg">current v long-run avg rank of 6 · green/red at ±.5</span>',
+    d=>{const s=P(d).seg.house;return [ppSig(s.gap),'#'+Math.round(s.lrrank+s.gap)+' v '+s.lrrank.toFixed(1),TKF(PPHOUSE[d])]})
+  +crow('Price position · units<span class="pgg">current v long-run avg rank of 6 · green/red at ±.5</span>',
+    d=>{const s=P(d).seg.unit;return [ppSig(s.gap),'#'+Math.round(s.lrrank+s.gap)+' v '+s.lrrank.toFixed(1),TKF(PPUNIT[d])]})
   +row('Runway · houses',d=>{const r=100*P(d).seg.house.runway;return [rwSig(r,'house'),(r>=0?'+':'')+r.toFixed(0)+'%']})
   +row('Runway · units',d=>{const r=100*P(d).seg.unit.runway;return [rwSig(r,'unit'),(r>=0?'+':'')+r.toFixed(0)+'%']})
   +'<div class="pgrp2">Confidence · reading · score out of 10</div>'
