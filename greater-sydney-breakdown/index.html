@@ -1967,13 +1967,14 @@ function pTLI(){
   m.forEach((d,i)=>out[d]=Math.round((m.length===1?(lo+hi)/2:lo+(hi-lo)*i/(m.length-1))*10)/10)});return out};
  const PPS10=s=>BAND10(d=>P(d).seg[s].gap,d=>ppSig(P(d).seg[s].gap));
  const RWS10=s=>BAND10(d=>Math.round(1000*P(d).seg[s].runway)/10,d=>rwSig(100*P(d).seg[s].runway,s));
+ const DS10=s=>BAND10(d=>P(d).seg[s].dscore,d=>P(d).seg[s].dsig);
  gid('ti-grid').style.gridTemplateColumns='minmax(9cqw,auto) repeat('+VIS.length+',1fr)';
- const PPHOUSE=PPS10('house'),PPUNIT=PPS10('unit'),RWHOUSE=RWS10('house'),RWUNIT=RWS10('unit');
+ const PPHOUSE=PPS10('house'),PPUNIT=PPS10('unit'),RWHOUSE=RWS10('house'),RWUNIT=RWS10('unit'),DSHOUSE=DS10('house'),DSUNIT=DS10('unit');
  put('ti-grid','<div></div>'+VIS.map(d=>'<div class="ph" style="background:'+HDL[d]
    +'">'+d+'</div>').join('')
-  +'<div class="pgrp2">S&amp;D</div>'
-  +row('Demand score · houses',d=>[P(d).seg.house.dsig,P(d).seg.house.dscore.toFixed(1)])
-  +row('Demand score · units',d=>[P(d).seg.unit.dsig,P(d).seg.unit.dscore.toFixed(1)])
+  +'<div class="pgrp2">S&amp;D · reading · score out of 10</div>'
+  +crow('Demand score · houses<span class="pgg">green ≥30 · orange ≥5</span>',d=>{const s=P(d).seg.house;return [s.dsig,s.dscore.toFixed(1),TKF(DSHOUSE[d])]})
+  +crow('Demand score · units<span class="pgg">green ≥30 · orange ≥5</span>',d=>{const s=P(d).seg.unit;return [s.dsig,s.dscore.toFixed(1),TKF(DSUNIT[d])]})
   +'<div class="pgrp2">Value · reading · score out of 10</div>'
   /* price position is a RANK among the six districts (1 = dearest): the cell shows the
      current rank v the long-run average rank, with the band-rank score /10 in the chip */
