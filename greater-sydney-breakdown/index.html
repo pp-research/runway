@@ -636,7 +636,7 @@ body.presenting .exitfs{display:grid}
 #pg-tli .pgrp2{color:#7FB7C4}
 #pg-tli .pgv .pc.pcv b{color:#F0F5F7}
 #pg-tli .pgg{color:#6E7E8A}
-#pg-tli i.scir{width:1.6cqw;height:1.6cqw;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:.66cqw;font-weight:800;color:#FFF;letter-spacing:-.02em}
+#pg-tli .sc10{display:inline-block;margin-left:.42cqw;padding:.02cqw .42cqw;border-radius:.65cqw;font-size:.82em;font-weight:700;border:.06cqw solid transparent;vertical-align:baseline}
 [data-shell=light] #pg-tli .pgrid .pgl{color:#4A5866;border-bottom-color:#17202C12}
 [data-shell=light] #pg-tli .pgrid .pc{border-bottom-color:#17202C12}
 [data-shell=light] #pg-tli .pgrp2{color:var(--teal-text)}
@@ -1957,7 +1957,7 @@ function pTLI(){
  const vcell=(d,sig,txt)=>'<div class="pc pcv"><i style="background:'+SIGC[sig]
   +';box-shadow:0 0 .5cqw '+SIGC[sig]+'66" title="'+d+'"></i><b>'+txt+'</b></div>';
  const row=(label,get)=>'<div class="pgl">'+label+'</div>'+VIS.map(d=>{const r=get(d);return vcell(d,r[0],r[1])}).join('');
- const crow=(label,get)=>'<div class="pgl">'+label+'</div>'+VIS.map(d=>{const r=get(d);return '<div class="pc pcv"><i class="scir" style="background:'+SIGC[r[0]]+';box-shadow:0 0 .5cqw '+SIGC[r[0]]+'66" title="'+d+'">'+r[2]+'</i><b>'+r[1]+'</b></div>'}).join('');
+ const crow=(label,get)=>'<div class="pgl">'+label+'</div>'+VIS.map(d=>{const r=get(d);return '<div class="pc pcv" title="'+d+'"><b>'+r[1]+'</b><span class="sc10" style="background:'+SIGC[r[0]]+'26;border-color:'+SIGC[r[0]]+'40">'+r[2]+'</span></div>'}).join('');
  gid('ti-grid').style.gridTemplateColumns='minmax(9cqw,auto) repeat('+VIS.length+',1fr)';
  put('ti-grid','<div></div>'+VIS.map(d=>'<div class="ph" style="background:'+HDL[d]
    +'">'+d+'</div>').join('')
