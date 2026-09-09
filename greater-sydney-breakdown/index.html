@@ -1960,7 +1960,7 @@ function pTLI(){
  const vcell=(d,sig,txt)=>'<div class="pc pcv"><i style="background:'+SIGC[sig]
   +';box-shadow:0 0 .5cqw '+SIGC[sig]+'66" title="'+d+'"></i><b>'+txt+'</b></div>';
  const row=(label,get)=>'<div class="pgl">'+label+'</div>'+VIS.map(d=>{const r=get(d);return vcell(d,r[0],r[1])}).join('');
- const crow=(label,get)=>'<div class="pgl">'+label+'</div>'+VIS.map(d=>{const r=get(d);return '<div class="pc pcv pcc" title="'+d+'"><b>'+r[1]+'</b><span class="sc10" style="background:'+SIGC[r[0]]+'26;border-color:'+SIGC[r[0]]+'40">'+r[2]+'</span></div>'}).join('');
+ const crow=(label,get)=>'<div class="pgl">'+label+'</div>'+VIS.map(d=>{const r=get(d);return '<div class="pc pcv pcc" title="'+d+'"><b>'+r[1]+'</b><span class="sc10" style="background:'+SIGC[r[0]]+'66;border-color:'+SIGC[r[0]]+'CC">'+r[2]+'</span></div>'}).join('');
  /* indicator band-rank s10s, the VALUE pillar's own construction, from stored values */
  const BAND10=(val,sig)=>{const B={GREEN:[7,10],ORANGE:[4,6.9],RED:[1,3.9]},out={};['GREEN','ORANGE','RED'].forEach(b=>{
   const m=ORDER.filter(d=>sig(d)===b).sort((a,c)=>val(a)-val(c)),[lo,hi]=B[b];
