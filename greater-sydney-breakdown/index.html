@@ -636,6 +636,7 @@ body.presenting .exitfs{display:grid}
 #pg-tli .pgrp2{color:#7FB7C4}
 #pg-tli .pgv .pc.pcv b{color:#F0F5F7}
 #pg-tli .pgg{color:#6E7E8A}
+#pg-tli .sc10{display:inline-block;margin-left:.42cqw;padding:.02cqw .4cqw;border-radius:.65cqw;font-size:.82em;border:.06cqw solid transparent;vertical-align:baseline}
 [data-shell=light] #pg-tli .pgrid .pgl{color:#4A5866;border-bottom-color:#17202C12}
 [data-shell=light] #pg-tli .pgrid .pc{border-bottom-color:#17202C12}
 [data-shell=light] #pg-tli .pgrp2{color:var(--teal-text)}
@@ -1973,7 +1974,7 @@ function pTLI(){
   +row('Runway · units',d=>{const r=100*P(d).seg.unit.runway;return [rwSig(r,'unit'),(r>=0?'+':'')+r.toFixed(0)+'%']})
   +'<div class="pgrp2">Confidence · reading · score out of 10</div>'
   +P(VIS[0]).conf.inds.map((x,i)=>row(x.n+'<span class="pgg">'+x.g+' · '+THR[x.n]+'</span>',
-    d=>{const c=P(d).conf.inds[i];return [SIG2(c.s10),FMTV(x.n,c.v)+' · '+TKF(c.s10)]})).join(''));
+    d=>{const c=P(d).conf.inds[i],g=SIG2(c.s10);return [g,FMTV(x.n,c.v)+'<span class="sc10" style="background:'+SIGC[g]+'26;border-color:'+SIGC[g]+'40">'+TKF(c.s10)+'</span>']})).join(''));
 }
 function pDistricts(){
  const cols=['District','LGAs','Cheapest LGA','Dearest LGA','Spread','Avg. of LGA medians'];
